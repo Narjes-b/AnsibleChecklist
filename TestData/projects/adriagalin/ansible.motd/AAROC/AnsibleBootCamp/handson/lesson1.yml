@@ -1,0 +1,55 @@
+---
+# the first playbook for lesson 1 - a list of tasks with no role
+
+- hosts: all
+  #accelerate: true
+  name: Check the basic connectivity
+  tasks:
+  - ping:
+
+- hosts: all
+  #accelerate: true
+  name: Set up the basic users
+  become_user: root
+  tasks:
+  - name: ensure that bob is present
+    user:
+      name: bob
+      home: /dev/null
+
+- hosts: all
+  #accelerate: true
+  name: ensure system is properly configured
+  become_user: root
+  vars_files: ["lesson1_vars.yml"]
+  tasks:
+    - name: ensure that packages are installed
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items: packages
+    - name: push the template for ntp.conf
+      template:
+        src: ntp.conf.j2
+        dest: /etc/ntp.conf
+    - name: ensure that ntp is started
+      service:
+        name: ntpd
+        state: started
+
+- hosts: all
+  #accelerate: true
+  name: test installation is correct
+  tasks:
+    - name: Get time drift
+      command: /usr/sbin/ntptime
+      register: thetime
+      changed_when: false
+    - name: output time
+      debug:
+        msg: "{{ thetime['stdout_lines'] | regex_replace('^.*offset (\\d+.\\d+).*$', '\\1') | float }}"
+    - name: Raise error if differente is larger than acceptable difference
+      debug:
+        msg: "The time difference is NOT ok"
+      when: "{{ thetime['stdout_lines'] | regex_replace('^.*offset (\\d+.\\d+).*$', '\\1') | float * 1000 > item }}"
+      with_items: time_difference

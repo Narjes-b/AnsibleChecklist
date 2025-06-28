@@ -1,0 +1,6 @@
+---
+  - name: make a frikkin webserver
+    hosts: webservers
+    pre_tasks:
+    roles:
+      - { role: webserver, sudo: true }
