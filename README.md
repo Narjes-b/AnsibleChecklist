@@ -1,6 +1,6 @@
 Ongoing implementation
 
-22 IaC smells are now detected
+22 IaC smells are now detected: Overview at https://www.overleaf.com/2736588529tfxqwjmdkmhn#2fc7bc
 
 To run the tool:
  - run the script 'smellsDetector.py'
