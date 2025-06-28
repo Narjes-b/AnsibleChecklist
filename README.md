@@ -1,5 +1,7 @@
 Ongoing implementation
 
+22 IaC smells are now detected
+
 To run the tool:
  - run the script 'smellsDetector.py'
  - update the necessary file paths in 'config.py'
