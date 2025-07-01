@@ -4,7 +4,7 @@ To run the tool:
  - run the script 'smellsDetector.py'
  - update the necessary file paths in 'config.py'
  - install AnsibleLint from https://ansible.readthedocs.io/projects/lint/installing/#installing-the-latest-version
- - run the script 'Install.GitLeaks.py' to install GitLeaks
+ - run the script 'Install_GitLeaks.py' to install GitLeaks
 
 Current features:
 - 22 IaC smells adapted from Puppet and EMSE checklist: Overview at https://www.overleaf.com/2736588529tfxqwjmdkmhn#2fc7bc
