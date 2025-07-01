@@ -13,4 +13,4 @@ Current features:
   
 Upcoming features:
  - wrap the tool as a Pull-request Github bot
- - support reading a whole ansible project (only 1 playbook and a folder of vars are supported for now)
+ - the scanner would scan only one playbook and optionnaly given vars folder to scan the playbooks one by one in a pull request commit
