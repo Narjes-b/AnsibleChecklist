@@ -1,0 +1,229 @@
+---
+# tasks file for adriagalin.motd
+- name: Notconsideredtask1
+  block:
+    - name: task1
+      file:
+        path: /etc/update-motd.d/backups
+        state: directory
+  when: ag_motd_remove_default_config
+
+- name: task2
+  shell: mv /etc/update-motd.d/backups/* /etc/update-motd.d/
+  when: ag_motd_restore_default_config and not ag_motd_remove_default_config
+  
+- name: Notconsideredtask2
+  block:
+    - name: task3
+      file:
+        path: /etc/update-motd.d/backups
+        state: directory
+  when: ag_motd_remove_default_config
+- name: Example Playbook
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Include some vars from a file (used)
+      include_vars: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/aalaesar/install_nextcloud/roles/install_nextcloud/vars/main.yml
+
+    - name: Include some vars from another file (unused)
+      include_vars: vars_unused.yml
+
+    - name: Use a variable from the first included file
+      debug:
+        msg: "The value is {{ mysql_credential_file }}"  
+        msg: "{{ s }}"
+        
+- name: Example playbook with secret
+  hosts: localhost
+  tasks:
+    - name: Set AWS secret key (bad practice!)
+      set_fact:
+        aws_secret_access_key: "AKIA1234567890EXAMPLEKEY"
+        
+- name: play1
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Notconsideredtask3
+      block:
+        - name: task4
+          apt:
+            name: nginx
+            state: present
+            update_cache: yes  
+        - name: task5
+          apt:
+            name: nginx
+            state: present
+            update_cache: yes
+            
+    - name: Notconsideredtask4
+      block:
+        - name: task6
+          apt:
+            name: nginx
+            state: present
+            update_cache: yes 
+            
+- name: play2
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Notconsideredtask5
+      block:
+        - name: task7
+          apt:
+            name: nginx
+            state: present
+            update_cache: yes 
+            state: absent
+            
+- name: task8
+  copy:
+    src: 99-footer
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: 0755
+    src: 99-footer
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: 0755
+    src: 99-footer
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: 0755
+    src: 99-footer
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: 0755
+    src: 99-footer
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: 0755
+    src: 99-footer
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: 0755
+    group: root
+    mode: 0755
+    src: 99-footer
+    dest: /etc/update-motd.d/99-footer
+    owner: root
+    group: root
+    mode: 0755
+  password : sdsd
+  when: ag_motd_add_footer | bool
+  tags: ["motd", "common"]
+   
+
+- name: task9
+  file:
+    path: /etc/update-motd.d/99-footer
+    state: absent
+  when: not ag_motd_add_footer | bool
+  set_fact:
+        pwd_updated: True
+        cacheable: yes  
+  tags: ["motd", "common"]
+
+- name: task10
+  template:
+    src: etc/update-motd.d/20-update.j2
+    dest: /etc/update-motd.d/20-update
+    mode: a+x
+  when: ag_motd_add_update | bool
+  tags: ["motd", "common"]
+
+- name: task11
+  file:
+    path: /etc/update-motd.d/20-update
+    state: absent
+  when: not ag_motd_add_update | bool
+  set_fact:
+        pwd_updated: False
+  tags: ["motd", "common"]
+  
+#- name: record updated mysql root password
+ # hosts: all
+#  tasks:
+#    - name: setting a new fact
+ #     set_fact:
+  #      pwd_updated: True
+   #     cacheable: yes  
+
+- name: task12
+  file:
+    path: /etc/motd
+    state: absent
+  #when: pwd_updated | bool  # Use the fact here as a condition
+  tags: ["motd", "common"]
+  
+- name: task13
+  file:
+    path: /etc/motd
+    state: absent
+  tags: ["motd", "common"]  
+
+- name: task14
+  copy:
+    content: "User is {{ cacheable }}"
+  stat:
+    path: /etc/update-motd.d/99-footer
+  register: motd_tail_supported
+  tags: ["motd", "common"]
+
+- name: task15
+  template:
+    src: etc/motd.j2
+    dest: /etc/motd.tail
+  when: motd_tail_supported.stat.exists | bool
+  set_fact:
+        cacheable: False
+  tags: ["motd", "common"]
+
+- name: task16
+  template:
+    src: etc/motd.j2
+    dest: /etc/motd
+    version: "{{ version[2] }}"
+  when: not motd_tail_supported.stat.exists | bool
+  tags: ["motd", "common"]
+
+- name: task17
+  template:
+    src: etc/motd.j2
+    dest: /etc/motd
+  when: not motd_tail_supported.stat.exists | bool
+  tags: ["motd", "common"]
+
+- name: task18
+  template:
+    src: etc/motd.j2
+    dest: /etc/motd
+  when: not motd_tail_supported.stat.exists | bool
+  tags: ["motd", "common"]
+
+- name: task19
+  template:
+    src: etc/motd.j2
+    dest: /etc/motd
+  when: not motd_tail_supported.stat.exists | bool
+  tags: ["motd", "common"]
+  
+- name: task20
+  template:
+    src: etc/motd.j2
+    dest: /etc/motd
+  when: not motd_tail_supported.stat.exists | bool
+  tags: ["motd", "common"]  
+  
+  
+  
