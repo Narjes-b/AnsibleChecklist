@@ -1,0 +1,172 @@
+[
+  {
+    "RuleID": "AwsAccessKey",
+    "Description": "AWS access key ID",
+    "SmellType": "Cloud Credentials"
+  },
+  {
+    "RuleID": "AwsSecretKey",
+    "Description": "AWS secret access key",
+    "SmellType": "Cloud Credentials"
+  },
+  {
+    "RuleID": "GcpServiceAccount",
+    "Description": "Google Cloud service account credentials",
+    "SmellType": "Cloud Credentials"
+  },
+  {
+    "RuleID": "AzureClientSecret",
+    "Description": "Azure client secret",
+    "SmellType": "Cloud Credentials"
+  },
+  {
+    "RuleID": "AlibabaAccessKey",
+    "Description": "Alibaba Cloud access key",
+    "SmellType": "Cloud Credentials"
+  },
+  {
+    "RuleID": "AlibabaSecretKey",
+    "Description": "Alibaba Cloud secret key",
+    "SmellType": "Cloud Credentials"
+  },
+  {
+    "RuleID": "GithubToken",
+    "Description": "GitHub personal access token",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "GitlabToken",
+    "Description": "GitLab personal access token",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "SlackToken",
+    "Description": "Slack bot/user token",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "DiscordToken",
+    "Description": "Discord bot token",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "SendgridToken",
+    "Description": "SendGrid API token",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "MailchimpAPIKey",
+    "Description": "Mailchimp API key",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "StripeAccessToken",
+    "Description": "Stripe API access token",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "AsanaAccessToken",
+    "Description": "Asana access token",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "TrelloAPIKey",
+    "Description": "Trello API key",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "GenericAPIKey",
+    "Description": "Generic API key",
+    "SmellType": "API Key"
+  },
+  {
+    "RuleID": "CircleCIToken",
+    "Description": "CircleCI token",
+    "SmellType": "CI/CD Secret"
+  },
+  {
+    "RuleID": "GithubPAT",
+    "Description": "GitHub personal access token",
+    "SmellType": "CI/CD Secret"
+  },
+  {
+    "RuleID": "GitHubAppToken",
+    "Description": "GitHub App token",
+    "SmellType": "CI/CD Secret"
+  },
+  {
+    "RuleID": "NpmAuthToken",
+    "Description": "NPM authentication token",
+    "SmellType": "CI/CD Secret"
+  },
+  {
+    "RuleID": "PyPIApiToken",
+    "Description": "PyPI API token",
+    "SmellType": "CI/CD Secret"
+  },
+  {
+    "RuleID": "DockerHubPassword",
+    "Description": "DockerHub password",
+    "SmellType": "CI/CD Secret"
+  },
+  {
+    "RuleID": "PrivateKey",
+    "Description": "Generic private key",
+    "SmellType": "Private Key"
+  },
+  {
+    "RuleID": "SSHPrivateKey",
+    "Description": "SSH private key",
+    "SmellType": "Private Key"
+  },
+  {
+    "RuleID": "RSAKey",
+    "Description": "RSA private key",
+    "SmellType": "Private Key"
+  },
+  {
+    "RuleID": "PGPPrivateKey",
+    "Description": "PGP private key",
+    "SmellType": "Private Key"
+  },
+  {
+    "RuleID": "PemFile",
+    "Description": "PEM-encoded private key",
+    "SmellType": "Private Key"
+  },
+  {
+    "RuleID": "MongoDbURI",
+    "Description": "MongoDB connection URI",
+    "SmellType": "Database Credential"
+  },
+  {
+    "RuleID": "PostgresURI",
+    "Description": "PostgreSQL connection URI",
+    "SmellType": "Database Credential"
+  },
+  {
+    "RuleID": "MySQLPassword",
+    "Description": "MySQL password in connection string",
+    "SmellType": "Database Credential"
+  },
+  {
+    "RuleID": "ElasticSearchPassword",
+    "Description": "ElasticSearch password",
+    "SmellType": "Database Credential"
+  },
+  {
+    "RuleID": "GenericSecret",
+    "Description": "Generic assignment of secrets",
+    "SmellType": "Generic Secret"
+  },
+  {
+    "RuleID": "GenericToken",
+    "Description": "Generic assignment of token",
+    "SmellType": "Generic Secret"
+  },
+  {
+    "RuleID": "HighEntropyString",
+    "Description": "High entropy string likely to be secret",
+    "SmellType": "High Entropy Secret"
+  }
+]

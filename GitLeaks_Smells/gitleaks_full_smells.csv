@@ -1,0 +1,35 @@
+RuleID,Description,SmellType
+AwsAccessKey,AWS access key ID,Cloud Credentials
+AwsSecretKey,AWS secret access key,Cloud Credentials
+GcpServiceAccount,Google Cloud service account credentials,Cloud Credentials
+AzureClientSecret,Azure client secret,Cloud Credentials
+AlibabaAccessKey,Alibaba Cloud access key,Cloud Credentials
+AlibabaSecretKey,Alibaba Cloud secret key,Cloud Credentials
+GithubToken,GitHub personal access token,API Key
+GitlabToken,GitLab personal access token,API Key
+SlackToken,Slack bot/user token,API Key
+DiscordToken,Discord bot token,API Key
+SendgridToken,SendGrid API token,API Key
+MailchimpAPIKey,Mailchimp API key,API Key
+StripeAccessToken,Stripe API access token,API Key
+AsanaAccessToken,Asana access token,API Key
+TrelloAPIKey,Trello API key,API Key
+GenericAPIKey,Generic API key,API Key
+CircleCIToken,CircleCI token,CI/CD Secret
+GithubPAT,GitHub personal access token,CI/CD Secret
+GitHubAppToken,GitHub App token,CI/CD Secret
+NpmAuthToken,NPM authentication token,CI/CD Secret
+PyPIApiToken,PyPI API token,CI/CD Secret
+DockerHubPassword,DockerHub password,CI/CD Secret
+PrivateKey,Generic private key,Private Key
+SSHPrivateKey,SSH private key,Private Key
+RSAKey,RSA private key,Private Key
+PGPPrivateKey,PGP private key,Private Key
+PemFile,PEM-encoded private key,Private Key
+MongoDbURI,MongoDB connection URI,Database Credential
+PostgresURI,PostgreSQL connection URI,Database Credential
+MySQLPassword,MySQL password in connection string,Database Credential
+ElasticSearchPassword,ElasticSearch password,Database Credential
+GenericSecret,Generic assignment of secrets,Generic Secret
+GenericToken,Generic assignment of token,Generic Secret
+HighEntropyString,High entropy string likely to be secret,High Entropy Secret
