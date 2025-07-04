@@ -1,0 +1,121 @@
+{
+    "playbook_metrics": {
+        "LOC_playbook": 86,
+        "num_plays": 0,
+        "avg_play_size": 0,
+        "num_nested_tasks_playbook": 12,
+        "avg_nested_task_playbook": 7.0,
+        "num_global_tasks_playbook": 0
+    },
+    "high_coupling_metrics": {
+        "Num_Imports": 1,
+        "Num_Roles": 0
+    },
+    "similarity": 0.493461253742377,
+    "duplicated_code": 0,
+    "unecessary_set_fact": 0,
+    "overriding_facts": 0,
+    "unecessary_abstraction": 0,
+    "missing_files_extension": 2,
+    "unnamed_play": 0,
+    "unnamed_tasks": 0,
+    "overriden_keys": [],
+    "duplicate_task_names": 0,
+    "missing_bool_filters": 8,
+    "similarityPlays": 0,
+    "credentials_leaking_in_log": 0,
+    "unused_include_vars": 0,
+    "WarningUnusedIncludeVars": [],
+    "plays": [
+        {
+            "play_metrics": null,
+            "unnamed_play": null,
+            "task_metrics": [
+                {
+                    "play_id": -1,
+                    "task_name": "Test if Ant {{ ant_version }} is already installed",
+                    "LOC_task": 5,
+                    "task_name_len": 50,
+                    "special_chars": 5
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Test if Ant is already downloaded",
+                    "LOC_task": 5,
+                    "task_name_len": 33,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Download Apache ANT",
+                    "LOC_task": 10,
+                    "task_name_len": 19,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "GPG Signature Verification of Binary",
+                    "LOC_task": 10,
+                    "task_name_len": 36,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Deploy Apache ANT",
+                    "LOC_task": 7,
+                    "task_name_len": 17,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Set ANT_HOME",
+                    "LOC_task": 4,
+                    "task_name_len": 12,
+                    "special_chars": 1
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Add %ANT_HOME%\\bin to %PATH%",
+                    "LOC_task": 7,
+                    "task_name_len": 28,
+                    "special_chars": 6
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Test if ant-contrib is already installed",
+                    "LOC_task": 5,
+                    "task_name_len": 40,
+                    "special_chars": 1
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Download ant-contrib",
+                    "LOC_task": 9,
+                    "task_name_len": 20,
+                    "special_chars": 1
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Unzip ant-contrib",
+                    "LOC_task": 7,
+                    "task_name_len": 17,
+                    "special_chars": 1
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Copy the ant-contrib.jar to ANT's lib folder",
+                    "LOC_task": 7,
+                    "task_name_len": 44,
+                    "special_chars": 3
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Clean up ant zip files",
+                    "LOC_task": 8,
+                    "task_name_len": 22,
+                    "special_chars": 0
+                }
+            ]
+        }
+    ]
+}

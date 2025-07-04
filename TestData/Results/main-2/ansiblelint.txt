@@ -1,0 +1,11 @@
+AnsibleLint analysis for playbook /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:
+
+
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?
+- ⚠️ yaml[line-length] - Line too long (710 > 160 characters) at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?
+- ⚠️ yaml[line-length] - Line too long (698 > 160 characters) at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main-2.yml:?

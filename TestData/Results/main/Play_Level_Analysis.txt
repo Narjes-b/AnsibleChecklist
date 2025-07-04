@@ -1,0 +1,49 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+No unnecessary dependencies found.
+
+
+### OVERRIDEN KEYS  ###.
+
+No duplicate keys found.
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+	Task:: Test if Ant {{ ant_version }} is already installed:
+	- inconsistent_naming_convention
+
+	Task:: Test if Ant is already downloaded:
+	No IaC smell detected for this task.
+
+	Task:: Download Apache ANT:
+	No IaC smell detected for this task.
+
+	Task:: GPG Signature Verification of Binary:
+	No IaC smell detected for this task.
+
+	Task:: Deploy Apache ANT:
+	No IaC smell detected for this task.
+
+	Task:: Set ANT_HOME:
+	No IaC smell detected for this task.
+
+	Task:: Add %ANT_HOME%\bin to %PATH%:
+	- inconsistent_naming_convention
+
+	Task:: Test if ant-contrib is already installed:
+	No IaC smell detected for this task.
+
+	Task:: Download ant-contrib:
+	No IaC smell detected for this task.
+
+	Task:: Unzip ant-contrib:
+	No IaC smell detected for this task.
+
+	Task:: Copy the ant-contrib.jar to ANT's lib folder:
+	No IaC smell detected for this task.
+
+	Task:: Clean up ant zip files:
+	No IaC smell detected for this task.
+
+

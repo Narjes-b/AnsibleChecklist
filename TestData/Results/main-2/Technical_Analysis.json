@@ -1,0 +1,100 @@
+{
+    "playbook_metrics": {
+        "LOC_playbook": 61,
+        "num_plays": 0,
+        "avg_play_size": 0,
+        "num_nested_tasks_playbook": 9,
+        "avg_nested_task_playbook": 8.222222222222221,
+        "num_global_tasks_playbook": 0
+    },
+    "high_coupling_metrics": {
+        "Num_Imports": 0,
+        "Num_Roles": 0
+    },
+    "similarity": 0.5514425569110446,
+    "duplicated_code": 0,
+    "unecessary_set_fact": 0,
+    "overriding_facts": 0,
+    "unecessary_abstraction": 0,
+    "missing_files_extension": 2,
+    "unnamed_play": 0,
+    "unnamed_tasks": 0,
+    "overriden_keys": [],
+    "duplicate_task_names": 0,
+    "missing_bool_filters": 5,
+    "similarityPlays": 0,
+    "credentials_leaking_in_log": 0,
+    "unused_include_vars": 0,
+    "WarningUnusedIncludeVars": [],
+    "plays": [
+        {
+            "play_metrics": null,
+            "unnamed_play": null,
+            "task_metrics": [
+                {
+                    "play_id": -1,
+                    "task_name": "Test if freetype is already installed",
+                    "LOC_task": 5,
+                    "task_name_len": 37,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Test if freetype is already downloaded",
+                    "LOC_task": 5,
+                    "task_name_len": 38,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Download freetype 2.5.3",
+                    "LOC_task": 9,
+                    "task_name_len": 23,
+                    "special_chars": 2
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Unpack freetype",
+                    "LOC_task": 8,
+                    "task_name_len": 15,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Add modify, write permissions for jenkins user",
+                    "LOC_task": 9,
+                    "task_name_len": 46,
+                    "special_chars": 1
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Check if freetype 32bit has been built",
+                    "LOC_task": 5,
+                    "task_name_len": 38,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Check if freetype 64bit has been built",
+                    "LOC_task": 5,
+                    "task_name_len": 38,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Build freetype-2.5.3 32bit",
+                    "LOC_task": 14,
+                    "task_name_len": 26,
+                    "special_chars": 3
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Build freetype-2.5.3 64bit",
+                    "LOC_task": 14,
+                    "task_name_len": 26,
+                    "special_chars": 3
+                }
+            ]
+        }
+    ]
+}

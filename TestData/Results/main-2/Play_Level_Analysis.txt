@@ -1,0 +1,40 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+No unnecessary dependencies found.
+
+
+### OVERRIDEN KEYS  ###.
+
+No duplicate keys found.
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+	Task:: Test if freetype is already installed:
+	No IaC smell detected for this task.
+
+	Task:: Test if freetype is already downloaded:
+	No IaC smell detected for this task.
+
+	Task:: Download freetype 2.5.3:
+	No IaC smell detected for this task.
+
+	Task:: Unpack freetype:
+	No IaC smell detected for this task.
+
+	Task:: Add modify, write permissions for jenkins user:
+	No IaC smell detected for this task.
+
+	Task:: Check if freetype 32bit has been built:
+	No IaC smell detected for this task.
+
+	Task:: Check if freetype 64bit has been built:
+	No IaC smell detected for this task.
+
+	Task:: Build freetype-2.5.3 32bit:
+	No IaC smell detected for this task.
+
+	Task:: Build freetype-2.5.3 64bit:
+	No IaC smell detected for this task.
+
+

@@ -1,0 +1,101 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+Warning: Included vars file not found: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/tasks/vars_unused.yml
+
+
+### OVERRIDEN KEYS  ###.
+
+Found 3 tasks with duplicate keys:
+
+Task 'Use a variable from the first included file' (starting line 33) has duplicate keys:
+  - Key 'msg' duplicated on lines [35, 36]
+
+Task 'task7' (starting line 76) has duplicate keys:
+  - Key 'state' duplicated on lines [79, 81]
+
+Task 'task8' (starting line 83) has duplicate keys:
+  - Key 'src' duplicated on lines [85, 90, 95, 100, 105, 110, 117]
+  - Key 'dest' duplicated on lines [86, 91, 96, 101, 106, 111, 118]
+  - Key 'owner' duplicated on lines [87, 92, 97, 102, 107, 112, 119]
+  - Key 'group' duplicated on lines [88, 93, 98, 103, 108, 113, 115, 120]
+  - Key 'mode' duplicated on lines [89, 94, 99, 104, 109, 114, 116, 121]
+
+Total number of duplicate keys detected: 7
+
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+Play:: Example Playbook:
+No IaC smell detected for this play.
+
+	Task:: task1:
+	No IaC smell detected for this task.
+
+Play:: Example playbook with secret:
+No IaC smell detected for this play.
+
+	Task:: task3:
+	No IaC smell detected for this task.
+
+Play:: play1:
+No IaC smell detected for this play.
+
+	Task:: Include some vars from a file (used):
+	No IaC smell detected for this task.
+
+	Task:: Include some vars from another file (unused):
+	No IaC smell detected for this task.
+
+	Task:: Use a variable from the first included file:
+	No IaC smell detected for this task.
+
+Play:: play2:
+No IaC smell detected for this play.
+
+	Task:: Set AWS secret key (bad practice!):
+	No IaC smell detected for this task.
+
+	Task:: task2:
+	No IaC smell detected for this task.
+
+	Task:: task8:
+	No IaC smell detected for this task.
+
+	Task:: task9:
+	No IaC smell detected for this task.
+
+	Task:: task10:
+	No IaC smell detected for this task.
+
+	Task:: task11:
+	No IaC smell detected for this task.
+
+	Task:: task12:
+	No IaC smell detected for this task.
+
+	Task:: task13:
+	No IaC smell detected for this task.
+
+	Task:: task14:
+	No IaC smell detected for this task.
+
+	Task:: task15:
+	No IaC smell detected for this task.
+
+	Task:: task16:
+	No IaC smell detected for this task.
+
+	Task:: task17:
+	No IaC smell detected for this task.
+
+	Task:: task18:
+	No IaC smell detected for this task.
+
+	Task:: task19:
+	No IaC smell detected for this task.
+
+	Task:: task20:
+	No IaC smell detected for this task.
+
+

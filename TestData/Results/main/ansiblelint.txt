@@ -1,0 +1,12 @@
+AnsibleLint analysis for playbook /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:
+
+
+- ⚠️ name[template] - Jinja templates should only be at the end of 'name' at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (include_tasks). at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ var-naming[pattern] - Variables names should match ^[a-z_][a-z0-9_]*$ regex. (GPG_key) at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ var-naming[pattern] - Variables names should match ^[a-z_][a-z0-9_]*$ regex. (GPG_key) (vars: GPG_key) at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ no-changed-when - Commands should not change things if nothing needs doing. at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (raw). at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
