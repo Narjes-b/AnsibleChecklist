@@ -15,10 +15,10 @@
  - enter the Playbooks folder and the vars folder of your project
 
 *To run the CLI package*:
- - run 'python main.py --playbooks /path/to/tasks --vars /path/to/vars'
+ - run ```python main.py --playbooks /path/to/tasks --vars /path/to/vars```
 
 *To run the python package*:
- - run 'from CodeSmellsTool import Main.py'
+ - run ```from CodeSmellsTool import Main.py```
  
 *Current IaC smells*:
 - 22 IaC smells adapted from Puppet and [Ansible best practices checklist](https://dl.acm.org/doi/10.1007/s10664-025-10654-w)
