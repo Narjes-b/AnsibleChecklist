@@ -1,4 +1,3 @@
-Ongoing implementation
 
 *Configuration*:
 
