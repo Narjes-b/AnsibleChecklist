@@ -12,5 +12,6 @@ Current features:
 - All GitLeaks secrets violation detection
   
 Upcoming features:
- - wrap the tool as a Pull-request Github bot
+ - wrap the tool as a CLI bot
+ - make the tool reads a commit
  
