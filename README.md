@@ -7,7 +7,7 @@
    ```{LOC_playbook,num_plays,avg_play_size,num_tasks_playbook,avg_task_playbook,Num_Imports,Num_Roles,similarity,similarityPlays,LOC_play,num_tasks_play,avg_task_play,special_chars,LOC_task,task_name_len}```
    
        1) In intercative terminal: run 'python edit_cli_thresholds.py --file thresholds.csv'
-       2) In CLI: run 'python edit_cli_thresholds.py --file thresholds.csv --set avg_task_play=15'
+       2) In CLI: run 'python edit_cli_thresholds.py --file thresholds.csv --set avg_task_play=15 avg_task_playbook=3'
        3) To put values back to defaut: run 'python edit_cli_thresholds.py --file thresholds.csv --default'
   
 *To run the open-source tool*:
