@@ -28,4 +28,5 @@
 *Upcoming features*:
  - wrap the tool as a CLI bot
  - make the tool reads a commit
+ - publish it as a pip package
  
