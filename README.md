@@ -32,4 +32,6 @@ WATCH A DEMO
  - wrap the tool as a CLI bot
  - make the tool reads a commit
  - publish it as a pip package
- 
+
+   
+[Delivrables file](https://docs.google.com/spreadsheets/d/1ICNgj6lPEsDJfUfRHX9wu8Yr7QjwiTgp1eRsaYFuJ5o/edit?usp=sharing)
