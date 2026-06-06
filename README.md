@@ -1,3 +1,12 @@
+
+[Doc file](https://docs.google.com/document/d/1Qd7QykmOhfaJoQRHPPzV6vHzqiqkTZIwy7143MxPR5w/edit?usp=sharing)
+[Delivrables file](https://docs.google.com/spreadsheets/d/1ICNgj6lPEsDJfUfRHX9wu8Yr7QjwiTgp1eRsaYFuJ5o/edit?usp=sharing)
+
+
+
+
+
+
 WATCH A DEMO
 
 [![Watch the video](https://img.youtube.com/vi/hJuxqH0UzYE/hqdefault.jpg)](https://youtu.be/hJuxqH0UzYE)
@@ -34,4 +43,4 @@ WATCH A DEMO
  - publish it as a pip package
 
    
-[Delivrables file](https://docs.google.com/spreadsheets/d/1ICNgj6lPEsDJfUfRHX9wu8Yr7QjwiTgp1eRsaYFuJ5o/edit?usp=sharing)
+
