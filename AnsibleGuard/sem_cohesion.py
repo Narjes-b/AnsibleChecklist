@@ -6,61 +6,81 @@ from nltk.stem import WordNetLemmatizer
 
 
 lemmatizer = WordNetLemmatizer()
-nlp = spacy.load('en_core_web_lg')
+nlp = spacy.load("en_core_web_lg")
+
+
+def _collect_task_names(tasks):
+    """Recursively collect named tasks, including those nested in block/rescue/always."""
+    names = []
+    for task in tasks:
+        if not isinstance(task, dict):
+            continue
+        if task.get("name") is not None:
+            names.append(task["name"])
+        for section in ("block", "rescue", "always"):
+            if section in task and isinstance(task[section], list):
+                names.extend(_collect_task_names(task[section]))
+    return names
+
 
 def calculate_similarity(file_path):
     try:
-        with open(file_path, 'r', encoding='latin1') as f:
-            yaml_data = yaml.load(f, Loader=yaml.Loader)
-           
+        with open(file_path, "r", encoding="utf-8") as f:
+            yaml_data = yaml.safe_load(f)
 
             if not yaml_data or not isinstance(yaml_data, list):
                 print("File is not a valid YAML or is empty.")
                 return None
-        
+
             sum_similarity = 0
             num_pairs = 0
-            
-            # plays names without unnamed plays
-            play_names = [play['name'] for play in yaml_data if 'name' in play and play['name'] is not None]
-            #play_names = [play['name'] for play in yaml_data if 'name' in play]
-            #print(play_names)
 
-            preprocessed_play_names = [lemmatizer.lemmatize(name.lower()) for name in play_names]
+            # plays names without unnamed plays — guard against non-dict/None entries
+            play_names = [
+                play["name"]
+                for play in yaml_data
+                if isinstance(play, dict) and play.get("name") is not None
+            ]
+
+            preprocessed_play_names = [
+                lemmatizer.lemmatize(name.lower()) for name in play_names
+            ]
 
             for i in range(len(preprocessed_play_names)):
-                #for j in range(i + 1, len(preprocessed_play_names)):
+                doc_i = nlp(preprocessed_play_names[i])
+                if not doc_i.has_vector:
+                    continue  # Skip if no vector
 
-                    doc_i = nlp(preprocessed_play_names[i])
-                    if not doc_i.has_vector:
+                for j in range(i + 1, len(preprocessed_play_names)):
+                    doc_j = nlp(preprocessed_play_names[j])
+                    if not doc_j.has_vector:
                         continue  # Skip if no vector
-                    
-                    for j in range(i + 1, len(preprocessed_play_names)):
-                        doc_j = nlp(preprocessed_play_names[j])
-                        if not doc_j.has_vector:
-                            continue  # Skip if no vector
-                        
-                        similarity_p = doc_i.similarity(doc_j)
 
-                    #similarity = nlp(preprocessed_play_names[i]).similarity(nlp(preprocessed_play_names[j]))
-                        sum_similarity += similarity_p
-                        num_pairs += 1
-            # tasks names without unnamed tasks
-            tasks = [task for play in yaml_data if 'tasks' in play for task in play['tasks']]
-            task_names = [task['name'] for task in tasks if 'name' in task and task['name'] is not None]
-            #print(task_names)
-            preprocessed_task_names = [lemmatizer.lemmatize(name.lower()) for name in task_names]
+                    similarity_p = doc_i.similarity(doc_j)
+                    sum_similarity += similarity_p
+                    num_pairs += 1
+
+            # tasks names without unnamed tasks — now recurses into block/rescue/always,
+            # and guards against non-dict play entries
+            tasks = []
+            for play in yaml_data:
+                if isinstance(play, dict) and isinstance(play.get("tasks"), list):
+                    tasks.extend(_collect_task_names(play["tasks"]))
+            task_names = tasks
+            preprocessed_task_names = [
+                lemmatizer.lemmatize(name.lower()) for name in task_names
+            ]
 
             for i in range(len(preprocessed_task_names)):
                 doc_i = nlp(preprocessed_task_names[i])
                 if not doc_i.has_vector:
                     continue  # Skip if no vector
-                
+
                 for j in range(i + 1, len(preprocessed_task_names)):
                     doc_j = nlp(preprocessed_task_names[j])
                     if not doc_j.has_vector:
                         continue  # Skip if no vector
-                    
+
                     similarity_t = doc_i.similarity(doc_j)
                     sum_similarity += similarity_t
                     num_pairs += 1
@@ -68,20 +88,23 @@ def calculate_similarity(file_path):
             if num_pairs > 0:
                 average_similarity = sum_similarity / num_pairs
             else:
-                average_similarity = 1  
+                average_similarity = 1
 
             return average_similarity
-            
+
     except Exception as e:
         print(f"Impossible to read {file_path}. Error: {e}")
         return None
 
+
 # Tester la fonction
-if __name__ == '__main__':
-    file_path = '/Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/adriagalin/ansible.motd/tasks/main.yml'  
-    average_similarity = calculate_similarity(file_path)
-    
+if __name__ == "__main__":
+    from config import TEST_PLAYBOOK
+
+    average_similarity = calculate_similarity(str(TEST_PLAYBOOK))
+
     if average_similarity is not None:
-        print(f'La similarité moyenne est : {average_similarity}')
+        print(f"La similarité moyenne est : {average_similarity}")
     else:
-        print('Pas de métriques disponibles.')
+        print("Pas de métriques disponibles.")
+

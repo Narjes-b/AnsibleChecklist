@@ -1,5 +1,6 @@
 import yaml
 
+
 def detect_overriding_set_fact(yaml_content):
     try:
         data = yaml.safe_load(yaml_content)
@@ -8,7 +9,7 @@ def detect_overriding_set_fact(yaml_content):
         return
 
     set_facts = []
-    
+
     def find_facts_in_data(data):
         if isinstance(data, dict):
             for key, value in data.items():
@@ -37,13 +38,14 @@ def detect_overriding_set_fact(yaml_content):
         print("No overriding set_fact issues detected.") """
     return detected_issues
 
+
 def overriding_facts(file_path):
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             yaml_content = f.read()
-        
+
         smelly_facts = detect_overriding_set_fact(yaml_content)
-        #print(f"Overriding set_fact issues detected: {smelly_facts}")
+        # print(f"Overriding set_fact issues detected: {smelly_facts}")
         return len(smelly_facts)
         if smelly_facts:
             return 1
@@ -54,12 +56,11 @@ def overriding_facts(file_path):
         print(f"Could not read file {file_path}. Error: {e}")
         return None
 
+
 # Tester la fonction
-file_path = "/Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/adriagalin/ansible.motd/tasks/main.yml"
-result = overriding_facts(file_path)
 if __name__ == "__main__":
+    from config import TEST_PLAYBOOK
+
+    result = overriding_facts(TEST_PLAYBOOK)
     if result is not None:
         print(result)
-    else:
-        pass
- 

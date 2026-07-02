@@ -3,15 +3,15 @@
         "LOC_playbook": 201,
         "num_plays": 4,
         "avg_play_size": 12.75,
-        "num_nested_tasks_playbook": 24,
-        "avg_nested_task_playbook": 6.541666666666667,
+        "num_nested_tasks_playbook": 26,
+        "avg_nested_task_playbook": 6.576923076923077,
         "num_global_tasks_playbook": 7
     },
     "high_coupling_metrics": {
         "Num_Imports": 0,
         "Num_Roles": 0
     },
-    "similarity": 0.8024798716817584,
+    "similarity": 0.8024798461369106,
     "duplicated_code": 3,
     "unecessary_set_fact": 2,
     "overriding_facts": 2,
@@ -100,7 +100,8 @@
     "credentials_leaking_in_log": 1,
     "unused_include_vars": 1,
     "WarningUnusedIncludeVars": [
-        "Warning: Included vars file not found: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/tasks/vars_unused.yml"
+        "Warning: Included vars file not found: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/aalaesar/install_nextcloud/roles/install_nextcloud/vars/main.yml",
+        "Warning: Included vars file not found: /home/aymmzn/Documents/AnsibleChecklist/TestData/tasks/vars_unused.yml"
     ],
     "plays": [
         {
@@ -121,9 +122,23 @@
             "task_metrics": [
                 {
                     "play_id": 0,
-                    "task_name": "task1",
-                    "LOC_task": 4,
-                    "task_name_len": 5,
+                    "task_name": "Include some vars from a file (used)",
+                    "LOC_task": 2,
+                    "task_name_len": 36,
+                    "special_chars": 2
+                },
+                {
+                    "play_id": 0,
+                    "task_name": "Include some vars from another file (unused)",
+                    "LOC_task": 2,
+                    "task_name_len": 44,
+                    "special_chars": 2
+                },
+                {
+                    "play_id": 0,
+                    "task_name": "Use a variable from the first included file",
+                    "LOC_task": 3,
+                    "task_name_len": 43,
                     "special_chars": 0
                 }
             ]
@@ -144,10 +159,10 @@
             "task_metrics": [
                 {
                     "play_id": 1,
-                    "task_name": "task3",
-                    "LOC_task": 4,
-                    "task_name_len": 5,
-                    "special_chars": 0
+                    "task_name": "Set AWS secret key (bad practice!)",
+                    "LOC_task": 3,
+                    "task_name_len": 34,
+                    "special_chars": 3
                 }
             ]
         },
@@ -168,23 +183,23 @@
             "task_metrics": [
                 {
                     "play_id": 2,
-                    "task_name": "Include some vars from a file (used)",
-                    "LOC_task": 2,
-                    "task_name_len": 36,
-                    "special_chars": 2
+                    "task_name": "task4",
+                    "LOC_task": 5,
+                    "task_name_len": 5,
+                    "special_chars": 0
                 },
                 {
                     "play_id": 2,
-                    "task_name": "Include some vars from another file (unused)",
-                    "LOC_task": 2,
-                    "task_name_len": 44,
-                    "special_chars": 2
+                    "task_name": "task5",
+                    "LOC_task": 5,
+                    "task_name_len": 5,
+                    "special_chars": 0
                 },
                 {
                     "play_id": 2,
-                    "task_name": "Use a variable from the first included file",
-                    "LOC_task": 3,
-                    "task_name_len": 43,
+                    "task_name": "task6",
+                    "LOC_task": 5,
+                    "task_name_len": 5,
                     "special_chars": 0
                 }
             ]
@@ -205,10 +220,10 @@
             "task_metrics": [
                 {
                     "play_id": 3,
-                    "task_name": "Set AWS secret key (bad practice!)",
-                    "LOC_task": 3,
-                    "task_name_len": 34,
-                    "special_chars": 3
+                    "task_name": "task7",
+                    "LOC_task": 5,
+                    "task_name_len": 5,
+                    "special_chars": 0
                 }
             ]
         },
@@ -218,9 +233,37 @@
             "task_metrics": [
                 {
                     "play_id": -1,
+                    "task_name": "task1",
+                    "LOC_task": 4,
+                    "task_name_len": 5,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Notconsideredtask1",
+                    "LOC_task": 7,
+                    "task_name_len": 18,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
                     "task_name": "task2",
                     "LOC_task": 3,
                     "task_name_len": 5,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "task3",
+                    "LOC_task": 4,
+                    "task_name_len": 5,
+                    "special_chars": 0
+                },
+                {
+                    "play_id": -1,
+                    "task_name": "Notconsideredtask2",
+                    "LOC_task": 7,
+                    "task_name_len": 18,
                     "special_chars": 0
                 },
                 {

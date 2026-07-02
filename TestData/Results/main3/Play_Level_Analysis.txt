@@ -1,6 +1,7 @@
 ### UNECESSARY DEPENDENCIES  ###.
 
-Warning: Included vars file not found: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/tasks/vars_unused.yml
+Warning: Included vars file not found: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/aalaesar/install_nextcloud/roles/install_nextcloud/vars/main.yml
+Warning: Included vars file not found: /home/aymmzn/Documents/AnsibleChecklist/TestData/tasks/vars_unused.yml
 
 
 ### OVERRIDEN KEYS  ###.
@@ -29,18 +30,6 @@ Total number of duplicate keys detected: 7
 Play:: Example Playbook:
 No IaC smell detected for this play.
 
-	Task:: task1:
-	No IaC smell detected for this task.
-
-Play:: Example playbook with secret:
-No IaC smell detected for this play.
-
-	Task:: task3:
-	No IaC smell detected for this task.
-
-Play:: play1:
-No IaC smell detected for this play.
-
 	Task:: Include some vars from a file (used):
 	No IaC smell detected for this task.
 
@@ -50,13 +39,43 @@ No IaC smell detected for this play.
 	Task:: Use a variable from the first included file:
 	No IaC smell detected for this task.
 
-Play:: play2:
+Play:: Example playbook with secret:
 No IaC smell detected for this play.
 
 	Task:: Set AWS secret key (bad practice!):
 	No IaC smell detected for this task.
 
+Play:: play1:
+No IaC smell detected for this play.
+
+	Task:: task4:
+	No IaC smell detected for this task.
+
+	Task:: task5:
+	No IaC smell detected for this task.
+
+	Task:: task6:
+	No IaC smell detected for this task.
+
+Play:: play2:
+No IaC smell detected for this play.
+
+	Task:: task7:
+	No IaC smell detected for this task.
+
+	Task:: task1:
+	No IaC smell detected for this task.
+
+	Task:: Notconsideredtask1:
+	No IaC smell detected for this task.
+
 	Task:: task2:
+	No IaC smell detected for this task.
+
+	Task:: task3:
+	No IaC smell detected for this task.
+
+	Task:: Notconsideredtask2:
 	No IaC smell detected for this task.
 
 	Task:: task8:

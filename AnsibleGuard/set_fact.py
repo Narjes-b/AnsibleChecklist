@@ -1,5 +1,6 @@
 import yaml
 
+
 def find_unnecessary_set_facts(yaml_content):
     try:
         data = yaml.safe_load(yaml_content)
@@ -24,7 +25,6 @@ def find_unnecessary_set_facts(yaml_content):
                 find_facts_in_data(item)
 
     find_facts_in_data(data)
-    
 
     def find_used_facts(data):
         if isinstance(data, dict):
@@ -32,12 +32,12 @@ def find_unnecessary_set_facts(yaml_content):
                 if isinstance(value, str):
                     for fact_name in set_facts:
                         if (
-                    f"{{{{ {fact_name} }}}}" in value
-                    or f"{{{{{fact_name}}}}}" in value
-                    or f"{{{{ {fact_name}|" in value
-                    or f"{{{{{fact_name}|" in value
-                    or fact_name in value.split()
-                ):
+                            f"{{{{ {fact_name} }}}}" in value
+                            or f"{{{{{fact_name}}}}}" in value
+                            or f"{{{{ {fact_name}|" in value
+                            or f"{{{{{fact_name}|" in value
+                            or fact_name in value.split()
+                        ):
                             used_facts.add(fact_name)
                 else:
                     find_used_facts(value)
@@ -51,20 +51,18 @@ def find_unnecessary_set_facts(yaml_content):
                     find_used_facts(item)
 
     find_used_facts(data)
-    #print("Set facts:", set_facts)
-    #print("Used facts:", used_facts)
+    # print("Set facts:", set_facts)
+    # print("Used facts:", used_facts)
     unused_facts = set_facts - used_facts
-    return unused_facts 
-
-    
+    return unused_facts
 
 
 def set_fact(file_path):
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             yaml_content = f.read()
         unused_facts = find_unnecessary_set_facts(yaml_content)
-        return len(unused_facts) 
+        return len(unused_facts)
         if unused_facts:
             return 1
         else:
@@ -73,13 +71,10 @@ def set_fact(file_path):
         print(f"Could not read file {file_path}. Error: {e}")
         return None
 
-# Tester la fonction
-file_path = "/Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/adriagalin/ansible.motd/tasks/main.yml"
-result = set_fact(file_path)
 
 if __name__ == "__main__":
+    from config import TEST_PLAYBOOK
+
+    result = set_fact(TEST_PLAYBOOK)
     if result is not None:
         print("unused facts=", result)
-    else:
-        pass
- 
