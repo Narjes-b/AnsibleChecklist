@@ -88,10 +88,10 @@ def calculate_metrics_task(yaml_file_path):
         playbook = yaml.safe_load(f)
 
     all_metrics = []
+    top_level_tasks = []
 
     if isinstance(playbook, list):
         play_id = 0
-        top_level_tasks = []
 
         for entry in playbook:
             # print(f"Processing entry: {entry}")
