@@ -1,0 +1,11 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: Real first task
+      debug:
+        msg: hi
+    - become: yes
+      name: Second task, name not first
+      debug:
+        msg: hi
+        msg: there

@@ -14,7 +14,7 @@ def unnamed_play(file_path):
     if isinstance(data, list):
         for item in data:
             # print("item:", item)
-            if isinstance(item, dict) and "hosts" in item and "tasks" in item:
+            if isinstance(item, dict) and ("hosts" in item or "tasks" in item):
                 play_name = item.get("name", None)
                 if play_name is None or (
                     isinstance(play_name, str) and not play_name.strip()

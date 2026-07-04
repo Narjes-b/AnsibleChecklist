@@ -63,6 +63,8 @@ No IaC smell detected for this play.
 	Task:: task7:
 	No IaC smell detected for this task.
 
+Tasks outside any play (Global):
+
 	Task:: task1:
 	No IaC smell detected for this task.
 

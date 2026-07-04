@@ -166,7 +166,13 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
         result["playbook"]["metrics"]["high_coupling"] = 0
 
     ############incohesive_playbook
-    if metrics.get("similarity", 0) < thresholds.get("similarity", 0):
+    similarity_value = metrics.get("similarity")
+    if similarity_value is None:
+        # Cohesion couldn't be measured (e.g. no play/task names had a usable
+        # word vector — likely non-English or otherwise out-of-vocabulary
+        # names). Don't guess; don't crash comparing None < float.
+        result["playbook"]["metrics"]["incohesive_playbook"] = None
+    elif similarity_value < thresholds.get("similarity", 0):
         result["playbook"]["metrics"]["incohesive_playbook"] = 1
     else:
         result["playbook"]["metrics"]["incohesive_playbook"] = 0
@@ -209,8 +215,9 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
     result["playbook"]["metrics"]["hardcoded_credentials"] = len(findings)
 
     lint_results = run_ansible_lint(yaml_file_path)
-    if lint_results:
-        result["playbook"]["metrics"]["ansible_lint_issues"] = len(lint_results)
+    result["playbook"]["metrics"]["ansible_lint_issues"] = (
+        len(lint_results) if lint_results else 0
+    )
 
     # Niveau Play
     if "plays" in metrics:

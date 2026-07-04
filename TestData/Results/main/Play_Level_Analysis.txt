@@ -10,6 +10,8 @@ No duplicate keys found.
 ### PLAY LEVEL IAC SMELLS  ###.
 
 
+Tasks outside any play (Global):
+
 	Task:: Test if Ant {{ ant_version }} is already installed:
 	- inconsistent_naming_convention
 

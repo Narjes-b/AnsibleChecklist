@@ -58,10 +58,12 @@ def calculate_similarity(file_path):
                 lemmatizer.lemmatize(name.lower()) for name in name_tasks_inplay
             ]
 
+            names_with_vector = 0
             for i in range(len(preprocessed_task_names)):
                 doc_i = nlp(preprocessed_task_names[i])
                 if not doc_i.has_vector:
                     continue  # Skip if no vector
+                names_with_vector += 1
 
                 for j in range(i + 1, len(preprocessed_task_names)):
                     doc_j = nlp(preprocessed_task_names[j])
@@ -74,10 +76,25 @@ def calculate_similarity(file_path):
 
             if num_pairs > 0:
                 average_similarity = sum_similarity / num_pairs
-            else:
-                average_similarity = (
-                    1  # Si aucun pair n'est trouvé, mettre la similarité à 1
+            elif len(preprocessed_task_names) >= 2 and names_with_vector == 0:
+                # Every task name in this play was outside the model's
+                # vocabulary (e.g. non-English) — nothing was actually
+                # measured, so don't report "perfectly cohesive" (mirrors
+                # the fix already applied in sem_cohesion.py).
+                print(
+                    f"Warning: play '{playname}' has task name(s) with no "
+                    "usable word vector (likely non-English or otherwise "
+                    "out-of-vocabulary). Cohesion could not be measured for "
+                    "this play — skipping it rather than assuming cohesive."
                 )
+                average_similarity = None
+            else:
+                # Genuinely too few names to form any pair (0 or 1 total) —
+                # nothing to disagree about, so treat as trivially cohesive.
+                average_similarity = 1
+
+            if average_similarity is None:
+                continue  # unmeasurable — don't count it either way
 
             # print(f"Le Play {i} a une similarité sémantique de {average_similarity:.2f}.")
             threshold = thresholds.get("similarityPlays", 0)

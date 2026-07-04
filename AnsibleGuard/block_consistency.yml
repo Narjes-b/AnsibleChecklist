@@ -1,0 +1,9 @@
+- name: play1
+  hosts: webservers
+  tasks:
+    - name: Notconsideredtask3
+      block:
+        - name: task4
+          debug: {msg: hi}
+        - name: task5
+          debug: {msg: hi}

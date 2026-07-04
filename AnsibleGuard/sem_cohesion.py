@@ -34,6 +34,8 @@ def calculate_similarity(file_path):
 
             sum_similarity = 0
             num_pairs = 0
+            total_names = 0
+            names_with_vector = 0
 
             # plays names without unnamed plays — guard against non-dict/None entries
             play_names = [
@@ -47,9 +49,11 @@ def calculate_similarity(file_path):
             ]
 
             for i in range(len(preprocessed_play_names)):
+                total_names += 1
                 doc_i = nlp(preprocessed_play_names[i])
                 if not doc_i.has_vector:
                     continue  # Skip if no vector
+                names_with_vector += 1
 
                 for j in range(i + 1, len(preprocessed_play_names)):
                     doc_j = nlp(preprocessed_play_names[j])
@@ -72,9 +76,11 @@ def calculate_similarity(file_path):
             ]
 
             for i in range(len(preprocessed_task_names)):
+                total_names += 1
                 doc_i = nlp(preprocessed_task_names[i])
                 if not doc_i.has_vector:
                     continue  # Skip if no vector
+                names_with_vector += 1
 
                 for j in range(i + 1, len(preprocessed_task_names)):
                     doc_j = nlp(preprocessed_task_names[j])
@@ -87,7 +93,20 @@ def calculate_similarity(file_path):
 
             if num_pairs > 0:
                 average_similarity = sum_similarity / num_pairs
+            elif total_names >= 2 and names_with_vector == 0:
+                # Every name was outside the model's vocabulary (e.g. non-English
+                # task/play names) — we measured nothing, so don't report "perfectly
+                # cohesive". Distinct from the genuinely-too-small-to-judge case below.
+                print(
+                    f"Warning: {total_names} play/task name(s) found in {file_path}, "
+                    "but none had a usable word vector (likely non-English or "
+                    "otherwise out-of-vocabulary names). Cohesion could not be "
+                    "measured for this file."
+                )
+                average_similarity = None
             else:
+                # Genuinely too few names to form any pair (0 or 1 total) — nothing
+                # to disagree about, so treat as trivially cohesive.
                 average_similarity = 1
 
             return average_similarity

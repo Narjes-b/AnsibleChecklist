@@ -5,7 +5,7 @@
         "avg_play_size": 12.75,
         "num_nested_tasks_playbook": 26,
         "avg_nested_task_playbook": 6.576923076923077,
-        "num_global_tasks_playbook": 7
+        "num_global_tasks_playbook": 8
     },
     "high_coupling_metrics": {
         "Num_Imports": 0,
@@ -171,12 +171,13 @@
                 "play_id": 2,
                 "Play_name": "play1",
                 "LOC_play": 23,
-                "num_tasks_in_play": 2,
+                "num_tasks_in_play": 3,
                 "tasks_names": [
-                    "Notconsideredtask3",
-                    "Notconsideredtask4"
+                    "task4",
+                    "task5",
+                    "task6"
                 ],
-                "avg_task_play": 11.5,
+                "avg_task_play": 7.666666666666667,
                 "special_chars": 0
             },
             "unnamed_play": 0,
@@ -211,7 +212,7 @@
                 "LOC_play": 11,
                 "num_tasks_in_play": 1,
                 "tasks_names": [
-                    "Notconsideredtask5"
+                    "task7"
                 ],
                 "avg_task_play": 11.0,
                 "special_chars": 0

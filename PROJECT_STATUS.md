@@ -114,6 +114,24 @@ Three separate bugs found while getting GitLeaks working:
   inside `assess_code_smells()` was being masked by a second crash
   (`UnboundLocalError`) in the `except` block's own `return` statement.
 - `num_large_task=+1` — parsed as "assign +1", not "increment by 1"; fixed to `+=`.
+- `large_task`/`long_task_name`/`inconsistent_naming_convention` playbook-level
+  counters (`num_large_task`, `task_name`, `naming_convention`) were reset to
+  `0` at the top of *each* play's task loop and the playbook-level result got
+  overwritten every iteration — same bug shape as the `large_play` reset bug
+  above, just in the task-level block. Final CSV value was only ever the last
+  play processed, not the true playbook-wide total. Fixed the same way:
+  initialize all three counters once before the per-play loop, accumulate
+  across every play, write the result to `result["playbook"]["metrics"]`
+  exactly once after the loop completes.
+- `is_unamed.py`'s `is_unnamed()` only treated `None` as unnamed, not an
+  empty/whitespace string, inconsistent with `unnamed_play.py`. Fixed to also
+  catch `isinstance(play_name, str) and not play_name.strip()`.
+- `unnamed_play.py`'s play-detection condition used
+  `"hosts" in item and "tasks" in item` (AND) while every other
+  play-detection function in the codebase uses OR — undercounted plays that
+  had only one of the two keys. Fixed to `"hosts" in item or "tasks" in
+  item`. Confirmed via fixture: a `tasks:`-only play with no name previously
+  went undetected (`0`), now correctly reports `1`.
 - `is_large_play` — per-play flag was being overwritten immediately after being
   set correctly, with the running playbook-wide count (so every play showed
   the total instead of its own true/false).
@@ -240,47 +258,162 @@ distinct cases, three different outcomes:
      list)` may have the same latent risk and haven't been individually
      re-verified against this specific input yet.
 
+### Non-English playbooks — `sem_cohesion.py`
+Investigated empirically. Since the real `en_core_web_lg` model couldn't be
+downloaded in the sandbox used for part of this investigation (network
+restriction unrelated to the code itself), the finding was first proven
+using `spacy.blank('en')` (identical `has_vector=False` code path to any
+out-of-vocabulary input), then independently confirmed against the real
+model with actual Arabic task names, both producing the same result. The
+bug: `average_similarity = 1` (the "nothing to compare" fallback) fires
+identically whether a playbook has too few names to form any pair *or*
+every name is outside the model's vocabulary (non-English, or otherwise
+unrecognized) — collapsing "too small to judge" and "language not
+supported" into the same falsely-reassuring "perfectly cohesive" result.
+This is worse than a crash: an incohesive non-English playbook — exactly
+what `incohesive_plays.py` exists to catch — would score as the *best*
+possible result instead of being flagged as unmeasurable. Fixed by tracking
+how many names actually had a usable vector; if there were 2+ names but zero
+had vectors, return `None` (with a printed warning) instead of `1`. This in
+turn required a follow-on fix in `smellsDetector.py`'s `incohesive_playbook`
+threshold check, which previously did `metrics.get("similarity", 0) <
+threshold` — `.get(key, 0)` only defaults when the key is *missing*, not
+when it's present with value `None`, so comparing `None < float` would have
+raised a `TypeError` the first time this code path was hit for real. Fixed
+by checking for `None` explicitly before comparing, setting
+`incohesive_playbook` to `None` (propagated correctly) rather than crashing
+or guessing.
+
+### `write_to_csv.py`
+Reviewed against `smellsDetector.py`'s actual output shape — structurally
+sound (every field name checked and matched correctly), but two issues
+found. First, a regression from the `sem_cohesion.py` fix above: since
+`incohesive_playbook` can now be explicitly `None`, `.get('incohesive_playbook',
+'')` doesn't catch it (that default only applies to a *missing* key) — the
+CSV would have literally shown the string `"None"` in that cell instead of
+blank. Fixed by checking `is not None` explicitly, careful to preserve a
+legitimate `0` value (a naive `value or ''` would have wrongly blanked `0`
+too, since `0` is falsy in Python). Second, unrelated: `ansible_lint_issues`
+was only ever set inside `if lint_results:` in `smellsDetector.py` — meaning
+"0 real lint issues" and "ansible-lint failed to run at all" both rendered
+as an identical blank cell in the CSV, with no way to distinguish them.
+Fixed by setting it unconditionally
+(`len(lint_results) if lint_results else 0`). Not a bug, but noted: the large
+commented-out per-play/per-task writer block actually targets the *correct*
+schema that `smellsDetector.py` produces — just dead code, safe to leave or
+delete.
+
+### `write_to_text.py`
+Reviewed, no bugs found. The three-writer file-mode chain
+(`write_unused_vars_to_txt` truncates with `'w'`, then
+`write_duplicates_to_txt` and `write_results_to_txt` both append with `'a'`)
+is correct and already verified against real output on `main3.yml` earlier
+in this process — but it's fragile: correctness depends entirely on an
+unstated call order across two different files. If the three calls in
+`smellsDetector.py` are ever reordered, the `'w'`-mode call would silently
+wipe out anything written before it. Worth documenting explicitly or
+restructuring into a single orchestrating function later; not urgent since
+it currently works.
+
+### `overriden_keys.py` — cross-depth false positive
+The depth-tracking fix (grouping by `(depth, key)` to stop a task's own
+`name:` from being confused with a nested module parameter also called
+`name:`, e.g. `apt: {name: nginx}`) was implemented correctly during
+collection, but a later line collapsed `(depth, key)` back down to a plain
+key name *before* checking for duplicates — silently discarding the very
+distinction it had just made. Confirmed via fixture: a task with only
+`- name: task4` / `apt: {name: nginx, state: present}` (no real duplicate
+anywhere) was reported as having a duplicated `name:` key. Fixed by
+deciding duplication within each `(depth, key)` bucket first, and only
+collapsing to a plain key name for the report after that check passes.
+Verified against 4 fixtures (the original 3 plus a mixed case combining a
+real duplicate and a cross-depth `name:` collision in the same file) and
+against the real `main3.yml`.
+
+### `GitLeaks_hardcoded_credentials.py` — unguarded crash on missing binary
+A nonexistent playbook path was already handled gracefully (real GitLeaks
+exits non-zero on a bad `--source`; the `else` branch already returned
+`[]`). A missing or misconfigured `gitleaks` binary path, however, raised
+an unguarded `FileNotFoundError` from `subprocess.run()` with no matching
+`except`. It doesn't crash the whole batch run — `execute_for_single_file`'s
+outer `try/except` catches it — but it silently skips that file's entire
+analysis and prints a misleading message that reads as if the *playbook*
+is missing rather than the *gitleaks binary*. Fixed by catching
+`FileNotFoundError` at the source and printing a message that actually
+points at the fix (`Install_Gitleaks.py` / check `GITLEAKS_PATH`). Verified
+against all three paths: missing binary (now fails gracefully with a clear
+message), bad target path (unaffected, still returns `[]`), successful
+scan with real findings (unaffected).
+
+### `credentials_leaking_in_log.py` — scope bug, most severe finding this round
+This function sourced its raw task dicts from `detect_large_task.py`'s
+`top_level_tasks` return value — which, by that function's own design,
+contains *only* the tasks with no `hosts:`/`tasks:` wrapper at all (the
+`play_id=-1` "Global" group). Every task living inside a normal
+`- hosts: ... tasks: [...]` play — the overwhelming majority of real
+Ansible content, including the exact "Set AWS secret key (bad practice!)"
+example already present in `main3.yml` — was completely invisible to this
+check. Confirmed live: a `main3.yml`-shaped fixture containing that exact
+secret task returned `nbLeaks: 0`. This means the credential-leak check,
+arguably the single most security-relevant smell this tool detects, has
+likely been silently reporting near-zero findings on every real playbook
+run through it so far, regardless of actual content. Fixed by replacing
+the `top_level_tasks` dependency with a self-contained recursive collector
+(same traversal pattern as `files_extensions.py`) that gathers every real
+task's raw dict regardless of nesting depth. Verified against 4 cases:
+secret nested inside a play (now caught), a mix of one top-level and one
+nested secret (both caught), a task with `no_log: true` (correctly still
+not flagged), and a secret nested inside `block:` (still caught).
+
+### `incohesive_plays.py` — same OOV bug as `sem_cohesion.py`, missed in the earlier pass
+Carries the exact "falsely perfectly cohesive" bug already found and fixed
+in `sem_cohesion.py`: `average_similarity = 1` fires identically whether a
+play genuinely has too few task names to compare, or every task name is
+outside the model's vocabulary (non-English or otherwise OOV) — collapsing
+"nothing to judge" and "language not supported" into the same falsely
+reassuring result. This is a *separate* bug from the block-recursion issue
+that was checked and cleared for this file earlier (see the
+`detect_large_play.py` entry above, "`incohesive_plays.py` needed no
+changes"); that clearance was correct for block-recursion specifically but
+didn't cover this. Confirmed via isolated logic test (mocking
+`doc.has_vector = False`, since the real `en_core_web_lg` model wasn't
+downloadable in this session's sandbox). Fixed the same way as
+`sem_cohesion.py`: track how many task names in the play actually had a
+usable vector; if 2+ names exist but none had a vector, skip the play
+(count toward neither cohesive nor incohesive) rather than assuming
+cohesive. Unlike `sem_cohesion.py`, this function only ever returns a
+plain integer count (not the raw similarity score), so no follow-on
+`None`-handling fix was needed in `smellsDetector.py` or `write_to_csv.py`
+this time.
+
 ## Known issues / not yet fixed
 
-1. **`smellsDetector.py`**: `large_task`, `long_task_name`, and
-   `inconsistent_naming_convention` playbook-level counters (`num_large_task`,
-   `task_name`, `naming_convention`) are reset to `0` at the top of *each*
-   play's task loop and overwrite `result["playbook"]["metrics"][...]` every
-   iteration — same bug shape as the `large_play` reset bug, just not yet
-   applied to this block. Final CSV value = only the last play processed, not
-   the playbook total.
-2. **`is_unamed.py`**: `is_unnamed()` only treats `None` as unnamed, not an
-   empty/whitespace string — inconsistent with `unnamed_play.py`.
-3. **`unnamed_play.py`**: play-detection condition uses
-   `"hosts" in item and "tasks" in item` (AND) — every other play-detection
-   function in the codebase uses OR. Undercounts plays that have only one of
-   the two keys.
-4. **`requirements.txt`**: `requests=2.34.2` (duplicate, invalid `=` instead
+1. **`requirements.txt`**: `requests=2.34.2` (duplicate, invalid `=` instead
    of `==`) and `pytest=9.1.1` (same) — `pip install -r requirements.txt`
    will fail on these two lines.
-5. **`varsfiles_folder`** in `config.py` is `None` — no sample data with a
+2. **`varsfiles_folder`** in `config.py` is `None` — no sample data with a
    real `include_vars:` + `vars/` folder exists in `TestData/` yet, so
    `include_vars.py`'s unused-vars detection is untested against real data.
-6. **`avg_task_playbook`** threshold exists in `thresholds.csv` but is never
+3. **`avg_task_playbook`** threshold exists in `thresholds.csv` but is never
    referenced by any check in `smellsDetector.py` — either a missing check or
    a threshold nobody uses; not investigated.
-7. **`GeneralsmellsDetector.py`** is a stale fork of `smellsDetector.py` with
+4. **`GeneralsmellsDetector.py`** is a stale fork of `smellsDetector.py` with
    its own copy of the same `is_large_play` bug (pre-fix) and its own local
    CSV/TXT writer functions instead of using `write_to_csv.py`/`write_to_text.py`.
    Nothing imports it. Decide: delete it, or clearly mark it deprecated.
-8. **`exceptions.py`** is empty — `explanation.md` describes it as holding
+5. **`exceptions.py`** is empty — `explanation.md` describes it as holding
    custom exception classes, but nothing is implemented.
-9. **`include_vars.py`**: the "used variable" regex only matches
+6. **`include_vars.py`**: the "used variable" regex only matches
    `{{ var_name }}` with a single space and no filter — misses
    `{{var_name}}` (no spaces) and `{{ var_name | default(...) }}`, so real
    usages can be falsely flagged as unused. A looser regex
    (`var_usage_pattern`) is already defined in the file but never used.
-10. **`detect_large_play.py` vs `detect_large_task.py`**: use two different
+7. **`detect_large_play.py` vs `detect_large_task.py`**: use two different
     special-character-counting regexes (`re.findall(r'[^\w\s]', ...)` vs
     Unicode-aware `regex.findall(r'[^\p{L}\p{N}\s]', ...)`) — inconsistent
     counts for the same `special_chars` metric depending on which level is
     being checked.
-11. **`LOC_task` under-reports duplicate-key-heavy tasks**: `detect_large_task.py`
+8. **`LOC_task` under-reports duplicate-key-heavy tasks**: `detect_large_task.py`
     computes `LOC_task` by re-`yaml.dump()`-ing the *parsed* task dict — but
     `yaml.safe_load()` silently collapses duplicate keys to their last value
     during parsing (this is exactly why `overriden_keys.py` had to do manual
@@ -293,12 +426,12 @@ distinct cases, three different outcomes:
     says it is. Deliberately left as-is for now — fixing means computing
     `LOC_task` from raw line span instead of the parsed dict, a bigger change;
     revisit if size-based severity scoring becomes important.
-12. **Threshold comparisons are implicitly strict `>` everywhere**, not `>=`.
+9. **Threshold comparisons are implicitly strict `>` everywhere**, not `>=`.
     E.g. `main3.yml`'s AWS-secret task has `special_chars=3` against a
     threshold of exactly `3` — doesn't fire. Not a bug, but an undecided,
     unstated design choice; worth deciding once and documenting rather than
     leaving implicit.
-13. **`sem_cohesion.py` uses `encoding='latin1'`** while the rest of the
+10. **`sem_cohesion.py` uses `encoding='latin1'`** while the rest of the
     codebase consistently uses `utf-8` — inconsistent, and would silently
     mis-decode (not error) any UTF-8 file containing non-Latin-1 characters
     (accented French, given the codebase's mixed French/English comments, is
@@ -353,14 +486,17 @@ top of the current structure inherits these problems:
    an actual project rather than a flat fixture folder — along with an
    exclude list for `molecule/`, `.github/`, `.git/` once recursive globbing
    is added, since those often contain YAML that isn't a real playbook.
-9. **Never stress-tested inputs**: multi-document YAML (`---` separators
-   within one file), Ansible Vault-encrypted variables (`!vault |` blocks),
-   dict-style `roles:` entries (`roles: [{role: x, vars: {...}}]` instead of
-   a flat string list, which would likely break `high_coupling.py`'s
-   `num_roles += len(roles)`), and non-English task names (both
-   `sem_cohesion.py` and `incohesive_plays.py` hard-depend on
-   `en_core_web_lg`; non-English names would silently degrade to poor/no
-   vectors rather than error).
+9. ~~**Never stress-tested inputs**: multi-document YAML, Ansible Vault,
+   dict-style `roles:` entries, non-English task names.~~ **Resolved** —
+   this item was stale even before this round: multi-document YAML and
+   Ansible Vault handling were investigated and fixed earlier in this same
+   log (see "Multi-document YAML and Ansible Vault handling" above),
+   dict-style `roles:` entries were confirmed never actually broken (see
+   the `high_coupling.py` entry above), and non-English task names in both
+   `sem_cohesion.py` and `incohesive_plays.py` are now confirmed and fixed
+   this round (see entries above) — both correctly report "unmeasurable"
+   instead of falsely reporting perfect cohesion when names are entirely
+   out-of-vocabulary.
 
 
 Full pipeline (`python smellsDetector.py`) runs clean against all three
@@ -368,3 +504,20 @@ Full pipeline (`python smellsDetector.py`) runs clean against all three
 (confirmed via `Technical_Analysis.json` for `main3.yml`), correct threshold
 evaluation for playbook- and play-level large/complex checks, and working
 GitLeaks + ansible-lint integration.
+
+## This round's fixes (post-restructure review)
+Four additional bugs found and fixed while reviewing the full file set
+against `ARCHITECTURE.md`'s call graph — see the dedicated entries above
+for each:
+- `overriden_keys.py` — cross-depth false-positive duplicate-key reports
+- `GitLeaks_hardcoded_credentials.py` — unguarded crash on a missing
+  gitleaks binary
+- `credentials_leaking_in_log.py` — **high severity**: only scanned tasks
+  with no play wrapper, missing virtually all real-world credential-leak
+  cases
+- `incohesive_plays.py` — non-English/OOV task names falsely scored as
+  perfectly cohesive (same bug class as the earlier `sem_cohesion.py` fix,
+  missed on this sibling file)
+
+All four verified against multiple fixtures each, including regression
+checks against previously-correct behavior.

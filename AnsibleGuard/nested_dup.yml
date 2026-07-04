@@ -1,0 +1,11 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: Outer wrapper
+      when: condition1
+      when: condition2
+      block:
+        - name: Child task
+          debug:
+            msg: hi
+            msg: bye

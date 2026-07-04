@@ -2,7 +2,8 @@
 
 Companion to `PROJECT_STATUS.md` (bug log). This file answers: what calls
 what, what still needs eyes on it, and how to verify the whole project end
-to end.
+to end. For the forward-looking packaging/refactoring plan, see
+`REFACTOR_PLAN.md`.
 
 ## Entry point and call graph
 
@@ -89,7 +90,8 @@ exactly how we found the `detect_large_task.py` play-numbering bug.
 | `detect_large_play.py` | ✅ fixed — guard only; block/rescue/always recursion now matches `detect_large_task.py`'s task semantics |
 | `detect_large_playbook.py` | ✅ fixed — guard + try/except widened |
 | `duplicate_task_Name.py` | ✅ fixed — guard + tuple-unpack bug |
-| `credentials_leaking_in_log.py` | ✅ fixed — guard only |
+| `credentials_leaking_in_log.py` | ✅ fixed — guard only; **fixed again this round** for a much more severe scope bug — it only scanned tasks with no play wrapper at all, missing virtually every real-world credential-leak case (see `PROJECT_STATUS.md`) |
+| `GitLeaks_hardcoded_credentials.py` | ✅ fixed this round — unguarded crash when the `gitleaks` binary path is missing/misconfigured (a bad target playbook path was already handled gracefully) |
 | `unnamed_tasks.py` | ✅ fixed — guard only |
 | `unnamed_play.py` | ✅ fixed — guard done; OR/AND bug fixed this round |
 | `set_fact.py` | ✅ fixed — guard only |
@@ -102,15 +104,14 @@ exactly how we found the `detect_large_task.py` play-numbering bug.
 | `duplicate_code.py` | ⚪ reviewed, no bug found |
 | `files_extensions.py` | ✅ fixed — missing `rescue`/`always` recursion, triple-count bug in task collection |
 | `filters_for_comparison.py` | ✅ fixed — `TypeError` crash on bare-boolean `when:` conditions, missing `rescue`/`always` recursion |
-| `high_coupling.py` | ⚪ reviewed, no bug found |
-| `overriden_keys.py` | ⚪ reviewed, no bug found |
-| `write_to_csv.py` | ⚪ reviewed, no bug found |
-| `write_to_text.py` | ⚪ reviewed, no bug found |
+| `overriden_keys.py` | ✅ fixed this round — cross-depth false positive (a task's own `name:` was being merged with an unrelated nested module parameter also called `name:`, e.g. `apt: {name: nginx}`) |
 | `Ansible_Lint.py` | ⚪ reviewed, no bug found |
 | `unecessary_abs.py` | ⚪ reviewed, no bug found — tested against empty file and nested single-task block fixture |
 | `high_coupling.py` | ✅ fixed — `KeyError` on singular `role:`; nested `import_tasks`/`include_tasks` detection; missing type guard on non-list YAML (vault files) |
-| `sem_cohesion.py` | ✅ fixed — recurses into `block`/`rescue`/`always`, guards non-dict entries, `TEST_PLAYBOOK`/`utf-8` wired up |
-| `incohesive_plays.py` | ✅ confirmed good — pure consumer of `detect_large_play.py`, correctly benefits from its block-recursion fix with no changes needed |
+| `sem_cohesion.py` | ✅ fixed — recurses into `block`/`rescue`/`always`, guards non-dict entries; non-English/OOV names now correctly return `None` (unmeasurable) instead of falsely reporting "perfectly cohesive" |
+| `incohesive_plays.py` | ✅ fixed this round — confirmed good for block-recursion (pure consumer of `detect_large_play.py`'s fix, no changes needed there); separately fixed for the same non-English/OOV false-cohesion bug found in `sem_cohesion.py` below, which the earlier block-recursion review didn't cover |
+| `write_to_csv.py` | ✅ fixed — `None` vs. blank regression from the `sem_cohesion.py` fix; `ansible_lint_issues` consistency gap |
+| `write_to_text.py` | ✅ fixed — Global-tasks group printed with no header, visually indistinguishable from belonging to the preceding play; confirmed misleading via `main3.yml`'s final regression run, not just cosmetic |
 | `include_vars.py` | 🟡 reviewed — regex looseness noted, not fixed |
 | `requirements.txt` | 🟡 reviewed — 2 invalid lines, not fixed |
 | `GeneralsmellsDetector.py` | 🟡 reviewed — decide delete/keep |
@@ -120,10 +121,15 @@ exactly how we found the `detect_large_task.py` play-numbering bug.
 
 **Next candidates to review**, in priority order (untested against adversarial
 input, not just "read the code"):
-1. Non-English playbooks — `sem_cohesion.py`/`incohesive_plays.py` hard-depend
-   on `en_core_web_lg`; non-English task names will silently degrade to
-   poor/no vectors rather than error.
-2. `write_to_csv.py` / `write_to_text.py` — marked "reviewed, no bug found"
+1. ~~Non-English playbooks~~ — resolved this round; both `sem_cohesion.py`
+   and `incohesive_plays.py` now correctly report "unmeasurable" instead of
+   falsely-perfect cohesion when task/play names are entirely
+   out-of-vocabulary.
+2. `Ansible_Lint.py` — same class of risk as the `GitLeaks_hardcoded_credentials.py`
+   fix this round (missing-binary crash): not yet stress-tested against
+   `ansible-lint` not being installed at all. Still open — see
+   `REFACTOR_PLAN.md` Part 5 #8.
+3. `write_to_csv.py` / `write_to_text.py` — marked "reviewed, no bug found"
    early on before the block-recursion and play_id bugs were discovered;
    worth a second pass now that upstream data shapes have changed twice
    since that review.
@@ -229,5 +235,10 @@ feedback loop than re-running the whole pipeline every time.
   hand against `thresholds.csv` and the actual YAML.
 - `unecessary_abs.py` and `sem_cohesion.py` reviewed with the same rigor
   as everything else in the table above.
+- `credentials_leaking_in_log.py` and `incohesive_plays.py` re-verified this
+  round with the same rigor after both were found to have bugs missed by
+  an earlier pass — a reminder that "reviewed, no bug found" on one axis
+  (e.g. crash-safety, or one specific data-shape issue) doesn't guarantee
+  no bug exists on a different axis of the same file.
 - The "Known issues" list in `PROJECT_STATUS.md` empty, or intentionally
   deferred with a reason written down.
