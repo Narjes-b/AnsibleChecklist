@@ -1,0 +1,4 @@
+- name: bare task one
+  debug: {msg: hi}
+- name: bare task two
+  debug: {msg: hi}

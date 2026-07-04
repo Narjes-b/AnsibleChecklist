@@ -1,0 +1,6 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: t1
+      debug: {msg: hi}
+      when: true

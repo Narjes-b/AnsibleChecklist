@@ -90,49 +90,114 @@ exactly how we found the `detect_large_task.py` play-numbering bug.
 | `detect_large_play.py` | ✅ fixed — guard only; block/rescue/always recursion now matches `detect_large_task.py`'s task semantics |
 | `detect_large_playbook.py` | ✅ fixed — guard + try/except widened |
 | `duplicate_task_Name.py` | ✅ fixed — guard + tuple-unpack bug |
-| `credentials_leaking_in_log.py` | ✅ fixed — guard only; **fixed again this round** for a much more severe scope bug — it only scanned tasks with no play wrapper at all, missing virtually every real-world credential-leak case (see `PROJECT_STATUS.md`) |
-| `GitLeaks_hardcoded_credentials.py` | ✅ fixed this round — unguarded crash when the `gitleaks` binary path is missing/misconfigured (a bad target playbook path was already handled gracefully) |
+| `credentials_leaking_in_log.py` | ✅ fixed — guard only |
 | `unnamed_tasks.py` | ✅ fixed — guard only |
-| `unnamed_play.py` | ✅ fixed — guard done; OR/AND bug fixed this round |
+| `unnamed_play.py` | ✅ fixed — guard done; OR/AND bug fixed, confirmed working (hosts-only play now correctly caught) |
 | `set_fact.py` | ✅ fixed — guard only |
-| `overriding_facts.py` | ✅ fixed — guard only |
+| `overriding_facts.py` | ✅ fixed — guard only; confirmed no crash on non-list (vault-string) input |
 | `incohesive_plays.py` | ✅ fixed — guard + threshold path |
 | `parser_playbook.py` | ✅ fixed — guard only |
 | `smellsDetector.py` | ✅ fixed — 8 separate bugs, see `PROJECT_STATUS.md` |
 | `Install_Gitleaks.py` | ✅ fixed — arch detection + version wiring |
-| `is_unamed.py` | ✅ fixed this round — None-or-empty check |
-| `duplicate_code.py` | ⚪ reviewed, no bug found |
+| `is_unamed.py` | ✅ fixed — None-or-empty check, confirmed working |
+| `duplicate_code.py` | ✅ **fixed and pytest-confirmed** — previously required `'name' in task` to consider a task at all, so two unnamed tasks with identical parameters were completely invisible (this was originally a documented `xfail` limitation, not silently unnoticed). Rewritten to drop the name requirement (`task.pop('name', None)` is safe either way) and added `block`/`rescue`/`always` recursion, which the original never had at all. Confirmed via 4 tests: named duplicates (original passing case, no regression), unnamed duplicates (the fixed case), duplicates nested in separate `block:` wrappers (new coverage), and a clean negative case. |
 | `files_extensions.py` | ✅ fixed — missing `rescue`/`always` recursion, triple-count bug in task collection |
-| `filters_for_comparison.py` | ✅ fixed — `TypeError` crash on bare-boolean `when:` conditions, missing `rescue`/`always` recursion |
-| `overriden_keys.py` | ✅ fixed this round — cross-depth false positive (a task's own `name:` was being merged with an unrelated nested module parameter also called `name:`, e.g. `apt: {name: nginx}`) |
-| `Ansible_Lint.py` | ⚪ reviewed, no bug found |
-| `unecessary_abs.py` | ⚪ reviewed, no bug found — tested against empty file and nested single-task block fixture |
+| `filters_for_comparison.py` | ✅ **genuinely fixed and pytest-confirmed** — `TypeError` crash on bare-boolean `when:` conditions was real and fixed; the `rescue`/`always` recursion claimed fixed in an earlier pass was **not actually present in the code** (confirmed false via a failing pytest test — see `PROJECT_STATUS.md`). Real fix applied and verified this round. |
+| `overriden_keys.py` | ✅ **rewritten** — replaced the fragile `- name:` text-heuristic with a structural approach using `ruamel.yaml`'s round-trip loader (`.lc.line` for real per-dict line numbers). Old version misattributed duplicates to the wrong entity and, worse, silently stopped scanning the rest of the file the moment any task's first key wasn't literally `name:` (e.g. `become:` before `name:` — ordinary Ansible style). Confirmed via 4 targeted fixtures plus no regression on the original `task8` case from `main3.yml`. |
+| `Ansible_Lint.py` | ✅ confirmed clean — tested against real findings, nonexistent target path, and simulated missing binary; all degrade correctly, never crash |
+| `unecessary_abs.py` | ✅ confirmed clean — tested against empty file, nested single-task block, and rescue-nested block fixtures |
+| `include_vars.py` | ✅ fixed — dict-not-list early-return path returned a bare `0` instead of the `(0, [])` tuple every caller expects; crashed `parser_playbook.py`'s unpacking on any non-list top-level YAML (dict-shaped vars files, vault-encrypted files) |
 | `high_coupling.py` | ✅ fixed — `KeyError` on singular `role:`; nested `import_tasks`/`include_tasks` detection; missing type guard on non-list YAML (vault files) |
-| `sem_cohesion.py` | ✅ fixed — recurses into `block`/`rescue`/`always`, guards non-dict entries; non-English/OOV names now correctly return `None` (unmeasurable) instead of falsely reporting "perfectly cohesive" |
-| `incohesive_plays.py` | ✅ fixed this round — confirmed good for block-recursion (pure consumer of `detect_large_play.py`'s fix, no changes needed there); separately fixed for the same non-English/OOV false-cohesion bug found in `sem_cohesion.py` below, which the earlier block-recursion review didn't cover |
-| `write_to_csv.py` | ✅ fixed — `None` vs. blank regression from the `sem_cohesion.py` fix; `ansible_lint_issues` consistency gap |
-| `write_to_text.py` | ✅ fixed — Global-tasks group printed with no header, visually indistinguishable from belonging to the preceding play; confirmed misleading via `main3.yml`'s final regression run, not just cosmetic |
-| `include_vars.py` | 🟡 reviewed — regex looseness noted, not fixed |
+| `sem_cohesion.py` | ✅ **genuinely fixed and pytest-confirmed** — recurses into `block`/`rescue`/`always`, guards non-dict entries, `utf-8` encoding confirmed (an earlier discrepancy flag is resolved). The non-English/OOV handling had a real follow-up bug: vector availability was tracked as one shared counter across plays and tasks combined, so a normal English play name could mask that the task names specifically were entirely unmeasurable, silently falling through to a false "perfectly cohesive" result again. Fixed by tracking each group (plays, tasks) independently. Confirmed via a monkeypatched test controlling `has_vector` directly, not dependent on the real model's specific vocabulary. |
+| `incohesive_plays.py` | ✅ confirmed good — pure consumer of `detect_large_play.py`, correctly benefits from its block-recursion fix with no changes needed |
+| `write_to_csv.py` | ✅ **fixed and pytest-confirmed** — `None` vs. blank regression from the `sem_cohesion.py` fix; `ansible_lint_issues` consistency gap |
+| `write_to_text.py` | ✅ **fixed and pytest-confirmed** — Global-tasks group printed with no header, visually indistinguishable from belonging to the preceding play; confirmed misleading via `main3.yml`'s final regression run, not just cosmetic. Append-mode call-order dependency (multiple writer functions share one output file, some `'w'` some `'a'`) is real and intentional — now locked in by a dedicated test rather than left as an undocumented trap. |
 | `requirements.txt` | 🟡 reviewed — 2 invalid lines, not fixed |
 | `GeneralsmellsDetector.py` | 🟡 reviewed — decide delete/keep |
 | `parser_playbook_mod.py` | ⚪ not reviewed (dead code, low priority) |
 | `parser_playbook.ipynb` | ⚪ not reviewed (dead code, low priority) |
 | `exceptions.py` | ⚪ empty, unused |
 
-**Next candidates to review**, in priority order (untested against adversarial
-input, not just "read the code"):
-1. ~~Non-English playbooks~~ — resolved this round; both `sem_cohesion.py`
-   and `incohesive_plays.py` now correctly report "unmeasurable" instead of
-   falsely-perfect cohesion when task/play names are entirely
-   out-of-vocabulary.
-2. `Ansible_Lint.py` — same class of risk as the `GitLeaks_hardcoded_credentials.py`
-   fix this round (missing-binary crash): not yet stress-tested against
-   `ansible-lint` not being installed at all. Still open — see
-   `REFACTOR_PLAN.md` Part 5 #8.
-3. `write_to_csv.py` / `write_to_text.py` — marked "reviewed, no bug found"
-   early on before the block-recursion and play_id bugs were discovered;
-   worth a second pass now that upstream data shapes have changed twice
-   since that review.
+**Note:** `include_vars.py`'s regex looseness (misses `{{var_name}}` with no
+spaces, and `{{ var_name | default(...) }}`) is still open — a separate,
+narrower issue from the tuple-shape crash bug that was fixed this round.
+
+**Both items previously listed here as "next candidates to review"
+(non-English playbook handling, `write_to_csv.py`/`write_to_text.py`) are
+now resolved and pytest-covered** — see the "Automated regression suite"
+section below for current remaining candidates.
+
+## Automated regression suite (pytest) — now the primary way to verify fixes
+
+`AnsibleGuard/tests/` contains a growing `pytest` suite, one file per
+detector, seeded from every bug found and manually verified across this
+whole debugging effort. Run the whole thing with:
+```bash
+cd ~/Documents/AnsibleChecklist/AnsibleGuard
+python3 -m pytest tests/ -v
+```
+
+**Why this now takes priority over the manual "How to test" section below:**
+a status doc claiming a bug is fixed can silently go stale the moment the
+code changes without the doc changing too — and it did, for real, this
+round (`filters_for_comparison.py`'s `rescue`/`always` recursion was
+recorded here as fixed, and wasn't; a pytest test asserting the correct
+behavior failed against the real code, which is what caught it). A test
+that actually executes the real function against a concrete fixture can't
+drift out of sync the same way. Treat a green pytest run as the source of
+truth; treat this file's status table as a human-readable summary that
+should always agree with it, not the other way around.
+
+Structure:
+- `tests/conftest.py` — the shared `fixtures_dir` pytest fixture every test
+  file uses to locate `tests/fixtures/`
+- `tests/fixtures/*.yml` — real YAML sample files, one or more per bug
+  scenario, readable on their own
+- `tests/test_<module_name>.py` — one file per source module under test
+
+Coverage so far (all confirmed passing on the actual project machine, not
+just in isolation): `duplicate_task_Name.py`, `overriden_keys.py`,
+`high_coupling.py`, `credentials_leaking_in_log.py`, `detect_large_task.py`,
+`detect_large_play.py`, `detect_large_playbook.py`, `unecessary_abs.py`,
+`include_vars.py`, `is_unamed.py`, `unnamed_play.py`, `Ansible_Lint.py`,
+`overriding_facts.py`, `set_fact.py`, `duplicate_code.py` (was an `xfail`
+documenting a known limitation — now a real, complete fix, see status table
+above), `files_extensions.py`, `filters_for_comparison.py`,
+`smellsDetector.py`'s `assess_code_smells()` aggregation logic (confirmed
+the documented per-play counter-reset bug is NOT actually present — a
+genuine, valuable correction in the *opposite* direction from the
+`filters_for_comparison.py` discovery: that time the doc wrongly claimed
+"fixed," this time an earlier doc pass correctly recorded it as fixed and
+pytest now independently confirms that claim is true), `sem_cohesion.py`
+(found and fixed a real follow-up bug in an earlier "fixed" pass — see
+`PROJECT_STATUS.md`), `write_to_csv.py`, `write_to_text.py` (both were
+already genuinely correctly fixed in an earlier pass; this round gave them
+pytest coverage for the first time, including an explicit test locking in
+the append-mode call-order fragility as a documented, intentional behavior
+rather than an undocumented trap).
+
+**Known environment gap:** `overriden_keys.py`'s tests depend on
+`ruamel.yaml`, which is not currently listed in `requirements.txt` — a
+fresh install would hit `ModuleNotFoundError` even though existing
+development machines already have it installed. Needs adding.
+
+**All items from the previous "still to write" list are now covered.** Next
+candidates, not yet given pytest coverage: `parser_playbook.py`'s `mainn()`
+end-to-end orchestration as its own direct test (currently only exercised
+indirectly through `test_smellsDetector.py`); `incohesive_plays.py` itself
+(its upstream dependency `detect_large_play.py` is well-covered, but the
+play-level cohesion function has no direct test of its own yet);
+`GitLeaks_hardcoded_credentials.py` and `Install_Gitleaks.py` (never
+stress-tested against "gitleaks binary not installed" or "target path
+doesn't exist," unlike `Ansible_Lint.py` which has exactly this coverage).
+
+## Manual regression procedure (fallback / pre-pytest reference)
+
+This section predates the pytest suite above and is kept as a fallback for
+whole-pipeline smoke-testing (running `smellsDetector.py` itself against
+real fixture files) — the pytest suite is more precise for verifying
+individual bug fixes, but doesn't yet replace an actual end-to-end run of
+the real entry point.
 
 ## How to test the *whole* project, start to finish
 
@@ -235,10 +300,5 @@ feedback loop than re-running the whole pipeline every time.
   hand against `thresholds.csv` and the actual YAML.
 - `unecessary_abs.py` and `sem_cohesion.py` reviewed with the same rigor
   as everything else in the table above.
-- `credentials_leaking_in_log.py` and `incohesive_plays.py` re-verified this
-  round with the same rigor after both were found to have bugs missed by
-  an earlier pass — a reminder that "reviewed, no bug found" on one axis
-  (e.g. crash-safety, or one specific data-shape issue) doesn't guarantee
-  no bug exists on a different axis of the same file.
 - The "Known issues" list in `PROJECT_STATUS.md` empty, or intentionally
   deferred with a reason written down.

@@ -1,0 +1,15 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: wrapper one
+      block:
+        - name: install thing
+          apt:
+            name: nginx
+            state: present
+    - name: wrapper two
+      block:
+        - name: install thing again
+          apt:
+            name: nginx
+            state: present

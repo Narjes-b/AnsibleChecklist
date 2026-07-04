@@ -1,0 +1,12 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: risky
+      block:
+        - name: normal
+          debug: {msg: hi}
+      rescue:
+        - name: copy without ext
+          copy:
+            src: myfile
+            dest: /etc/myfile.conf

@@ -1,0 +1,7 @@
+- name: Play
+  hosts: all
+  roles:
+    - role: webserver
+      vars:
+        port: 80
+    - role: database

@@ -1,0 +1,7 @@
+- name: play1
+  hosts: webservers
+  tasks:
+    - name: task4
+      apt:
+        name: nginx
+        state: present

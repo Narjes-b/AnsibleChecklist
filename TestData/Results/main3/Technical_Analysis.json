@@ -97,7 +97,7 @@
     "duplicate_task_names": 0,
     "missing_bool_filters": 3,
     "similarityPlays": 0,
-    "credentials_leaking_in_log": 1,
+    "credentials_leaking_in_log": 2,
     "unused_include_vars": 1,
     "WarningUnusedIncludeVars": [
         "Warning: Included vars file not found: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/aalaesar/install_nextcloud/roles/install_nextcloud/vars/main.yml",

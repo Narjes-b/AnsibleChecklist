@@ -1,0 +1,9 @@
+- name: Play with duplicate task names
+  hosts: all
+  tasks:
+    - name: Install package
+      apt:
+        name: nginx
+    - name: Install package
+      apt:
+        name: curl

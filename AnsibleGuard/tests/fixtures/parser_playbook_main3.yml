@@ -1,0 +1,76 @@
+---
+- name: Notconsideredtask1
+  block:
+    - name: task1
+      file:
+        path: /etc/update-motd.d/backups
+        state: directory
+  when: ag_motd_remove_default_config
+
+- name: task2
+  shell: mv /etc/update-motd.d/backups/* /etc/update-motd.d/
+  when: ag_motd_restore_default_config and not ag_motd_remove_default_config
+
+- name: Notconsideredtask2
+  block:
+    - name: task3
+      file:
+        path: /etc/update-motd.d/backups
+        state: directory
+  when: ag_motd_remove_default_config
+
+- name: Example Playbook
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Include some vars from a file (used)
+      include_vars: vars_used.yml
+    - name: Include some vars from another file (unused)
+      include_vars: vars_unused.yml
+    - name: Use a variable from the first included file
+      debug:
+        msg: "The value is {{ mysql_credential_file }}"
+
+- name: Example playbook with secret
+  hosts: localhost
+  tasks:
+    - name: Set AWS secret key (bad practice!)
+      set_fact:
+        aws_secret_access_key: "AKIA1234567890EXAMPLEKEY"
+
+- name: play1
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Notconsideredtask3
+      block:
+        - name: task4
+          apt:
+            name: nginx
+            state: present
+        - name: task5
+          apt:
+            name: nginx
+            state: present
+    - name: Notconsideredtask4
+      block:
+        - name: task6
+          apt:
+            name: nginx
+            state: present
+
+- name: play2
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Notconsideredtask5
+      block:
+        - name: task7
+          apt:
+            name: nginx
+            state: present
+
+- name: task20
+  file:
+    path: /etc/motd
+    state: absent

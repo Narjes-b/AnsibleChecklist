@@ -49,9 +49,10 @@ def get_when_conditions(yaml_file_path):
                         when_conditions.extend(when)
                     else:
                         when_conditions.append(when)
-                # Handle blocks recursively
-                if "block" in task:
-                    extract_when_from_tasks(task["block"])
+                # Handle block/rescue/always recursively
+                for section in ("block", "rescue", "always"):
+                    if section in task and isinstance(task[section], list):
+                        extract_when_from_tasks(task[section])
 
     if isinstance(playbook, list):
         for entry in playbook:
@@ -91,3 +92,4 @@ If not, flag it as potentially missing a boolean filter.
 Find when: conditions that compare variables to quoted strings "true"/"false".
 Suggest replacing with unquoted booleans or adding | bool.
  """
+

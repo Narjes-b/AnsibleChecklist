@@ -1,0 +1,6 @@
+- name: task8
+  copy:
+    src: 99-footer
+    dest: /etc/x
+    src: 99-footer
+    dest: /etc/x
