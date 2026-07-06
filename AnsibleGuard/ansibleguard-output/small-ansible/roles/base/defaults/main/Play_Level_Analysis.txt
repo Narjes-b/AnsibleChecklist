@@ -1,0 +1,29 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+No unnecessary dependencies found.
+
+
+### OVERRIDEN KEYS  ###.
+
+Found 1 tasks with duplicate keys:
+
+Task 'Unknown' (starting line 4) has duplicate keys:
+  - Key 'description' duplicated on lines [8, 15, 24, 33, 42, 53]
+  - Key 'baseurl' duplicated on lines [9, 16, 25, 34, 43, 54]
+  - Key 'gpgcheck' duplicated on lines [10, 18, 29, 38, 47, 56]
+  - Key 'gpgkey' duplicated on lines [11, 17, 30, 39, 48, 55]
+  - Key 'enabled' duplicated on lines [12, 19, 28, 37, 46, 57]
+  - Key 'file' duplicated on lines [13, 20, 31, 40, 49]
+  - Key 'epel' duplicated on lines [23, 52]
+  - Key 'mirrorlist' duplicated on lines [26, 35, 44]
+  - Key 'failovermethod' duplicated on lines [27, 36, 45]
+
+Total number of duplicate keys detected: 9
+
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+Tasks outside any play (Global):
+
+

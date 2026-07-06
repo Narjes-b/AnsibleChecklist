@@ -12,7 +12,6 @@ from Ansible_Lint import run_ansible_lint
 from GitLeaks_hardcoded_credentials import scan_with_gitleaks_file_output
 from Install_Gitleaks import GITLEAKS_PATH
 from config import (
-    yaml_file_path,
     csvfile,
     textfile,
     Ansiblelintfile,
@@ -40,12 +39,18 @@ def read_thresholds():
     return thresholds
 
 
-def assess_code_smells(metrics, thresholds, txt_output_files):
+def assess_code_smells(metrics, thresholds, txt_output_files, yaml_file_path):
     result = {"playbook": {"metrics": {}, "plays": []}}
 
     # print("metrics", metrics.get('plays', {}))
 
-    playbook_metrics = metrics.get("playbook_metrics", {})
+    playbook_metrics = metrics.get("playbook_metrics")
+    if playbook_metrics is None:
+        playbook_metrics = {}
+
+    high_coupling_metrics = metrics.get("high_coupling_metrics")
+    if high_coupling_metrics is None:
+        high_coupling_metrics = {}
     # print("playbook_metrics", playbook_metrics)
     ##missing_files_extension
 
@@ -140,8 +145,9 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
             and playbook_metrics.get("num_nested_tasks_playbook", 0)
             > thresholds.get("num_tasks_playbook", 0)
         )
-        or playbook_metrics.get("Num_Imports", 0) > thresholds.get("Num_Imports", 0)
-        or playbook_metrics.get("Num_Roles", 0) > thresholds.get("Num_Roles", 0)
+        or high_coupling_metrics.get("Num_Imports", 0)
+        > thresholds.get("Num_Imports", 0)
+        or high_coupling_metrics.get("Num_Roles", 0) > thresholds.get("Num_Roles", 0)
     ):
         result["playbook"]["metrics"]["complex_playbook"] = 1
 
@@ -158,7 +164,7 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
 
     #########high_coupling
     if any(
-        playbook_metrics.get(key, 0) > thresholds.get(key, 0)
+        high_coupling_metrics.get(key, 0) > thresholds.get(key, 0)
         for key in ["Num_Imports", "Num_Roles"]
     ):
         result["playbook"]["metrics"]["high_coupling"] = 1
@@ -231,7 +237,7 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
         naming_convention = 0
         for play in metrics["plays"]:
             # print("play", play)
-            # ✅ Case 1: Structured Play (has play_metrics)
+            # Case 1: Structured Play (has play_metrics)
             if play.get("play_metrics", {}) != None:
                 play_metrics_dict = play.get("play_metrics", {})
                 play_result = {
@@ -260,7 +266,7 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
                 if is_unnamed:
                     num_unnamed_plays += 1
                 result["playbook"]["metrics"]["unnamed_play"] = num_unnamed_plays
-                # ✅ Case 2: Global tasks not in a defined play (play_metrics is None)
+                # Case 2: Global tasks not in a defined play (play_metrics is None)
             else:
                 play_result = {
                     "exist_play": 0,
@@ -295,11 +301,12 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
                     # else:
                     #   task_result['metrics']['long_task_name'] = 0
 
+                    play_special_chars = (play.get("play_metrics") or {}).get(
+                        "special_chars", 0
+                    )
                     if task.get("special_chars", 0) > thresholds.get(
                         "special_chars", 0
-                    ) or play.get("special_chars", 0) > thresholds.get(
-                        "special_chars", 0
-                    ):
+                    ) or play_special_chars > thresholds.get("special_chars", 0):
                         naming_convention += 1
                         task_result["metrics"]["inconsistent_naming_convention"] = 1
                         #
@@ -309,36 +316,6 @@ def assess_code_smells(metrics, thresholds, txt_output_files):
                     play_result["tasks"].append(task_result)
 
             result["playbook"]["plays"].append(play_result)
-            """ else:
-               
-                play_result = {
-                    'exist_play': 0,
-                    'tasks': []
-                }
-                if 'task_metrics' in play:
-                    for task in play['task_metrics']:
-                        task_result = {
-                            'task_name': task.get('task_name', 'Unknown'),
-                            'metrics': {}
-                        }
-                        
-                        if task.get('LOC_task', 0) > thresholds.get('LOC_task', 0):
-                            task_result['metrics']['large_task'] = 1
-                        else:
-                            task_result['metrics']['large_task'] = 0
-
-                        if task.get('task_name_len', 0) > thresholds.get('task_name_len', 0):
-                            task_result['metrics']['long_task_name'] = 1
-                        else:
-                            task_result['metrics']['long_task_name'] = 0
-
-                        if task.get('special_chars', 0) > thresholds.get('special_chars', 0):
-                            result['playbook']['metrics']['inconsistent_naming_convention'] = 1
-                        else:
-                            result['playbook']['metrics']['inconsistent_naming_convention'] = 0  
-
-                        play_result['tasks'].append(task_result)
-            result['playbook']['plays'].append(play_result)  """
 
         result["playbook"]["metrics"]["large_task"] = num_large_task
         result["playbook"]["metrics"]["inconsistent_naming_convention"] = (
@@ -354,6 +331,8 @@ def execute_for_single_file(yaml_file_path, csvfile, textfile, output_dir):
     all_results = {}
     findings = []
     lint_results = []
+    result = None
+    metrics = None
 
     thresholds = read_thresholds()
 
@@ -361,6 +340,12 @@ def execute_for_single_file(yaml_file_path, csvfile, textfile, output_dir):
         print(f"Analyzing file {yaml_file_path}...")
 
         metrics = mainn(yaml_file_path)
+        if metrics is None:
+            print(
+                f"Skipping {yaml_file_path}: could not be parsed as a valid YAML/Ansible file."
+            )
+            return findings, lint_results, result, metrics
+
         JSON_output_file = output_dir / "Technical_Analysis.json"
         with open(JSON_output_file, "w") as f:
             json.dump(metrics, f, indent=4)
@@ -369,15 +354,10 @@ def execute_for_single_file(yaml_file_path, csvfile, textfile, output_dir):
         csv_output_file = output_dir / "IaC_Smells.csv"
         txt_output_file = output_dir / "Play_Level_Analysis.txt"
         result, findings, lint_results = assess_code_smells(
-            metrics, thresholds, txt_output_file
+            metrics, thresholds, txt_output_file, yaml_file_path
         )
 
         all_results[yaml_file_path] = result
-
-        # Build output paths based on the input filename
-
-        # csv_output_file = Path(csvfile).with_name(f"{file_stem}_IaC_Smells.csv")
-        # txt_output_file = Path(textfile).with_name(f"{file_stem}_Play_Level_Analysis.txt")
 
         write_results_to_csv(all_results, csv_output_file)
         write_results_to_txt(all_results, txt_output_file)
@@ -386,69 +366,46 @@ def execute_for_single_file(yaml_file_path, csvfile, textfile, output_dir):
     except Exception as e:
         print(f"Error while analyzing file {yaml_file_path}: {e}")
 
-    return findings, lint_results
+    return findings, lint_results, result, metrics
 
 
 def format_ansible_lint_results(lint_results):
     formatted = []
 
     for issue in lint_results:
-        # Use check_name or rule_id as identifier
         rule = issue.get("rule_id") or issue.get("check_name") or "unknown-rule"
-
-        # Use message or provide fallback
         message = (
             issue.get("message") or issue.get("description") or "No message provided"
         )
-
-        # Get location if available
         location = issue.get("location", {})
         path = issue.get("path") or location.get("path") or "unknown-path"
         line = issue.get("line") or location.get("line") or "?"
-
         formatted.append(f"⚠️ {rule} - {message} at {path}:{line}")
 
     return formatted
 
 
 if __name__ == "__main__":
-    # yaml_file_path = input("Enter your Playbook path : ")
     import os
     from pathlib import Path
 
-    yaml_folder = Path(yaml_files_folder)  # your input folder path
+    yaml_folder = Path(yaml_files_folder)
     yaml_files = list(yaml_folder.glob("*.yml")) + list(yaml_folder.glob("*.yaml"))
 
     for yaml_file_path in yaml_files:
         print(f"🔍 Processing file: {yaml_file_path}")
-
         file_stem = yaml_file_path.stem
-
-        # Create a dedicated folder for this file's results
-
         output_dir = RESULTS_DIR / file_stem
-
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        findings, lint_results = execute_for_single_file(
+        findings, lint_results, result, metrics = execute_for_single_file(
             yaml_file_path, csvfile, textfile, output_dir
         )
 
-        # Output files inside the new folder
         lint_output_file = output_dir / "ansiblelint.txt"
         gitleaks_output_file = output_dir / "gitleaks.txt"
 
-        # Build output paths based on the input filename
-        # lint_output_file = Path(Ansiblelintfile).with_name(f"{file_stem}_ansiblelint.txt")
-        # gitleaks_output_file = Path(Gitleaksfile).with_name(f"{file_stem}_gitleaks.txt")
-
-        # Format and write Ansible Lint results
         formatted = format_ansible_lint_results(lint_results)
         write_AnsibleLint_results_to_txt(formatted, lint_output_file, yaml_file_path)
-
-        # Write Gitleaks findings
         write_GitLeaks_results_to_txt(findings, gitleaks_output_file)
 
-        # formatted = format_ansible_lint_results(lint_results)
-        # write_AnsibleLint_results_to_txt(formatted,Ansiblelintfile,yaml_file_path)
-        # write_GitLeaks_results_to_txt(findings,Gitleaksfile)

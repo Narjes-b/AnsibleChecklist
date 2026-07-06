@@ -1,0 +1,9 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/small-ansible/roles/tomcat/tasks/main.yml:
+
+
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (package). at ~/Documents/ansible-structure/small-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/small-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (service). at ~/Documents/ansible-structure/small-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/small-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/small-ansible/roles/tomcat/tasks/main.yml:?

@@ -7,4 +7,5 @@ def test_hosts_only_play_with_no_tasks_key_counted(fixtures_dir):
     function in the codebase uses OR. A play with only hosts: (no tasks:)
     was invisible to this specific check. Fixed to OR."""
     fixture = fixtures_dir / "unnamed_play_hosts_only.yml"
-    assert unnamed_play(str(fixture)) == 1
+    count, details = unnamed_play(str(fixture))
+    assert count == 1 == 1

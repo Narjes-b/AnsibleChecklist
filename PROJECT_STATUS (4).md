@@ -77,6 +77,115 @@ metric-producing functions:
 
 ## Fixed so far
 
+### `smellsDetector.py` — `assess_code_smells()` silently scanned the wrong file for every single file, ever (most severe bug found this session)
+Found while wiring the CLI against a real 42-file external Ansible project,
+not by direct code review — worth noting, since this bug had been sitting
+in the pipeline through the entire debugging session and every test written
+so far, undetected.
+
+`assess_code_smells(metrics, thresholds, txt_output_files)` — three
+parameters — internally calls:
+```python
+findings = scan_with_gitleaks_file_output(yaml_file_path, GITLEAKS_PATH)
+lint_results = run_ansible_lint(yaml_file_path)
+```
+`yaml_file_path` is not a parameter of this function. Python resolved it by
+falling back to the **module-level global** imported from `config.py` at
+the top of the file — a single, fixed path, completely independent of
+which file's `metrics` dict was actually passed in. Confirmed the bug
+reached production, not just a theoretical code-reading concern:
+`execute_for_single_file(yaml_file_path, ...)` has the correct per-file
+path as its own local parameter, but never passed it through when calling
+`assess_code_smells()` three lines later — so **every file this pipeline
+has ever processed** — `main.yml`, `main3.yml`, `main-2.yml`, and every one
+of the 42 real files in the CLI validation run — had its
+`hardcoded_credentials` and `ansible_lint_issues` (the CSV's "Design
+Smells" column) computed against `config.yaml_file_path`, not against
+itself. Every other metric (everything flowing through `metrics` from
+`parser_playbook.py`'s `mainn()` — duplicated code, large playbook, etc.)
+was unaffected; only these two, gitleaks- and ansible-lint-derived values
+were silently wrong for every file except whichever one happened to match
+the config global.
+
+This is exactly the class of bug the earlier `test_smellsDetector.py`
+test could not have caught: that test deliberately monkeypatched
+`scan_with_gitleaks_file_output`/`run_ansible_lint` to
+`lambda *a, **kw: []` specifically to isolate the counter-accumulation
+logic under test — which meant it never inspected *what argument* those
+functions were being called with, only that they returned something
+usable.
+
+**Fixed** by adding `yaml_file_path` as an explicit required 4th parameter
+to `assess_code_smells()`, updating `execute_for_single_file()`'s call site
+to pass its own already-correct local path through, and removing the now-
+dead (and dangerous to leave in place) `yaml_file_path` import from
+`config` at the top of `smellsDetector.py` — leaving it there was exactly
+the landmine that caused this bug to be possible in the first place.
+Confirmed via a dedicated pytest regression test that calls
+`assess_code_smells()` twice with two different file paths and asserts the
+mocked external-tool calls actually received two *different* paths, not
+one shared fallback.
+
+**Two more bugs found in this same function immediately after, once the
+full CLI → `execute_for_single_file()` → `assess_code_smells()` chain was
+run end-to-end against the real 42-file project** (not just `mainn()` in
+isolation) — this function has now yielded three independent, previously
+undiscovered bugs from real-world data alone:
+
+**Bug A — same None-vs-missing-key hazard, twice more, in the same
+function.** `playbook_metrics = metrics.get("playbook_metrics", {})` — the
+default only applies when the key is *missing*; `mainn()` legitimately sets
+this key to `None` (not absent) for any non-playbook file, so
+`playbook_metrics` came out `None` itself, crashing the very next line
+(`playbook_metrics.get("num_plays", 0)` → `AttributeError`). Reproduced
+exactly using the real `mainn()` output captured from a genuine failing
+file (`group_vars/tomcat.yml`) before fixing. Separately, and independently
+confirmed: `Num_Imports`/`Num_Roles` were being read from `playbook_metrics`
+in the `complex_playbook` and `high_coupling` checks, but those keys never
+exist there — they live in a completely separate top-level dict,
+`high_coupling_metrics`, that `mainn()` builds from `high_coupling.py`'s
+real output. This meant `High Playbook Coupling` (and half of
+`Complex Playbook`'s OR-conditions) had never fired correctly for *any*
+file, ever, regardless of real coupling data — invisible all session
+because `main3.yml`, the primary fixture, genuinely had zero imports/zero
+roles, so "always reports 0" and "correctly reports 0" were
+indistinguishable until a real project with actual role dependencies was
+run through it. Fixed with explicit `is None` checks for both dicts, and
+both misrouted `Num_Imports`/`Num_Roles` lookups corrected to read from
+`high_coupling_metrics`.
+
+**Bug B — `execute_for_single_file()` never checked whether `mainn()`
+returned `None` before handing it to `assess_code_smells()`.** Even after
+`mainn()`'s own vault-tag guard (added during CLI validation, see
+`CLI_STATUS.md`) and Bug A's fix above, running the full pipeline still
+crashed on the same 2 vault-tagged files — a *different* crash
+(`'NoneType' object has no attribute 'get'` on the whole `metrics` dict
+itself, one level further up the call stack) than either previous fix
+reached. `mainn()` was correctly returning `None` for these files;
+`execute_for_single_file()` simply never checked for that before
+proceeding. Fixed with an explicit `if metrics is None:` guard immediately
+after calling `mainn()`, printing a clear skip message and returning early.
+**Known, accepted limitation:** a file that hits this path never gets
+scanned by `gitleaks`/`ansible-lint` either, since both are invoked from
+inside `assess_code_smells()`, which this guard now skips entirely — not a
+new regression (these files crashed before reaching those tools anyway),
+but a real, currently-unaddressed coverage gap worth revisiting, since
+GitLeaks' content-scan doesn't actually require valid YAML structure to
+find a hardcoded secret.
+
+**Confirmed via a genuine full end-to-end run** — not `mainn()` in
+isolation, the actual `cli.py` → `execute_for_single_file()` →
+`assess_code_smells()` chain, exactly as a future PR bot would invoke it —
+against all 42 real files: **42 out of 42 produced a complete, real report**
+(`Technical_Analysis.json`, `IaC_Smells.csv`, `Play_Level_Analysis.txt`,
+`ansiblelint.txt`, `gitleaks.txt`), verified by counting actual
+`IaC_Smells.csv` files on disk, not by absence of a traceback. Worth
+remembering as its own lesson: earlier "42/42" claims in this session
+(before Bugs A and B were found) were checked only by "nothing crashed,"
+which is a materially weaker claim than "the intended output was actually
+produced" — the two silently diverged here, with roughly half the files
+producing no report at all while the run still reported "success."
+
 ### `overriden_keys.py` — structural rewrite (this round)
 The old version detected task boundaries by looking for lines starting with
 the literal text `- name:` — a text heuristic with no real awareness of YAML
@@ -229,8 +338,10 @@ This corrupted `num_tasks_in_play` (undercounted, affecting the `Large Play`
 threshold check) and `incohesive_plays.py`'s cohesion scoring (compared
 generic wrapper labels instead of real task names for any block-using play).
 Fixed by making `detect_large_play.py` recurse into `block`/`rescue`/`always`
-the same way `detect_large_task.py` does. `incohesive_plays.py` needed no
-changes — it's a pure consumer and now gets correct data automatically.
+the same way `detect_large_task.py` does. **`incohesive_plays.py` needed no
+changes for this specific bug** — it's a pure consumer and correctly
+benefited automatically — but it did need a separate, unrelated fix later
+(see below).
 
 ### `files_extensions.py`
 Two bugs. First, `recurse_extract()` only recursed into `block:`, silently
@@ -441,6 +552,155 @@ no regression), the previously-`xfail`'d case (unnamed duplicates, now a
 real pass), a new case (duplicates nested in two separate `block:`
 wrappers), and a clean negative case. The `xfail` marker is gone from the
 test suite — this is a genuine fix, not a documented limitation anymore.
+
+### `GitLeaks_hardcoded_credentials.py` — unguarded crash on missing binary
+A nonexistent playbook path was already handled gracefully (real GitLeaks
+exits non-zero on a bad `--source`; the `else` branch already returned
+`[]`). A missing or misconfigured `gitleaks` binary path, however, raised
+an unguarded `FileNotFoundError` from `subprocess.run()`. Doesn't crash the
+whole batch run (`execute_for_single_file`'s outer `try/except` catches
+it), but silently skips that file's entire analysis and prints a message
+that reads as if the *playbook* is missing rather than the *binary*. Fixed
+by catching `FileNotFoundError` at the source with a message pointing at
+the real fix (`Install_Gitleaks.py` / check `GITLEAKS_PATH`). Verified
+against all three paths: missing binary, bad target, successful scan with
+real findings.
+
+### `credentials_leaking_in_log.py` — scope bug, most severe finding of its round
+Sourced its raw task dicts from `detect_large_task.py`'s `top_level_tasks`
+— which, by that function's own design, contains *only* tasks with no
+`hosts:`/`tasks:` wrapper at all. Every task living inside a normal
+`- hosts: ... tasks: [...]` play — the overwhelming majority of real
+Ansible content — was completely invisible to this check. Confirmed live:
+a fixture matching `main3.yml`'s real hardcoded-secret task returned
+`nbLeaks: 0`. Fixed by replacing the `top_level_tasks` dependency with a
+self-contained recursive collector (`_collect_all_raw_tasks`, mirroring
+`files_extensions.py`'s traversal) that gathers every real task's raw
+dict regardless of nesting depth. Verified against nested secrets, mixed
+top-level+nested, `no_log: true` suppression, and block-nested secrets.
+
+### `incohesive_plays.py` — same OOV bug as `sem_cohesion.py`, missed in the earlier pass
+Carries the exact "falsely perfectly cohesive" bug already found and fixed
+in `sem_cohesion.py`: a play whose task names are all non-English/
+out-of-vocabulary gets `average_similarity = 1` (perfectly cohesive)
+purely because nothing had a usable word vector, not because the tasks
+are actually related. Separate bug from the block-recursion issue already
+covered above — that clearance was correct for block-recursion but didn't
+cover this axis. Confirmed via isolated logic test (mocking
+`doc.has_vector = False`). Fixed the same way as `sem_cohesion.py`: an
+all-OOV play is skipped (counted toward neither cohesive nor incohesive)
+rather than assumed cohesive. Unlike `sem_cohesion.py`, this function only
+ever returns a plain integer count, so no downstream `None`-handling fix
+was needed.
+
+### `smellsDetector.py` — `play_special_chars` double-`.get()` crash
+`play_special_chars = (play.get("play_metrics") or {}).get("special_chars", 0)`
+already unwraps to a plain `int` — the very next line then called
+`.get("special_chars", 0)` on that same int again:
+`AttributeError: 'int' object has no attribute 'get'`. Only fired when the
+*task's own* `special_chars` did not exceed threshold (Python's `or`
+short-circuits, skipping the buggy right-hand side otherwise) — which is
+why it never surfaced on the project's own tiny fixtures, none of which
+had a real structured play with a plain, low-special-char task name reach
+that branch. Confirmed against the real, unmodified function with a
+synthetic metrics dict before fixing (not just reasoned through). Fixed by
+removing the redundant second `.get()`. Locked in as three pytest cases:
+the previously-working short-circuit path, the exact crash condition (now
+correctly flags the smell instead of crashing), and a clean negative case.
+
+### Real per-line location data — `ruamel.yaml` rewrite of five detectors
+Every finding besides `overriden_keys.py`'s only ever had a task/play
+*name*, never a real source line — a real gap once the goal became
+feeding a PR bot (see `OUTPUT_FORMATS.md`), since "leave a comment on this
+line" needs exactly that. `detect_large_task.py`, `detect_large_play.py`,
+`unnamed_play.py`, `unnamed_tasks.py`, and `credentials_leaking_in_log.py`
+all rewritten to use `ruamel.yaml`'s round-trip loader (`.lc.line`),
+matching the pattern `overriden_keys.py` already established.
+
+Two silent-drift risks caught and fixed before shipping, not assumed away:
+1. Naively `yaml.dump()`-ing a `ruamel`-loaded object with PyYAML doesn't
+   error — it silently serializes ruamel's *internal implementation
+   details* (`_yaml_line_col`, `state`, etc.) instead of the actual
+   content. Confirmed this exact failure mode directly. Would have
+   corrupted `LOC_task`/`LOC_play` completely. Fixed with a `_to_plain()`
+   conversion back to plain dict/list before the existing PyYAML dump
+   path in all three affected files.
+2. Even using `ruamel`'s *own* dumper (which preserves original
+   comments/blank-lines/flow-style formatting) instead of PyYAML's
+   canonical re-serialization produces a genuinely *different* line count
+   once comments or flow-style lists are involved — confirmed directly:
+   12 vs 11 lines on one realistic test case. Exactly the kind of silent
+   shift that would move "Large Play"/"Large Task" threshold decisions
+   without anyone noticing. Fixed the same way as #1 — `LOC_task`/
+   `LOC_play` confirmed byte-identical to pre-rewrite output on content
+   with comments and flow-style lists.
+
+Also re-verified: vault-tagged files, genuinely malformed YAML, and
+duplicate-key files all still degrade the same way as before the `ruamel`
+switch (no new crashes) — `isinstance(x, dict)`/`isinstance(x, list)`
+checks throughout these files continue to work unchanged, since
+`ruamel`'s `CommentedMap`/`CommentedSeq` genuinely subclass `dict`/`list`
+(confirmed directly rather than assumed).
+
+**Two more real bugs found while doing this line-tracking work, unrelated to line numbers themselves:**
+
+- **`unnamed_tasks()` always returned `0`, for every file, always.** It
+  iterated `top_level_tasks` (raw dicts, no computed fields) and checked
+  `task.get("task_name")` — a key that only exists on the *computed*
+  entries in `all_metrics`. Confirmed directly: a fixture with one
+  genuinely unnamed top-level task returned `0`, not `1`; the "Unnamed
+  Task" CSV column has very likely reported `0` for every file, always,
+  this entire project. Fixed by iterating `all_metrics` instead — this
+  also fixes the structural gap that `top_level_tasks` could never see an
+  unnamed task nested inside a real play at all (confirmed this exact
+  case is now caught). `unnamed_tasks()` now returns `(count, details)`
+  with a real per-task `"line"`, mirroring
+  `credentials_leaking_in_log.py`'s `(warnings, nbLeaks)` pattern.
+
+- **The per-play "Unnamed Play" count undercounted, silently, in
+  `parser_playbook.py`.** `detect_large_play.py` substitutes the
+  placeholder string `"unknown"` for `Play_name` when a play has no real
+  name (so display code always has something to show). `parser_playbook.py`'s
+  per-play loop then called `is_unnamed()` on that *already-substituted
+  placeholder* — `"unknown"` is a non-empty string, so
+  `is_unnamed("unknown")` always returns `0`, silently masking every
+  genuinely unnamed play in the final count. Confirmed directly: a real
+  `hosts:`-only play with no `name:` reported `unnamed_play == 0` all the
+  way through to the final CSV-level aggregate, not just an intermediate
+  dict. Fixed by having `parser_playbook.py` use `unnamed_play.py`'s own
+  `unnamed_play_details` (rewritten the same way as `unnamed_tasks()`,
+  built from a fresh, correct check against the raw YAML, unaffected by
+  the placeholder) matched by real line number, instead of re-checking
+  the already-corrupted `Play_name` field.
+
+### `high_coupling.py` — malformed entry poisons the whole file's data
+A single malformed/blank list item (e.g. a stray `- ` or `- null` in
+hand-edited YAML — a common typo) wasn't a crash outward (the function's
+own broad `except Exception` catches the resulting `TypeError`), but
+silently discarded *every other real play's* coupling data for the entire
+file, since the per-entry loop had no `isinstance(play, dict)` guard
+before that outer `except` swallowed the error. Confirmed directly with a
+two-entry fixture (one real play, one `null`) — the whole file returned
+`None` instead of the real play's actual coupling numbers. Fixed with a
+per-entry guard so one malformed item only skips itself.
+
+### New: `cli.py`, `findings.py`, `sarif_writer.py` — SARIF/PR-bot output layer
+Built out this round to give the pipeline a real front door onto arbitrary
+projects (not just `config.py`'s hardcoded fixture folder) and a
+PR-bot-ready output shape, not just the existing per-file reports. Full
+design rationale and what each of the three project-wide output layers is
+for now lives in `OUTPUT_FORMATS.md`. Highlights:
+- `output_dir_for()`'s collision-safe naming was verified against a real
+  collision, not a hypothetical one — two different roles' `tasks/main.yml`
+  files in the same real downloaded project.
+- The generated SARIF is validated against the actual downloaded OASIS
+  2.1.0 schema (`jsonschema.validate()`), not just eyeballed, including
+  the repo-relative-URI requirement GitHub Code Scanning needs.
+- The rule/severity catalog in `findings.py` is explicitly a stated,
+  provisional judgment call (security > correctness > style tiers), not
+  an empirically calibrated one — flagged for a future pass against the
+  project's own `Literature_review/` sources, the same way `thresholds.csv`
+  itself is flagged as needing calibration in `REFACTOR_PLAN.md`.
 
 ## Known issues / not yet fixed
 

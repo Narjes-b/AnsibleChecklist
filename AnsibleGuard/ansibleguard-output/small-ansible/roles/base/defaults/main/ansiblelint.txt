@@ -1,0 +1,19 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:
+
+
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/small-ansible/roles/base/defaults/main.yml:?

@@ -1,0 +1,18 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+No unnecessary dependencies found.
+
+
+### OVERRIDEN KEYS  ###.
+
+No duplicate keys found.
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+Tasks outside any play (Global):
+
+	Task:: ensure {{ansible_hostname}} is in the /etc/hosts file:
+	- inconsistent_naming_convention
+
+

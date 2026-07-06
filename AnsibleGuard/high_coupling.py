@@ -33,6 +33,15 @@ def high_coupling(file_path):
         num_roles = 0
 
         for play in playbook:
+            if not isinstance(play, dict):
+                # A malformed/blank list item (e.g. a stray "- " or "- null"
+                # in hand-edited YAML) shouldn't discard every other real
+                # play's coupling data via the outer except below. Confirmed
+                # this was a real, live gap: a single null entry caused the
+                # whole file to silently return None, losing all coupling
+                # data for the rest of the file.
+                continue
+
             if "import_playbook" in play:
                 num_imports += 1
 

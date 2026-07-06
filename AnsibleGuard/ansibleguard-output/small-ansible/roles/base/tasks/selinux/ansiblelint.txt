@@ -1,0 +1,6 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/small-ansible/roles/base/tasks/selinux.yml:
+
+
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.posix.selinux`. at ~/Documents/ansible-structure/small-ansible/roles/base/tasks/selinux.yml:?
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/ansible-structure/small-ansible/roles/base/tasks/selinux.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/small-ansible/roles/base/tasks/selinux.yml:?

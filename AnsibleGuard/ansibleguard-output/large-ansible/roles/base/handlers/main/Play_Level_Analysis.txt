@@ -1,0 +1,18 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+No unnecessary dependencies found.
+
+
+### OVERRIDEN KEYS  ###.
+
+No duplicate keys found.
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+Tasks outside any play (Global):
+
+	Task:: reset directory perms:
+	No IaC smell detected for this task.
+
+

@@ -1,53 +1,43 @@
-import yaml
 from detect_large_task import calculate_metrics_task
 
 
 def unnamed_tasks(file_path):
-    """try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            data = yaml.safe_load(f)
-    except (yaml.YAMLError, FileNotFoundError) as e:
-        print("Erreur lors de l'analyse du fichier YAML ou fichier non trouvé :", e)
-        return None"""
+    """
+    Returns (count, details) where details is a list of
+    {"task_name": "Unknown", "line": <real line or None>} dicts, one per
+    unnamed task -- mirrors credentials_leaking_in_log.py's (warnings,
+    count) pattern so downstream findings/SARIF output can point at the
+    real task, not just report a bare count.
 
-    unnamed_tasks = []
-    tasks = []
-    all_metrics, tasks = calculate_metrics_task(file_path)
-    # print("tasks:", tasks)
-    if not tasks:
+    BUG FIXED: this previously iterated `tasks` (== top_level_tasks from
+    calculate_metrics_task(), the RAW task dicts with no computed fields
+    at all) and checked `task.get("task_name")` -- a key that only exists
+    on the *computed* entries in `all_metrics`, never on a raw task dict.
+    Confirmed this meant unnamed_tasks() returned 0 for every file,
+    always, regardless of real content: a fixture with one genuinely
+    unnamed top-level task returned 0, not 1. Fixed by iterating
+    `all_metrics` (every task, correctly computed, including ones nested
+    inside real plays -- which top_level_tasks never covered anyway) and
+    checking the correct field.
+    """
+    all_metrics, top_level_tasks = calculate_metrics_task(file_path)
+
+    if not all_metrics:
         print("No tasks found in the file.")
-        return 0
-    for task in tasks:
-        # print("task:", task)
-        # for key, value in task.items():
-        # print(f"{key}: {value}")
-        task_name = task.get("task_name")
-        # print(f"Task: {task_name}")
-        if task_name == "Unknown":
-            unnamed_tasks.append(task)
-            # print(f"Unnamed task found: {task}")
-    ##counts only tasks under -tasks:
-    """ if isinstance(data, list):
-        for play_index, play in enumerate(data):
-            if isinstance(play, dict) and "tasks" in play:
-                for task_index, task in enumerate(play["tasks"]):
-                    task_name = task.get("name")
-                    print(f"Play {play_index}, Task {task_index}: {task_name}")
-                    if not isinstance(task_name, str) or not task_name.strip():
-                        unnamed_tasks.append((play_index, task_index, task)) """
+        return 0, []
 
-    # print("Unnamed tasks found:", len(unnamed_tasks))
-    return len(unnamed_tasks)
-    if unnamed_tasks:
-        return 1
-    else:
-        return 0
+    details = []
+    for task in all_metrics:
+        if task.get("task_name") == "Unknown":
+            details.append({"task_name": "Unknown", "line": task.get("line")})
+
+    return len(details), details
 
 
 # Tester la fonction
 if __name__ == "__main__":
     from config import TEST_PLAYBOOK
 
-    result = unnamed_tasks(TEST_PLAYBOOK)
-    if result is not None:
-        print(result)
+    result, details = unnamed_tasks(TEST_PLAYBOOK)
+    print(result, details)
+

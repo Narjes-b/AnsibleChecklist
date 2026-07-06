@@ -1,0 +1,5 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/small-ansible/roles/base/meta/main.yml:
+
+
+- ⚠️ schema[meta] - $.galaxy_info 'license' is a required property. See https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_reuse_roles.html#using-role-dependencies at ~/Documents/ansible-structure/small-ansible/roles/base/meta/main.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/small-ansible/roles/base/meta/main.yml:?

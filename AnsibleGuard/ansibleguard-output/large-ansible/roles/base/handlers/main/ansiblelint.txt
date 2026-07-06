@@ -1,0 +1,8 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:
+
+
+- ⚠️ command-instead-of-shell - Use shell only when shell functionality is required. at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (shell). at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ jinja[spacing] - Jinja2 spacing could be improved: restorecon -Rv {{item}} -> restorecon -Rv {{ item }} at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ no-changed-when - Commands should not change things if nothing needs doing. at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?

@@ -1,0 +1,4 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/small-ansible/test/integration/default/default.yml:
+
+
+- ⚠️ syntax-check[specific] - The role 'kitchen-ansible' was not found in: /home/aymmzn/Documents/ansible-structure/small-ansible/test/integration/default/roles:/home/aymmzn/Documents/ansible-structure/.ansible/roles:/home/aymmzn/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:/home/aymmzn/Documents/ansible-structure/small-ansible/test/integration/default at ~/Documents/ansible-structure/small-ansible/test/integration/default/default.yml:?

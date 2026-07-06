@@ -1,0 +1,4 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/large-ansible/roles/base/tests/test.yml:
+
+
+- ⚠️ syntax-check[specific] - The role 'base' was not found in: /home/aymmzn/Documents/ansible-structure/large-ansible/roles/base/tests/roles:/home/aymmzn/Documents/ansible-structure/.ansible/roles:/home/aymmzn/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:/home/aymmzn/Documents/ansible-structure/large-ansible/roles/base/tests at ~/Documents/ansible-structure/large-ansible/roles/base/tests/test.yml:?

@@ -1,0 +1,33 @@
+{
+    "playbook_metrics": {
+        "LOC_playbook": 3,
+        "num_plays": 0,
+        "avg_play_size": 0,
+        "num_nested_tasks_playbook": 0,
+        "avg_nested_task_playbook": 0,
+        "num_global_tasks_playbook": 0
+    },
+    "high_coupling_metrics": null,
+    "similarity": null,
+    "duplicated_code": 0,
+    "unecessary_set_fact": 0,
+    "overriding_facts": 0,
+    "unecessary_abstraction": 0,
+    "missing_files_extension": 0,
+    "unnamed_play": 0,
+    "unnamed_tasks": 0,
+    "overriden_keys": [],
+    "duplicate_task_names": 0,
+    "missing_bool_filters": 0,
+    "similarityPlays": 0,
+    "credentials_leaking_in_log": 0,
+    "unused_include_vars": 0,
+    "WarningUnusedIncludeVars": [],
+    "plays": [
+        {
+            "play_metrics": null,
+            "unnamed_play": null,
+            "task_metrics": []
+        }
+    ]
+}

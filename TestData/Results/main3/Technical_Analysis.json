@@ -12,13 +12,15 @@
         "Num_Roles": 0
     },
     "similarity": 0.8024798461369106,
-    "duplicated_code": 3,
+    "duplicated_code": 4,
     "unecessary_set_fact": 2,
     "overriding_facts": 2,
     "unecessary_abstraction": 4,
     "missing_files_extension": 8,
     "unnamed_play": 0,
+    "unnamed_play_details": [],
     "unnamed_tasks": 0,
+    "unnamed_tasks_details": [],
     "overriden_keys": [
         {
             "task_name": "Use a variable from the first included file",
@@ -98,6 +100,22 @@
     "missing_bool_filters": 3,
     "similarityPlays": 0,
     "credentials_leaking_in_log": 2,
+    "credentials_leaking_in_log_warnings": [
+        "Task 'Set AWS secret key (bad practice!)' handles a sensitive value but does not use no_log: true \u2014 secrets may leak in logs.",
+        "Task 'task8' handles a sensitive value but does not use no_log: true \u2014 secrets may leak in logs."
+    ],
+    "credentials_leaking_in_log_details": [
+        {
+            "task_name": "Set AWS secret key (bad practice!)",
+            "line": 41,
+            "message": "Task 'Set AWS secret key (bad practice!)' handles a sensitive value but does not use no_log: true \u2014 secrets may leak in logs."
+        },
+        {
+            "task_name": "task8",
+            "line": 83,
+            "message": "Task 'task8' handles a sensitive value but does not use no_log: true \u2014 secrets may leak in logs."
+        }
+    ],
     "unused_include_vars": 1,
     "WarningUnusedIncludeVars": [
         "Warning: Included vars file not found: /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/aalaesar/install_nextcloud/roles/install_nextcloud/vars/main.yml",
@@ -108,6 +126,7 @@
             "play_metrics": {
                 "play_id": 0,
                 "Play_name": "Example Playbook",
+                "line": 22,
                 "LOC_play": 11,
                 "num_tasks_in_play": 3,
                 "tasks_names": [
@@ -147,6 +166,7 @@
             "play_metrics": {
                 "play_id": 1,
                 "Play_name": "Example playbook with secret",
+                "line": 38,
                 "LOC_play": 6,
                 "num_tasks_in_play": 1,
                 "tasks_names": [
@@ -170,6 +190,7 @@
             "play_metrics": {
                 "play_id": 2,
                 "Play_name": "play1",
+                "line": 45,
                 "LOC_play": 23,
                 "num_tasks_in_play": 3,
                 "tasks_names": [
@@ -209,6 +230,7 @@
             "play_metrics": {
                 "play_id": 3,
                 "Play_name": "play2",
+                "line": 70,
                 "LOC_play": 11,
                 "num_tasks_in_play": 1,
                 "tasks_names": [

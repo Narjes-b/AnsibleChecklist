@@ -1,0 +1,4 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/large-ansible/roles/tomcat/defaults/main.yml:
+
+
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/tomcat/defaults/main.yml:?

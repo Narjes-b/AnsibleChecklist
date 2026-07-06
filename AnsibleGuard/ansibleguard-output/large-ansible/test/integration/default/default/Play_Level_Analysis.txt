@@ -1,0 +1,16 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+No unnecessary dependencies found.
+
+
+### OVERRIDEN KEYS  ###.
+
+No duplicate keys found.
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+Play:: wrapper playbook for kitchen testing:
+No IaC smell detected for this play.
+
+

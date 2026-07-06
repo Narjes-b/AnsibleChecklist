@@ -1,0 +1,6 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/large-ansible/roles/tomcat/meta/main.yml:
+
+
+- ⚠️ schema[meta] - $.galaxy_info.min_ansible_version 2.0 is not of type 'string'. See https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_reuse_roles.html#using-role-dependencies at ~/Documents/ansible-structure/large-ansible/roles/tomcat/meta/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/large-ansible/roles/tomcat/meta/main.yml:?
+- ⚠️ meta-incorrect - Should change default metadata: license at ~/Documents/ansible-structure/large-ansible/roles/tomcat/meta/main.yml:?

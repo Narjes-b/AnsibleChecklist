@@ -44,8 +44,12 @@ import yaml
 
 
 def mainn(yaml_file_path):
-    with open(yaml_file_path, "r", encoding="utf-8") as f:
-        playbook = yaml.safe_load(f)
+    try:
+        with open(yaml_file_path, "r", encoding="utf-8") as f:
+            playbook = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        print(f"Could not parse {yaml_file_path} as YAML: {e}")
+        return None
 
     is_task_only_playbook = isinstance(playbook, list) and all(
         isinstance(task, dict) and "hosts" not in task and "tasks" not in task
@@ -68,13 +72,15 @@ def mainn(yaml_file_path):
     unecessary_abst = unecessary_abs(yaml_file_path)
     similarityPlaybook = calculate_similarity(yaml_file_path)
     extension = extract_tasks_from_playbook(yaml_file_path)
-    unnamedPlay = unnamed_play(yaml_file_path)
-    unnamedTasks = unnamed_tasks(yaml_file_path)
+    unnamedPlay, unnamedPlayDetails = unnamed_play(yaml_file_path)
+    unnamedTasks, unnamedTasksDetails = unnamed_tasks(yaml_file_path)
     overridenKeys = detect_duplicate_keys_per_task(yaml_file_path)
     duplicate_task_names = repeated_task_names(yaml_file_path)
     missing_bool_filters = get_when_conditions(yaml_file_path)
     similarityPlays = calculate_similarity_plays(yaml_file_path)
-    warnings, nbLeaks = detect_credentials_leaking_in_log(yaml_file_path)
+    warnings, nbLeaks, credentialsLeakDetails = detect_credentials_leaking_in_log(
+        yaml_file_path
+    )
     unused_include_vars, WarningUnusedIncludeVars = detect_unused_include_vars(
         yaml_file_path, vars_folder=None
     )
@@ -89,12 +95,16 @@ def mainn(yaml_file_path):
         "unecessary_abstraction": unecessary_abst,
         "missing_files_extension": extension,
         "unnamed_play": unnamedPlay,
+        "unnamed_play_details": unnamedPlayDetails,
         "unnamed_tasks": unnamedTasks,
+        "unnamed_tasks_details": unnamedTasksDetails,
         "overriden_keys": overridenKeys,
         "duplicate_task_names": duplicate_task_names,
         "missing_bool_filters": missing_bool_filters,
         "similarityPlays": similarityPlays,
         "credentials_leaking_in_log": nbLeaks,
+        "credentials_leaking_in_log_warnings": warnings,
+        "credentials_leaking_in_log_details": credentialsLeakDetails,
         "unused_include_vars": unused_include_vars,
         "WarningUnusedIncludeVars": WarningUnusedIncludeVars,
         "plays": [],
@@ -110,11 +120,26 @@ def mainn(yaml_file_path):
                 tasks_by_play_id[play_id] = []
             tasks_by_play_id[play_id].append(task)
 
+        # detect_large_play.py substitutes the placeholder string "unknown"
+        # for Play_name when a play has no real name (so downstream display
+        # code always has something to show). Calling is_unnamed() on that
+        # already-substituted placeholder is wrong -- "unknown" is a
+        # non-empty string, so is_unnamed("unknown") always returns 0,
+        # silently masking every genuinely unnamed play. Confirmed this
+        # directly: a real hosts:-only play with no name: reported
+        # unnamed_play == 0. Use unnamedPlayDetails instead (built by
+        # unnamed_play.py from a fresh, correct check against the raw
+        # YAML, unaffected by this placeholder), matched by real line
+        # number, which unnamed_play.py's ruamel-based rewrite now provides.
+        unnamed_play_lines = {
+            d["line"] for d in unnamedPlayDetails if d.get("line") is not None
+        }
+
         for play in metrics_play["Plays"]:
             play_id = play.get("play_id")
             tasks_for_this_play = tasks_by_play_id.get(play_id, [])
 
-            is_unnamed_Play = is_unnamed(play.get("Play_name", None))
+            is_unnamed_Play = int(play.get("line") in unnamed_play_lines)
 
             play_entry = {
                 "play_metrics": play,

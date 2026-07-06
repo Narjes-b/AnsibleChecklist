@@ -1,0 +1,3 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/large-ansible/inventories/dev/group_vars/tomcat.yml:
+
+

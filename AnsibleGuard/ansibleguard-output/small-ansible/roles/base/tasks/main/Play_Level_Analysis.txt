@@ -1,0 +1,21 @@
+### UNECESSARY DEPENDENCIES  ###.
+
+No unnecessary dependencies found.
+
+
+### OVERRIDEN KEYS  ###.
+
+No duplicate keys found.
+
+### PLAY LEVEL IAC SMELLS  ###.
+
+
+Tasks outside any play (Global):
+
+	Task:: Unknown:
+	No IaC smell detected for this task.
+
+	Task:: Unknown:
+	No IaC smell detected for this task.
+
+

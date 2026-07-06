@@ -1,0 +1,19 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:
+
+
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (lineinfile). at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ jinja[spacing] - Jinja2 spacing could be improved: ^127\.0\.0\.1 {{ansible_hostname}} localhost -> ^127\.0\.0\.1 {{ ansible_hostname }} localhost at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ jinja[spacing] - Jinja2 spacing could be improved: ensure {{ansible_hostname}} is in the /etc/hosts file -> ensure {{ ansible_hostname }} is in the /etc/hosts file at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ name[template] - Jinja templates should only be at the end of 'name' at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ yaml[octal-values] - Forbidden implicit octal value "0644" at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ schema[tasks] - Replace 'include' with either 'ansible.builtin.include_tasks' or 'ansible.builtin.import_tasks'. See https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/include_module.html at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:?
+- ⚠️ deprecated-module - Deprecated module. include at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:?
+- ⚠️ deprecated-module - Deprecated module. include at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:?
+- ⚠️ name[missing] - All tasks should be named. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:?
+- ⚠️ name[missing] - All tasks should be named. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.posix.selinux`. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/selinux.yml:?
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/selinux.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/selinux.yml:?

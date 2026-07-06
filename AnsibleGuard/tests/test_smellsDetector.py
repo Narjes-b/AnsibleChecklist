@@ -3,7 +3,9 @@ from parser_playbook import mainn
 from smellsDetector import assess_code_smells, read_thresholds
 
 
-def test_per_task_counters_accumulate_across_plays_not_reset(fixtures_dir, tmp_path, monkeypatch):
+def test_per_task_counters_accumulate_across_plays_not_reset(
+    fixtures_dir, tmp_path, monkeypatch
+):
     """Regression test for a bug PROJECT_STATUS.md documented as open:
     large_task / long_task_name / inconsistent_naming_convention were
     claimed to reset to 0 at the top of each play's task loop, so the
@@ -29,7 +31,10 @@ def test_per_task_counters_accumulate_across_plays_not_reset(fixtures_dir, tmp_p
     thresholds = read_thresholds()
 
     txt_output = tmp_path / "Play_Level_Analysis.txt"
-    result, findings, lint_results = assess_code_smells(metrics, thresholds, txt_output)
+
+    result, findings, lint_results = assess_code_smells(
+        metrics, thresholds, txt_output, str(fixture)
+    )
 
     playbook_metrics = result["playbook"]["metrics"]
     assert playbook_metrics["large_task"] == 2, (

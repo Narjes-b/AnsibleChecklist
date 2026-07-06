@@ -1,0 +1,52 @@
+AnsibleLint analysis for playbook /home/aymmzn/Documents/ansible-structure/large-ansible/deploy.yml:
+
+
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/large-ansible/deploy.yml:?
+- ⚠️ yaml[indentation] - Wrong indentation: expected at least 3 at ~/Documents/ansible-structure/large-ansible/deploy.yml:?
+- ⚠️ name[play] - All plays should be named. at ~/Documents/ansible-structure/large-ansible/deploy.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/deploy.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/deploy.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/large-ansible/roles/base/defaults/main.yml:?
+- ⚠️ command-instead-of-shell - Use shell only when shell functionality is required. at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (shell). at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ jinja[spacing] - Jinja2 spacing could be improved: restorecon -Rv {{item}} -> restorecon -Rv {{ item }} at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ no-changed-when - Commands should not change things if nothing needs doing. at ~/Documents/ansible-structure/large-ansible/roles/base/handlers/main.yml:?
+- ⚠️ schema[meta] - $.galaxy_info 'license' is a required property. See https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_reuse_roles.html#using-role-dependencies at ~/Documents/ansible-structure/large-ansible/roles/base/meta/main.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/base/meta/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (lineinfile). at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ jinja[spacing] - Jinja2 spacing could be improved: ^127\.0\.0\.1 {{ansible_hostname}} localhost -> ^127\.0\.0\.1 {{ ansible_hostname }} localhost at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ jinja[spacing] - Jinja2 spacing could be improved: ensure {{ansible_hostname}} is in the /etc/hosts file -> ensure {{ ansible_hostname }} is in the /etc/hosts file at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ name[template] - Jinja templates should only be at the end of 'name' at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ yaml[octal-values] - Forbidden implicit octal value "0644" at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/hosts.yml:?
+- ⚠️ syntax-check[specific] - The 'ansible.builtin.include' action plugin has been removed. Use include_tasks or import_tasks instead. This feature was removed from ansible-core in a release after 2023-05-16. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.posix.selinux`. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/selinux.yml:?
+- ⚠️ literal-compare - Don't compare to literal True/False. at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/selinux.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/base/tasks/selinux.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/tomcat/defaults/main.yml:?
+- ⚠️ schema[meta] - $.galaxy_info.min_ansible_version 2.0 is not of type 'string'. See https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_reuse_roles.html#using-role-dependencies at ~/Documents/ansible-structure/large-ansible/roles/tomcat/meta/main.yml:?
+- ⚠️ yaml[trailing-spaces] - Trailing spaces at ~/Documents/ansible-structure/large-ansible/roles/tomcat/meta/main.yml:?
+- ⚠️ meta-incorrect - Should change default metadata: license at ~/Documents/ansible-structure/large-ansible/roles/tomcat/meta/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (package). at ~/Documents/ansible-structure/large-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/large-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/ansible-structure/large-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (service). at ~/Documents/ansible-structure/large-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ name[casing] - All names should start with an uppercase letter. at ~/Documents/ansible-structure/large-ansible/roles/tomcat/tasks/main.yml:?
+- ⚠️ yaml[new-line-at-end-of-file] - No new line character at the end of file at ~/Documents/ansible-structure/large-ansible/roles/tomcat/tasks/main.yml:?
