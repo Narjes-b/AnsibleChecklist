@@ -1,4 +1,4 @@
-from duplicate_code import duplicate_code
+from ansibleguard.detectors.duplicate_code import duplicate_code
 
 
 def test_duplicate_named_tasks_detected(fixtures_dir):

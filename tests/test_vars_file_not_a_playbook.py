@@ -1,5 +1,6 @@
 from parser_playbook import mainn
-from high_coupling import high_coupling
+
+from ansibleguard.detectors.high_coupling import high_coupling
 
 
 def test_mainn_handles_vars_file_gracefully(fixtures_dir):
@@ -12,7 +13,9 @@ def test_mainn_handles_vars_file_gracefully(fixtures_dir):
     fixture = fixtures_dir / "vars_file_not_a_playbook.yml"
     result = mainn(str(fixture))
     assert result["high_coupling_metrics"] is None
-    assert result["plays"] == [{"play_metrics": None, "unnamed_play": None, "task_metrics": []}]
+    assert result["plays"] == [
+        {"play_metrics": None, "unnamed_play": None, "task_metrics": []}
+    ]
 
 
 def test_high_coupling_returns_none_for_dict_shaped_yaml(fixtures_dir):

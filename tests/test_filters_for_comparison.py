@@ -1,4 +1,4 @@
-from filters_for_comparison import get_when_conditions
+from ansibleguard.detectors.filters_for_comparison import get_when_conditions
 
 
 def test_bare_boolean_when_does_not_crash(fixtures_dir):

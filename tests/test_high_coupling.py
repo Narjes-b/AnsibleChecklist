@@ -1,4 +1,4 @@
-from high_coupling import high_coupling
+from ansibleguard.detectors.high_coupling import high_coupling
 
 
 def test_singular_role_does_not_crash(fixtures_dir):

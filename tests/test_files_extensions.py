@@ -1,4 +1,4 @@
-from files_extensions import extract_tasks_from_playbook
+from ansibleguard.detectors.files_extensions import extract_tasks_from_playbook
 
 
 def test_missing_extension_nested_in_rescue_detected_once(fixtures_dir):

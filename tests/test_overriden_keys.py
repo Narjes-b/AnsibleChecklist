@@ -1,4 +1,4 @@
-from overriden_keys import detect_duplicate_keys_per_task
+from ansibleguard.detectors.overriden_keys import detect_duplicate_keys_per_task
 
 
 def test_cross_depth_name_not_a_false_positive(fixtures_dir):

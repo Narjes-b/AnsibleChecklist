@@ -1,4 +1,4 @@
-from unecessary_abs import unecessary_abs
+from ansibleguard.detectors.unnecessary_abs import unecessary_abs
 
 
 def test_empty_file_returns_zero_not_crash(fixtures_dir):
