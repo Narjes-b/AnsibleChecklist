@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ansibleguard"
+version = "0.1.0"
+description = "IaC smell detector for Ansible playbooks"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+ansibleguard = "ansibleguard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ansibleguard = ["thresholds.csv"]

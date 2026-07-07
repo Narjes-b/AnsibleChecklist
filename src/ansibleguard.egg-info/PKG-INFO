@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: ansibleguard
+Version: 0.1.0
+Summary: IaC smell detector for Ansible playbooks
+Requires-Python: >=3.10

@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+src/ansibleguard/__init__.py
+src/ansibleguard.egg-info/PKG-INFO
+src/ansibleguard.egg-info/SOURCES.txt
+src/ansibleguard.egg-info/dependency_links.txt
+src/ansibleguard.egg-info/entry_points.txt
+src/ansibleguard.egg-info/top_level.txt
