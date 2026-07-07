@@ -1,6 +1,5 @@
-from detect_large_playbook import calculate_metrics_playbook
-from detect_large_play import calculate_metrics_play
-
+from ansibleguard.detectors.detect_large_playbook import calculate_metrics_playbook
+from ansibleguard.detectors.detect_large_play import calculate_metrics_play
 from ansibleguard.detectors.large_task import calculate_metrics_task
 from ansibleguard.detectors.high_coupling import high_coupling
 from ansibleguard.detectors.duplicate_code import duplicate_code
@@ -21,17 +20,22 @@ from ansibleguard.detectors.unnamed_tasks import unnamed_tasks
 
 from ansibleguard.detectors.overriden_keys import detect_duplicate_keys_per_task
 from itertools import zip_longest
-from sem_cohesion import calculate_similarity
 
+from ansibleguard.detectors.sem_cohesion import calculate_similarity
 from ansibleguard.detectors.duplicate_task_names import repeated_task_names
 from ansibleguard.detectors.files_extensions import extract_tasks_from_playbook
-from incohesive_plays import calculate_similarity as calculate_similarity_plays
+
+from ansibleguard.detectors.incohesive_plays import (
+    calculate_similarity as calculate_similarity_plays,
+)
 
 # new
 from pathlib import Path
 
 from ansibleguard.detectors.filters_for_comparison import get_when_conditions
-from credentials_leaking_in_log import detect_credentials_leaking_in_log
+from ansibleguard.detectors.credentials_leaking_in_log import (
+    detect_credentials_leaking_in_log,
+)
 
 from ansibleguard.detectors.include_vars import detect_unused_include_vars
 import pandas as pd

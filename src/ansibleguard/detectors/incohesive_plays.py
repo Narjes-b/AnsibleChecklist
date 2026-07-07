@@ -1,6 +1,7 @@
 import csv
 import spacy
-from detect_large_play import calculate_metrics_play
+from .detect_large_play import calculate_metrics_play
+
 import yaml
 import pandas as pd
 from nltk.stem import WordNetLemmatizer
@@ -117,4 +118,3 @@ if __name__ == "__main__":
         print(f"Nombre de plays incohérents : {numincohesive}")
     else:
         print("Aucun play incohérent trouvé.")
-

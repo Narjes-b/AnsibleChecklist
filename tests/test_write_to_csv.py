@@ -1,5 +1,6 @@
 import csv
-from write_to_csv import write_results_to_csv
+
+from ansibleguard.report.csv_writer import write_results_to_csv
 
 
 def test_none_incohesive_playbook_writes_blank(tmp_path):

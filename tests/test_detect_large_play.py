@@ -1,4 +1,4 @@
-from detect_large_play import calculate_metrics_play
+from ansibleguard.detectors.detect_large_play import calculate_metrics_play
 
 
 def test_block_recursion_matches_detect_large_task(fixtures_dir):

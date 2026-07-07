@@ -1,4 +1,4 @@
-from Ansible_Lint import run_ansible_lint
+from ansibleguard.external.ansible_lint import run_ansible_lint
 
 
 def test_clean_playbook_returns_no_findings(fixtures_dir):

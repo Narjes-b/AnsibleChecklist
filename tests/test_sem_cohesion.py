@@ -1,7 +1,7 @@
 import tempfile
 import os
 import spacy
-import sem_cohesion
+from ansibleguard.detectors import sem_cohesion
 
 
 class FakeDoc:

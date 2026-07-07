@@ -1,4 +1,4 @@
-from detect_large_playbook import calculate_metrics_playbook
+from ansibleguard.detectors.detect_large_playbook import calculate_metrics_playbook
 
 
 def test_task_only_file_does_not_crash(fixtures_dir):

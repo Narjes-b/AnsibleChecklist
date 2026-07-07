@@ -1,4 +1,6 @@
-from credentials_leaking_in_log import detect_credentials_leaking_in_log
+from ansibleguard.detectors.credentials_leaking_in_log import (
+    detect_credentials_leaking_in_log,
+)
 
 
 def test_credential_in_normal_play_detected(fixtures_dir):

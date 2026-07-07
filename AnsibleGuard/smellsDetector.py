@@ -8,9 +8,14 @@ from write_to_text import write_unused_vars_to_txt
 from write_to_text import write_duplicates_to_txt
 from write_to_csv import write_results_to_csv
 from write_to_text import write_GitLeaks_results_to_txt
-from Ansible_Lint import run_ansible_lint
-from GitLeaks_hardcoded_credentials import scan_with_gitleaks_file_output
-from Install_Gitleaks import GITLEAKS_PATH
+
+from ansibleguard.external.ansible_lint import run_ansible_lint
+
+from ansibleguard.external.GitLeaks_hardcoded_credentials import (
+    scan_with_gitleaks_file_output,
+)
+
+from ansibleguard.external.Install_Gitleaks import GITLEAKS_PATH
 from config import (
     csvfile,
     textfile,
@@ -408,4 +413,3 @@ if __name__ == "__main__":
         formatted = format_ansible_lint_results(lint_results)
         write_AnsibleLint_results_to_txt(formatted, lint_output_file, yaml_file_path)
         write_GitLeaks_results_to_txt(findings, gitleaks_output_file)
-

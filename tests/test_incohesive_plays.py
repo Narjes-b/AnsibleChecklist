@@ -1,4 +1,4 @@
-from incohesive_plays import calculate_similarity
+from ansibleguard.detectors.incohesive_plays import calculate_similarity
 
 
 def test_nonenglish_task_names_not_falsely_incohesive(fixtures_dir):
