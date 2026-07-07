@@ -1,4 +1,4 @@
-from is_unamed import is_unnamed
+from ansibleguard.detectors.is_unnamed import is_unnamed
 
 
 def test_none_is_unnamed():

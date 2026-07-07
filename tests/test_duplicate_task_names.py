@@ -1,4 +1,4 @@
-from duplicate_task_Name import repeated_task_names
+from ansibleguard.detectors.duplicate_task_names import repeated_task_names
 
 
 def test_duplicate_names_detected(fixtures_dir):

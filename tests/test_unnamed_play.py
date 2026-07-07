@@ -1,4 +1,4 @@
-from unnamed_play import unnamed_play
+from ansibleguard.detectors.unnamed_play import unnamed_play
 
 
 def test_hosts_only_play_with_no_tasks_key_counted(fixtures_dir):

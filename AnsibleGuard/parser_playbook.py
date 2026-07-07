@@ -8,13 +8,16 @@ from duplicate_code import duplicate_code
 from set_fact import set_fact
 from overriding_facts import overriding_facts
 from unecessary_abs import unecessary_abs
-from unnamed_play import unnamed_play
-from is_unamed import is_unnamed
+
+from ansibleguard.detectors.unnamed_play import unnamed_play
+from ansibleguard.detectors.is_unnamed import is_unnamed
+
 from unnamed_tasks import unnamed_tasks
 from overriden_keys import detect_duplicate_keys_per_task
 from itertools import zip_longest
 from sem_cohesion import calculate_similarity
-from duplicate_task_Name import repeated_task_names
+
+from ansibleguard.detectors.duplicate_task_names import repeated_task_names
 from incohesive_plays import calculate_similarity as calculate_similarity_plays
 
 # new
