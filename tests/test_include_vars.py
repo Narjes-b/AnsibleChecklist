@@ -1,4 +1,4 @@
-from include_vars import detect_unused_include_vars
+from ansibleguard.detectors.include_vars import detect_unused_include_vars
 
 
 def test_non_list_yaml_returns_tuple_not_bare_int(fixtures_dir):

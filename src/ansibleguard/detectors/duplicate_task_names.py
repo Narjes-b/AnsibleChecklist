@@ -1,7 +1,7 @@
 import yaml
 from collections import Counter
 
-from detect_large_task import calculate_metrics_task
+from .large_task import calculate_metrics_task
 
 
 def repeated_task_names(file_path):

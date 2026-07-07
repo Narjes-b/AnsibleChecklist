@@ -1,4 +1,4 @@
-from detect_large_task import calculate_metrics_task
+from ansibleguard.detectors.large_task import calculate_metrics_task
 
 
 def test_vault_encrypted_file_does_not_crash(fixtures_dir):

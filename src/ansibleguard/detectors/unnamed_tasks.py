@@ -1,4 +1,4 @@
-from detect_large_task import calculate_metrics_task
+from .large_task import calculate_metrics_task
 
 
 def unnamed_tasks(file_path):
@@ -40,4 +40,3 @@ if __name__ == "__main__":
 
     result, details = unnamed_tasks(TEST_PLAYBOOK)
     print(result, details)
-

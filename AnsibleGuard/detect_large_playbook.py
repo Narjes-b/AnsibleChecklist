@@ -4,7 +4,8 @@ from ansiblemetrics.playbook.num_plays import NumPlays
 from ansiblemetrics.playbook.avg_play_size import AvgPlaySize
 from ansiblemetrics.playbook.avg_task_size import AvgTaskSize
 from ansiblemetrics.general.lines_comment import LinesComment
-from detect_large_task import calculate_metrics_task
+
+from ansibleguard.detectors.large_task import calculate_metrics_task
 from detect_large_play import calculate_metrics_play
 import pandas as pd
 
