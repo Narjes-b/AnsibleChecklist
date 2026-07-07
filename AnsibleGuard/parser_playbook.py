@@ -7,7 +7,8 @@ from duplicate_code import duplicate_code
 # from include_vars import detect_unnecessary_include_vars
 
 from ansibleguard.detectors.set_fact import set_fact
-from overriding_facts import overriding_facts
+
+from ansibleguard.detectors.overriding_facts import overriding_facts
 from unecessary_abs import unecessary_abs
 
 from ansibleguard.detectors.unnamed_play import unnamed_play

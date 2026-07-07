@@ -9,6 +9,7 @@ src/ansibleguard.egg-info/top_level.txt
 src/ansibleguard/detectors/__init__.py
 src/ansibleguard/detectors/duplicate_task_names.py
 src/ansibleguard/detectors/is_unnamed.py
+src/ansibleguard/detectors/overriding_facts.py
 src/ansibleguard/detectors/set_fact.py
 src/ansibleguard/detectors/unnamed_play.py
 tests/test_00_smoke.py

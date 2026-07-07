@@ -1,4 +1,4 @@
-from overriding_facts import overriding_facts
+from ansibleguard.detectors.overriding_facts import overriding_facts
 
 
 def test_conflicting_fact_values_detected(fixtures_dir):
