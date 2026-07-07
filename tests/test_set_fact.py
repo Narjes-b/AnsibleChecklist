@@ -1,4 +1,4 @@
-from set_fact import set_fact
+from ansibleguard.detectors.set_fact import set_fact
 
 
 def test_unused_fact_detected(fixtures_dir):
