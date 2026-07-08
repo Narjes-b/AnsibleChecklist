@@ -3,3 +3,16 @@ Name: ansibleguard
 Version: 0.1.0
 Summary: IaC smell detector for Ansible playbooks
 Requires-Python: >=3.10
+Requires-Dist: pyyaml
+Requires-Dist: ruamel.yaml==0.19.1
+Requires-Dist: regex
+Requires-Dist: pandas
+Requires-Dist: spacy
+Requires-Dist: nltk
+Requires-Dist: ansiblemetrics
+Requires-Dist: ansible-lint
+Requires-Dist: ansible-compat
+Requires-Dist: requests
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: jsonschema; extra == "dev"

@@ -17,8 +17,6 @@
 
 ## we adopt gotleaks that does the same job as Snyk but for Ansible playbooks detecting hardcoded credentials.
 
-from ..config import JSONfile, yaml_file_path, varsfiles_folder
-
 
 import subprocess
 import json
@@ -54,7 +52,7 @@ def scan_with_gitleaks_file_output(playbook_path, gitleaks_path):
         except FileNotFoundError:
             print(
                 f"[✗] Gitleaks binary not found at '{gitleaks_path}'. "
-                f"Run the installer (Install_Gitleaks.py) or check GITLEAKS_PATH in config.py."
+                f"Run the installer (ansibleguard.external.install_gitleaks) or check GITLEAKS_PATH in config.py."
             )
             return []
 
@@ -78,4 +76,3 @@ def scan_with_gitleaks_file_output(playbook_path, gitleaks_path):
 
 
 # if __name__ == "__main__":
-

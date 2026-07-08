@@ -13,11 +13,7 @@ from ansibleguard.report.text_writer import write_GitLeaks_results_to_txt
 
 from ansibleguard.external.ansible_lint import run_ansible_lint
 
-from ansibleguard.external.GitLeaks_hardcoded_credentials import (
-    scan_with_gitleaks_file_output,
-)
-
-from ansibleguard.external.Install_Gitleaks import GITLEAKS_PATH
+from .external.gitleaks import scan_with_gitleaks_file_output
 from .config import (
     csvfile,
     textfile,
@@ -30,6 +26,9 @@ from .config import (
 )
 
 from .config import THRESHOLDS_FILE
+from .external.install_gitleaks import GITLEAKS_PATH, ensure_gitleaks_installed
+
+ensure_gitleaks_installed()
 
 
 def read_thresholds():

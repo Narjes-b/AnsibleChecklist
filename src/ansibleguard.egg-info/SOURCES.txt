@@ -1,6 +1,7 @@
 README.md
 pyproject.toml
 src/ansibleguard/__init__.py
+src/ansibleguard/cli.py
 src/ansibleguard/config.py
 src/ansibleguard/parser.py
 src/ansibleguard/smells.py
@@ -9,6 +10,7 @@ src/ansibleguard.egg-info/PKG-INFO
 src/ansibleguard.egg-info/SOURCES.txt
 src/ansibleguard.egg-info/dependency_links.txt
 src/ansibleguard.egg-info/entry_points.txt
+src/ansibleguard.egg-info/requires.txt
 src/ansibleguard.egg-info/top_level.txt
 src/ansibleguard/detectors/__init__.py
 src/ansibleguard/detectors/credentials_leaking_in_log.py
@@ -30,10 +32,10 @@ src/ansibleguard/detectors/set_fact.py
 src/ansibleguard/detectors/unnamed_play.py
 src/ansibleguard/detectors/unnamed_tasks.py
 src/ansibleguard/detectors/unnecessary_abs.py
-src/ansibleguard/external/GitLeaks_hardcoded_credentials.py
-src/ansibleguard/external/Install_Gitleaks.py
 src/ansibleguard/external/__init__.py
 src/ansibleguard/external/ansible_lint.py
+src/ansibleguard/external/gitleaks.py
+src/ansibleguard/external/install_gitleaks.py
 src/ansibleguard/report/__init__.py
 src/ansibleguard/report/csv_writer.py
 src/ansibleguard/report/findings.py
@@ -52,6 +54,7 @@ tests/test_duplicate_code.py
 tests/test_duplicate_task_names.py
 tests/test_files_extensions.py
 tests/test_filters_for_comparison.py
+tests/test_findings.py
 tests/test_gitleaks_hardcoded_credentials.py
 tests/test_high_coupling.py
 tests/test_include_vars.py
@@ -61,6 +64,7 @@ tests/test_overriden_keys.py
 tests/test_overriding_facts.py
 tests/test_parser_playbook.py
 tests/test_parser_playbook_vault_crash.py
+tests/test_sarif_writer.py
 tests/test_sem_cohesion.py
 tests/test_set_fact.py
 tests/test_smellsDetector.py

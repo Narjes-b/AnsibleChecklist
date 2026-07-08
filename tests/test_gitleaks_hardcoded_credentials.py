@@ -1,6 +1,4 @@
-from ansibleguard.external.GitLeaks_hardcoded_credentials import (
-    scan_with_gitleaks_file_output,
-)
+from ansibleguard.external.gitleaks import scan_with_gitleaks_file_output
 
 
 def test_missing_gitleaks_binary_degrades_gracefully(fixtures_dir):

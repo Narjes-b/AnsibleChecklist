@@ -8,7 +8,8 @@ import json
 from pathlib import Path
 
 GITLEAKS_VERSION = "8.30.1"
-GITLEAKS_DIR = Path(__file__).parent / "gitleaks-bin"
+
+GITLEAKS_DIR = Path.home() / ".ansibleguard" / "gitleaks-bin"
 GITLEAKS_PATH = GITLEAKS_DIR / "gitleaks"
 
 
@@ -42,7 +43,7 @@ def get_gitleaks_download_url(version=GITLEAKS_VERSION):
 
 
 def download_and_install_gitleaks():
-    GITLEAKS_DIR.mkdir(exist_ok=True)
+    GITLEAKS_DIR.mkdir(parents=True, exist_ok=True)
     url, filename, ext = get_gitleaks_download_url()
 
     local_archive = GITLEAKS_DIR / filename

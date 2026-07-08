@@ -7,7 +7,24 @@ name = "ansibleguard"
 version = "0.1.0"
 description = "IaC smell detector for Ansible playbooks"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "pyyaml",
+    "ruamel.yaml==0.19.1",
+    "regex",
+    "pandas",
+    "spacy",
+    "nltk",
+    "ansiblemetrics",
+    "ansible-lint",
+    "ansible-compat",
+    "requests",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "jsonschema",
+]
 
 [project.scripts]
 ansibleguard = "ansibleguard.cli:main"

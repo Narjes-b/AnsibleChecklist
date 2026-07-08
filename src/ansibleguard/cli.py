@@ -91,7 +91,7 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
     from .report.findings import build_findings_list
     from .report.sarif_writer import write_sarif
 
-    from .report.findings import RULE_CATALO
+    from .report.findings import RULE_CATALOG
 
     target = Path(target)
     output_root = Path(output_root)
