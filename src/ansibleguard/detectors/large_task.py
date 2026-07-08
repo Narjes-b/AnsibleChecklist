@@ -166,7 +166,7 @@ def calculate_metrics_task(yaml_file_path):
 
 
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     metrics, top_level_tasks = calculate_metrics_task(TEST_PLAYBOOK)
     if metrics:

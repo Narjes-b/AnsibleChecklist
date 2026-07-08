@@ -52,7 +52,7 @@ def unnamed_play(file_path):
 
 # Tester la fonction
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     result, details = unnamed_play(TEST_PLAYBOOK)
     if result is not None:

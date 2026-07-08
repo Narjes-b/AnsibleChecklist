@@ -1,5 +1,5 @@
 from pathlib import Path
-from cli import collect_yaml_files
+from ansibleguard.cli import collect_yaml_files
 
 
 def test_single_file_target_returns_that_file(tmp_path):

@@ -1,4 +1,4 @@
-from smellsDetector import assess_code_smells, read_thresholds
+from ansibleguard.smells import assess_code_smells, read_thresholds
 
 
 def _make_metrics(task_special_chars, play_special_chars):
@@ -68,9 +68,9 @@ def test_play_level_special_chars_no_longer_crashes(tmp_path, monkeypatch):
     reproduced immediately on a realistic synthetic case. Confirmed
     against the real, unmodified assess_code_smells() before fixing."""
     monkeypatch.setattr(
-        "smellsDetector.scan_with_gitleaks_file_output", lambda *a, **kw: []
+        "ansibleguard.smells.scan_with_gitleaks_file_output", lambda *a, **kw: []
     )
-    monkeypatch.setattr("smellsDetector.run_ansible_lint", lambda *a, **kw: [])
+    monkeypatch.setattr("ansibleguard.smells.run_ansible_lint", lambda *a, **kw: [])
 
     thresholds = read_thresholds()
     txt_output = tmp_path / "Play_Level_Analysis.txt"
@@ -91,9 +91,9 @@ def test_play_level_special_chars_short_circuit_path_unaffected(tmp_path, monkey
     exceeds threshold, short-circuiting before the buggy line) must still
     correctly flag the smell after the fix -- no regression."""
     monkeypatch.setattr(
-        "smellsDetector.scan_with_gitleaks_file_output", lambda *a, **kw: []
+        "ansibleguard.smells.scan_with_gitleaks_file_output", lambda *a, **kw: []
     )
-    monkeypatch.setattr("smellsDetector.run_ansible_lint", lambda *a, **kw: [])
+    monkeypatch.setattr("ansibleguard.smells.run_ansible_lint", lambda *a, **kw: [])
 
     thresholds = read_thresholds()
     txt_output = tmp_path / "Play_Level_Analysis.txt"
@@ -107,9 +107,9 @@ def test_play_level_special_chars_clean_negative_case(tmp_path, monkeypatch):
     """Neither task nor play special_chars exceed threshold -> must not
     flag the smell, and must not crash."""
     monkeypatch.setattr(
-        "smellsDetector.scan_with_gitleaks_file_output", lambda *a, **kw: []
+        "ansibleguard.smells.scan_with_gitleaks_file_output", lambda *a, **kw: []
     )
-    monkeypatch.setattr("smellsDetector.run_ansible_lint", lambda *a, **kw: [])
+    monkeypatch.setattr("ansibleguard.smells.run_ansible_lint", lambda *a, **kw: [])
 
     thresholds = read_thresholds()
     txt_output = tmp_path / "Play_Level_Analysis.txt"

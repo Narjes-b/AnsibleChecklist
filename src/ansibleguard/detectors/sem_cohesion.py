@@ -128,7 +128,7 @@ def calculate_similarity(file_path):
 
 # Tester la fonction
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     average_similarity = calculate_similarity(str(TEST_PLAYBOOK))
 

@@ -184,7 +184,7 @@ def mainn(yaml_file_path):
 
 
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ansibleguard.config import TEST_PLAYBOOK
 
     metrics_playbook = mainn(TEST_PLAYBOOK)
     if metrics_playbook:

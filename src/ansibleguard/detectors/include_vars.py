@@ -3,8 +3,8 @@
 import yaml
 import os
 import re
-from config import varsfiles_folder
-from write_to_text import write_unused_vars_to_txt
+from ..config import varsfiles_folder
+from ansibleguard.report.text_writer import write_unused_vars_to_txt
 
 
 def detect_unused_include_vars(playbook_file, vars_folder=None):

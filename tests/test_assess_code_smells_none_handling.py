@@ -5,7 +5,7 @@ fixture all session, because our own fixtures never happened to combine
 "a non-playbook file" with "real, nonzero high_coupling data" at once."""
 
 import pytest
-from smellsDetector import assess_code_smells
+from ansibleguard.smells import assess_code_smells
 
 
 def _base_metrics(playbook_metrics=None, high_coupling_metrics=None, **overrides):
@@ -40,9 +40,9 @@ def test_none_playbook_metrics_does_not_crash(tmp_path, monkeypatch):
     returns for any non-playbook file (vars files, meta files, etc). This
     crashed on the very first playbook_metrics.get(...) call afterward."""
     monkeypatch.setattr(
-        "smellsDetector.scan_with_gitleaks_file_output", lambda *a, **k: []
+        "ansibleguard.smells.scan_with_gitleaks_file_output", lambda *a, **k: []
     )
-    monkeypatch.setattr("smellsDetector.run_ansible_lint", lambda *a, **k: [])
+    monkeypatch.setattr("ansibleguard.smells.run_ansible_lint", lambda *a, **k: [])
 
     metrics = _base_metrics(playbook_metrics=None, high_coupling_metrics=None)
     thresholds = {"LOC_playbook": 110, "num_plays": 4, "similarity": 0.4}
@@ -64,21 +64,28 @@ def test_high_coupling_reads_from_correct_dict(tmp_path, monkeypatch):
     regardless of real coupling data, for the whole session -- invisible
     because our main fixture happened to genuinely have zero imports/roles."""
     monkeypatch.setattr(
-        "smellsDetector.scan_with_gitleaks_file_output", lambda *a, **k: []
+        "ansibleguard.smells.scan_with_gitleaks_file_output", lambda *a, **k: []
     )
-    monkeypatch.setattr("smellsDetector.run_ansible_lint", lambda *a, **k: [])
+    monkeypatch.setattr("ansibleguard.smells.run_ansible_lint", lambda *a, **k: [])
 
     metrics = _base_metrics(
         playbook_metrics={
-            "LOC_playbook": 10, "num_plays": 1, "avg_play_size": 10,
-            "num_nested_tasks_playbook": 1, "avg_nested_task_playbook": 1,
+            "LOC_playbook": 10,
+            "num_plays": 1,
+            "avg_play_size": 10,
+            "num_nested_tasks_playbook": 1,
+            "avg_nested_task_playbook": 1,
             "num_global_tasks_playbook": 0,
         },
         high_coupling_metrics={"Num_Imports": 10, "Num_Roles": 10},
     )
     thresholds = {
-        "LOC_playbook": 110, "num_plays": 4, "avg_play_size": 50,
-        "num_tasks_playbook": 15, "Num_Imports": 4, "Num_Roles": 5,
+        "LOC_playbook": 110,
+        "num_plays": 4,
+        "avg_play_size": 50,
+        "num_tasks_playbook": 15,
+        "Num_Imports": 4,
+        "Num_Roles": 5,
         "similarity": 0.4,
     }
     txt_file = tmp_path / "out.txt"

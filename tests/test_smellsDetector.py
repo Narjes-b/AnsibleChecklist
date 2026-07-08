@@ -1,6 +1,6 @@
 from pathlib import Path
-from parser_playbook import mainn
-from smellsDetector import assess_code_smells, read_thresholds
+from ansibleguard.parser import mainn
+from ansibleguard.smells import assess_code_smells, read_thresholds
 
 
 def test_per_task_counters_accumulate_across_plays_not_reset(
@@ -22,9 +22,9 @@ def test_per_task_counters_accumulate_across_plays_not_reset(
     # we're testing the aggregation logic here, not those integrations,
     # which already have their own dedicated tests.
     monkeypatch.setattr(
-        "smellsDetector.scan_with_gitleaks_file_output", lambda *a, **kw: []
+        "ansibleguard.smells.scan_with_gitleaks_file_output", lambda *a, **kw: []
     )
-    monkeypatch.setattr("smellsDetector.run_ansible_lint", lambda *a, **kw: [])
+    monkeypatch.setattr("ansibleguard.smells.run_ansible_lint", lambda *a, **kw: [])
 
     fixture = fixtures_dir / "smells_two_plays_each_over_threshold.yml"
     metrics = mainn(str(fixture))

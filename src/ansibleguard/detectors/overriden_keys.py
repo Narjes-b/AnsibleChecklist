@@ -1,6 +1,6 @@
 from collections import defaultdict
 from ruamel.yaml import YAML
-from write_to_text import write_duplicates_to_txt
+from ansibleguard.report.text_writer import write_duplicates_to_txt
 
 
 def _collect_task_markers(node, markers):
@@ -106,7 +106,7 @@ def detect_duplicate_keys_per_task(yaml_file_path):
 
 # Usage example:
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     dupes = detect_duplicate_keys_per_task(str(TEST_PLAYBOOK))
     print(dupes)

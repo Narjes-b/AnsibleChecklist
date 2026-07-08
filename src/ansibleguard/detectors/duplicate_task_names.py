@@ -19,7 +19,7 @@ def repeated_task_names(file_path):
 
 
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     result = repeated_task_names(TEST_PLAYBOOK)
     print(result)

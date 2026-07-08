@@ -1,5 +1,5 @@
 import json
-from write_to_text import (
+from ansibleguard.report.text_writer import (
     write_GitLeaks_results_to_txt,
     write_unused_vars_to_txt,
     write_duplicates_to_txt,

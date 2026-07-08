@@ -9,7 +9,7 @@ github/codeql-action/upload-sarif in a CI workflow.
 import json
 from pathlib import Path
 
-from findings import RULE_CATALOG
+from .findings import RULE_CATALOG
 
 TOOL_NAME = "AnsibleGuard"
 TOOL_VERSION = "0.1.0"

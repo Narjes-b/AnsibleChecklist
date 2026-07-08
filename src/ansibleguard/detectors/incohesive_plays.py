@@ -6,7 +6,7 @@ import yaml
 import pandas as pd
 from nltk.stem import WordNetLemmatizer
 
-from config import THRESHOLDS_FILE
+from ..config import THRESHOLDS_FILE
 
 # Initialisation du lemmatiseur et du modèle Spacy
 lemmatizer = WordNetLemmatizer()

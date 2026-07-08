@@ -1,4 +1,4 @@
-from parser_playbook import mainn
+from ansibleguard.parser import mainn
 
 
 def test_mainn_handles_inline_vault_tag_gracefully(fixtures_dir):

@@ -192,7 +192,7 @@ def detect_credentials_leaking_in_log(yaml_file_path):
 # Tester la fonction
 # file_path = "/Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/projects/adriagalin/ansible.motd/tasks/main.yml"
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     warnings, nbLeaks, details = detect_credentials_leaking_in_log(TEST_PLAYBOOK)
     if warnings:

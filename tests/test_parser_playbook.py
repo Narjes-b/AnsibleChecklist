@@ -1,4 +1,4 @@
-from parser_playbook import mainn
+from ansibleguard.parser import mainn
 
 
 def test_mainn_pairs_each_play_with_its_own_tasks(fixtures_dir):

@@ -80,16 +80,18 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
     Returns (num_succeeded, num_files) so a caller (or a future PR bot) can
     tell at a glance whether anything failed without re-parsing print output.
     """
-    from smellsDetector import (
+    from .smells import (
         execute_for_single_file,
         format_ansible_lint_results,
     )
-    from write_to_text import (
+    from .report.text_writer import (
         write_AnsibleLint_results_to_txt,
         write_GitLeaks_results_to_txt,
     )
-    from findings import build_findings_list
-    from sarif_writer import write_sarif
+    from .report.findings import build_findings_list
+    from .report.sarif_writer import write_sarif
+
+    from .report.findings import RULE_CATALO
 
     target = Path(target)
     output_root = Path(output_root)
@@ -152,7 +154,7 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
 def _write_rollups(all_findings, summary_rows, output_root, scan_root):
     import csv
     import json as _json
-    from sarif_writer import write_sarif
+    from .report.sarif_writer import write_sarif
 
     # summary.csv -- one row per file, ranked worst-first, for "which files
     # actually need attention" at a glance instead of opening N CSVs by hand.
@@ -214,4 +216,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
-

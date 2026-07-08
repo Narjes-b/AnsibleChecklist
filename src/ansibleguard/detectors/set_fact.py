@@ -73,7 +73,7 @@ def set_fact(file_path):
 
 
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     result = set_fact(TEST_PLAYBOOK)
     if result is not None:

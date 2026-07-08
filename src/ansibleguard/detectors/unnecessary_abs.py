@@ -55,7 +55,7 @@ def unecessary_abs(file_path):
 
 # Tester la fonction
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     result = unecessary_abs(str(TEST_PLAYBOOK))
 

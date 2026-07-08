@@ -1,13 +1,15 @@
-from parser_playbook import mainn
+from .parser import mainn
 import json
 import csv
 import pandas as pd
-from write_to_text import write_results_to_txt
-from write_to_text import write_AnsibleLint_results_to_txt
-from write_to_text import write_unused_vars_to_txt
-from write_to_text import write_duplicates_to_txt
-from write_to_csv import write_results_to_csv
-from write_to_text import write_GitLeaks_results_to_txt
+from ansibleguard.report.text_writer import write_results_to_txt
+from ansibleguard.report.text_writer import write_AnsibleLint_results_to_txt
+from ansibleguard.report.text_writer import write_unused_vars_to_txt
+from ansibleguard.report.text_writer import write_duplicates_to_txt
+
+from ansibleguard.report.csv_writer import write_results_to_csv
+
+from ansibleguard.report.text_writer import write_GitLeaks_results_to_txt
 
 from ansibleguard.external.ansible_lint import run_ansible_lint
 
@@ -16,7 +18,7 @@ from ansibleguard.external.GitLeaks_hardcoded_credentials import (
 )
 
 from ansibleguard.external.Install_Gitleaks import GITLEAKS_PATH
-from config import (
+from .config import (
     csvfile,
     textfile,
     Ansiblelintfile,
@@ -27,7 +29,7 @@ from config import (
     RESULTS_DIR,
 )
 
-from config import THRESHOLDS_FILE
+from .config import THRESHOLDS_FILE
 
 
 def read_thresholds():

@@ -59,7 +59,7 @@ def overriding_facts(file_path):
 
 # Tester la fonction
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     result = overriding_facts(TEST_PLAYBOOK)
     if result is not None:

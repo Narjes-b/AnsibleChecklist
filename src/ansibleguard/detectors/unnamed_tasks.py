@@ -36,7 +36,7 @@ def unnamed_tasks(file_path):
 
 # Tester la fonction
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     result, details = unnamed_tasks(TEST_PLAYBOOK)
     print(result, details)

@@ -17,7 +17,7 @@
 
 ## we adopt gotleaks that does the same job as Snyk but for Ansible playbooks detecting hardcoded credentials.
 
-from config import JSONfile, yaml_file_path, varsfiles_folder
+from ..config import JSONfile, yaml_file_path, varsfiles_folder
 
 
 import subprocess

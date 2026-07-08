@@ -67,7 +67,7 @@ def calculate_metrics_playbook(yaml_file_path):
 # Tester la fonction
 
 if __name__ == "__main__":
-    from config import TEST_PLAYBOOK
+    from ..config import TEST_PLAYBOOK
 
     metrics = calculate_metrics_playbook(TEST_PLAYBOOK)
     if metrics:

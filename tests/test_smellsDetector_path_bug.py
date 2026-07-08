@@ -1,4 +1,4 @@
-from smellsDetector import assess_code_smells, read_thresholds
+from ansibleguard.smells import assess_code_smells, read_thresholds
 
 
 def test_assess_code_smells_uses_the_correct_file_path_for_external_tools(
@@ -26,8 +26,8 @@ def test_assess_code_smells_uses_the_correct_file_path_for_external_tools(
         calls["lint"].append(path)
         return []
 
-    monkeypatch.setattr("smellsDetector.scan_with_gitleaks_file_output", fake_gitleaks)
-    monkeypatch.setattr("smellsDetector.run_ansible_lint", fake_lint)
+    monkeypatch.setattr("ansibleguard.smells.scan_with_gitleaks_file_output", fake_gitleaks)
+    monkeypatch.setattr("ansibleguard.smells.run_ansible_lint", fake_lint)
 
     thresholds = read_thresholds()
 

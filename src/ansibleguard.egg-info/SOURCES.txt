@@ -1,6 +1,10 @@
 README.md
 pyproject.toml
 src/ansibleguard/__init__.py
+src/ansibleguard/config.py
+src/ansibleguard/parser.py
+src/ansibleguard/smells.py
+src/ansibleguard/thresholds.csv
 src/ansibleguard.egg-info/PKG-INFO
 src/ansibleguard.egg-info/SOURCES.txt
 src/ansibleguard.egg-info/dependency_links.txt
@@ -30,6 +34,11 @@ src/ansibleguard/external/GitLeaks_hardcoded_credentials.py
 src/ansibleguard/external/Install_Gitleaks.py
 src/ansibleguard/external/__init__.py
 src/ansibleguard/external/ansible_lint.py
+src/ansibleguard/report/__init__.py
+src/ansibleguard/report/csv_writer.py
+src/ansibleguard/report/findings.py
+src/ansibleguard/report/sarif_writer.py
+src/ansibleguard/report/text_writer.py
 tests/test_00_smoke.py
 tests/test_ansible_lint.py
 tests/test_assess_code_smells_none_handling.py

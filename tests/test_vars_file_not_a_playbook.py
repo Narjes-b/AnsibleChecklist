@@ -1,5 +1,4 @@
-from parser_playbook import mainn
-
+from ansibleguard.parser import mainn
 from ansibleguard.detectors.high_coupling import high_coupling
 
 
