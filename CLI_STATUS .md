@@ -7,6 +7,13 @@ the three project-wide output layers is for), and `REFACTOR_PLAN.md`
 This file answers: where are we on making this tool runnable against an
 arbitrary real project, not just our fixed `TestData/tasks/` folder.
 
+> **Note:** the packaging work this file tracked has since completed —
+> the project is now installed via `pip install -e .` with an `ansibleguard`
+> command (see `REFACTOR_PLAN.md`). File paths below have been updated to
+> the current `src/ansibleguard/...` locations; the bug narrative itself is
+> unchanged, since it describes real bugs found and fixed during this CLI
+> development work, before the later file-move refactor.
+
 ## Why this matters (the actual goal)
 
 The stated end goal is a GitHub PR-review bot: hardcoded rules (this
@@ -18,7 +25,7 @@ front door onto the exact pipeline already built and tested.
 
 ## What's built so far
 
-### `cli.py` — `collect_yaml_files()`
+### `ansibleguard/cli.py` — `collect_yaml_files()`
 Recursive file discovery (`rglob`, not the old `glob("*.yml")` which only
 ever found files in one flat folder). Excludes `molecule/`, `.github/`,
 `.git/`, `.venv/`, `venv/` — directories that contain real YAML but aren't
@@ -34,7 +41,7 @@ manually cross-checked against the real directory tree — exact match, zero
 
 ### The real bug this surfaced: `mainn()` had no top-level parse guard
 Running `parser_playbook.mainn()` directly against all 42 real files (not
-through `smellsDetector.py`, which has its own outer `try/except`) crashed
+through `smells.py`, which has its own outer `try/except`) crashed
 on 2 of them: `env_vars/dev.yml` and `env_vars/stage.yml`, both containing
 an inline `!vault |` tag on a variable — a common, real, recommended
 Ansible pattern for per-variable secrets.
@@ -42,7 +49,7 @@ Ansible pattern for per-variable secrets.
 Root cause: `mainn()`'s very first line,
 `playbook = yaml.safe_load(f)`, had **no try/except at all** — unlike
 every individual detector it calls, which each independently catch
-`yaml.YAMLError`. `smellsDetector.py`'s `execute_for_single_file()`
+`yaml.YAMLError`. `smells.py`'s `execute_for_single_file()`
 happened to catch this one level up in production, which is why it was
 never noticed before — but that's incidental protection from a *caller*,
 not `mainn()` protecting itself, and the CLI calls `mainn()` more directly.
@@ -59,7 +66,7 @@ the codebase. Confirmed fixed against the real files that crashed
 fix**: this is the first bug in the whole session that a hand-built
 fixture would have been unlikely to catch — we'd have had to specifically
 think to test "what if `mainn()`'s own parse fails, independent of
-`smellsDetector.py`'s outer safety net," which only became obvious once we
+`smells.py`'s outer safety net," which only became obvious once we
 were pointing the pipeline at real, messy, third-party data instead of
 fixtures we designed ourselves.
 
@@ -83,10 +90,10 @@ vars file, dict-shaped, must not crash `mainn()` or `high_coupling.py` —
 this is a genuinely different failure mode than the vault-string case
 tested earlier, which was a parsed *string*, not a real dict).
 
-### Two more real bugs found once `cli.py` and `smellsDetector.py` were wired together for a genuine end-to-end run
+### Two more real bugs found once `ansibleguard/cli.py` and `smells.py` were wired together for a genuine end-to-end run
 
 **Bug A — `assess_code_smells()`'s `playbook_metrics`/`high_coupling_metrics`
-None-vs-missing-key bug (same shape as the `write_to_csv.py` bug found
+None-vs-missing-key bug (same shape as the `report/csv_writer.py` bug found
 earlier, now confirmed twice more in one file).** `metrics.get("playbook_metrics", {})`
 only substitutes the default when the key is *missing*, not when it's
 present with value `None` — which is exactly what `mainn()` returns for
@@ -96,7 +103,7 @@ confirmed via isolated reproduction: `Num_Imports`/`Num_Roles` were being
 read from `playbook_metrics` in two places (the `complex_playbook` and
 `high_coupling` checks), but those keys **never exist there at all** —
 they live in a completely separate top-level dict, `high_coupling_metrics`,
-that `parser_playbook.py`'s `mainn()` builds from `high_coupling.py`'s real
+that `parser.py`'s `mainn()` builds from `high_coupling.py`'s real
 output. This meant `High Playbook Coupling` (and half of `Complex Playbook`'s
 conditions) had never actually fired correctly for *any* file, ever,
 regardless of real coupling data — invisible all session because
@@ -114,7 +121,7 @@ two new permanent pytest tests after
 **Bug B — `execute_for_single_file()` never checked whether `mainn()`
 returned `None` before handing it to `assess_code_smells()`.** Once Bug A's
 fix (and the earlier `mainn()` vault-tag fix) were in place, running the
-*full* `cli.py` → `execute_for_single_file()` → `assess_code_smells()`
+*full* `ansibleguard/cli.py` → `execute_for_single_file()` → `assess_code_smells()`
 chain against the real 42-file project still crashed on exactly the 2
 files containing an inline `!vault` tag — a **different** crash than
 before (`'NoneType' object has no attribute 'get'`, this time on the whole
@@ -140,16 +147,19 @@ coverage gap).
 
 ### Confirmed: full real end-to-end run, 42/42, through the actual CLI
 With both bugs above fixed, ran the genuine full pipeline exactly as a
-future PR bot would invoke it — `cli.py`'s `analyze_path()`, calling
+future PR bot would invoke it — `ansibleguard/cli.py`'s `analyze_path()`, calling
 `execute_for_single_file()` (which itself calls `mainn()` →
 `assess_code_smells()` → both external tools → both writers) against every
 file `collect_yaml_files()` found in the real 42-file project:
 
 ```bash
-python3 cli.py ~/Documents/ansible-structure -o /tmp/ansibleguard-test-output
+ansibleguard ~/Documents/ansible-structure -o /tmp/ansibleguard-test-output
 find /tmp/ansibleguard-test-output -name "IaC_Smells.csv" | wc -l
 # -> 42
 ```
+(Originally run pre-refactor as `python3 cli.py ~/Documents/ansible-structure
+-o /tmp/ansibleguard-test-output` — shown above as the equivalent
+post-refactor `ansibleguard` invocation, same underlying pipeline.)
 
 **42 out of 42 files produced a complete, real report** (`Technical_Analysis.json`,
 `IaC_Smells.csv`, `Play_Level_Analysis.txt`, `ansiblelint.txt`,
@@ -171,7 +181,7 @@ root-level playbook files), skipping `group_vars/`, `defaults/`, `vars/`,
 `meta/`, `requirements.yml` by convention, to reduce noise in the eventual
 report.
 
-**Decided against, for now.** The deciding factor: `GitLeaks_hardcoded_credentials.py`
+**Decided against, for now.** The deciding factor: `external/gitleaks.py`
 is a content scan, not a structure scan — real hardcoded secrets very
 commonly leak into exactly the files a convention-based filter would
 exclude (`group_vars/`, `defaults/`, `vars/` are extremely common places
@@ -202,34 +212,34 @@ bug (`play_special_chars` double-`.get()` crash — see `PROJECT_STATUS.md`),
 now fixed. Separately, built out the actual PR-bot-ready output shape this
 file's opening section names as the whole point of the CLI:
 
-- **`findings.py`** — flattens one file's analysis into
+- **`report/findings.py`** — flattens one file's analysis into
   `{file, line, rule_id, severity, message}` dicts. Rule/severity catalog
   is explicit and provisional (security > correctness > style), not
   empirically calibrated — same open item as `thresholds.csv` itself.
-- **`sarif_writer.py`** — serializes that flat list into a real SARIF
+- **`report/sarif_writer.py`** — serializes that flat list into a real SARIF
   2.1.0 document. **Validated against the actual downloaded OASIS
   schema** (`jsonschema.validate()`), not just eyeballed — this caught
   that the commonly-cited `$schema` URL
   (`oasis-tcs/sarif-spec/master/Schemata/...`) 404s now; the correct
   current path is `oasis-tcs/sarif-spec/main/sarif-2.1/schema/...`.
-- **`cli.py`'s `analyze_path()`** — now also accumulates a flat findings
+- **`ansibleguard/cli.py`'s `analyze_path()`** — now also accumulates a flat findings
   list and a per-file summary row across the whole run, writing
   `summary.csv`, `findings.json`, and `findings.sarif` once at the end,
   purely additive alongside every existing per-file report. See
   `OUTPUT_FORMATS.md` for what each of the three output layers is for.
 
 **Real per-line location data** was also added this round —
-`detect_large_task.py`, `detect_large_play.py`, `unnamed_play.py`,
-`unnamed_tasks.py`, and `credentials_leaking_in_log.py` all rewritten with
+`detectors/large_task.py`, `detectors/large_play.py`, `detectors/unnamed_play.py`,
+`detectors/unnamed_tasks.py`, and `detectors/credentials_in_log.py` all rewritten with
 `ruamel.yaml` for real source line numbers (previously only
-`overriden_keys.py` had this). Two silent-drift risks caught and fixed
+`detectors/overridden_keys.py` had this). Two silent-drift risks caught and fixed
 before shipping (see `PROJECT_STATUS.md` for detail) — this is directly
 what makes SARIF annotations point at the right line instead of always
 landing on line 1 of the file.
 
 **Two more real bugs found doing that line-tracking work, unrelated to
 line numbers**: `unnamed_tasks()` iterated the wrong list and always
-returned `0`, for every file, always; `parser_playbook.py`'s per-play
+returned `0`, for every file, always; `parser.py`'s per-play
 "unnamed" count was silently undercounted by a placeholder-string
 collision with `is_unnamed()`. Both confirmed and fixed — see
 `PROJECT_STATUS.md`.
@@ -251,15 +261,15 @@ collision with `is_unnamed()`. Both confirmed and fixed — see
   correctly produced its own output directory distinct from
   `small-ansible/roles/tomcat/defaults/main.yml`'s) — no longer just a
   sketch.
-- No pytest coverage yet for `findings.py`/`sarif_writer.py` themselves —
+- No pytest coverage yet for `report/findings.py`/`report/sarif_writer.py` themselves —
   verified this round via direct manual testing (including real SARIF
   schema validation) but not yet locked in as permanent regression tests
   the way everything else in `tests/` is.
 - Given how many real bugs this exact "run it against real third-party
   data" process has now found (2 in `mainn()`/`execute_for_single_file()`,
   1 more in `assess_code_smells()`'s `play_special_chars` check, 2 more
-  in `unnamed_tasks()`/`unnamed_play.py`, on top of the 4 found earlier
-  this session in `credentials_leaking_in_log.py`/`overriden_keys.py`/
+  in `unnamed_tasks()`/`detectors/unnamed_play.py`, on top of the 4 found earlier
+  this session in `detectors/credentials_in_log.py`/`detectors/overridden_keys.py`/
   etc.), a **third** real project (ideally one with more variety than a
   Vagrant/Tomcat two-role demo — something with real `roles:`
   dependencies, real `import_playbook`/`import_tasks` usage, and genuine
@@ -275,9 +285,9 @@ Two real options, both reasonable:
    nonzero coupling data for the first time, which this project's
    fixtures never had — now also the first real test of the SARIF/
    findings.json output at real scale, not just synthetic fixtures.
-2. ~~Systematic audit of `smellsDetector.py`'s remaining `.get(key, default)`
+2. ~~Systematic audit of `smells.py`'s remaining `.get(key, default)`
    calls~~ — done this round, found the `play_special_chars` bug (#4 in
    this exact hazard class); consider this category closed unless a
    future real-project run reveals another instance.
-3. Write permanent pytest coverage for `findings.py`/`sarif_writer.py`
+3. Write permanent pytest coverage for `report/findings.py`/`report/sarif_writer.py`
    (currently only manually verified) before relying on them further.

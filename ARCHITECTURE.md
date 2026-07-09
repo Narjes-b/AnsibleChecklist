@@ -7,102 +7,136 @@ what, what still needs eyes on it, and how to verify the whole project end
 to end. For the forward-looking packaging/refactoring plan, see
 `REFACTOR_PLAN.md`.
 
-## Entry point and call graph
+## Entry point and call graph — UPDATED, package refactor complete
+
+The project is now installed as `ansibleguard` (`src/ansibleguard/`, see
+`REFACTOR_PLAN.md` for the full move log). Every flat-file module named
+below has moved into the package; the box on the left of each line is the
+**old** flat name for continuity with earlier debugging history, the arrow
+shows where it lives now.
 
 ```
-smellsDetector.py  (run this — batch mode against config.py's fixed folder)
+ansibleguard.cli   (run via the installed `ansibleguard` command — arbitrary
+                    target path/directory, real project use; this is now the
+                    documented entry point, superseding the old batch script)
   │
-  ├── config.py                     # all paths — read first if anything can't find a file
+  ├── config.py               → ansibleguard/config.py            # all paths
   │
-  ├── parser_playbook.py            # orchestrates ONE playbook's full analysis
-  │     │
-  │     ├── detect_large_playbook.py
-  │     │     ├── detect_large_task.py   (calculate_metrics_task)
-  │     │     └── detect_large_play.py   (calculate_metrics_play)
-  │     │
-  │     ├── detect_large_play.py         (calculate_metrics_play)
-  │     ├── detect_large_task.py         (calculate_metrics_task)
-  │     ├── high_coupling.py
-  │     ├── duplicate_code.py
-  │     ├── set_fact.py
-  │     ├── overriding_facts.py
-  │     ├── unecessary_abs.py
-  │     ├── unnamed_play.py
-  │     ├── is_unamed.py
-  │     ├── unnamed_tasks.py             (→ detect_large_task.py)
-  │     ├── overriden_keys.py            (→ write_to_text.write_duplicates_to_txt)
-  │     ├── sem_cohesion.py              (playbook-level similarity, spacy)
-  │     ├── incohesive_plays.py          (play-level similarity, spacy)
-  │     │     └── detect_large_play.py
-  │     ├── duplicate_task_Name.py       (→ detect_large_task.py)
-  │     ├── files_extensions.py
-  │     ├── filters_for_comparison.py
-  │     ├── credentials_leaking_in_log.py (→ detect_large_task.py)
-  │     └── include_vars.py              (→ write_to_text.write_unused_vars_to_txt)
-  │
-  ├── assess_code_smells()  [inside smellsDetector.py itself]
-  │     — takes parser_playbook's raw metrics + thresholds.csv,
-  │       decides which smells actually fire (large_play, complex_playbook, etc.)
-  │     ├── GitLeaks_hardcoded_credentials.py  (→ Install_Gitleaks.py for the binary)
-  │     └── Ansible_Lint.py
-  │
-  └── write_to_csv.py / write_to_text.py   — final per-file report output
-
-cli.py  (run this instead — arbitrary target path/directory, real project use)
-  │
-  ├── collect_yaml_files()          # recursive discovery, excludes molecule/.git/.venv/etc.
-  ├── output_dir_for()              # collision-safe output path per file (mirrors relative structure)
+  ├── collect_yaml_files()    # recursive discovery, excludes molecule/.git/.venv/etc.
+  ├── output_dir_for()        # collision-safe output path per file (mirrors relative structure)
   ├── analyze_path()
-  │     ├── smellsDetector.execute_for_single_file()  — same pipeline as above, per file
-  │     ├── findings.build_findings_list()  — flattens one file's (metrics, result,
+  │     ├── smells.execute_for_single_file()   [ansibleguard/smells.py, was smellsDetector.py]
+  │     │     — same pipeline as before, per file:
+  │     │     │
+  │     │     ├── parser.py            → ansibleguard/parser.py [was parser_playbook.py]
+  │     │     │     │  # orchestrates ONE playbook's full analysis
+  │     │     │     ├── detectors/large_playbook.py    [was detect_large_playbook.py]
+  │     │     │     │     ├── detectors/large_task.py  (calculate_metrics_task)
+  │     │     │     │     └── detectors/large_play.py  (calculate_metrics_play)
+  │     │     │     ├── detectors/large_play.py         (calculate_metrics_play)
+  │     │     │     ├── detectors/large_task.py         (calculate_metrics_task)
+  │     │     │     ├── detectors/high_coupling.py
+  │     │     │     ├── detectors/duplicate_code.py
+  │     │     │     ├── detectors/set_fact.py
+  │     │     │     ├── detectors/overriding_facts.py
+  │     │     │     ├── detectors/unnecessary_abstraction.py  [was unecessary_abs.py]
+  │     │     │     ├── detectors/unnamed_play.py
+  │     │     │     ├── detectors/is_unnamed.py               [was is_unamed.py — typo fixed]
+  │     │     │     ├── detectors/unnamed_tasks.py             (→ .large_task)
+  │     │     │     ├── detectors/overridden_keys.py           [was overriden_keys.py — typo fixed]
+  │     │     │     │     (→ ansibleguard.report.text_writer.write_duplicates_to_txt)
+  │     │     │     ├── detectors/semantic_cohesion.py         [was sem_cohesion.py]
+  │     │     │     ├── detectors/incohesive_plays.py
+  │     │     │     │     └── detectors/large_play.py
+  │     │     │     ├── detectors/duplicate_task_names.py      [was duplicate_task_Name.py]
+  │     │     │     │     (→ .large_task)
+  │     │     │     ├── detectors/file_extensions.py           [was files_extensions.py]
+  │     │     │     ├── detectors/bool_filters.py              [was filters_for_comparison.py]
+  │     │     │     ├── detectors/credentials_in_log.py        [was credentials_leaking_in_log.py]
+  │     │     │     └── detectors/include_vars.py
+  │     │     │           (→ ansibleguard.report.text_writer.write_unused_vars_to_txt)
+  │     │     │
+  │     │     ├── smells.assess_code_smells()  [inside smells.py itself]
+  │     │     │     — takes parser's raw metrics + thresholds.csv,
+  │     │     │       decides which smells actually fire (large_play, complex_playbook, etc.)
+  │     │     │     ├── external/gitleaks.py       [was GitLeaks_hardcoded_credentials.py]
+  │     │     │     │     (→ external/install_gitleaks.py for the binary)
+  │     │     │     └── external/ansible_lint.py   [was Ansible_Lint.py]
+  │     │     │
+  │     │     └── report/csv_writer.py / report/text_writer.py
+  │     │           [was write_to_csv.py / write_to_text.py] — final per-file report output
+  │     │
+  │     ├── report/findings.py.build_findings_list()  — flattens one file's (metrics, result,
   │     │     gitleaks findings, lint results) into {file, line, rule_id, severity, message}
   │     └── _write_rollups() — accumulates every file's findings + a per-file
   │           summary row, writes THREE project-wide files once at the end:
-  │           summary.csv, findings.json, findings.sarif (via sarif_writer.py)
+  │           summary.csv, findings.json, findings.sarif (via report/sarif_writer.py)
   │
-  └── sarif_writer.py                # findings.py's flat list → real SARIF 2.1.0 document,
-                                      # validated against the actual OASIS schema
+  └── report/sarif_writer.py     # findings.py's flat list → real SARIF 2.1.0 document,
+                                  # validated against the actual OASIS schema
 ```
 
 See `OUTPUT_FORMATS.md` for what each of the three project-wide output layers
 (per-file reports, `summary.csv`, `findings.json`/`findings.sarif`) is
 actually for and when to use which.
 
-**Not in the call graph at all** (nothing imports them):
-- `parser_playbook_mod.py` — an older/alternate version of `parser_playbook.py`
-  with its own CSV-writing logic. Diverged fork, not used by `smellsDetector.py`.
+Every arrow between sibling modules inside the same subpackage
+(`detectors/`, `external/`, `report/`) is now a real relative import
+(`from .large_task import ...`); every arrow crossing from `detectors/` or
+`external/` or `report/` up to `config.py` is `from ..config import ...`.
+Nothing in the live pipeline resolves via bare, `cd`-dependent imports
+anymore — confirmed by grepping the whole package for any import not
+prefixed with `.` or `ansibleguard`, which now returns nothing.
+
+**Not in the call graph at all** (nothing imports them — these stayed
+behind in the old flat `AnsibleGuard/` folder and were never moved into
+`src/ansibleguard/`; their fate is still Known Issue #4 in
+`PROJECT_STATUS.md` — delete vs. keep):
+- `parser_playbook_mod.py` — an older/alternate version of `parser.py`'s
+  predecessor with its own CSV-writing logic. Diverged fork, not used.
 - `parser_playbook.ipynb` — notebook version, same idea, not used by any script.
-- `GeneralsmellsDetector.py` — stale fork of `smellsDetector.py` (see
-  `PROJECT_STATUS.md` Known Issue #7).
+- `GeneralsmellsDetector.py` — stale fork of `smells.py`'s predecessor (see
+  `PROJECT_STATUS.md` Known Issue #4).
 - `exceptions.py` — empty, unused.
 
-If you're editing detection logic, **`parser_playbook.py` +
-`detect_large_*.py` + `smellsDetector.py` is the real, live pipeline.** The
-`_mod`/`.ipynb`/`General*` files are not — changes there won't affect
-`smellsDetector.py`'s output.
+If you're editing detection logic, **`ansibleguard/parser.py` +
+`ansibleguard/detectors/large_*.py` + `ansibleguard/smells.py` is the real,
+live pipeline.** The `_mod`/`.ipynb`/`General*` files are not — changes
+there won't affect `ansibleguard`'s output, and they aren't part of the
+installed package at all.
 
 ## Data flow in one sentence per stage
-1. `detect_large_task.py` / `detect_large_play.py` / `detect_large_playbook.py`
-   read the YAML and produce **raw counts** (LOC, task counts, names) — no
-   threshold logic here, just measurement.
-2. `parser_playbook.py`'s `mainn()` calls all the raw-metric functions above
-   plus every other detector (`set_fact.py`, `overriding_facts.py`, etc.) and
+1. `detectors/large_task.py` / `detectors/large_play.py` /
+   `detectors/large_playbook.py` (was `detect_large_task.py` /
+   `detect_large_play.py` / `detect_large_playbook.py`) read the YAML and
+   produce **raw counts** (LOC, task counts, names) — no threshold logic
+   here, just measurement.
+2. `parser.py`'s `mainn()` (was `parser_playbook.py`) calls all the
+   raw-metric functions above plus every other detector
+   (`detectors/set_fact.py`, `detectors/overriding_facts.py`, etc.) and
    assembles one big `main_metrics` dict per playbook — still no
    pass/fail decisions.
-3. `smellsDetector.py`'s `assess_code_smells()` takes that dict, loads
-   `thresholds.csv`, and decides which smells actually fire (that's where
-   `is_large_play`, `complex_playbook`, etc. get computed).
-4. `write_to_csv.py` / `write_to_text.py` render the final decision dict to
-   disk.
+3. `smells.py`'s `assess_code_smells()` (was `smellsDetector.py`) takes that
+   dict, loads `thresholds.csv`, and decides which smells actually fire
+   (that's where `is_large_play`, `complex_playbook`, etc. get computed).
+4. `report/csv_writer.py` / `report/text_writer.py` (was `write_to_csv.py` /
+   `write_to_text.py`) render the final decision dict to disk.
 
 This matters for debugging: if a number looks wrong, check
 `Technical_Analysis.json` first (that's stage 2's raw output, before any
 threshold logic) — if the raw number is already wrong, the bug is in a
-`detect_large_*.py` file. If the raw number is right but the CSV's smell flag
-is wrong, the bug is in `smellsDetector.py`'s threshold logic instead. This is
-exactly how we found the `detect_large_task.py` play-numbering bug.
+`detectors/large_*.py` file. If the raw number is right but the CSV's smell
+flag is wrong, the bug is in `smells.py`'s threshold logic instead. This is
+exactly how we found the original `detect_large_task.py` play-numbering bug,
+before it was renamed/moved.
 
 ## Files touched and fix status
+
+> **Note:** this table is a historical bug log from the debugging pass and
+> intentionally uses the **old, pre-refactor flat filenames**
+> (`detect_large_task.py`, `write_to_csv.py`, etc.) since that's what the
+> bugs were found and fixed against at the time. See the call graph above
+> for the current `src/ansibleguard/...` location of every file listed here.
 
 | File | Status |
 |---|---|
@@ -225,53 +259,72 @@ real fixture files) — the pytest suite is more precise for verifying
 individual bug fixes, but doesn't yet replace an actual end-to-end run of
 the real entry point.
 
-## How to test the *whole* project, start to finish
+## How to test the *whole* project, start to finish — UPDATED for the package
 
 This is the full regression check — run it after any change, not just the
 file you touched, since the pipeline is tightly coupled (we've seen bugs in
-one file silently corrupt another file's output more than once).
+one file silently corrupt another file's output more than once). Commands
+below reflect the post-refactor package (`pip install -e .`, `ansibleguard`
+CLI) — none of this requires `cd`-ing into any particular subfolder anymore.
 
 ### 1. Environment sanity
 ```bash
-cd ~/Documents/AnsibleChecklist/AnsibleGuard
-python -c "from config import TEST_PLAYBOOK, THRESHOLDS_FILE, yaml_files_folder, RESULTS_DIR; print(TEST_PLAYBOOK.exists(), THRESHOLDS_FILE.exists(), yaml_files_folder.exists(), RESULTS_DIR.exists())"
-# expect: True True True True
+cd ~/Documents/AnsibleChecklist   # repo root — any directory actually works, this is just convenient
+pip install -e .
+python -c "from ansibleguard.config import THRESHOLDS_FILE; print(THRESHOLDS_FILE.exists())"
+# expect: True
 ./gitleaks-bin/gitleaks version
 # expect: a version string, not an error
 ```
 
 ### 2. Import check — every module, no crashes
 ```bash
-for f in detect_large_task detect_large_play detect_large_playbook \
-         duplicate_task_Name credentials_leaking_in_log unnamed_tasks \
-         unnamed_play set_fact overriding_facts incohesive_plays \
-         parser_playbook smellsDetector is_unamed high_coupling \
-         duplicate_code files_extensions filters_for_comparison \
-         overriden_keys include_vars unecessary_abs sem_cohesion \
-         write_to_csv write_to_text Ansible_Lint Install_Gitleaks; do
+for f in ansibleguard.detectors.large_task ansibleguard.detectors.large_play \
+         ansibleguard.detectors.large_playbook ansibleguard.detectors.duplicate_task_names \
+         ansibleguard.detectors.credentials_in_log ansibleguard.detectors.unnamed_tasks \
+         ansibleguard.detectors.unnamed_play ansibleguard.detectors.set_fact \
+         ansibleguard.detectors.overriding_facts ansibleguard.detectors.incohesive_plays \
+         ansibleguard.parser ansibleguard.smells ansibleguard.detectors.is_unnamed \
+         ansibleguard.detectors.high_coupling ansibleguard.detectors.duplicate_code \
+         ansibleguard.detectors.file_extensions ansibleguard.detectors.bool_filters \
+         ansibleguard.detectors.overridden_keys ansibleguard.detectors.include_vars \
+         ansibleguard.detectors.unnecessary_abstraction ansibleguard.detectors.semantic_cohesion \
+         ansibleguard.report.csv_writer ansibleguard.report.text_writer \
+         ansibleguard.external.ansible_lint ansibleguard.external.install_gitleaks \
+         ansibleguard.cli; do
   echo -n "$f: "
   python -c "import $f" 2>&1 | tail -1 || echo "OK"
 done
 ```
-Anything other than a blank "OK" line means that file has a crash-on-import
-bug we haven't caught yet.
+Anything other than a blank "OK" line means that module has a crash-on-import
+bug we haven't caught yet. This should also work from **any** directory, not
+just the repo root — worth confirming with `cd /tmp` once, since "resolves
+from anywhere" is the entire point of the refactor.
 
 ### 3. Full pipeline run
 ```bash
-python smellsDetector.py
+ansibleguard ~/Documents/AnsibleChecklist/TestData/tasks -o /tmp/ansibleguard-check
 ```
-Should process all files in `TestData/tasks/` with no traceback, print
-`[✔] Results are saved to ...` for each, and produce a
-`TestData/Results/<file_stem>/` folder per file with all 5 output files
-(`IaC_Smells.csv`, `Play_Level_Analysis.txt`, `Technical_Analysis.json`,
-`ansiblelint.txt`, `gitleaks.txt`).
+Should process every file with no traceback, print a per-file confirmation,
+and produce a `/tmp/ansibleguard-check/<file_stem>/` folder per file with all
+5 output files (`IaC_Smells.csv`, `Play_Level_Analysis.txt`,
+`Technical_Analysis.json`, `ansiblelint.txt`, `gitleaks.txt`), plus the three
+project-wide rollups (`summary.csv`, `findings.json`, `findings.sarif`) once
+at the end.
+
+Also worth re-running the real-world proof from the refactor itself:
+```bash
+ansibleguard ~/Documents/ansible-structure -o /tmp/ansibleguard-final-check
+find /tmp/ansibleguard-final-check -name "IaC_Smells.csv" | wc -l
+# expect: 42
+```
 
 ### 4. Data-correctness spot check (the part import/crash tests can't catch)
 Always check `main3.yml`'s output — it's the richest fixture (real plays,
 top-level block-tasks, duplicate keys, unused include_vars, a hardcoded
 secret):
 ```bash
-cat TestData/Results/main3/Technical_Analysis.json
+cat /tmp/ansibleguard-check/main3/Technical_Analysis.json
 ```
 Confirm, by reading the actual `main3.yml` alongside it:
 - Each play's `task_metrics` list contains tasks that actually belong to
@@ -282,7 +335,7 @@ Confirm, by reading the actual `main3.yml` alongside it:
 
 Then:
 ```bash
-cat TestData/Results/main3/IaC_Smells.csv
+cat /tmp/ansibleguard-check/main3/IaC_Smells.csv
 ```
 Cross-check a couple of columns by hand against `thresholds.csv` and the raw
 JSON — e.g. does `Large Play` actually match how many plays in the JSON have
@@ -292,39 +345,41 @@ That's the difference between the "doesn't crash" bugs (caught by step 2) and
 the "produces wrong data silently" bugs (only caught this way) — we found
 four of the latter kind so far, and they were the most damaging ones.
 
-### 5. Isolated fixture tests (for specific detectors)
-Useful when you've changed one detector and want a fast, controlled check
-without running the whole pipeline:
+### 5. Isolated fixture tests (for specific detectors) — now real `pytest`
+The throwaway `/tmp/*.yml` fixtures used during the original debugging pass
+have been converted into permanent files under `tests/fixtures/`, each with
+a real `pytest` function in `tests/test_detectors.py` (see
+`REFACTOR_PLAN.md` Part 4) — this is now the fast, controlled check for a
+single detector, instead of hand-writing a throwaway YAML each time:
 ```bash
-# duplicate task names
-cat > /tmp/dupe_test.yml << 'EOF'
-- name: Install package
-  apt: {name: nginx}
-- name: Install package
-  apt: {name: curl}
-EOF
-python -c "from duplicate_task_Name import repeated_task_names; print(repeated_task_names('/tmp/dupe_test.yml'))"
-# expect: 1
-
-# credential leaking without no_log
-cat > /tmp/creds_test.yml << 'EOF'
-- name: Set database password
-  set_fact: {db_password: "supersecret123"}
-EOF
-python -c "from credentials_leaking_in_log import detect_credentials_leaking_in_log as d; w,n = d('/tmp/creds_test.yml'); print(n, w)"
-# expect: 1 [warning about no_log]
+pytest tests/test_detectors.py -v
 ```
-Build similar tiny fixtures for anything else you change — much faster
-feedback loop than re-running the whole pipeline every time.
+For example, the old
+```bash
+python -c "from duplicate_task_Name import repeated_task_names; print(repeated_task_names('/tmp/dupe_test.yml'))"
+```
+is now a permanent regression test against `tests/fixtures/dupe_task_names.yml`:
+```python
+def test_duplicate_task_names_detected():
+    assert repeated_task_names(FIXTURES / "dupe_task_names.yml") == 1
+```
+Still worth hand-writing a brand-new throwaway fixture first when chasing a
+*new* suspected bug — but once confirmed, fold it into `tests/fixtures/` +
+`tests/test_detectors.py` rather than leaving it in `/tmp` to evaporate.
 
 ## What "done" looks like
-- Step 2 (import check) — all clean.
+- Step 2 (import check) — all clean, confirmed from a directory other than
+  the repo root.
 - Step 3 (full run) — no tracebacks, all output files present for all
-  fixtures in `TestData/tasks/`.
+  fixtures in `TestData/tasks/`, plus the real 42-file external project.
 - Step 4 (data correctness on `main3.yml`) — every number in the CSV
   traceable back to a real value in `Technical_Analysis.json`, matched by
   hand against `thresholds.csv` and the actual YAML.
-- `unecessary_abs.py` and `sem_cohesion.py` reviewed with the same rigor
-  as everything else in the table above.
+- `detectors/unnecessary_abstraction.py` and `detectors/semantic_cohesion.py`
+  (formerly `unecessary_abs.py`/`sem_cohesion.py`) reviewed with the same
+  rigor as everything else in the table above.
 - The "Known issues" list in `PROJECT_STATUS.md` empty, or intentionally
   deferred with a reason written down.
+- **New, post-refactor**: `pytest tests/` passes with the same count as
+  before the move; `grep -n "pythonpath" pytest.ini` returns nothing;
+  `ansibleguard --help` works from `/tmp`.

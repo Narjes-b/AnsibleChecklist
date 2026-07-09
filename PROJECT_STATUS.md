@@ -6,36 +6,65 @@ unnamed plays/tasks, duplicate keys, unused `set_fact`, missing bool filters,
 credential leaks, hardcoded secrets via GitLeaks, and `ansible-lint` issues),
 then writes results to CSV, TXT, and JSON reports.
 
-## How to run it
-Everything must be run from inside `AnsibleGuard/`, not the repo root —
-internal imports are bare (`from config import ...`) and only resolve when
-`AnsibleGuard/` is the working directory.
+## How to run it — UPDATED, package refactor complete
+The project is now a real installable package (`src/ansibleguard/`; see
+`REFACTOR_PLAN.md` for the rationale and the step-by-step move log). The old
+"must `cd AnsibleGuard/` first, bare imports only resolve from that
+directory" constraint described in earlier versions of this doc **no longer
+applies** — every internal import is now either fully relative
+(`from .config import ...`, `from ..config import ...`) or a real package
+import, and the `pytest.ini` `pythonpath = AnsibleGuard` bridge line used
+during the transition has been removed.
 
 ```bash
-cd AnsibleGuard
-python smellsDetector.py
+pip install -e .
+ansibleguard ~/my-ansible-project/          # any real project, recursive
+ansibleguard playbook.yml -o ./results/     # or a single file, custom output dir
 ```
 
-This batch-processes every `.yml`/`.yaml` file in `config.yaml_files_folder`
-(currently `TestData/tasks/`) and writes results to
-`TestData/Results/<file_stem>/`:
+This recursively finds every `.yml`/`.yaml` file under the target (excluding
+`molecule/`, `.github/`, `.git/`, `.venv/`, `venv/`) and writes results to
+`<output>/<file_stem>/`:
 - `IaC_Smells.csv` — one-row summary per playbook
 - `Play_Level_Analysis.txt` — human-readable per-play/per-task smell report
 - `Technical_Analysis.json` — raw metrics before threshold evaluation
 - `ansiblelint.txt`, `gitleaks.txt` — external tool output
 
+plus three project-wide rollup files written once at the end of a full
+`ansibleguard <target>` run: `summary.csv`, `findings.json`, and
+`findings.sarif` (see `OUTPUT_FORMATS.md`).
+
+The old direct-script entry point (`python smellsDetector.py` against a
+fixed `config.yaml_files_folder`) is superseded by `ansibleguard.smells`
+internally — `ansibleguard` is now the documented way to run the tool.
+
 ## Setup checklist (fresh machine)
-1. `pip install -r requirements.txt --break-system-packages` (or in a venv)
-   — note: `requirements.txt` currently has two invalid lines
-   (`requests=2.34.2` duplicate, `pytest=9.1.1`) that will make `pip install`
-   fail; not yet fixed.
-2. Install GitLeaks: `python -c "from Install_Gitleaks import ensure_gitleaks_installed; ensure_gitleaks_installed()"`
+1. `git clone <repo> && cd ansibleguard`
+2. `pip install -e .` — dependencies are now declared in `pyproject.toml`
+   (`pyyaml`, `pandas`, `spacy`, `nltk`, `requests`, `ansible-lint`,
+   `ansible-compat`, `ruamel.yaml`), so the old `requirements.txt` invalid-line
+   problem (`requests=2.34.2` duplicate, `pytest=9.1.1`) no longer blocks
+   setup — `pyproject.toml`'s `dependencies = [...]` supersedes that file.
+3. `python -c "import nltk; nltk.download('wordnet')"`
+4. `python -m spacy download en_core_web_lg`
+5. Install GitLeaks:
+   `python -c "from ansibleguard.external.install_gitleaks import ensure_gitleaks_installed; ensure_gitleaks_installed()"`
    then verify with `./gitleaks-bin/gitleaks version`.
-3. Confirm `config.py` paths resolve:
+6. Confirm the package resolves **from anywhere**, not just the repo root —
+   this is the actual proof the refactor achieved its goal:
    ```bash
-   python -c "from config import TEST_PLAYBOOK, THRESHOLDS_FILE, yaml_files_folder, RESULTS_DIR; print(TEST_PLAYBOOK.exists(), THRESHOLDS_FILE.exists(), yaml_files_folder.exists(), RESULTS_DIR.exists())"
+   cd ~   # deliberately NOT the repo
+   python -c "import ansibleguard; print(ansibleguard.__file__)"
+   ansibleguard --help
    ```
-   All four should print `True`.
+7. Confirm `config.py`'s paths still resolve (now `ansibleguard.config`):
+   ```bash
+   python -c "from ansibleguard.config import THRESHOLDS_FILE; print(THRESHOLDS_FILE.exists())"
+   ```
+   Should print `True`. (`TEST_PLAYBOOK`/`yaml_files_folder`/`RESULTS_DIR` were
+   the old fixed-fixture-folder globals used by the pre-CLI batch script —
+   with the real CLI in place, `THRESHOLDS_FILE` is the only path that still
+   matters for setup verification.)
 
 ## How we've been testing each module
 Two-step check per file, used throughout this debugging pass:
@@ -753,53 +782,57 @@ for now lives in `OUTPUT_FORMATS.md`. Highlights:
     earlier is no longer open.
 
 ## Structural / architecture critique
-Bug-fixing is close to done; the pipeline now runs correctly end-to-end. The
-project has not yet had a structural pass, and every new detector added on
-top of the current structure inherits these problems:
+Bug-fixing was the first pass; the pipeline runs correctly end-to-end. The
+structural pass described below has now **also been completed** — see
+`REFACTOR_PLAN.md` for the target design and `REFACTOR_PLAN.md`'s companion
+runbook for the exact step-by-step move log. Status per item:
 
-1. **No package structure** — everything is flat-file imports
-   (`from config import ...`), which only work because you `cd AnsibleGuard`
-   first. A real package (`AnsibleGuard/__init__.py`, `pip install -e .`)
-   would let this run from anywhere and be imported as a library, and would
-   have prevented several of the "why doesn't this find my file" bugs hit
-   during debugging.
-2. **`Results/` location is ambiguous** — generated output currently lives
-   inside `TestData/`, sibling to source fixtures. Convention: a top-level
-   `output/`/`Results/` at the repo root, not nested inside code or fixture
-   folders, so it's obviously disposable and easy to `.gitignore`.
-3. **No `.gitignore`** — `__pycache__/` was visible in the project tree,
-   meaning it's likely being committed. Add `__pycache__/`, `*.pyc`,
-   `.venv/`, `Results/`, `*.egg-info/` and `git rm -r --cached` anything
-   already tracked.
-4. **`tests/` folder exists but is empty/unused**, despite a large amount of
-   hand-written throwaway fixture testing done during this debugging pass
-   (`/tmp/dupe_test.yml`, `/tmp/creds_test.yml`, `/tmp/nested.yml`, etc.).
-   Converting those into real `pytest` functions is now the single highest-
-   value remaining task — that hard-won "this exact input breaks this exact
-   function" knowledge otherwise evaporates once debugging stops.
+1. ~~**No package structure**~~ — **RESOLVED**. Everything now lives under
+   `src/ansibleguard/` (`detectors/`, `external/`, `report/`, plus
+   `config.py`/`parser.py`/`smells.py`/`cli.py` at the package root), installed
+   via `pip install -e .`. Every internal import is relative
+   (`from .config import ...`) or a real package import — confirmed working
+   from a directory other than the repo root, which was the actual goal.
+2. ~~**`Results/` location is ambiguous**~~ — **RESOLVED**. Output no longer
+   lives inside `TestData/`; the CLI defaults to `./ansibleguard-output/` in
+   the current working directory (overridable via `-o`/`--output`), separate
+   from both source and test fixtures.
+3. ~~**No `.gitignore`**~~ — **RESOLVED**. Added, covering `__pycache__/`,
+   `*.pyc`, `.venv/`, `*.egg-info/`, `ansibleguard-output/`; anything already
+   tracked was untracked in the same pass.
+4. ~~**`tests/` folder exists but is empty/unused**~~ — **RESOLVED**. Moved to
+   the repo root (sibling of `src/`, standard packaging convention) and every
+   hand-written throwaway fixture from the debugging pass
+   (`/tmp/dupe_test.yml`, `/tmp/creds_test.yml`, etc.) has been converted into
+   a permanent fixture file under `tests/fixtures/` with a real `pytest`
+   function asserting the exact behavior found during debugging — this was
+   done as the first step of the refactor, specifically so that knowledge
+   didn't evaporate before the file-moving work began.
 5. **Thresholds are not empirically justified** — `thresholds.csv`'s values
    appear to be either inherited from prior literature or picked by feel.
    Worth a calibration pass: run the tool across a real corpus (e.g.
    `TestData/projects/` or a larger Ansible Galaxy sample), plot the actual
    metric distributions, and set thresholds near a percentile rather than a
    round guessed number.
-6. **Mixed French/English naming** throughout (`compter_tasks_dans_play`,
-   `nombre_tasks`, `analyser_tasks` next to `calculate_metrics_task`,
-   `detect_large_play`). Not a bug, but reads as unfinished; worth
-   standardizing on one language before showing this to anyone outside the
-   team.
+6. **Mixed French/English naming** — file names de-abbreviated and made
+   English-only during the refactor (`overriden_keys.py` → `overridden_keys.py`
+   fixing the typo, `unecessary_abs.py` → `unnecessary_abstraction.py`, etc.),
+   done as its own dedicated commit per `REFACTOR_PLAN.md`'s convention. Still
+   **open**: internal French function/variable names inside file bodies
+   (`compter_tasks_dans_play`, `nombre_tasks`, `analyser_tasks`) were out of
+   scope for the file-move refactor and haven't been touched — worth a
+   separate pass.
 7. **`print()`-based output everywhere, no logging levels** — fine for
    solo interactive debugging, bad for running unattended over a large
    corpus: no way to silence routine progress output, separate warnings
    from errors, or grep programmatically for "this file failed." A swap to
    Python's `logging` module would pay for itself the first time this runs
-   against hundreds of files.
-8. **Non-recursive file collection** — the entry point currently uses
-   `glob("*.yml")`, not `rglob`, so it won't find `roles/*/tasks/main.yml`
-   in a real multi-role Ansible project. Needed before running this against
-   an actual project rather than a flat fixture folder — along with an
-   exclude list for `molecule/`, `.github/`, `.git/` once recursive globbing
-   is added, since those often contain YAML that isn't a real playbook.
+   against hundreds of files. **Still open** — not part of the packaging
+   refactor.
+8. ~~**Non-recursive file collection**~~ — **RESOLVED**. `cli.py`'s
+   `collect_yaml_files()` uses `rglob` and excludes `molecule/`, `.github/`,
+   `.git/`, `.venv/`, `venv/` — confirmed against a real downloaded multi-role
+   project (42 real files found and processed correctly).
 9. **Never stress-tested inputs**: multi-document YAML (`---` separators
    within one file), Ansible Vault-encrypted variables (`!vault |` blocks),
    dict-style `roles:` entries (`roles: [{role: x, vars: {...}}]` instead of
@@ -810,8 +843,12 @@ top of the current structure inherits these problems:
    vectors rather than error).
 
 
-Full pipeline (`python smellsDetector.py`) runs clean against all three
-`TestData/tasks/*.yml` fixtures with no crashes, correct play/task pairing
-(confirmed via `Technical_Analysis.json` for `main3.yml`), correct threshold
-evaluation for playbook- and play-level large/complex checks, and working
-GitLeaks + ansible-lint integration.
+Full pipeline (now `ansibleguard <target>` via the installed CLI, run from
+outside the repo) runs clean against all three `TestData/tasks/*.yml`
+fixtures — plus a real 42-file external Ansible project via recursive
+discovery — with no crashes, correct play/task pairing (confirmed via
+`Technical_Analysis.json` for `main3.yml`), correct threshold evaluation for
+playbook- and play-level large/complex checks, working GitLeaks +
+ansible-lint integration, and the full test suite passing with the
+`pythonpath` bridge removed (confirmed the package resolves genuinely from
+anywhere, not just via a pytest-only workaround).

@@ -2,8 +2,15 @@
 
 Companion to `ARCHITECTURE.md` (call graph), `PROJECT_STATUS.md` (bug
 log), and `CLI_STATUS.md` (CLI development log). This file answers one
-question: **when you run `cli.py` against a project, what do you actually
-get, and which of the output files should you look at for what.**
+question: **when you run the `ansibleguard` command against a project,
+what do you actually get, and which of the output files should you look
+at for what.**
+
+> **Note:** the project is now a real installable package
+> (`src/ansibleguard/...`, `pip install -e .`) — `cli.py` below is
+> `ansibleguard/cli.py`, invoked via the installed `ansibleguard` command
+> (e.g. `ansibleguard ~/my-project/ -o ./results/`), not
+> `python3 cli.py`. See `REFACTOR_PLAN.md` for the full move log.
 
 There are three layers, each answering a different question, aimed at a
 different consumer. They're built from the exact same underlying data —
@@ -12,7 +19,7 @@ same analysis, because "a human reviewing one file" and "a CI pipeline
 deciding whether to fail a PR" need genuinely different things.
 
 ```
-cli.py analyze_path(target, output_root)
+ansibleguard/cli.py analyze_path(target, output_root)
   │
   ├── LAYER 1 — per-file detailed reports (one set per analyzed file)
   │     output_root/<mirrored/path/to/file>/
@@ -75,7 +82,7 @@ then most warnings, then most total findings):
 | `roles/nginx/tasks/main.yml` | 0 | 0 | 1 | 1 |
 
 This is the cheapest of the three layers to build — it's a `csv.DictWriter`
-call over data `findings.py` already computed for Layer 3 — but it's the
+call over data `report/findings.py` already computed for Layer 3 — but it's the
 one that directly answers the most common real question ("where do I even
 start") without needing any tooling beyond a spreadsheet.
 
@@ -95,7 +102,7 @@ PR-bot use case actually reachable.
 
 ### The shape
 
-Both files are built from `findings.py`'s `build_findings_list()`, which
+Both files are built from `report/findings.py`'s `build_findings_list()`, which
 flattens everything (playbook-level counts, per-play/per-task smells,
 GitLeaks findings, ansible-lint issues) down to one consistent record:
 
@@ -132,7 +139,7 @@ narrows to something more tractable: filtering *which* SARIF results are
 worth surfacing, or drafting a suggested fix — not building comment-posting
 infrastructure from scratch.
 
-`sarif_writer.py`'s output has been validated against the actual
+`report/sarif_writer.py`'s output has been validated against the actual
 downloaded OASIS 2.1.0 schema (`jsonschema.validate()`), not just
 eyeballed — this is also how a stale, commonly-cited schema URL was
 caught (the old `oasis-tcs/sarif-spec/master/Schemata/...` path 404s now;
@@ -142,14 +149,14 @@ One detail worth knowing if you're debugging a SARIF file that isn't
 annotating a PR correctly: `artifactLocation.uri` must be **relative to
 the repo root**, not an absolute path — that's the only way GitHub can map
 an annotation back to the right file in a PR diff. `_to_repo_relative()`
-in `sarif_writer.py` handles this.
+in `report/sarif_writer.py` handles this.
 
 ### Severity — what `error`/`warning`/`note` actually mean here
 
 This is a judgment call, stated as such, not an empirically calibrated
 scale — worth being upfront about, the same way `thresholds.csv`'s values
 are flagged in `REFACTOR_PLAN.md` as not yet empirically justified.
-`findings.py`'s `RULE_CATALOG` groups by *consequence*:
+`report/findings.py`'s `RULE_CATALOG` groups by *consequence*:
 
 - **`error`** — real security/correctness problems: `hardcoded-credentials`
   (GitLeaks), `credentials-leaking-in-log`, `overriden-keys` (a duplicate
@@ -165,7 +172,7 @@ are flagged in `REFACTOR_PLAN.md` as not yet empirically justified.
   `incohesive-playbook`/`incohesive-play` (a soft NLP-based signal that
   can misfire on real, fine code — deliberately not weighted as `error`).
 
-The catalog lives in one place (`findings.py`'s `RULE_CATALOG` dict), not
+The catalog lives in one place (`report/findings.py`'s `RULE_CATALOG` dict), not
 scattered through logic, so retuning it later is a data change, not a
 code change. The project's own `Literature_review/` sources are the right
 evidence base for a real calibration pass, once the detection engine

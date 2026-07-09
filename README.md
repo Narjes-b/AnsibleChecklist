@@ -1,287 +1,258 @@
-# AnsibleChecklist
+# AnsibleGuard
 
-A static-analysis tool for Ansible playbooks. It scans `.yml`/`.yaml` files
-for Infrastructure-as-Code smells (large playbooks/plays/tasks, unnamed
-plays/tasks, duplicate keys, unused `set_fact`, missing boolean filters,
-credential leaks, hardcoded secrets via GitLeaks, and `ansible-lint`
-findings) and writes the results out as CSV, TXT, and JSON reports.
+**AnsibleGuard** is a static-analysis tool for Ansible playbooks. Point it
+at a single playbook or a whole Ansible project, and it reads every YAML
+file, measures dozens of structural properties, compares those
+measurements against a set of thresholds, and reports the **code smells**
+it finds — things that aren't necessarily bugs, but are warning signs of
+future bugs, security leaks, or maintenance pain.
 
-This README replaces the previous one. It folds in a full debugging pass
-that took the pipeline from "crashes on import" to a working, tested,
-end-to-end tool, and documents exactly what changed, how the pipeline is
-wired together, and how to verify it still works after future edits.
+It also runs two mature external tools alongside its own checks:
+[GitLeaks](https://github.com/gitleaks/gitleaks) (hardcoded secrets) and
+[`ansible-lint`](https://ansible.readthedocs.io/projects/lint/) (general
+best-practice violations) — so one run gives you a combined view instead of
+three separate tools to remember.
+
+The end goal this project is building toward is a **GitHub PR-review bot**:
+this rule-based pipeline plus an AI layer that filters noise and suggests
+fixes, triggered automatically when a developer opens a pull request. Every
+design decision below (the CLI, the SARIF output, the line-accurate
+findings) exists in service of that goal.
 
 ---
 
-## 1. Setup (fresh machine)
+## Quick start
 
 ```bash
-cd AnsibleGuard
-pip install -r requirements.txt --break-system-packages   # or inside a venv
-python3 -c "import nltk; nltk.download('wordnet'); nltk.download('omw-1.4')"
-python3 -c "from Install_Gitleaks import ensure_gitleaks_installed; ensure_gitleaks_installed()"
-./gitleaks-bin/gitleaks version   # sanity check — should print a version string
+git clone <repo-url>
+cd ansibleguard
+pip install -e .
+
+# one-time model/data downloads the detectors depend on
+python -c "import nltk; nltk.download('wordnet')"
+python -m spacy download en_core_web_lg
+
+# installs the gitleaks binary if it isn't already available
+python -c "from ansibleguard.external.install_gitleaks import ensure_gitleaks_installed; ensure_gitleaks_installed()"
+
+ansibleguard --help
 ```
 
-Confirm paths resolve correctly:
+Then run it against any real Ansible project or single playbook:
 
 ```bash
-python3 -c "from config import TEST_PLAYBOOK, THRESHOLDS_FILE, yaml_files_folder, RESULTS_DIR; print(TEST_PLAYBOOK.exists(), THRESHOLDS_FILE.exists(), yaml_files_folder.exists(), RESULTS_DIR.exists())"
-# expect: True True True True
+ansibleguard ~/my-ansible-project/            # whole project, recursive
+ansibleguard playbook.yml -o ./results/       # single file, custom output dir
 ```
 
-> **Note:** everything must run from inside `AnsibleGuard/`, not the repo
-> root — internal imports are bare (`from config import ...`) and only
-> resolve when `AnsibleGuard/` is the working directory. This is a known
-> structural limitation, see [§6](#6-known-issues--next-steps).
+`ansibleguard` is a real installed command — it works from any directory
+on the machine, not just from inside this repo. This is a genuine, working
+tool, not a script you need to remember how to invoke — no `cd` into a
+particular folder required.
 
-## 2. Running it
+---
 
-```bash
-cd AnsibleGuard
-python3 smellsDetector.py
-```
+## What it actually detects
 
-This batch-processes every `.yml`/`.yaml` file in `config.yaml_files_folder`
-(currently `TestData/tasks/`) and writes one results folder per file to
-`TestData/Results/<file_stem>/`:
+AnsibleGuard organizes checks by the level of the file they describe —
+whole playbook, one play, or one task — plus two checks that come from
+external tools.
 
-| Output file | Contents |
+### Playbook-level
+| Smell | What it means |
 |---|---|
-| `IaC_Smells.csv` | one-row summary per playbook |
-| `Play_Level_Analysis.txt` | human-readable per-play/per-task smell report |
-| `Technical_Analysis.json` | raw metrics, before threshold evaluation |
-| `ansiblelint.txt` | `ansible-lint` output |
-| `gitleaks.txt` | GitLeaks output |
+| Large Playbook | The file overall is too big (lines, number of plays, average play size, or total nested tasks) |
+| Complex Playbook | Big *and* structurally tangled, or has heavy external coupling |
+| Insufficient Modularization | Too many lines *and* too many plays — probably should be split into roles |
+| High Playbook Coupling | Depends on too many `import_tasks`/`include_tasks`/`import_playbook`/`roles:` references |
+| Incohesive Playbook | Task/play names across the file don't seem conceptually related (semantic similarity via spaCy) |
+| Duplicated Code | The same task body (ignoring the name) appears more than once |
+| Unnecessary `set_fact` | A variable is set but never actually used |
+| Overriding Facts | The same fact gets set to two different values in the same file |
+| Unnecessary Abstraction | A `block:` wraps just one single task for no real grouping benefit |
+| Missing File Extension | A file reference (`src:`, `dest:`, `path:`, ...) has no extension |
+| Overridden Keys | The same key appears twice inside one task (e.g. `mode:` set twice — silently discards data) |
+| Duplicated Task Names | Two tasks share the exact same `name:` |
+| Missing Bool Filter | A `when:` condition looks boolean-ish but skips the `| bool` filter |
+| Unnecessary Dependency | An `include_vars:` file is pulled in but none of its variables are used |
+| Credentials Leaking In Log | A task handles a secret-looking value without `no_log: true` |
 
-## 3. Pipeline architecture
+### Play-level
+| Smell | What it means |
+|---|---|
+| Large Play | One specific play is too big |
+| Unnamed Play | A play has no `name:` field |
+| Incohesive Play | Same idea as Incohesive Playbook, scoped to one play |
+
+### Task-level
+| Smell | What it means |
+|---|---|
+| Large Task | One specific task is too big |
+| Long Task Name | A task's `name:` is unreasonably long |
+| Unnamed Task | A task has no `name:` field at all |
+| Inconsistent Naming Convention | A task or play name has an unusual amount of punctuation/symbols |
+
+### Security (external tools)
+| Smell | What it means |
+|---|---|
+| Hardcoded Credentials | A real secret is hardcoded in the file, via `gitleaks` |
+| Design Smells | General best-practice violations, via `ansible-lint` |
+
+Full explanations of *how* each check actually works are in
+[`docs/HOW_IT_WORKS.md`](docs/HOW_IT_WORKS.md).
+
+---
+
+## What you get back
+
+Every run produces layered output, built from the same underlying analysis
+but shaped for different audiences:
 
 ```
-smellsDetector.py  (run this)
-  │
-  ├── config.py                     # all paths — check first if a file can't be found
-  │
-  ├── parser_playbook.py            # orchestrates ONE playbook's full analysis
-  │     │
-  │     ├── detect_large_playbook.py
-  │     │     ├── detect_large_task.py   (calculate_metrics_task)
-  │     │     └── detect_large_play.py   (calculate_metrics_play)
-  │     │
-  │     ├── detect_large_play.py         (calculate_metrics_play)
-  │     ├── detect_large_task.py         (calculate_metrics_task)
-  │     ├── high_coupling.py
-  │     ├── duplicate_code.py
-  │     ├── set_fact.py
-  │     ├── overriding_facts.py
-  │     ├── unecessary_abs.py
-  │     ├── unnamed_play.py
-  │     ├── is_unamed.py
-  │     ├── unnamed_tasks.py             (→ detect_large_task.py)
-  │     ├── overriden_keys.py            (→ write_to_text.write_duplicates_to_txt)
-  │     ├── sem_cohesion.py              (playbook-level similarity, spaCy)
-  │     ├── incohesive_plays.py          (play-level similarity, spaCy)
-  │     │     └── detect_large_play.py
-  │     ├── duplicate_task_Name.py       (→ detect_large_task.py)
-  │     ├── files_extensions.py
-  │     ├── filters_for_comparison.py
-  │     ├── credentials_leaking_in_log.py (→ detect_large_task.py)
-  │     └── include_vars.py              (→ write_to_text.write_unused_vars_to_txt)
-  │
-  ├── assess_code_smells()  [inside smellsDetector.py]
-  │     — takes parser_playbook's raw metrics + thresholds.csv,
-  │       decides which smells actually fire
-  │     ├── GitLeaks_hardcoded_credentials.py  (→ Install_Gitleaks.py for the binary)
-  │     └── Ansible_Lint.py
-  │
-  └── write_to_csv.py / write_to_text.py   — final report output
+<output>/
+├── <mirrored-path-per-file>/          # LAYER 1 — one set per analyzed file
+│   ├── Technical_Analysis.json        #   raw metrics, before threshold logic
+│   ├── IaC_Smells.csv                 #   one-row summary for this file
+│   ├── Play_Level_Analysis.txt        #   human-readable per-play/task breakdown
+│   ├── ansiblelint.txt
+│   └── gitleaks.txt
+├── summary.csv                        # LAYER 2 — project-wide rollup, worst-first
+├── findings.json                      # LAYER 3 — flat findings list, one entry per problem
+└── findings.sarif                     # LAYER 3 — same data as real SARIF 2.1.0
 ```
 
-**Dead code — nothing imports these, edits here won't affect the tool:**
-`parser_playbook_mod.py`, `parser_playbook.ipynb`, `GeneralsmellsDetector.py`
-(stale fork of `smellsDetector.py`), `exceptions.py` (empty).
+- **Layer 1** is for a human doing a deep-dive on one specific playbook.
+- **Layer 2** (`summary.csv`) answers "out of everything just analyzed,
+  which files actually need attention" in one spreadsheet-friendly file.
+- **Layer 3** is built for machines: CI pipelines, and GitHub's Code
+  Scanning feature specifically, which natively renders `findings.sarif`
+  as inline PR annotations — no bot code required to post comments.
 
-**Data flow, one line per stage:**
-1. `detect_large_task.py` / `detect_large_play.py` / `detect_large_playbook.py`
-   read the YAML and produce raw counts (LOC, task counts, names) — no
-   threshold logic yet.
-2. `parser_playbook.py`'s `mainn()` calls every detector and assembles one
-   `main_metrics` dict per playbook — still no pass/fail decisions.
-3. `smellsDetector.py`'s `assess_code_smells()` takes that dict, loads
-   `thresholds.csv`, and decides which smells actually fire.
-4. `write_to_csv.py` / `write_to_text.py` render the decisions to disk.
+Full detail on when to use which layer, what the severity levels
+(`error`/`warning`/`note`) mean, and how SARIF line numbers work is in
+[`docs/OUTPUT_FORMATS.md`](docs/OUTPUT_FORMATS.md).
 
-If a number looks wrong: check `Technical_Analysis.json` first (stage 2's
-raw output). If it's already wrong there, the bug is in a `detect_large_*.py`
-file. If the raw number is right but the CSV flag is wrong, the bug is in
-`smellsDetector.py`'s threshold logic instead.
+---
 
-## 4. What changed in this pass
+## Project layout
 
-The tool didn't run at all at the start of this pass — a chain of
-unguarded module-level test code and hardcoded `/Users/narjes/...` paths
-crashed on plain `import`. It's now a working, spot-checked, end-to-end
-pipeline. Full detail in the sections below; short version:
+```
+ansibleguard/
+├── pyproject.toml                 # package metadata, dependencies, the `ansibleguard` entry point
+├── requirements.txt
+├── .gitignore
+├── src/
+│   └── ansibleguard/
+│       ├── cli.py                 # the `ansibleguard` command itself
+│       ├── config.py              # all shared paths/settings
+│       ├── parser.py              # orchestrates one playbook's full analysis
+│       ├── smells.py              # threshold logic — decides which smells fire
+│       ├── detectors/             # one file per smell (large_task.py, high_coupling.py, ...)
+│       ├── external/              # wrappers around gitleaks and ansible-lint
+│       ├── report/                # csv_writer.py, text_writer.py, findings.py, sarif_writer.py
+│       └── thresholds.csv         # every threshold value, one CSV
+├── tests/
+│   ├── fixtures/                  # hand-built YAML files, one per known bug/behavior
+│   ├── test_detectors.py
+│   ├── test_smells_thresholds.py
+│   ├── test_cli.py
+│   └── test_pipeline_end_to_end.py
+└── docs/
+    ├── HOW_IT_WORKS.md            # plain-language explanation of every stage and every smell
+    ├── ARCHITECTURE.md            # call graph, file-by-file status, full test guide
+    ├── OUTPUT_FORMATS.md          # the three output layers, in depth
+    ├── CLI_STATUS.md              # CLI development history and the bugs found building it
+    ├── PROJECT_STATUS.md          # the full detector bug-fixing log
+    └── REFACTOR_PLAN.md           # the packaging roadmap this layout was built from
+```
 
-**New file:** `main.py` (repo root) — a real CLI entry point wrapping
-`smellsDetector.py`'s per-file logic. Accepts a single file, a folder, or
-defaults to `config.yaml_files_folder`.
+Everything under `src/ansibleguard/` is installed and importable
+(`import ansibleguard`) from anywhere on the machine — this is a real
+Python package, not a folder of scripts that only works from inside
+itself. Every internal import is a relative package import
+(`from .config import ...`), so there's no hidden dependency on your
+current working directory.
 
-**Crash-on-import fixed (11 files):** `config.py` (rebuilt around portable
-`BASE_DIR`/`PROJECT_ROOT`), `detect_large_task.py`, `detect_large_play.py`,
-`detect_large_playbook.py`, `duplicate_task_Name.py`,
-`credentials_leaking_in_log.py`, `unnamed_tasks.py`, `unnamed_play.py`,
-`set_fact.py`, `overriding_facts.py`, `incohesive_plays.py`,
-`parser_playbook.py`.
+---
 
-**Silent wrong-output bugs fixed:**
-- `duplicate_task_Name.py` — tuple-unpacking bug meant `repeated_task_names()`
-  always returned `0`.
-- `credentials_leaking_in_log.py` — was reading the (almost always empty)
-  `top_level_tasks` list instead of the full metrics list, silently finding
-  zero leaks on any normal file.
-- `detect_large_play.py` vs `detect_large_task.py` — disagreed on whether a
-  `block:` wrapper counts as one task or should be recursed into, so
-  `play_metrics` and `task_metrics` described two different task sets for
-  the same play. Fixed by making both recurse into `block`/`rescue`/`always`
-  the same way.
-- **Root-cause data integrity bug** in `detect_large_task.py`:
-  `calculate_metrics_task()` included `"block" in entry` when deciding play
-  boundaries; `detect_large_play.py`'s equivalent check did not. Any
-  top-level task-with-a-block caused the two functions' play numbering to
-  drift apart, silently pairing each real play with a *different* play's
-  tasks throughout the pipeline. Fixed by removing that clause so both
-  functions agree.
-- `smellsDetector.py` — 8 separate bugs: `RESYULTS_DIR` import typo;
-  unassigned `play_metrics_dict` (`NameError`); `findings`/`lint_results`
-  not initialized before `try:` (masked real errors); `num_large_task=+1`
-  (assignment, not increment) fixed to `+=`; `is_large_play` per-play flag
-  overwritten with the running playbook-wide count; `large_play`/
-  `unnamed_play` counters reset to `0` on the trailing "Global tasks" group,
-  wiping earlier plays' counts; threshold key mismatches (`num_tasks_in_play`
-  vs `num_tasks_play`, `num_tasks_playbook` vs `num_nested_tasks_playbook`,
-  `Num_Roles` case); hardcoded `/Users/narjes/.../Results` path.
-- `unecessary_abs.py` — crashed on empty/`None` YAML; never recursed into a
-  block nested inside another block; unsafe `yaml.load` → `yaml.safe_load`.
-  Detection extended into `rescue`/`always`.
-- `sem_cohesion.py` — crashed on non-dict list items; `encoding='latin1'` →
-  `utf-8` (was corrupting non-ASCII names before similarity comparison);
-  unsafe `yaml.load` → `yaml.safe_load`; task-name collection now recurses
-  into `block`/`rescue`/`always`.
-- `Install_Gitleaks.py` — no ARM64 Linux branch; disconnected default
-  version parameter; renamed release asset tags between GitLeaks versions.
-  Pinned version, fixed URLs.
-- `is_unamed.py` — only treated `None` as unnamed, not empty/whitespace;
-  now matches `unnamed_play.py`.
+## How it works, in three stages
 
-**Removed:** `parser_playbook_mod.py`, `parser_playbook.ipynb` — both
-imported a nonexistent `CodeSmellsTool` package and used hardcoded Windows
-paths; nothing else in the codebase imported either file.
+Every file goes through exactly three stages, always in this order:
 
-**Environment fixes:** two invalid `requirements.txt` lines identified
-(`pytest=9.1.1`, duplicate `requests=2.34.2`); NLTK corpus data documented
-as a required setup step (`wordnet`, `omw-1.4`), needed by `sem_cohesion.py`
-and `incohesive_plays.py`.
+1. **Measure** (`parser.py` + `detectors/*.py`) — read the YAML, count
+   things. No judgment calls yet, just numbers and lists.
+2. **Judge** (`smells.py`) — compare those numbers against
+   `thresholds.csv`. Cross a threshold, and it's a smell.
+3. **Report** (`report/*.py`) — write the judged results to disk in every
+   format described above.
 
-Full file-by-file fix table and root-cause explanations: see
-`PROJECT_STATUS.md`.
+If a number in a report ever looks wrong: check `Technical_Analysis.json`
+first — that's the raw, pre-judgment output. If the raw number is already
+wrong, the bug is in a detector. If the raw number is right but the smell
+flag is wrong, the bug is in `smells.py`'s threshold logic instead.
 
-## 5. Testing
+The full plain-language walkthrough, including why one detector needs
+`ruamel.yaml` instead of plain `PyYAML`, how `block`/`rescue`/`always`
+nesting is handled, and how tasks get matched back to the right play, is
+in [`docs/HOW_IT_WORKS.md`](docs/HOW_IT_WORKS.md).
 
-Run this full regression check after any change — the pipeline is tightly
-coupled, and bugs in one file have silently corrupted another file's output
-more than once.
+---
 
-**Step 1 — environment sanity**
+## Running the tests
+
 ```bash
-cd AnsibleGuard
-python3 -c "from config import TEST_PLAYBOOK, THRESHOLDS_FILE, yaml_files_folder, RESULTS_DIR; print(TEST_PLAYBOOK.exists(), THRESHOLDS_FILE.exists(), yaml_files_folder.exists(), RESULTS_DIR.exists())"
-./gitleaks-bin/gitleaks version
+pytest tests/ -v
 ```
 
-**Step 2 — import check, every module, no crashes**
-```bash
-for f in detect_large_task detect_large_play detect_large_playbook \
-         duplicate_task_Name credentials_leaking_in_log unnamed_tasks \
-         unnamed_play set_fact overriding_facts incohesive_plays \
-         parser_playbook smellsDetector is_unamed high_coupling \
-         duplicate_code files_extensions filters_for_comparison \
-         overriden_keys include_vars unecessary_abs sem_cohesion \
-         write_to_csv write_to_text Ansible_Lint Install_Gitleaks; do
-  echo -n "$f: "
-  python3 -c "import $f" 2>&1 | tail -1 || echo "OK"
-done
-```
-Any output other than a blank "OK" line marks an unresolved import bug.
+The test suite covers every detector (with a real fixture YAML per known
+bug/behavior found during development), the CLI's file-discovery and
+output-path logic, and a full end-to-end pipeline run. See
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the complete call graph
+and a manual regression procedure if you want to verify something by hand
+instead.
 
-**Step 3 — full pipeline run**
-```bash
-python3 smellsDetector.py
-```
-Should process every file in `TestData/tasks/` with no traceback and
-produce all 5 output files per fixture.
+---
 
-**Step 4 — data-correctness spot check (the part crash tests can't catch)**
-`main3.yml` is the richest fixture (real plays, top-level block-tasks,
-duplicate keys, unused `include_vars`, a hardcoded secret):
-```bash
-cat TestData/Results/main3/Technical_Analysis.json
-cat TestData/Results/main3/IaC_Smells.csv
-```
-Read these against the actual `main3.yml` and `thresholds.csv` by hand —
-confirm each play's `task_metrics` really belongs to that play, and that
-each CSV smell flag matches the raw JSON numbers against the real threshold
-values. This is how the four silent wrong-output bugs above were caught;
-"doesn't crash" is not the same as "produces correct data."
+## Current status and known limitations
 
-**Step 5 — isolated fixture tests** (fast feedback for a single detector)
-```bash
-cat > /tmp/dupe_test.yml << 'EOF'
-- name: Install package
-  apt: {name: nginx}
-- name: Install package
-  apt: {name: curl}
-EOF
-python3 -c "from duplicate_task_Name import repeated_task_names; print(repeated_task_names('/tmp/dupe_test.yml'))"
-# expect: 1
-```
+The detection logic and the packaging are both done and stable — this is
+a genuinely runnable tool against real, arbitrary Ansible projects, not
+just a fixed local fixture folder. What's still open:
 
-**Definition of done:** Step 2 clean, Step 3 no tracebacks, Step 4 every
-number in the CSV traceable to `Technical_Analysis.json` and matched by hand
-against `thresholds.csv`.
+- **Thresholds aren't empirically calibrated yet** — `thresholds.csv`'s
+  values are a reasonable starting point (prior literature / judgment
+  call), not the result of running against a large real-world corpus and
+  picking a percentile.
+- **No structured logging** — the tool uses `print()` throughout; fine for
+  interactive use, not ideal for unattended runs over hundreds of files.
+- **Some internal function/variable names are still in French**
+  (file names themselves are English now; internal identifiers weren't in
+  scope for the packaging refactor).
+- **GitLeaks doesn't run on files that fail YAML parsing** — a known,
+  accepted gap (see `docs/CLI_STATUS.md`), since GitLeaks' content-scan
+  doesn't technically need valid YAML, but the pipeline currently skips
+  those files entirely.
+- **The SARIF severity/rule catalog is a stated judgment call**, not an
+  empirically calibrated one — see `docs/OUTPUT_FORMATS.md` for the exact
+  reasoning behind each `error`/`warning`/`note` assignment.
 
-## 6. Known issues / next steps
+The full, detailed bug-fixing history — every bug found, how it was
+confirmed, and how it was fixed — lives in
+[`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md), and is worth reading
+if you're about to touch a detector: several of the bugs found were subtle
+enough (silently reading from the wrong dictionary, a placeholder string
+masking a real check) that similar mistakes are easy to reintroduce
+without realizing it.
 
-- `smellsDetector.py`: `large_task`, `long_task_name`, and
-  `inconsistent_naming_convention` playbook-level counters are recomputed at
-  the top of *each* play's task loop and overwritten every iteration — final
-  CSV reflects only the last play processed. Same bug shape as the already-
-  fixed `large_play` reset, not yet applied here.
-- A task with heavy `overriden_keys`-style duplication under-reports its own
-  size in LOC-based metrics, because `yaml.safe_load()` silently collapses
-  duplicate keys before `detect_large_task.py` sees the task (confirmed on
-  `main3.yml`'s `task8`: real span ~37 lines, reported `LOC_task`: 12).
-- Threshold comparisons are strict `>` everywhere, not `>=` — an implicit
-  decision that should be stated explicitly.
-- `include_vars.py`'s "used variable" regex misses `{{var_name}}` (no
-  spaces) and `{{ var_name | default(...) }}` — a looser regex
-  (`var_usage_pattern`) is already defined but unused.
-- `sem_cohesion.py` and `incohesive_plays.py` each independently load
-  `en_core_web_lg` at import time — real startup cost, not centralized.
-- `config.py`'s `varsfiles_folder` is `None` — no `include_vars:` + `vars/`
-  fixture exists yet, so unused-vars detection is untested against real data.
-- `exceptions.py` is empty despite being described in `explanation.md`.
-- `GeneralsmellsDetector.py` — stale fork with the pre-fix `is_large_play`
-  bug, nothing imports it. Decide: delete, or mark deprecated.
-- No real Python package structure — every file uses bare
-  `from config import ...`, only resolving when `AnsibleGuard/` is the
-  working directory. A proper package would remove this constraint.
-- `main.py`'s folder-scan is non-recursive (`glob`, not `rglob`) — won't
-  find playbooks nested under `roles/*/tasks/main.yml` in a real project.
-- No permanent `pytest` suite yet — the throwaway fixtures built during this
-  pass (empty files, nested blocks, malformed YAML, duplicate names, etc.)
-  should become regression tests.
-- `thresholds.csv` values are inherited from OOP-smell literature or picked
-  by feel, not empirically calibrated against a real playbook corpus.
+---
 
-Full root-cause detail and the threshold key-name mapping table:
-`PROJECT_STATUS.md`.
+## Where to look next
+
+| I want to... | Read |
+|---|---|
+| Understand what the tool does and why, in plain language | `docs/HOW_IT_WORKS.md` |
+| See the exact call graph and file-by-file status | `docs/ARCHITECTURE.md` |
+| Understand the three output layers in depth | `docs/OUTPUT_FORMATS.md` |
+| See the CLI's development history and the bugs it surfaced | `docs/CLI_STATUS.md` |
+| See the full detector bug-fixing log | `docs/PROJECT_STATUS.md` |
+| Understand why the project is packaged the way it is | `docs/REFACTOR_PLAN.md` |
