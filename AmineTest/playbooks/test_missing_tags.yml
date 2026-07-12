@@ -1,0 +1,84 @@
+---
+# Test playbook for missing_tags detector
+# See: src/ansibleguard/detectors/missing_tags.py
+
+- name: Test missing tags detection
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    # === POSITIVE CASES (SHOULD WARN) ===
+
+    # SHOULD WARN: task with no tags
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+
+    # SHOULD WARN: task with no tags
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
+
+    # === NEGATIVE CASES (SHOULD PASS) ===
+
+    # SHOULD PASS: task with tags
+    - name: Install apache
+      apt:
+        name: apache2
+        state: present
+      tags:
+        - install
+
+    # SHOULD PASS: task with inline tags
+    - name: Configure apache
+      template:
+        src: apache.conf.j2
+        dest: /etc/apache2/apache2.conf
+      tags: configure
+
+    # SHOULD PASS: task inheriting tags from block
+    - name: Tagged block
+      tags:
+        - maintenance
+      block:
+        # SHOULD PASS: inherits tags from parent block
+        - name: Stop services
+          service:
+            name: nginx
+            state: stopped
+
+        # SHOULD PASS: inherits tags from parent block
+        - name: Run backup
+          command: tar -czf /backup/data.tar.gz /var/www
+
+    # === EDGE CASES ===
+
+    # SHOULD WARN: task inside an untagged block
+    - name: Untagged block
+      block:
+        # SHOULD WARN: no tags on task or parent block
+        - name: Remove temp files
+          file:
+            path: /tmp/cache
+            state: absent
+
+    # SHOULD PASS: task with 'never' tag (special Ansible tag)
+    - name: Dangerous database operation
+      command: rm -rf /var/lib/postgresql/data/old
+      tags:
+        - never
+        - database
+
+    # SHOULD WARN: task in rescue without tags
+    - name: Block with rescue
+      block:
+        - name: Try something
+          command: /bin/true
+          tags: main
+      rescue:
+        # SHOULD WARN: rescue task with no tags (not inherited from untagged block)
+        - name: Handle failure
+          debug:
+            msg: "Something failed"

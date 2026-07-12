@@ -1,0 +1,96 @@
+---
+# Test playbook for missing_validate_certs detector
+# See: src/ansibleguard/detectors/missing_validate_certs.py
+
+# SHOULD WARN: uri module with validate_certs: false
+- name: Test missing validate_certs
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    # === POSITIVE CASES (SHOULD WARN) ===
+
+    # SHOULD WARN: uri with validate_certs: false (boolean)
+    - name: Make API call without cert validation (bool)
+      uri:
+        url: https://api.example.com/data
+        method: GET
+        validate_certs: false
+
+    # SHOULD WARN: uri with validate_certs: "false" (string)
+    - name: Make API call without cert validation (string)
+      uri:
+        url: https://api.example.com/status
+        method: GET
+        validate_certs: "false"
+
+    # SHOULD WARN: uri with validate_certs: no
+    - name: Make API call without cert validation (no)
+      uri:
+        url: https://api.example.com/health
+        method: GET
+        validate_certs: no
+
+    # SHOULD WARN: get_url with validate_certs: false
+    - name: Download file without cert validation
+      get_url:
+        url: https://example.com/file.tar.gz
+        dest: /tmp/file.tar.gz
+        validate_certs: false
+
+    # === NEGATIVE CASES (SHOULD PASS) ===
+
+    # SHOULD PASS: uri with validate_certs: true (default)
+    - name: Make API call with cert validation
+      uri:
+        url: https://api.example.com/data
+        method: GET
+        validate_certs: true
+
+    # SHOULD PASS: uri without validate_certs (defaults to true)
+    - name: Make API call without explicit validate_certs
+      uri:
+        url: https://api.example.com/data
+        method: GET
+
+    # SHOULD PASS: get_url without validate_certs
+    - name: Download file with default cert validation
+      get_url:
+        url: https://example.com/file.tar.gz
+        dest: /tmp/file.tar.gz
+
+    # SHOULD PASS: unrelated module
+    - name: Copy a file (nothing to do with certs)
+      copy:
+        src: /tmp/a
+        dest: /tmp/b
+
+    # === EDGE CASES ===
+
+    # SHOULD WARN: uri nested inside a block with validate_certs: false
+    - name: Outer block
+      block:
+        # SHOULD WARN: nested uri with disabled certs
+        - name: Nested API call without cert validation
+          uri:
+            url: https://internal.example.com/api
+            method: POST
+            validate_certs: false
+      rescue:
+        - name: Rescue task (should not be affected)
+          debug:
+            msg: "API call failed"
+
+    # SHOULD WARN: FQCN module name
+    - name: FQCN uri with disabled certs
+      ansible.builtin.uri:
+        url: https://api.example.com/v2
+        method: GET
+        validate_certs: false
+
+    # SHOULD PASS: validate_certs set to a variable (dynamic — can't statically determine)
+    - name: API call with dynamic cert validation
+      uri:
+        url: https://api.example.com/data
+        method: GET
+        validate_certs: "{{ verify_ssl | default(true) }}"

@@ -82,6 +82,18 @@ def assess_code_smells(
         "missing_files_extension", 0
     )
 
+    result["playbook"]["metrics"]["missing_validate_certs"] = metrics.get(
+        "missing_validate_certs", 0
+    )
+
+    result["playbook"]["metrics"]["deprecated_modules"] = metrics.get(
+        "deprecated_modules", 0
+    )
+
+    result["playbook"]["metrics"]["missing_tags"] = metrics.get(
+        "missing_tags", 0
+    )
+
     result["playbook"]["metrics"]["similarityPlays"] = metrics.get("similarityPlays", 0)
     ##overriden_keys
 

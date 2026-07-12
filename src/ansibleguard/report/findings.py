@@ -140,6 +140,21 @@ RULE_CATALOG = {
         "category": "cohesion",
         "description": "A play's task names are semantically dissimilar.",
     },
+    "missing-validate-certs": {
+        "level": "warning",
+        "category": "security",
+        "description": "TLS certificate validation is disabled on an HTTPS module (uri/get_url).",
+    },
+    "deprecated-modules": {
+        "level": "warning",
+        "category": "maintainability",
+        "description": "A deprecated Ansible module is in use and may break in future versions.",
+    },
+    "missing-tags": {
+        "level": "note",
+        "category": "style",
+        "description": "A task has no tags and cannot be targeted with --tags or --skip-tags.",
+    },
 }
 
 
@@ -227,6 +242,43 @@ def build_findings_list(
     # --- unused_include_vars warnings: file-level, no line data available ---
     for warning in pm.get("WarningUnusedIncludeVars", []) or []:
         out.append(_finding(file, 1, "unused-include-vars", warning))
+
+    # --- missing_validate_certs: per-task details ---
+    for detail in metrics.get("missing_validate_certs_details", []) or []:
+        out.append(
+            _finding(
+                file,
+                detail.get("line", 1),
+                "missing-validate-certs",
+                f"Task '{detail.get('task_name', 'Unknown')}': "
+                f"{detail.get('issue', 'validate_certs disabled')} "
+                f"(module={detail.get('module', '?')})",
+            )
+        )
+
+    # --- deprecated_modules: per-task details ---
+    for detail in metrics.get("deprecated_modules_details", []) or []:
+        out.append(
+            _finding(
+                file,
+                detail.get("line", 1),
+                "deprecated-modules",
+                f"Task '{detail.get('task_name', 'Unknown')}': "
+                f"{detail.get('issue', 'deprecated module')}",
+            )
+        )
+
+    # --- missing_tags: per-task details ---
+    for detail in metrics.get("missing_tags_details", []) or []:
+        out.append(
+            _finding(
+                file,
+                detail.get("line", 1),
+                "missing-tags",
+                f"Task '{detail.get('task_name', 'Unknown')}': "
+                f"{detail.get('issue', 'no tags')}",
+            )
+        )
 
     # --- playbook-level boolean/count smells: file-level (line 1) ---
     playbook_level_simple = [

@@ -1,0 +1,74 @@
+---
+# Test playbook for deprecated_modules detector
+# See: src/ansibleguard/detectors/deprecated_modules.py
+
+- name: Test deprecated modules detection
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    # === POSITIVE CASES (SHOULD WARN) ===
+
+    # SHOULD WARN: docker is deprecated
+    - name: Run a docker container (deprecated)
+      docker:
+        name: myapp
+        image: nginx:latest
+        state: started
+
+    # SHOULD WARN: ec2 is deprecated
+    - name: Launch EC2 instance (deprecated)
+      ec2:
+        instance_type: t2.micro
+        image: ami-123456
+        wait: yes
+
+    # SHOULD WARN: s3 is deprecated
+    - name: Upload to S3 (deprecated)
+      s3:
+        bucket: my-bucket
+        object: /path/to/file
+        mode: put
+
+    # SHOULD WARN: include is deprecated
+    - name: Include tasks (deprecated)
+      include: setup_tasks.yml
+
+    # === NEGATIVE CASES (SHOULD PASS) ===
+
+    # SHOULD PASS: modern FQCN module
+    - name: Run container with FQCN
+      community.docker.docker_container:
+        name: myapp
+        image: nginx:latest
+        state: started
+
+    # SHOULD PASS: standard module still in core
+    - name: Copy a file
+      copy:
+        src: /tmp/a
+        dest: /tmp/b
+
+    # SHOULD PASS: include_tasks (not the deprecated include)
+    - name: Include tasks properly
+      include_tasks: setup_tasks.yml
+
+    # === EDGE CASES ===
+
+    # SHOULD WARN: deprecated module nested in block
+    - name: Outer block
+      block:
+        # SHOULD WARN: docker in a block
+        - name: Docker in block (deprecated)
+          docker:
+            name: nested
+            image: alpine
+            state: started
+
+    # SHOULD WARN: aliased module (old name)
+    - name: Mount with old module name
+      mount:
+        path: /mnt/data
+        src: /dev/sdb1
+        fstype: ext4
+        state: mounted

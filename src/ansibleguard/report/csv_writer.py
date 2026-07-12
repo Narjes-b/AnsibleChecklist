@@ -31,6 +31,9 @@ def write_results_to_csv(all_results, file_path):
             "Unecessary Dependency",
             "Hardcoded Credentials",
             "Missing File Extension",
+            "Missing Validate Certs",
+            "Deprecated Modules",
+            "Missing Tags",
             "Design Smells",
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -78,6 +81,15 @@ def write_results_to_csv(all_results, file_path):
                     "Hardcoded Credentials": metrics.get("hardcoded_credentials", 0),
                     "Missing File Extension": metrics.get(
                         "missing_files_extension", ""
+                    ),
+                    "Missing Validate Certs": metrics.get(
+                        "missing_validate_certs", ""
+                    ),
+                    "Deprecated Modules": metrics.get(
+                        "deprecated_modules", ""
+                    ),
+                    "Missing Tags": metrics.get(
+                        "missing_tags", ""
                     ),
                     "Design Smells": metrics.get("ansible_lint_issues", ""),
                 }

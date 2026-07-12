@@ -38,6 +38,9 @@ from ansibleguard.detectors.credentials_leaking_in_log import (
 )
 
 from ansibleguard.detectors.include_vars import detect_unused_include_vars
+from ansibleguard.detectors.missing_validate_certs import detect_missing_validate_certs
+from ansibleguard.detectors.deprecated_modules import detect_deprecated_modules
+from ansibleguard.detectors.missing_tags import detect_missing_tags
 import pandas as pd
 import csv
 import json
@@ -104,6 +107,15 @@ def mainn(yaml_file_path):
     unused_include_vars, WarningUnusedIncludeVars = detect_unused_include_vars(
         yaml_file_path, vars_folder=None
     )
+    missing_certs_count, missing_certs_details = detect_missing_validate_certs(
+        yaml_file_path
+    )
+    deprecated_mod_count, deprecated_mod_details = detect_deprecated_modules(
+        yaml_file_path
+    )
+    missing_tags_count, missing_tags_details = detect_missing_tags(
+        yaml_file_path
+    )
 
     main_metrics = {
         "playbook_metrics": metrics_playbook,
@@ -127,6 +139,12 @@ def mainn(yaml_file_path):
         "credentials_leaking_in_log_details": credentialsLeakDetails,
         "unused_include_vars": unused_include_vars,
         "WarningUnusedIncludeVars": WarningUnusedIncludeVars,
+        "missing_validate_certs": missing_certs_count,
+        "missing_validate_certs_details": missing_certs_details,
+        "deprecated_modules": deprecated_mod_count,
+        "deprecated_modules_details": deprecated_mod_details,
+        "missing_tags": missing_tags_count,
+        "missing_tags_details": missing_tags_details,
         "plays": [],
     }
 
