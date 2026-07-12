@@ -1,0 +1,75 @@
+---
+# Test playbook for handler_issues detector
+# See: src/ansibleguard/detectors/handler_issues.py
+
+- name: Test handler issues
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    # === TASKS THAT NOTIFY ===
+
+    # SHOULD PASS: notifies an existing handler
+    - name: Update nginx config
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: Restart nginx
+
+    # SHOULD WARN: notifies a handler that does not exist
+    - name: Install packages
+      apt:
+        name: nginx
+        state: present
+      notify: Reload firewall
+
+    # SHOULD PASS: notifies multiple handlers
+    - name: Deploy application
+      copy:
+        src: app.war
+        dest: /opt/tomcat/webapps/
+      notify:
+        - Restart tomcat
+        - Clean temp files
+
+    # SHOULD WARN: one of multiple notifies is missing
+    - name: Configure monitoring
+      template:
+        src: monitoring.conf.j2
+        dest: /etc/monitoring/conf.d/app.conf
+      notify:
+        - Restart monitoring agent
+        - Refresh cache  # does not exist
+
+    # === HANDLERS ===
+
+  handlers:
+    # SHOULD PASS: handler that IS notified
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    # SHOULD WARN: handler never notified
+    - name: Restart postgresql
+      service:
+        name: postgresql
+        state: restarted
+
+    # SHOULD PASS: handler notified above
+    - name: Restart tomcat
+      service:
+        name: tomcat
+        state: restarted
+
+    # SHOULD PASS: handler notified above
+    - name: Clean temp files
+      file:
+        path: /tmp/app
+        state: absent
+
+    # SHOULD PASS: handler notified above
+    - name: Restart monitoring agent
+      service:
+        name: monitoring-agent
+        state: restarted

@@ -50,7 +50,7 @@ _DEPRECATED_MODULES = {
     "ec2_tag": "amazon.aws.ec2_tag",
     "ec2_snapshot": "amazon.aws.ec2_snapshot",
     "ec2_instance": "amazon.aws.ec2_instance",
-    "s3": "amazon.aws.s3_object",
+    "s3": "amazon.aws.s3_object (for objects) or amazon.aws.s3_bucket (for buckets)",
     "s3_bucket": "amazon.aws.s3_bucket",
     "s3_lifecycle": "amazon.aws.s3_lifecycle",
     "iam": "amazon.aws.iam_role",
@@ -79,7 +79,10 @@ _DEPRECATED_MODULES = {
     "os_network": "openstack.cloud.network",
 }
 
-# Modules that are aliases (old names still work but warn)
+# Modules that are short names (unqualified) that still work but should
+# use FQCN for clarity. These are NOT deprecated — they are still
+# supported — but Ansible recommends using FQCN for future-proofing.
+# Severity: note (informational).
 _ALIASED_MODULES = {
     "authorized_key": "ansible.posix.authorized_key",
     "firewalld": "ansible.posix.firewalld",
@@ -88,29 +91,29 @@ _ALIASED_MODULES = {
     "seboolean": "ansible.posix.seboolean",
     "sysctl": "ansible.posix.sysctl",
     "acl": "ansible.posix.acl",
-    "at": "ansible.posix.at",
     "ini_file": "community.general.ini_file",
     "jenkins_job": "community.general.jenkins_job",
     "datadog_monitor": "community.general.datadog_monitor",
     "git_config": "community.general.git_config",
     "npm": "community.general.npm",
-    "pip": "ansible.builtin.pip",  # still in core but noted
 }
 
 
 def _collect_all_tasks(playbook):
-    """Recursively collect all leaf tasks."""
+    """Recursively collect all leaf tasks.
+    Processes ALL nested sections (block, rescue, always), not just the first."""
     all_tasks = []
 
     def recurse(tasks):
         for task in tasks:
             if not isinstance(task, dict):
                 continue
+            has_nested = False
             for section in ("block", "rescue", "always"):
                 if section in task and isinstance(task[section], list):
                     recurse(task[section])
-                    break
-            else:
+                    has_nested = True
+            if not has_nested:
                 all_tasks.append(task)
 
     if isinstance(playbook, list):
@@ -180,15 +183,17 @@ def detect_deprecated_modules(yaml_file_path):
                     "line": None,
                 })
                 break  # One module per task
-            # Check aliased modules (old names)
+            # Check aliased modules (short names — still supported but
+            # FQCN recommended for future-proofing)
             elif key in _ALIASED_MODULES:
                 details.append({
                     "task_name": task_name,
                     "module": key,
                     "replacement": _ALIASED_MODULES[key],
                     "issue": (
-                        f"Module '{key}' is aliased. "
-                        f"Use FQCN '{_ALIASED_MODULES[key]}' instead."
+                        f"Module '{key}' uses a short name. "
+                        f"Consider using FQCN '{_ALIASED_MODULES[key]}' "
+                        f"for future-proofing."
                     ),
                     "line": None,
                 })

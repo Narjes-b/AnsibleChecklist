@@ -41,6 +41,8 @@ from ansibleguard.detectors.include_vars import detect_unused_include_vars
 from ansibleguard.detectors.missing_validate_certs import detect_missing_validate_certs
 from ansibleguard.detectors.deprecated_modules import detect_deprecated_modules
 from ansibleguard.detectors.missing_tags import detect_missing_tags
+from ansibleguard.detectors.shell_instead_of_module import detect_shell_instead_of_module
+from ansibleguard.detectors.handler_issues import detect_handler_issues
 import pandas as pd
 import csv
 import json
@@ -116,6 +118,12 @@ def mainn(yaml_file_path):
     missing_tags_count, missing_tags_details = detect_missing_tags(
         yaml_file_path
     )
+    shell_mod_count, shell_mod_details = detect_shell_instead_of_module(
+        yaml_file_path
+    )
+    missing_handler_count, missing_handler_details, unused_handler_count, unused_handler_details = detect_handler_issues(
+        yaml_file_path
+    )
 
     main_metrics = {
         "playbook_metrics": metrics_playbook,
@@ -145,6 +153,12 @@ def mainn(yaml_file_path):
         "deprecated_modules_details": deprecated_mod_details,
         "missing_tags": missing_tags_count,
         "missing_tags_details": missing_tags_details,
+        "shell_instead_of_module": shell_mod_count,
+        "shell_instead_of_module_details": shell_mod_details,
+        "missing_handlers": missing_handler_count,
+        "missing_handlers_details": missing_handler_details,
+        "unused_handlers": unused_handler_count,
+        "unused_handlers_details": unused_handler_details,
         "plays": [],
     }
 

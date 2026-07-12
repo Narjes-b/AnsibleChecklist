@@ -31,7 +31,8 @@ import yaml
 
 
 def _collect_all_tasks(playbook):
-    """Recursively collect all leaf tasks. Returns list of (task_dict, inherited_tags)."""
+    """Recursively collect all leaf tasks. Returns list of (task_dict, inherited_tags).
+    Processes ALL nested sections (block, rescue, always), not just the first."""
     all_tasks = []
 
     def recurse(tasks, parent_has_tags=False):
@@ -41,12 +42,12 @@ def _collect_all_tasks(playbook):
             has_nested = False
             for section in ("block", "rescue", "always"):
                 if section in task and isinstance(task[section], list):
-                    # Children inherit tags from their block/rescue/always wrapper
+                    # Children inherit tags from their wrapper
                     wrapper_has_tags = parent_has_tags or "tags" in task
                     recurse(task[section], wrapper_has_tags)
                     has_nested = True
             if not has_nested:
-                # Leaf task — check if it has tags or inherits from parent
+                # Leaf task — check if it has tags or inherits
                 all_tasks.append((task, parent_has_tags))
 
     if isinstance(playbook, list):

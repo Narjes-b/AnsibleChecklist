@@ -34,6 +34,9 @@ def write_results_to_csv(all_results, file_path):
             "Missing Validate Certs",
             "Deprecated Modules",
             "Missing Tags",
+            "Shell Instead of Module",
+            "Missing Handlers",
+            "Unused Handlers",
             "Design Smells",
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -90,6 +93,15 @@ def write_results_to_csv(all_results, file_path):
                     ),
                     "Missing Tags": metrics.get(
                         "missing_tags", ""
+                    ),
+                    "Shell Instead of Module": metrics.get(
+                        "shell_instead_of_module", ""
+                    ),
+                    "Missing Handlers": metrics.get(
+                        "missing_handlers", ""
+                    ),
+                    "Unused Handlers": metrics.get(
+                        "unused_handlers", ""
                     ),
                     "Design Smells": metrics.get("ansible_lint_issues", ""),
                 }

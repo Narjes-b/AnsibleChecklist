@@ -1,0 +1,79 @@
+---
+# Test playbook for shell_instead_of_module detector
+# See: src/ansibleguard/detectors/shell_instead_of_module.py
+
+- name: Test shell instead of module
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+    # === POSITIVE CASES (SHOULD WARN) ===
+
+    # SHOULD WARN: apt-get install → apt module
+    - name: Install nginx via shell
+      shell: apt-get install -y nginx
+
+    # SHOULD WARN: yum install → yum module
+    - name: Install httpd via yum
+      command: yum install -y httpd
+
+    # SHOULD WARN: mkdir → file module
+    - name: Create directory via shell
+      shell: mkdir -p /opt/myapp/data
+
+    # SHOULD WARN: systemctl → systemd module
+    - name: Restart service via shell
+      command: systemctl restart nginx
+
+    # SHOULD WARN: pip install → pip module
+    - name: Install Python package via shell
+      shell: pip install requests
+
+    # SHOULD WARN: git clone → git module
+    - name: Clone repo via shell
+      command: git clone https://github.com/example/repo.git /opt/repo
+
+    # SHOULD WARN: wget → get_url module
+    - name: Download file via shell
+      shell: wget https://example.com/file.tar.gz -O /tmp/file.tar.gz
+
+    # SHOULD WARN: chmod → file module
+    - name: Set permissions via shell
+      command: chmod 755 /opt/myapp/bin/start.sh
+
+    # === NEGATIVE CASES (SHOULD PASS) ===
+
+    # SHOULD PASS: complex pipeline with pipes
+    - name: Find and process log files
+      shell: find /var/log -name "*.log" -mtime +7 | xargs gzip
+
+    # SHOULD PASS: multi-step command with &&
+    - name: Build and install from source
+      shell: ./configure && make && make install
+
+    # SHOULD PASS: native module usage
+    - name: Install package via apt module
+      apt:
+        name: nginx
+        state: present
+
+    # SHOULD PASS: valid shell with redirect
+    - name: Generate config and redirect
+      shell: echo "CONFIG_VERSION=2.0" >> /etc/app/config
+
+    # === EDGE CASES ===
+
+    # SHOULD WARN: chown → file module
+    - name: Change ownership via shell
+      command: chown appuser:appgroup /opt/myapp
+
+    # SHOULD PASS: FQCN shell usage with complex command
+    - name: Complex script execution
+      ansible.builtin.shell: /opt/scripts/backup.sh --full --compress
+
+    # SHOULD WARN: apt-get in nested block
+    - name: Package installation block
+      block:
+        # SHOULD WARN: apt-get inside block
+        - name: Update apt cache via shell
+          shell: apt-get update

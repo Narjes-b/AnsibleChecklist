@@ -94,6 +94,18 @@ def assess_code_smells(
         "missing_tags", 0
     )
 
+    result["playbook"]["metrics"]["shell_instead_of_module"] = metrics.get(
+        "shell_instead_of_module", 0
+    )
+
+    result["playbook"]["metrics"]["missing_handlers"] = metrics.get(
+        "missing_handlers", 0
+    )
+
+    result["playbook"]["metrics"]["unused_handlers"] = metrics.get(
+        "unused_handlers", 0
+    )
+
     result["playbook"]["metrics"]["similarityPlays"] = metrics.get("similarityPlays", 0)
     ##overriden_keys
 

@@ -42,18 +42,20 @@ _DISABLED_VALUES = {False, "false", "no", "False", "No", "NO"}
 
 
 def _collect_all_tasks(playbook):
-    """Recursively collect all leaf tasks (not block/rescue/always wrappers)."""
+    """Recursively collect all leaf tasks (not block/rescue/always wrappers).
+    Processes ALL nested sections (block, rescue, always), not just the first."""
     all_tasks = []
 
     def recurse(tasks):
         for task in tasks:
             if not isinstance(task, dict):
                 continue
+            has_nested = False
             for section in ("block", "rescue", "always"):
                 if section in task and isinstance(task[section], list):
                     recurse(task[section])
-                    break
-            else:
+                    has_nested = True
+            if not has_nested:
                 all_tasks.append(task)
 
     if isinstance(playbook, list):

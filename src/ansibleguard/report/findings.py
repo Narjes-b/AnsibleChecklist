@@ -155,6 +155,21 @@ RULE_CATALOG = {
         "category": "style",
         "description": "A task has no tags and cannot be targeted with --tags or --skip-tags.",
     },
+    "shell-instead-of-module": {
+        "level": "warning",
+        "category": "maintainability",
+        "description": "A shell/command task could be replaced by a native Ansible module.",
+    },
+    "missing-handler": {
+        "level": "error",
+        "category": "correctness",
+        "description": "A notify references a handler that does not exist.",
+    },
+    "unused-handler": {
+        "level": "warning",
+        "category": "maintainability",
+        "description": "A handler is defined but never notified.",
+    },
 }
 
 
@@ -277,6 +292,42 @@ def build_findings_list(
                 "missing-tags",
                 f"Task '{detail.get('task_name', 'Unknown')}': "
                 f"{detail.get('issue', 'no tags')}",
+            )
+        )
+
+    # --- shell_instead_of_module: per-task details ---
+    for detail in metrics.get("shell_instead_of_module_details", []) or []:
+        out.append(
+            _finding(
+                file,
+                detail.get("line", 1),
+                "shell-instead-of-module",
+                f"Task '{detail.get('task_name', 'Unknown')}': "
+                f"{detail.get('issue', 'shell instead of module')} "
+                f"(module: {detail.get('module', '?')}, "
+                f"command: {detail.get('command', '?')})",
+            )
+        )
+
+    # --- handler_issues: per-handler details ---
+    for detail in metrics.get("missing_handlers_details", []) or []:
+        out.append(
+            _finding(
+                file,
+                detail.get("line", 1),
+                "missing-handler",
+                f"Notify '{detail.get('handler_name', '?')}': "
+                f"{detail.get('issue', 'missing handler')}",
+            )
+        )
+    for detail in metrics.get("unused_handlers_details", []) or []:
+        out.append(
+            _finding(
+                file,
+                detail.get("line", 1),
+                "unused-handler",
+                f"Handler '{detail.get('handler_name', '?')}': "
+                f"{detail.get('issue', 'unused handler')}",
             )
         )
 
