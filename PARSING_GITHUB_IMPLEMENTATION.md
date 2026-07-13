@@ -697,3 +697,559 @@ The main result files are permanently available at:
 These paths persist across restarts. The fake validation credentials remain
 uncommitted in the nested clone until the dedicated GitHub fork/PR test is
 prepared.
+
+## GitHub SARIF repository setup — July 13, 2026
+
+This section records the work performed to move from local validation to a
+real GitHub pull request.
+
+### Safe custom GitLeaks markers
+
+Provider-shaped `ghp_...` test strings were removed before pushing. Even fake
+provider tokens can trigger GitHub push protection or native Secret Scanning,
+which would mix GitHub's own alerts with the AnsibleGuard SARIF test.
+
+AnsibleGuard now detects and passes a target repository's `.gitleaks.toml`
+explicitly using `--config`. The behavior works for directory targets and
+single-file targets and has regression coverage.
+
+The validation repository has this safe custom rule while retaining GitLeaks'
+default rules:
+
+```toml
+title = "AnsibleGuard safe SARIF validation"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "ansibleguard-test-secret"
+description = "Synthetic AnsibleGuard validation marker"
+regex = '''ANSIBLEGUARD_TEST_SECRET_[A-Z0-9]{24}'''
+tags = ["test", "ansibleguard"]
+```
+
+The three committed test values now use the non-provider marker
+`ANSIBLEGUARD_TEST_SECRET_...`. Raw GitLeaks validation found exactly three
+`ansibleguard-test-secret` results in:
+
+```text
+.env.validation:2
+vars/validation-secrets.yml:3
+vars/invalid-validation.yml:3
+```
+
+The permanent mutated scan was regenerated and remained stable at 89 findings
+and five errors. The project suite after target-local config support was:
+
+```text
+127 passed in 14.93s
+```
+
+### GitHub authentication and repositories
+
+The existing GitHub CLI credential for `JedidiAymen` was expired. Browser
+authentication was completed again, producing repository and workflow scopes,
+and `gh auth setup-git` configured Git HTTPS credential usage.
+
+The main AnsibleGuard checkout originally pointed to the private upstream:
+
+```text
+https://github.com/Narjes-b/AnsibleChecklist.git
+```
+
+A dedicated branch was created and committed locally:
+
+```text
+branch: sarif-validation-support
+commit: 9553aec
+message: Add resilient parsing and GitHub SARIF validation
+```
+
+A private fork was created and the tested branch pushed:
+
+```text
+https://github.com/JedidiAymen/AnsibleChecklist
+https://github.com/JedidiAymen/AnsibleChecklist/tree/sarif-validation-support
+```
+
+The dedicated public validation repository was created at:
+
+```text
+https://github.com/JedidiAymen/ansibleguard-sarif-validation
+```
+
+The first clean push from the shallow role clone failed because GitHub did not
+receive an older referenced object. `git fetch --unshallow origin` retrieved
+the complete upstream history, after which the untouched Apache role was
+successfully pushed as `main`.
+
+The controlled files, custom GitLeaks rule, and validation workflow were
+committed and pushed as:
+
+```text
+branch: ansibleguard-controlled-validation
+commit: 0e837e0 (controlled findings)
+commit: 31fef9f (standalone Python setup correction)
+```
+
+Pull request #1 is live:
+
+```text
+https://github.com/JedidiAymen/ansibleguard-sarif-validation/pull/1
+```
+
+The inherited Apache `CI`, `Release`, and `Close inactive issues` workflows
+were disabled in this dedicated repository so Molecule and upstream release
+automation do not obscure the SARIF test. Only `AnsibleGuard SARIF validation`
+remains relevant.
+
+### First GitHub workflow failure: inappropriate pip cache
+
+Run `29237993627` failed during `actions/setup-python` because the validation
+role has no `requirements.txt` or `pyproject.toml`, while `cache: pip` requires
+one of those files. The pip cache option was removed and commit `31fef9f` was
+pushed. This is specific to installing AnsibleGuard from another repository
+rather than from the scanned repository itself.
+
+### Second GitHub workflow failure: private cross-repository installation
+
+Run `29238313686` progressed to the AnsibleGuard installation command:
+
+```bash
+pip install \
+  "ansibleguard @ git+https://github.com/JedidiAymen/AnsibleChecklist.git@9553aec"
+```
+
+GitHub rejected the unauthenticated clone. Both the upstream AnsibleChecklist
+repository and the `JedidiAymen/AnsibleChecklist` fork are private. The
+validation repository is public, and its built-in `GITHUB_TOKEN` is scoped to
+that validation repository; it cannot read another private repository.
+
+No broad personal OAuth token was copied into repository secrets
+automatically. The safe ways forward are:
+
+1. add a read-only deploy key dedicated to the private AnsibleGuard fork and
+   store only its private half as a validation-repository Actions secret; or
+2. publish AnsibleGuard in a separate public repository/package, if making the
+   source public is intended.
+
+The least-privilege recommendation is option 1. Once access is configured, the
+workflow can install commit `9553aec`, run the scanner, upload SARIF and the
+artifact, and finally reach the intentionally failing five-error enforcement
+step.
+
+## Plain-language team handoff — what we are doing and why
+
+This section explains the GitHub work for team members who are not yet
+familiar with branches, forks, pull requests, or GitHub Actions.
+
+### The final goal
+
+The goal is to prove that AnsibleGuard works in a real GitHub pull request,
+not only on one developer's computer. When somebody changes an Ansible file,
+GitHub should automatically:
+
+1. install AnsibleGuard;
+2. scan every relevant file, including valid YAML, invalid YAML, vars files,
+   vault files, and non-YAML files that GitLeaks can inspect;
+3. create `findings.sarif` and the other permanent result files;
+4. upload the SARIF report to GitHub code scanning;
+5. show findings on the pull request at the affected files and lines; and
+6. fail the final policy check when findings at the configured severity are
+   present.
+
+The last failure in step 6 is expected for the controlled validation branch.
+It means the scanner found the five errors that we deliberately inserted. A
+failure during installation is different: it means the test never reached the
+scanner and therefore proves nothing about SARIF annotations.
+
+### Why there are two repositories
+
+There are two separate jobs, so there are two repositories:
+
+```text
+Private AnsibleGuard repository
+  JedidiAymen/AnsibleChecklist
+  Contains the scanner source code that GitHub Actions must install.
+
+Public validation repository
+  JedidiAymen/ansibleguard-sarif-validation
+  Contains the Apache Ansible role, controlled test changes, workflow,
+  pull request, and GitHub code-scanning results.
+```
+
+Keeping the validation repository separate gives the team a realistic target:
+AnsibleGuard is installed as a tool and scans another project. It also keeps
+intentional invalid YAML and synthetic secrets out of the scanner's own source
+tree.
+
+### What a fork means here
+
+A fork is a GitHub copy of another repository under a different account. The
+original AnsibleGuard repository belongs to `Narjes-b`; the working fork
+belongs to `JedidiAymen`.
+
+```text
+Original: Narjes-b/AnsibleChecklist
+Working fork: JedidiAymen/AnsibleChecklist
+```
+
+The fork lets us push and test the AnsibleGuard changes without changing the
+team's original repository immediately. Later, after the work is reviewed, a
+pull request can propose those changes back to the original repository. A
+fork is not a temporary folder and it is not the test result; it is a real
+GitHub repository with its own branches and permissions.
+
+### What a branch and pull request mean
+
+A branch is a separate line of changes inside a repository. The validation
+repository currently uses:
+
+```text
+main
+  Clean Apache role used as the starting point.
+
+ansibleguard-controlled-validation
+  Apache role plus deliberate findings and the AnsibleGuard workflow.
+```
+
+Pull request #1 asks GitHub to compare the controlled branch with `main`. This
+comparison is the page where the team expects the workflow check and SARIF
+annotations to appear. Opening a pull request does not immediately merge or
+publish its changes into `main`; it creates a review and test area first.
+
+### What GitHub Actions is doing
+
+GitHub Actions is a clean computer started by GitHub for the workflow. It does
+not automatically have the files, Python packages, login session, or private
+repository access from the developer's computer. The workflow must explicitly
+check out the validation repository, install Python, install AnsibleGuard, run
+the scan, and upload the reports.
+
+This explains why the local scan can succeed while the GitHub workflow can
+still fail during setup. They run in different environments with different
+credentials.
+
+### What failed and what it means
+
+The first run failed because Python package caching was enabled even though
+the Apache role has no Python dependency file. Removing that cache setting
+fixed the first setup problem.
+
+The second run reached the AnsibleGuard installation step but could not clone
+the private `JedidiAymen/AnsibleChecklist` repository. The validation
+repository's automatic `GITHUB_TOKEN` only has access to the validation
+repository. GitHub intentionally does not allow that token to read an
+unrelated private repository.
+
+Therefore, the current problem is not YAML parsing, GitLeaks, SARIF generation,
+or the controlled findings. It is only private cross-repository authentication:
+
+```text
+GitHub Actions in the public validation repository
+        needs read-only access to
+the private AnsibleGuard working fork
+```
+
+### Why a read-only deploy key is recommended
+
+A deploy key is a dedicated SSH key that gives one automated workflow access
+to one repository. It has two halves:
+
+- the public half is registered on the private AnsibleGuard fork with
+  read-only access;
+- the private half is stored as an encrypted GitHub Actions secret in the
+  validation repository.
+
+The workflow can then read and install AnsibleGuard, but the key cannot write
+changes to it. This is safer than storing a developer's broad personal access
+token, which could grant access to several repositories or account actions.
+The key itself must never be committed to either Git repository or written in
+this Markdown log.
+
+### Current status
+
+Completed:
+
+- resilient document classification and parsing;
+- GitLeaks coverage even when YAML is invalid;
+- target-local `.gitleaks.toml` support;
+- structured external-tool results and honest summaries;
+- repository-relative SARIF paths and fingerprints;
+- GitHub workflow files and automated tests;
+- permanent baseline and mutated local results;
+- safe synthetic secret markers;
+- public validation repository, controlled branch, and pull request;
+- diagnosis and correction of the first workflow setup failure; and
+- documentation of every material action performed in this session.
+
+Still required:
+
+1. commit and push the latest target-local GitLeaks configuration support and
+   documentation from the AnsibleGuard working branch;
+2. update the validation workflow to install that newest exact commit;
+3. create the dedicated SSH key pair without committing either key;
+4. register its public half as a read-only deploy key on the private fork;
+5. store its private half as an encrypted Actions secret in the validation
+   repository;
+6. update and rerun the workflow using SSH authentication;
+7. confirm that the scan produces the expected five errors;
+8. inspect the GitHub pull-request annotations, code-scanning result, SARIF
+   upload, and downloadable result artifact; and
+9. record the final run links, commit IDs, result counts, and any corrections
+   in this file.
+
+At this point in the session the exact key commands had not yet been executed.
+The following section records the procedure prepared in the next chat. No
+private key value will ever be added to this file.
+
+## Planned deploy-key procedure — explained step by step
+
+This procedure was prepared on July 13, 2026 from GitHub's current deploy-key,
+Actions-secret, and SSH host-key documentation. It records what will be done;
+no key has been generated or registered yet.
+
+### Important idea: there are two different keys
+
+Running `ssh-keygen` creates a matching pair:
+
+```text
+ansibleguard-actions-readonly.pub   Public key: safe to give to GitHub
+ansibleguard-actions-readonly       Private key: secret; never commit or print
+```
+
+The public key is a lock that is attached to the private AnsibleGuard
+repository. The private key is what lets the validation workflow open that
+lock. A person who only sees the public key cannot use it to enter the private
+repository.
+
+### Step 1: finish the AnsibleGuard source commit first
+
+The workflow currently installs commit `9553aec`, but additional tested work
+for target-local `.gitleaks.toml` support and documentation exists after that
+commit. Before configuring SSH access, the team will:
+
+1. inspect the AnsibleGuard working tree and diff;
+2. run the complete test suite again;
+3. commit only the intended scanner, test, and documentation changes;
+4. push `sarif-validation-support` to
+   `JedidiAymen/AnsibleChecklist`; and
+5. record the new full commit hash.
+
+The workflow must be pinned to this new hash. Pinning means that every run
+installs one known version instead of silently changing when a branch moves.
+
+### Step 2: generate one new dedicated key pair
+
+The key will be created in a private, ignored directory outside the nested
+Apache repository:
+
+```bash
+mkdir -p /home/aymmzn/Documents/AnsibleChecklist/validation/private
+chmod 700 /home/aymmzn/Documents/AnsibleChecklist/validation/private
+ssh-keygen \
+  -t ed25519 \
+  -C "ansibleguard-actions-readonly" \
+  -N "" \
+  -f /home/aymmzn/Documents/AnsibleChecklist/validation/private/ansibleguard-actions-readonly
+```
+
+Explanation of the options:
+
+- `-t ed25519` creates a modern Ed25519 SSH key;
+- `-C` adds a recognizable label, not a password;
+- `-N ""` creates it without a passphrase because the non-interactive GitHub
+  runner cannot stop and type one; and
+- `-f` uses an explicit unique filename so no existing personal SSH key can be
+  overwritten.
+
+The `validation/` directory is already ignored by the main AnsibleGuard
+repository, and this location is outside the nested validation Git repository.
+Before generation, we will still verify that neither destination file already
+exists. We will not use `~/.ssh/id_ed25519` and will not reuse a personal key.
+
+### Step 3: add only the public key to the private fork
+
+The destination is the repository that must be read:
+
+```text
+JedidiAymen/AnsibleChecklist
+```
+
+In the GitHub web interface:
+
+1. open `JedidiAymen/AnsibleChecklist`;
+2. open **Settings**;
+3. select **Deploy keys**;
+4. click **Add deploy key**;
+5. use the title `ansibleguard-sarif-validation-readonly`;
+6. paste the contents of `ansibleguard-actions-readonly.pub`;
+7. leave **Allow write access** unchecked; and
+8. add the key.
+
+We can perform the same operation with GitHub CLI after reviewing the public
+key:
+
+```bash
+gh repo deploy-key add \
+  /home/aymmzn/Documents/AnsibleChecklist/validation/private/ansibleguard-actions-readonly.pub \
+  --repo JedidiAymen/AnsibleChecklist \
+  --title ansibleguard-sarif-validation-readonly
+```
+
+The command intentionally omits `--allow-write`, so the key remains read-only.
+Only the `.pub` file is sent in this step. The private file must never be
+passed to `gh repo deploy-key add`.
+
+One deploy key belongs to one repository. This dedicated pair must not be
+reused for another repository.
+
+### Step 4: put the private key into the validation repository's secret store
+
+The destination is now the repository that runs the workflow:
+
+```text
+JedidiAymen/ansibleguard-sarif-validation
+```
+
+The repository-level Actions secret will be called
+`ANSIBLEGUARD_DEPLOY_KEY`. GitHub CLI can encrypt and upload it directly from
+the private-key file:
+
+```bash
+gh secret set ANSIBLEGUARD_DEPLOY_KEY \
+  --repo JedidiAymen/ansibleguard-sarif-validation \
+  --app actions \
+  < /home/aymmzn/Documents/AnsibleChecklist/validation/private/ansibleguard-actions-readonly
+```
+
+GitHub stores the secret encrypted. The secret's value cannot be read back
+through the web interface or CLI after it is saved. The team can verify the
+secret name and update time, but not reveal its value:
+
+```bash
+gh secret list --repo JedidiAymen/ansibleguard-sarif-validation --app actions
+```
+
+This secret is added to the public validation repository, but it is not public
+repository content. It must never be placed in the workflow YAML, a commit, a
+Markdown file, an issue, a pull-request comment, or a command argument that
+would display it.
+
+### Step 5: update the workflow to use the secret safely
+
+The HTTPS installation that failed will be replaced with an SSH installation.
+The intended workflow step has this shape, with `NEW_COMMIT_HASH` replaced by
+the full hash created in step 1:
+
+```yaml
+- name: Install pinned AnsibleGuard
+  env:
+    ANSIBLEGUARD_DEPLOY_KEY: ${{ secrets.ANSIBLEGUARD_DEPLOY_KEY }}
+  run: |
+    install -m 700 -d "$HOME/.ssh"
+    printf '%s\n' "$ANSIBLEGUARD_DEPLOY_KEY" > "$HOME/.ssh/ansibleguard_deploy_key"
+    chmod 600 "$HOME/.ssh/ansibleguard_deploy_key"
+    printf '%s\n' \
+      'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' \
+      > "$HOME/.ssh/known_hosts"
+    GIT_SSH_COMMAND="ssh -i $HOME/.ssh/ansibleguard_deploy_key -o IdentitiesOnly=yes" \
+      pip install \
+      "ansibleguard @ git+ssh://git@github.com/JedidiAymen/AnsibleChecklist.git@NEW_COMMIT_HASH"
+```
+
+This step does the following on GitHub's temporary runner:
+
+1. creates an SSH directory with restricted permissions;
+2. writes the encrypted Actions secret into a temporary key file;
+3. limits the private file so only the current runner user can read it;
+4. trusts GitHub's published Ed25519 host key, which protects against
+   connecting to an impersonated server;
+5. tells Git to use only the dedicated deploy key; and
+6. installs the exact reviewed AnsibleGuard commit through SSH.
+
+The workflow does not print the key. The runner is destroyed by GitHub after
+the job, so its temporary copy disappears. The official published GitHub host
+key is written explicitly instead of accepting an unverified key returned by
+the network at runtime.
+
+### Step 6: commit and push the validation workflow
+
+The workflow change will be committed on:
+
+```text
+ansibleguard-controlled-validation
+```
+
+and pushed to the existing pull request. That push automatically starts a new
+GitHub Actions run. Because pull request #1 comes from a branch in the same
+validation repository, the repository secret is available to it. GitHub does
+not normally pass Actions secrets to pull requests originating from an
+untrusted external fork; that restriction is useful and should not be
+disabled.
+
+### Step 7: understand the expected workflow result
+
+The expected order is:
+
+```text
+Checkout validation role
+  -> Install Python
+  -> Authenticate to private AnsibleGuard fork
+  -> Install pinned AnsibleGuard
+  -> Install GitLeaks
+  -> Scan controlled files
+  -> Upload SARIF
+  -> Upload complete result artifact
+  -> Enforce policy and fail because five intentional errors exist
+```
+
+Success does not mean that every workflow step is green. For this controlled
+branch, the final policy step should be red because five error findings were
+deliberately added. Installation, scanning, SARIF upload, and artifact upload
+must succeed before that expected red policy result.
+
+### Step 8: verify GitHub, not only the terminal output
+
+The team will check all of the following:
+
+- the installation step authenticated successfully;
+- the summary reports 89 findings and five errors, or any intentional updated
+  count is explained;
+- no external tool is reported as a tool error;
+- `findings.sarif` uploads successfully;
+- GitHub code scanning shows the expected repository-relative file paths;
+- pull-request annotations point to the intended lines;
+- the complete `ansibleguard-controlled-results` artifact is downloadable;
+- the final failure comes only from the five-error enforcement step; and
+- no key material appears in logs, artifacts, commits, or result files.
+
+The workflow run URL, final source and validation commit hashes, counts, and
+any necessary corrections will then be added to this implementation log.
+
+### Step 9: local key cleanup and future rotation
+
+After the GitHub secret has been verified and the workflow works, the local
+private-key file is no longer needed. It should be deleted from
+`validation/private/` rather than kept beside project data. This cleanup does
+not remove the GitHub deploy key or encrypted Actions secret and does not
+remove any validation result. It only removes the extra local copy of the
+credential.
+
+If the key is ever exposed, the response is:
+
+1. remove the deploy key from `JedidiAymen/AnsibleChecklist` immediately;
+2. delete or replace `ANSIBLEGUARD_DEPLOY_KEY` in the validation repository;
+3. generate a completely new key pair; and
+4. repeat the registration steps.
+
+Deploy keys do not expire automatically, so the team should remove this one
+when the validation integration is no longer used.
+
+Official references used for this procedure:
+
+- [Managing deploy keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys)
+- [Using secrets in GitHub Actions](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets)
+- [GitHub SSH key fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints)
+- [REST API endpoints for deploy keys](https://docs.github.com/en/rest/deploy-keys/deploy-keys)
