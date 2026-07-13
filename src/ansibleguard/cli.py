@@ -1,10 +1,20 @@
 from pathlib import Path
+from dataclasses import dataclass
+import os
 
 # Default output folder name is excluded too — otherwise a second run
 # against the same target directory could, in principle, later start
 # picking up its own previous output as input if that ever changed shape.
 # Costs nothing to guard against now.
-EXCLUDE_DIRS = {"molecule", ".github", ".git", ".venv", "venv", "ansibleguard-output"}
+EXCLUDE_DIRS = {
+    "molecule",
+    ".github",
+    ".git",
+    ".ansible",
+    ".venv",
+    "venv",
+    "ansibleguard-output",
+}
 
 
 def collect_yaml_files(target: Path) -> list[Path]:
@@ -62,7 +72,41 @@ def _relative_or_self(path: Path, root: Path) -> str:
         return str(path)
 
 
-def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
+def _finding_path(finding) -> str:
+    return str(
+        finding.get("File")
+        or finding.get("file")
+        or finding.get("Path")
+        or finding.get("path")
+        or ""
+    )
+
+
+def _findings_for_file(findings, yaml_file, scan_root):
+    expected = _relative_or_self(yaml_file, scan_root).replace(os.sep, "/")
+    if Path(scan_root).is_file():
+        return list(findings)
+    matched = []
+    for finding in findings:
+        actual = _finding_path(finding).replace("\\", "/").lstrip("./")
+        if actual == expected or actual.endswith("/" + expected):
+            matched.append(finding)
+    return matched
+
+
+def _lint_findings_for_file(findings, yaml_file, scan_root):
+    from .external.ansible_lint import lint_issue_path
+
+    expected = _relative_or_self(yaml_file, scan_root).replace(os.sep, "/")
+    matched = []
+    for finding in findings:
+        actual = lint_issue_path(finding).replace("\\", "/").lstrip("./")
+        if actual == expected or actual.endswith("/" + expected):
+            matched.append(finding)
+    return matched
+
+
+def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
     """
     Run the existing per-file analysis + report-writing pipeline
     (smellsDetector.py's execute_for_single_file + the ansible-lint/gitleaks
@@ -77,8 +121,8 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
     industry-standard shape GitHub Code Scanning natively renders as
     inline PR annotations).
 
-    Returns (num_succeeded, num_files) so a caller (or a future PR bot) can
-    tell at a glance whether anything failed without re-parsing print output.
+    Returns a run-summary dictionary with discovery, structural-analysis,
+    finding, parsing, and tool-failure counts.
     """
     from .smells import (
         execute_for_single_file,
@@ -92,6 +136,10 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
     from .report.sarif_writer import write_sarif
 
     from .report.findings import RULE_CATALOG
+    from .document import inspect_document
+    from .external.gitleaks import scan_with_gitleaks
+    from .external.ansible_lint import scan_with_ansible_lint
+    from .external.install_gitleaks import GITLEAKS_PATH
 
     target = Path(target)
     output_root = Path(output_root)
@@ -100,14 +148,14 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
     yaml_files = collect_yaml_files(target)
     print(f"Found {len(yaml_files)} YAML file(s) to analyze.")
 
-    if not yaml_files:
-        print("Nothing to analyze.")
-        return 0, 0
-
     scan_root = target if target.is_dir() else target.parent
-    succeeded = 0
+    gitleaks_result = scan_with_gitleaks(target, gitleaks_path or GITLEAKS_PATH)
+    lint_result = scan_with_ansible_lint(target)
+    structurally_analyzed = 0
     all_findings = []
     summary_rows = []
+    diagnostics = []
+    consumed_gitleaks_ids = set()
 
     for yaml_file in yaml_files:
         out_dir = output_dir_for(scan_root, yaml_file, output_root)
@@ -115,8 +163,21 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
 
         print(f"🔍 Processing file: {yaml_file}")
 
+        document_info = inspect_document(yaml_file)
+        file_gitleaks = _findings_for_file(
+            gitleaks_result.findings, yaml_file, scan_root
+        )
+        consumed_gitleaks_ids.update(id(finding) for finding in file_gitleaks)
+        file_lint = _lint_findings_for_file(lint_result.findings, yaml_file, scan_root)
+
         findings, lint_results, result, metrics = execute_for_single_file(
-            yaml_file, None, None, out_dir
+            yaml_file,
+            None,
+            None,
+            out_dir,
+            gitleaks_findings=file_gitleaks,
+            lint_results=file_lint,
+            run_external=False,
         )
 
         formatted = format_ansible_lint_results(lint_results)
@@ -133,25 +194,99 @@ def analyze_path(target: Path, output_root: Path) -> tuple[int, int]:
         summary_rows.append(
             {
                 "file": _relative_or_self(yaml_file, scan_root),
+                "parse_status": document_info.parse_status,
+                "document_type": document_info.document_type,
+                "structural_status": "analyzed" if metrics is not None else "skipped",
+                "gitleaks_status": gitleaks_result.status,
+                "ansible_lint_status": lint_result.status,
                 "errors": sum(1 for f in file_findings if f["severity"] == "error"),
                 "warnings": sum(1 for f in file_findings if f["severity"] == "warning"),
                 "notes": sum(1 for f in file_findings if f["severity"] == "note"),
                 "total": len(file_findings),
             }
         )
+        if metrics is not None:
+            structurally_analyzed += 1
+        if document_info.diagnostics:
+            diagnostics.append(
+                {
+                    "file": _relative_or_self(yaml_file, scan_root),
+                    "stage": "yaml-parse",
+                    "status": document_info.parse_status,
+                    "message": "; ".join(document_info.diagnostics),
+                }
+            )
 
-        succeeded += 1
+    # Repository-wide gitleaks also covers non-YAML files. Preserve those
+    # findings in JSON/SARIF instead of silently dropping them merely because
+    # they never enter the structural Ansible loop above.
+    for finding in gitleaks_result.findings:
+        if id(finding) in consumed_gitleaks_ids:
+            continue
+        finding_file = _finding_path(finding) or "."
+        finding_path = Path(finding_file)
+        if not finding_path.is_absolute():
+            finding_path = Path(scan_root) / finding_path
+        external_findings = build_findings_list(
+            None, None, [finding], [], finding_path
+        )
+        all_findings.extend(external_findings)
+        summary_rows.append(
+            {
+                "file": _relative_or_self(finding_path, scan_root),
+                "parse_status": "not-applicable",
+                "document_type": "non-yaml",
+                "structural_status": "not-applicable",
+                "gitleaks_status": gitleaks_result.status,
+                "ansible_lint_status": lint_result.status,
+                "errors": len(external_findings),
+                "warnings": 0,
+                "notes": 0,
+                "total": len(external_findings),
+            }
+        )
 
-    _write_rollups(all_findings, summary_rows, output_root, scan_root)
+    if gitleaks_result.status != "completed":
+        diagnostics.append(
+            {
+                "file": ".",
+                "stage": "gitleaks",
+                "status": gitleaks_result.status,
+                "message": gitleaks_result.message,
+            }
+        )
+    if lint_result.status != "completed":
+        diagnostics.append(
+            {
+                "file": ".",
+                "stage": "ansible-lint",
+                "status": lint_result.status,
+                "message": lint_result.message,
+            }
+        )
+
+    _write_rollups(all_findings, summary_rows, diagnostics, output_root, scan_root)
 
     print(
-        f"[✔] {succeeded}/{len(yaml_files)} file(s) analyzed. Results under {output_root}"
+        f"[✔] {len(yaml_files)} file(s) discovered; "
+        f"{structurally_analyzed} structurally analyzed; "
+        f"gitleaks={gitleaks_result.status}; ansible-lint={lint_result.status}. "
+        f"Results under {output_root}"
     )
     print(f"[✔] {len(all_findings)} total finding(s) across all files.")
-    return succeeded, len(yaml_files)
+    return {
+        "discovered": len(yaml_files),
+        "structurally_analyzed": structurally_analyzed,
+        "findings": all_findings,
+        "tool_errors": int(gitleaks_result.status != "completed")
+        + int(lint_result.status != "completed"),
+        "parse_failures": sum(
+            row["parse_status"] in {"invalid", "read-error"} for row in summary_rows
+        ),
+    }
 
 
-def _write_rollups(all_findings, summary_rows, output_root, scan_root):
+def _write_rollups(all_findings, summary_rows, diagnostics, output_root, scan_root):
     import csv
     import json as _json
     from .report.sarif_writer import write_sarif
@@ -164,7 +299,11 @@ def _write_rollups(all_findings, summary_rows, output_root, scan_root):
     summary_csv_path = output_root / "summary.csv"
     with open(summary_csv_path, "w", newline="") as f:
         writer = csv.DictWriter(
-            f, fieldnames=["file", "errors", "warnings", "notes", "total"]
+            f,
+            fieldnames=[
+                "file", "parse_status", "document_type", "structural_status",
+                "gitleaks_status", "ansible_lint_status", "errors", "warnings", "notes", "total",
+            ],
         )
         writer.writeheader()
         writer.writerows(summary_rows_sorted)
@@ -173,6 +312,9 @@ def _write_rollups(all_findings, summary_rows, output_root, scan_root):
     findings_json_path = output_root / "findings.json"
     with open(findings_json_path, "w", encoding="utf-8") as f:
         _json.dump(all_findings, f, indent=2)
+
+    with open(output_root / "diagnostics.json", "w", encoding="utf-8") as f:
+        _json.dump(diagnostics, f, indent=2)
 
     # findings.sarif -- GitHub Code Scanning-native shape.
     sarif_path = output_root / "findings.sarif"
@@ -187,6 +329,13 @@ def main(argv=None):
     import argparse
     import sys
 
+    argv = list(argv) if argv is not None else sys.argv[1:]
+    if argv == ["install-tools"]:
+        from .external.install_gitleaks import ensure_gitleaks_installed
+
+        ensure_gitleaks_installed()
+        return
+
     parser = argparse.ArgumentParser(
         prog="ansibleguard",
         description="Analyze Ansible playbooks/roles for IaC code smells.",
@@ -195,6 +344,17 @@ def main(argv=None):
         "target",
         type=Path,
         help="A playbook file OR a project directory (searched recursively)",
+    )
+    parser.add_argument(
+        "--gitleaks-path",
+        type=Path,
+        help="Path to the gitleaks binary (default: ~/.ansibleguard/gitleaks-bin/gitleaks)",
+    )
+    parser.add_argument(
+        "--fail-on",
+        choices=("never", "error", "warning", "tool-error", "parse-error"),
+        default="error",
+        help="Exit non-zero for the selected condition (default: error)",
     )
     parser.add_argument(
         "-o",
@@ -209,9 +369,17 @@ def main(argv=None):
         print(f"Error: target path does not exist: {args.target}", file=sys.stderr)
         sys.exit(1)
 
-    succeeded, total = analyze_path(args.target, args.output)
-    if total and succeeded < total:
-        sys.exit(1)  # non-zero exit if anything failed, useful for CI/bot use
+    run = analyze_path(args.target, args.output, args.gitleaks_path)
+    severities = {finding["severity"] for finding in run.get("findings", [])}
+    should_fail = {
+        "never": False,
+        "error": "error" in severities,
+        "warning": bool(severities & {"error", "warning"}),
+        "tool-error": run.get("tool_errors", 0) > 0,
+        "parse-error": run.get("parse_failures", 0) > 0,
+    }[args.fail_on]
+    if should_fail:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -70,6 +70,13 @@ def test_venv_directories_excluded(tmp_path):
     assert result == [tmp_path / "site.yml"]
 
 
+def test_ansible_runtime_cache_excluded(tmp_path):
+    (tmp_path / ".ansible" / "roles" / "cached").mkdir(parents=True)
+    (tmp_path / ".ansible" / "roles" / "cached" / "main.yml").write_text("x: 1")
+    (tmp_path / "site.yml").write_text("x: 1")
+    assert collect_yaml_files(tmp_path) == [tmp_path / "site.yml"]
+
+
 def test_empty_directory_returns_empty_list(tmp_path):
     assert collect_yaml_files(tmp_path) == []
 

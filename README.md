@@ -45,6 +45,21 @@ ansibleguard ~/my-ansible-project/            # whole project, recursive
 ansibleguard playbook.yml -o ./results/       # single file, custom output dir
 ```
 
+For CI or explicit setup, install the pinned GitLeaks binary without causing
+downloads during package import:
+
+```bash
+ansibleguard install-tools
+ansibleguard . -o ansibleguard-output --fail-on error
+```
+
+Vars/defaults files, inline `!vault` values, invalid YAML, and fully encrypted
+vault files are now classified separately from playbooks. Structural detectors
+run only where applicable, while GitLeaks scans the target independently and
+its findings are retained even when YAML parsing fails. See
+[`PARSING_GITHUB_IMPLEMENTATION.md`](PARSING_GITHUB_IMPLEMENTATION.md) for the
+step-by-step implementation and GitHub PR workflow.
+
 `ansibleguard` is a real installed command — it works from any directory
 on the machine, not just from inside this repo. This is a genuine, working
 tool, not a script you need to remember how to invoke — no `cd` into a

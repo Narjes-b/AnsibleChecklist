@@ -22,9 +22,20 @@ import subprocess
 import json
 import tempfile
 from pathlib import Path
+from dataclasses import dataclass, field
 
 
-def scan_with_gitleaks_file_output(playbook_path, gitleaks_path):
+@dataclass
+class ToolResult:
+    status: str
+    findings: list = field(default_factory=list)
+    message: str = ""
+
+
+def scan_with_gitleaks(target_path, gitleaks_path):
+    target_path = Path(target_path)
+    config_root = target_path if target_path.is_dir() else target_path.parent
+    target_config = config_root / ".gitleaks.toml"
     with tempfile.NamedTemporaryFile(
         mode="r", suffix=".json", delete=False
     ) as temp_json:
@@ -32,47 +43,57 @@ def scan_with_gitleaks_file_output(playbook_path, gitleaks_path):
 
     try:
         try:
+            command = [
+                str(gitleaks_path),
+                "detect",
+                "--source",
+                str(target_path),
+                "--no-git",
+                "--report-format",
+                "json",
+                "--report-path",
+                str(report_path),
+                "--log-level",
+                "error",
+            ]
+            if target_config.is_file():
+                command.extend(["--config", str(target_config)])
             result = subprocess.run(
-                [
-                    str(gitleaks_path),
-                    "detect",
-                    "--source",
-                    playbook_path,
-                    "--no-git",
-                    "--report-format",
-                    "json",
-                    "--report-path",
-                    str(report_path),
-                    "--log-level",
-                    "silent",
-                ],
+                command,
                 capture_output=True,
                 text=True,
             )
         except FileNotFoundError:
-            print(
-                f"[✗] Gitleaks binary not found at '{gitleaks_path}'. "
-                f"Run the installer (ansibleguard.external.install_gitleaks) or check GITLEAKS_PATH in config.py."
+            message = (
+                f"Gitleaks binary not found at '{gitleaks_path}'. "
+                "Run `ansibleguard install-tools` or pass --gitleaks-path."
             )
-            return []
+            print(f"[✗] {message}")
+            return ToolResult("tool-error", message=message)
 
         if result.returncode in [0, 1]:
             if report_path.exists() and report_path.stat().st_size > 0:
                 with open(report_path, "r") as f:
                     findings = json.load(f)
                     print(f"[✓] Gitleaks found {len(findings)} findings.")
-                    return findings
+                    return ToolResult("completed", findings)
             else:
                 print("[✓] Gitleaks found no issues.")
-                return []
+                return ToolResult("completed")
         else:
             print("[✗] Gitleaks failed:")
             print("STDOUT:", result.stdout)
             print("STDERR:", result.stderr)
-            return []
+            message = (result.stderr or result.stdout or "Unknown gitleaks failure").strip()
+            return ToolResult("tool-error", message=message)
     finally:
         if report_path.exists():
             report_path.unlink()
+
+
+def scan_with_gitleaks_file_output(playbook_path, gitleaks_path):
+    """Backward-compatible list-returning wrapper for existing callers."""
+    return scan_with_gitleaks(playbook_path, gitleaks_path).findings
 
 
 # if __name__ == "__main__":

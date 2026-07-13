@@ -1,4 +1,8 @@
-from ansibleguard.external.ansible_lint import run_ansible_lint
+from ansibleguard.external.ansible_lint import (
+    lint_issue_line,
+    run_ansible_lint,
+    scan_with_ansible_lint,
+)
 
 
 def test_clean_playbook_returns_no_findings(fixtures_dir):
@@ -39,3 +43,28 @@ def test_missing_binary_degrades_to_empty_list(fixtures_dir, monkeypatch):
     fixture = fixtures_dir / "ansible_lint_clean.yml"
     result = run_ansible_lint(str(fixture))
     assert result == []
+
+
+def test_real_nested_position_schema_produces_line_number():
+    issue = {
+        "location": {
+            "path": "tasks/main.yml",
+            "positions": {"begin": {"line": 23, "column": 3}},
+        }
+    }
+    assert lint_issue_line(issue) == 23
+
+
+def test_real_nested_lines_schema_produces_line_number():
+    issue = {"location": {"path": "tasks/main.yml", "lines": {"begin": 7}}}
+    assert lint_issue_line(issue) == 7
+
+
+def test_structured_lint_result_distinguishes_missing_binary(monkeypatch):
+    def missing(*args, **kwargs):
+        raise FileNotFoundError("ansible-lint missing")
+
+    monkeypatch.setattr("subprocess.run", missing)
+    result = scan_with_ansible_lint("playbook.yml")
+    assert result.status == "tool-error"
+    assert "missing" in result.message

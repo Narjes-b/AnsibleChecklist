@@ -89,6 +89,27 @@ def test_gitleaks_finding_falls_back_to_line_1_when_no_line_data():
     assert out[0]["line"] == 1
 
 
+def test_gitleaks_finding_survives_structural_parse_failure():
+    findings = [{"StartLine": 3, "Description": "Secret in invalid YAML"}]
+    out = build_findings_list(None, None, findings, [], "broken-vars.yaml")
+    assert len(out) == 1
+    assert out[0]["rule_id"] == "hardcoded-credentials"
+    assert out[0]["line"] == 3
+
+
+def test_ansible_lint_finding_survives_structural_parse_failure():
+    lint = [
+        {
+            "description": "Failed to load YAML",
+            "location": {"path": "broken.yml", "lines": {"begin": 4}},
+        }
+    ]
+    out = build_findings_list(None, None, [], lint, "broken.yml")
+    assert len(out) == 1
+    assert out[0]["rule_id"] == "ansible-lint-issue"
+    assert out[0]["line"] == 4
+
+
 # --- ansible-lint findings: real line data from the tool's own output ---
 
 

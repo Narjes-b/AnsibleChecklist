@@ -23,3 +23,23 @@ def test_nonexistent_target_path_does_not_crash(fixtures_dir):
     gitleaks_path = shutil.which("gitleaks") or "./gitleaks-bin/gitleaks"
     result = scan_with_gitleaks_file_output("/nonexistent/playbook.yml", gitleaks_path)
     assert result == []
+
+
+def test_target_local_gitleaks_config_is_passed_to_binary(tmp_path, monkeypatch):
+    import subprocess
+    from ansibleguard.external.gitleaks import scan_with_gitleaks
+
+    target = tmp_path / "project"
+    target.mkdir()
+    config = target / ".gitleaks.toml"
+    config.write_text("title = 'validation'\n")
+    captured = {}
+
+    def fake_run(command, **kwargs):
+        captured["command"] = command
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    result = scan_with_gitleaks(target, "/fake/gitleaks")
+    assert result.status == "completed"
+    assert captured["command"][-2:] == ["--config", str(config)]

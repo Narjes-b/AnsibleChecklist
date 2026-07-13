@@ -168,11 +168,7 @@ def build_findings_list(
              already returned by execute_for_single_file() today.
     """
     out = []
-    if not metrics or not result:
-        return out
-
     file = yaml_file_path
-    pm = result["playbook"]["metrics"]
 
     # --- GitLeaks: real file+line data already present in its own output ---
     for f in gitleaks_findings or []:
@@ -180,14 +176,21 @@ def build_findings_list(
         desc = f.get("Description") or f.get("RuleID") or "Hardcoded secret detected"
         out.append(_finding(file, line, "hardcoded-credentials", desc))
 
-    # --- ansible-lint: already carries path+line in its raw output ---
+    # ansible-lint is also target-level and may produce useful load/syntax
+    # findings for documents our structural detector cannot analyze.
+    from ansibleguard.external.ansible_lint import lint_issue_line
+
     for issue in lint_results or []:
-        location = issue.get("location", {})
-        line = issue.get("line") or location.get("line") or 1
+        line = lint_issue_line(issue)
         message = (
             issue.get("message") or issue.get("description") or "ansible-lint issue"
         )
         out.append(_finding(file, line, "ansible-lint-issue", message))
+
+    if not metrics or not result:
+        return out
+
+    pm = result["playbook"]["metrics"]
 
     # --- credentials_leaking_in_log: use the new details list (real line
     # per task, from credentials_leaking_in_log.py's own ruamel-based

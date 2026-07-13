@@ -42,6 +42,7 @@ import pandas as pd
 import csv
 import json
 import yaml
+from ansibleguard.document import inspect_document
 
 
 ##def read_specific_values():
@@ -59,12 +60,16 @@ import yaml
 
 
 def mainn(yaml_file_path):
-    try:
-        with open(yaml_file_path, "r", encoding="utf-8") as f:
-            playbook = yaml.safe_load(f)
-    except yaml.YAMLError as e:
-        print(f"Could not parse {yaml_file_path} as YAML: {e}")
+    document_info = inspect_document(yaml_file_path)
+    if not document_info.structurally_analyzable:
+        detail = "; ".join(document_info.diagnostics)
+        print(
+            f"Skipping structural analysis for {yaml_file_path}: "
+            f"{document_info.parse_status}/{document_info.document_type}"
+            + (f" ({detail})" if detail else "")
+        )
         return None
+    playbook = document_info.document
 
     is_task_only_playbook = isinstance(playbook, list) and all(
         isinstance(task, dict) and "hosts" not in task and "tasks" not in task

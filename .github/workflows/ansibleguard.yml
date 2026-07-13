@@ -1,0 +1,61 @@
+name: AnsibleGuard PR scan
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install AnsibleGuard
+        run: pip install -e .
+      - name: Install gitleaks
+        run: ansibleguard install-tools
+      - name: Scan repository
+        run: ansibleguard . -o ansibleguard-output --fail-on never
+      - name: Publish scan summary
+        if: always()
+        run: |
+          echo '## AnsibleGuard scan' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Detailed reports are attached as a workflow artifact. Findings are uploaded to Code Scanning.' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo '```csv' >> "$GITHUB_STEP_SUMMARY"
+          head -n 21 ansibleguard-output/summary.csv >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload SARIF
+        if: always() && hashFiles('ansibleguard-output/findings.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ansibleguard-output/findings.sarif
+          category: ansibleguard
+      - name: Upload detailed reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ansibleguard-results
+          path: ansibleguard-output/
+      - name: Enforce error policy
+        run: |
+          python - <<'PY'
+          import json
+          import sys
+          findings = json.load(open('ansibleguard-output/findings.json'))
+          diagnostics = json.load(open('ansibleguard-output/diagnostics.json'))
+          errors = [item for item in findings if item['severity'] == 'error']
+          tool_errors = [item for item in diagnostics if item['status'] == 'tool-error']
+          if errors or tool_errors:
+              print(f"Blocking: {len(errors)} error finding(s), {len(tool_errors)} tool error(s)")
+              sys.exit(1)
+          PY

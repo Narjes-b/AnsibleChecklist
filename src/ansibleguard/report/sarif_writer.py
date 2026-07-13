@@ -7,13 +7,14 @@ github/codeql-action/upload-sarif in a CI workflow.
 """
 
 import json
+import hashlib
 from pathlib import Path
 
 from .findings import RULE_CATALOG
 
 TOOL_NAME = "AnsibleGuard"
 TOOL_VERSION = "0.1.0"
-TOOL_INFO_URI = "https://github.com/your-org/ansibleguard"  # update once packaged
+TOOL_INFO_URI = "https://github.com/ansibleguard/ansibleguard"
 
 
 def _to_repo_relative(file_path, repo_root):
@@ -50,6 +51,10 @@ def build_sarif(all_findings, repo_root):
     findings.build_findings_list() (called once per file, concatenated)."""
     results = []
     for f in all_findings:
+        uri = _to_repo_relative(f["file"], repo_root)
+        fingerprint_source = "|".join(
+            [f["rule_id"], uri, str(f["line"]), f["message"]]
+        )
         results.append(
             {
                 "ruleId": f["rule_id"],
@@ -59,12 +64,17 @@ def build_sarif(all_findings, repo_root):
                     {
                         "physicalLocation": {
                             "artifactLocation": {
-                                "uri": _to_repo_relative(f["file"], repo_root)
+                                "uri": uri
                             },
                             "region": {"startLine": f["line"]},
                         }
                     }
                 ],
+                "partialFingerprints": {
+                    "primaryLocationLineHash": hashlib.sha256(
+                        fingerprint_source.encode("utf-8")
+                    ).hexdigest()
+                },
             }
         )
 

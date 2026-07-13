@@ -11,10 +11,10 @@ def test_mainn_handles_vars_file_gracefully(fixtures_dir):
     downloaded OpenStack-style project structure."""
     fixture = fixtures_dir / "vars_file_not_a_playbook.yml"
     result = mainn(str(fixture))
-    assert result["high_coupling_metrics"] is None
-    assert result["plays"] == [
-        {"play_metrics": None, "unnamed_play": None, "task_metrics": []}
-    ]
+    # Vars files are valid YAML, but they are not playbooks/task files.
+    # The classifier now deliberately keeps them out of structural detectors;
+    # content-only scanners such as gitleaks still run at the CLI layer.
+    assert result is None
 
 
 def test_high_coupling_returns_none_for_dict_shaped_yaml(fixtures_dir):

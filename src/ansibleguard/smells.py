@@ -26,9 +26,7 @@ from .config import (
 )
 
 from .config import THRESHOLDS_FILE
-from .external.install_gitleaks import GITLEAKS_PATH, ensure_gitleaks_installed
-
-ensure_gitleaks_installed()
+from .external.install_gitleaks import GITLEAKS_PATH
 
 
 def read_thresholds():
@@ -45,7 +43,15 @@ def read_thresholds():
     return thresholds
 
 
-def assess_code_smells(metrics, thresholds, txt_output_files, yaml_file_path):
+def assess_code_smells(
+    metrics,
+    thresholds,
+    txt_output_files,
+    yaml_file_path,
+    gitleaks_findings=None,
+    provided_lint_results=None,
+    run_external=True,
+):
     result = {"playbook": {"metrics": {}, "plays": []}}
 
     # print("metrics", metrics.get('plays', {}))
@@ -223,10 +229,18 @@ def assess_code_smells(metrics, thresholds, txt_output_files, yaml_file_path):
     else:
         result["playbook"]["metrics"]["unecessary_abstraction"] = 0
 
-    findings = scan_with_gitleaks_file_output(yaml_file_path, GITLEAKS_PATH)
+    findings = (
+        scan_with_gitleaks_file_output(yaml_file_path, GITLEAKS_PATH)
+        if run_external and gitleaks_findings is None
+        else (gitleaks_findings or [])
+    )
     result["playbook"]["metrics"]["hardcoded_credentials"] = len(findings)
 
-    lint_results = run_ansible_lint(yaml_file_path)
+    lint_results = (
+        run_ansible_lint(yaml_file_path)
+        if run_external and provided_lint_results is None
+        else (provided_lint_results or [])
+    )
     result["playbook"]["metrics"]["ansible_lint_issues"] = (
         len(lint_results) if lint_results else 0
     )
@@ -332,11 +346,19 @@ def assess_code_smells(metrics, thresholds, txt_output_files, yaml_file_path):
     return result, findings, lint_results
 
 
-def execute_for_single_file(yaml_file_path, csvfile, textfile, output_dir):
+def execute_for_single_file(
+    yaml_file_path,
+    csvfile,
+    textfile,
+    output_dir,
+    gitleaks_findings=None,
+    lint_results=None,
+    run_external=True,
+):
     all_metrics = {}
     all_results = {}
-    findings = []
-    lint_results = []
+    findings = list(gitleaks_findings or [])
+    lint_results = list(lint_results or [])
     result = None
     metrics = None
 
@@ -360,7 +382,13 @@ def execute_for_single_file(yaml_file_path, csvfile, textfile, output_dir):
         csv_output_file = output_dir / "IaC_Smells.csv"
         txt_output_file = output_dir / "Play_Level_Analysis.txt"
         result, findings, lint_results = assess_code_smells(
-            metrics, thresholds, txt_output_file, yaml_file_path
+            metrics,
+            thresholds,
+            txt_output_file,
+            yaml_file_path,
+            gitleaks_findings=gitleaks_findings,
+            provided_lint_results=lint_results,
+            run_external=run_external,
         )
 
         all_results[yaml_file_path] = result
@@ -376,6 +404,7 @@ def execute_for_single_file(yaml_file_path, csvfile, textfile, output_dir):
 
 
 def format_ansible_lint_results(lint_results):
+    from .external.ansible_lint import lint_issue_line, lint_issue_path
     formatted = []
 
     for issue in lint_results:
@@ -383,9 +412,8 @@ def format_ansible_lint_results(lint_results):
         message = (
             issue.get("message") or issue.get("description") or "No message provided"
         )
-        location = issue.get("location", {})
-        path = issue.get("path") or location.get("path") or "unknown-path"
-        line = issue.get("line") or location.get("line") or "?"
+        path = lint_issue_path(issue) or "unknown-path"
+        line = lint_issue_line(issue)
         formatted.append(f"⚠️ {rule} - {message} at {path}:{line}")
 
     return formatted
