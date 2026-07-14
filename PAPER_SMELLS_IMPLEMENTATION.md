@@ -124,6 +124,6 @@ first YAML file in the role.
 `tests/test_paper_candidates.py` covers every new algorithm, including nested
 task traversal, a role dependency cycle, a missing role, a missing role entry
 point, a guarded-variable negative case, and parser-to-finding integration.
-The complete suite currently has 130 passing tests; the remaining local failure
+The complete suite currently has 134 passing tests; the remaining local failure
 requires the `ansible-lint` executable, which is absent from the active virtual
 environment.

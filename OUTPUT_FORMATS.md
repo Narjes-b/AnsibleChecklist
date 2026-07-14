@@ -161,18 +161,22 @@ are flagged in `REFACTOR_PLAN.md` as not yet empirically justified.
 - **`error`** — real security/correctness problems: `hardcoded-credentials`
   (GitLeaks), `credentials-leaking-in-log`, `overriden-keys` (a duplicate
   key silently discards data — a real bug, not style), and
-  `broken-role-dependency`.
+  `broken-role-dependency`, `insecure-permissions`, and
+  `default-credentials`.
 - **`warning`** — don't break anything today, but increase bug risk:
   `missing-bool-filters`, `overriding-facts`, `duplicated-code`,
   `high-coupling`, `large-playbook`/`complex-playbook`/`large-play`/
   `large-task`, `complex-expression`, `incomplete-task`,
   `unstructured-module`, `empty-abstraction`, `excessive-nesting`,
   `missing-abstraction`, `unguarded-variable`, ansible-lint's own findings (no clean severity field to
-  inherit from most ansible-lint output modes, so these default here).
+  inherit from most ansible-lint output modes), plus
+  `non-idempotent-command`, `silent-error-suppression`, and
+  `shell-environment-export`.
 - **`note`** — style/maintainability, low consequence: `unnamed-play`/
   `unnamed-task`, `long-task-name`, `inconsistent-naming-convention`,
   `missing-file-extension`, `unnecessary-abstraction`,
   `long-statement`,
+  `redundant-default-value`, `undocumented-complex-task`,
   `incohesive-playbook`/`incohesive-play` (a soft NLP-based signal that
   can misfire on real, fine code — deliberately not weighted as `error`).
 

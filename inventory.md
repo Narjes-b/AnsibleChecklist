@@ -2,8 +2,8 @@
 
 > **Branch:** `sarif-validation-support`
 > **Last updated:** 2026-07-14
-> **Total smells:** 40 (39 internal/integrated rules + 1 external tool)
-> **Test suite:** 130 passing; 1 local environment failure (`ansible-lint` executable absent)
+> **Total smells:** 46 (44 internal rules + GitLeaks + ansible-lint)
+> **Test suite:** 134 passing; 1 local environment failure (`ansible-lint` executable absent)
 
 ---
 
@@ -69,13 +69,13 @@ These detect active security vulnerabilities — hardcoded secrets, credential e
 
 | Field | Value |
 |-------|-------|
-| **Detector** | `detectors/insecure_permissions.py` |
+| **Detector** | `detectors/review_checklist.py::detect_insecure_permissions()` |
 | **Severity** | error |
 | **Evidence** | CIS Benchmark §6.1 (file permissions); OWASP A05:2021 (Security Misconfiguration); POSIX file permission model (`stat.S_IWOTH`, `stat.S_IROTH`) |
-| **Strategy** | Walks all leaf tasks. Checks `mode` parameter on task-level and inside module parameter dicts (`file`, `copy`, `template`, etc.). Parses octal mode strings (`"0777"`, `"0644"`, `0o777`, `"0o644"`) to integers. Bitmask check: `mode & 0o007` — write bit (`0o002`) set → world-writable; read bit (`0o004`) set + task mentions sensitive keywords → world-readable sensitive. |
+| **Strategy** | Walks all tasks. Checks `mode` on common file-managing modules, including FQCN forms. Parses octal modes to permission bits and recognizes symbolic grants to `other`/`all`. World-write is always reported; world-read is reported for sensitive tasks. |
 | **Confidence** | Medium — octal parsing robust; sensitive-keyword heuristic for world-readable detection |
 | **FP Risk** | Low — bitmask analysis is deterministic; symbolic modes not yet parsed |
-| **Limitations** | Symbolic modes (`"a+rwx"`) not parsed; line numbers not yet resolved (ruamel integration pending); `_MODE_MODULES` list covers 16 common modules |
+| **Limitations** | Variable-computed modes cannot be resolved; module coverage focuses on common file-managing modules. |
 
 ### 5. Missing Handlers (notify → missing)
 
@@ -454,9 +454,45 @@ positives, so this rule is a warning.
 
 ---
 
+## ADDITIONAL CODE-REVIEW CHECKS (6)
+
+The live insecure-permissions rule is already catalogued as smell 4. Six other
+checks from the same implementation cycle are added here. Full algorithms and
+limitations are in `REVIEW_CHECKLIST_IMPLEMENTATION.md`.
+
+### 40. Default Credentials
+
+Reports credential-like keys using conservative well-known default values.
+
+### 41. Non-idempotent Command
+
+Reports recognized mutating command tasks without `creates`, `removes`,
+`changed_when`, or check-mode guards.
+
+### 42. Silent Error Suppression
+
+Reports ignored/disabled failures whose results are not registered for later
+warning or recovery handling.
+
+### 43. Redundant Default Value
+
+Compares role defaults with exact play/task vars and `set_fact` assignments.
+
+### 44. Shell Environment Export
+
+Reports shell `export` statements that should use Ansible's `environment:`
+mapping.
+
+### 45. Undocumented Complex Task
+
+Reports structurally complex tasks without an immediately preceding source
+comment.
+
+---
+
 ## 🔧 EXTERNAL TOOLS (1)
 
-### 40. Design Smells (ansible-lint)
+### 46. Design Smells (ansible-lint)
 
 | Field | Value |
 |-------|-------|
@@ -476,36 +512,39 @@ positives, so this rule is a warning.
 
 | Severity | Count | Smells |
 |----------|-------|--------|
-| **error** | 6 | Existing errors plus Broken Role Dependency |
-| **warning** | 21 | Existing warnings plus seven new heuristic/structural warnings |
-| **note** | 13 | Existing notes plus Long Statement |
+| **error** | 7 | Security/correctness findings that can cause direct harm or silent failure |
+| **warning** | 24 | Maintainability, reliability, and likely correctness risks |
+| **note** | 15 | Style, documentation, naming, and lower-confidence semantic findings |
 
 ### By Category
 
 | Category | Count |
 |----------|-------|
 | Security | 5 |
-| Correctness | 3 |
-| Maintainability | 16 |
-| Style | 9 |
+| Correctness | 8 |
+| Maintainability | 14 |
+| Style | 11 |
+| Structure | 3 |
 | Semantic (NLP) | 2 |
+| Reliability | 1 |
+| Documentation | 1 |
 | Lint (external) | 1 |
 
 ### By Confidence
 
-| Level | Count | Examples |
-|-------|-------|----------|
-| **High** | 21 | Size thresholds, exact-match naming, documented deprecations, structural detection |
-| **Medium** | 8 | Pattern-matching (bool filters, shell commands, variable usage, file extensions) |
-| **Low** | 2 | NLP cohesion (spaCy similarity on short names) |
+| Level | Examples |
+|-------|----------|
+| **High** | Exact structural checks, dependency cycles, duplicate keys, explicit unsafe modes |
+| **Medium** | Pattern matching for commands, variables, credentials, documentation, and file extensions |
+| **Low** | NLP cohesion on short or out-of-vocabulary names |
 
 ### By False Positive Risk
 
-| Level | Count | Examples |
-|-------|-------|----------|
-| **Low** | 22 | Exact-match, structural, threshold-based detectors |
-| **Medium** | 7 | Pattern-matching, heuristic detectors |
-| **High** | 2 | NLP semantic cohesion (incohesive playbook, incohesive play) |
+| Level | Examples |
+|-------|----------|
+| **Low** | Exact-match, structural, and direct security-property detectors |
+| **Medium** | Command, variable, default-value, and documentation heuristics |
+| **High** | NLP semantic cohesion and intent-dependent interpretations |
 
 ---
 
@@ -533,9 +572,9 @@ report/text_writer.py        # Human-readable TXT report
 
 | Metric | Value |
 |--------|-------|
-| Test files | 40 |
-| Total tests | 131 |
-| Passing | 130 |
+| Test files | 41 |
+| Total tests | 135 |
+| Passing | 134 |
 | Environment failures | 1 (`ansible-lint` executable absent locally) |
 
 ---

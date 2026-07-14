@@ -215,6 +215,41 @@ RULE_CATALOG = {
         "category": "correctness",
         "description": "A Jinja variable lacks a visible definition or safety guard.",
     },
+    "insecure-permissions": {
+        "level": "error",
+        "category": "security",
+        "description": "A managed resource grants unsafe permissions to other users.",
+    },
+    "default-credentials": {
+        "level": "error",
+        "category": "security",
+        "description": "A credential uses a well-known default value.",
+    },
+    "non-idempotent-command": {
+        "level": "warning",
+        "category": "correctness",
+        "description": "A mutating command lacks an idempotency guard.",
+    },
+    "silent-error-suppression": {
+        "level": "warning",
+        "category": "reliability",
+        "description": "A task suppresses failure without retaining its result.",
+    },
+    "redundant-default-value": {
+        "level": "note",
+        "category": "maintainability",
+        "description": "An assignment repeats a value already supplied by role defaults.",
+    },
+    "shell-environment-export": {
+        "level": "warning",
+        "category": "correctness",
+        "description": "A shell export is used instead of Ansible's environment mapping.",
+    },
+    "undocumented-complex-task": {
+        "level": "note",
+        "category": "documentation",
+        "description": "A complex task lacks a nearby explanatory comment.",
+    },
 }
 
 
@@ -386,6 +421,13 @@ def build_findings_list(
         ("missing_abstractions_details", "missing-abstraction"),
         ("broken_role_dependencies_details", "broken-role-dependency"),
         ("unguarded_variables_details", "unguarded-variable"),
+        ("insecure_permissions_details", "insecure-permissions"),
+        ("default_credentials_details", "default-credentials"),
+        ("non_idempotent_commands_details", "non-idempotent-command"),
+        ("silent_error_suppressions_details", "silent-error-suppression"),
+        ("redundant_default_values_details", "redundant-default-value"),
+        ("shell_environment_exports_details", "shell-environment-export"),
+        ("undocumented_complex_tasks_details", "undocumented-complex-task"),
     )
     for details_key, rule_id in paper_detail_rules:
         for detail in metrics.get(details_key, []) or []:

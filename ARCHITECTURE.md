@@ -55,8 +55,10 @@ ansibleguard.cli   (run via the installed `ansibleguard` command — arbitrary
   │     │     │     ├── detectors/credentials_in_log.py        [was credentials_leaking_in_log.py]
   │     │     │     ├── detectors/include_vars.py
   │     │     │           (→ ansibleguard.report.text_writer.write_unused_vars_to_txt)
-  │     │     │     └── detectors/paper_candidates.py
+  │     │     │     ├── detectors/paper_candidates.py
   │     │     │           (9 source/task/role checks sharing one safe traversal engine)
+  │     │     │     └── detectors/review_checklist.py
+  │     │     │           (7 security/reliability/review-checklist checks)
   │     │     │
   │     │     ├── smells.assess_code_smells()  [inside smells.py itself]
   │     │     │     — takes parser's raw metrics + thresholds.csv,

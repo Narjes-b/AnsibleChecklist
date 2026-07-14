@@ -868,3 +868,19 @@ end-to-end parser/findings assertion. Current local result: 130 passing tests;
 one environment failure remains because the active virtual environment lacks
 the `ansible-lint` executable. Full design and limitations are recorded in
 `PAPER_SMELLS_IMPLEMENTATION.md`.
+
+## 2026-07-14 — additional code-review checklist automation
+
+Added seven live rules in `detectors/review_checklist.py`: insecure
+permissions, default credentials, non-idempotent commands, silent error
+suppression, redundant role-default values, shell environment exports, and
+undocumented complex tasks. All seven flow through parser metrics, assessed
+results, per-file CSV, JSON findings, and SARIF. The full suite now has 134
+passing tests; one local environment failure remains because `ansible-lint` is
+not installed.
+
+`REVIEW_CHECKLIST_IMPLEMENTATION.md` documents their algorithms and limits.
+`CODE_REVIEW_CHECKLIST_COVERAGE.md` now records 12 directly covered, 11
+partially covered, and 15 missing paper criteria. `ALL_DETECTED_SMELLS.md` is
+the canonical code-backed catalog of all 46 active rules and explains why the
+active-rule count is larger than the paper's directly covered checklist count.

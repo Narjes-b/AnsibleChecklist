@@ -98,6 +98,13 @@ external tools.
 | Excessive Nesting | Block/rescue/always nesting exceeds three levels |
 | Missing Abstraction | A large task file uses no roles or task includes |
 | Unguarded Variable | A Jinja variable has no visible definition or default/defined guard |
+| Insecure Permissions | A managed file is world-writable or exposes sensitive content |
+| Default Credentials | A credential uses a well-known default value |
+| Non-idempotent Command | A mutating command lacks a repeat-safe guard |
+| Silent Error Suppression | A task ignores failure without retaining its result |
+| Redundant Default Value | A role assignment repeats its existing default |
+| Shell Environment Export | A shell export is used instead of `environment:` |
+| Undocumented Complex Task | A complex task has no nearby explanatory comment |
 
 ### Role/project structure
 | Smell | What it means |
@@ -130,6 +137,10 @@ Full explanations of *how* each check actually works are in
 [`HOW_IT_WORKS.md`](HOW_IT_WORKS.md). The paper-derived checks and their
 limitations are documented in
 [`PAPER_SMELLS_IMPLEMENTATION.md`](PAPER_SMELLS_IMPLEMENTATION.md).
+The authoritative list of all active rules is
+[`ALL_DETECTED_SMELLS.md`](ALL_DETECTED_SMELLS.md), while
+[`CODE_REVIEW_CHECKLIST_COVERAGE.md`](CODE_REVIEW_CHECKLIST_COVERAGE.md)
+maps them back to the paper's 38 review criteria.
 
 ---
 

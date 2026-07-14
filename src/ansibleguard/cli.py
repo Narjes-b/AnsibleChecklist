@@ -138,6 +138,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
     from .report.findings import RULE_CATALOG
     from .document import inspect_document
     from .detectors.paper_candidates import detect_paper_candidates
+    from .detectors.review_checklist import detect_review_checklist_smells
     from .external.gitleaks import scan_with_gitleaks
     from .external.ansible_lint import scan_with_ansible_lint
     from .external.install_gitleaks import GITLEAKS_PATH
@@ -190,6 +191,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         report_result = result
         if not structurally_analyzed_file:
             source_metrics = detect_paper_candidates(yaml_file)
+            source_metrics.update(detect_review_checklist_smells(yaml_file))
             if any(
                 value
                 for key, value in source_metrics.items()

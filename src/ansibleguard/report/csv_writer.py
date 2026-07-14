@@ -46,6 +46,13 @@ def write_results_to_csv(all_results, file_path):
             "Missing Abstractions",
             "Broken Role Dependencies",
             "Unguarded Variables",
+            "Insecure Permissions",
+            "Default Credentials",
+            "Non-idempotent Commands",
+            "Silent Error Suppressions",
+            "Redundant Default Values",
+            "Shell Environment Exports",
+            "Undocumented Complex Tasks",
             "Design Smells",
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -115,6 +122,23 @@ def write_results_to_csv(all_results, file_path):
                         "broken_role_dependencies", ""
                     ),
                     "Unguarded Variables": metrics.get("unguarded_variables", ""),
+                    "Insecure Permissions": metrics.get("insecure_permissions", ""),
+                    "Default Credentials": metrics.get("default_credentials", ""),
+                    "Non-idempotent Commands": metrics.get(
+                        "non_idempotent_commands", ""
+                    ),
+                    "Silent Error Suppressions": metrics.get(
+                        "silent_error_suppressions", ""
+                    ),
+                    "Redundant Default Values": metrics.get(
+                        "redundant_default_values", ""
+                    ),
+                    "Shell Environment Exports": metrics.get(
+                        "shell_environment_exports", ""
+                    ),
+                    "Undocumented Complex Tasks": metrics.get(
+                        "undocumented_complex_tasks", ""
+                    ),
                     "Design Smells": metrics.get("ansible_lint_issues", ""),
                 }
             )

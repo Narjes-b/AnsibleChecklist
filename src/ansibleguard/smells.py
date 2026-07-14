@@ -112,6 +112,13 @@ def assess_code_smells(
         "missing_abstractions",
         "broken_role_dependencies",
         "unguarded_variables",
+        "insecure_permissions",
+        "default_credentials",
+        "non_idempotent_commands",
+        "silent_error_suppressions",
+        "redundant_default_values",
+        "shell_environment_exports",
+        "undocumented_complex_tasks",
     ):
         result["playbook"]["metrics"][metric_name] = metrics.get(metric_name, 0)
 
