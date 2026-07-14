@@ -170,6 +170,51 @@ RULE_CATALOG = {
         "category": "maintainability",
         "description": "A handler is defined but never notified.",
     },
+    "complex-expression": {
+        "level": "warning",
+        "category": "maintainability",
+        "description": "A Jinja or conditional expression is excessively complex.",
+    },
+    "incomplete-task": {
+        "level": "warning",
+        "category": "maintainability",
+        "description": "An unresolved TODO/FIXME marker remains in configuration code.",
+    },
+    "long-statement": {
+        "level": "note",
+        "category": "style",
+        "description": "A YAML source line exceeds the configured length threshold.",
+    },
+    "unstructured-module": {
+        "level": "warning",
+        "category": "structure",
+        "description": "An Ansible role does not follow the conventional directory layout.",
+    },
+    "empty-abstraction": {
+        "level": "warning",
+        "category": "structure",
+        "description": "A task file or nested task abstraction is empty.",
+    },
+    "excessive-nesting": {
+        "level": "warning",
+        "category": "maintainability",
+        "description": "Nested block/rescue/always structures exceed the depth threshold.",
+    },
+    "missing-abstraction": {
+        "level": "warning",
+        "category": "structure",
+        "description": "A large task collection is not split into roles or included task files.",
+    },
+    "broken-role-dependency": {
+        "level": "error",
+        "category": "correctness",
+        "description": "A local role dependency is missing, cyclic, or self-referential.",
+    },
+    "unguarded-variable": {
+        "level": "warning",
+        "category": "correctness",
+        "description": "A Jinja variable lacks a visible definition or safety guard.",
+    },
 }
 
 
@@ -330,6 +375,28 @@ def build_findings_list(
                 f"{detail.get('issue', 'unused handler')}",
             )
         )
+
+    paper_detail_rules = (
+        ("complex_expressions_details", "complex-expression"),
+        ("incomplete_tasks_details", "incomplete-task"),
+        ("long_statements_details", "long-statement"),
+        ("unstructured_modules_details", "unstructured-module"),
+        ("empty_abstractions_details", "empty-abstraction"),
+        ("excessive_nesting_details", "excessive-nesting"),
+        ("missing_abstractions_details", "missing-abstraction"),
+        ("broken_role_dependencies_details", "broken-role-dependency"),
+        ("unguarded_variables_details", "unguarded-variable"),
+    )
+    for details_key, rule_id in paper_detail_rules:
+        for detail in metrics.get(details_key, []) or []:
+            out.append(
+                _finding(
+                    file,
+                    detail.get("line", 1),
+                    rule_id,
+                    detail.get("issue", RULE_CATALOG[rule_id]["description"]),
+                )
+            )
 
     # --- playbook-level boolean/count smells: file-level (line 1) ---
     playbook_level_simple = [

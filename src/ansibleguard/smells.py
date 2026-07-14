@@ -90,9 +90,7 @@ def assess_code_smells(
         "deprecated_modules", 0
     )
 
-    result["playbook"]["metrics"]["missing_tags"] = metrics.get(
-        "missing_tags", 0
-    )
+    result["playbook"]["metrics"]["missing_tags"] = metrics.get("missing_tags", 0)
 
     result["playbook"]["metrics"]["shell_instead_of_module"] = metrics.get(
         "shell_instead_of_module", 0
@@ -102,9 +100,20 @@ def assess_code_smells(
         "missing_handlers", 0
     )
 
-    result["playbook"]["metrics"]["unused_handlers"] = metrics.get(
-        "unused_handlers", 0
-    )
+    result["playbook"]["metrics"]["unused_handlers"] = metrics.get("unused_handlers", 0)
+
+    for metric_name in (
+        "complex_expressions",
+        "incomplete_tasks",
+        "long_statements",
+        "unstructured_modules",
+        "empty_abstractions",
+        "excessive_nesting",
+        "missing_abstractions",
+        "broken_role_dependencies",
+        "unguarded_variables",
+    ):
+        result["playbook"]["metrics"][metric_name] = metrics.get(metric_name, 0)
 
     result["playbook"]["metrics"]["similarityPlays"] = metrics.get("similarityPlays", 0)
     ##overriden_keys
@@ -362,9 +371,9 @@ def assess_code_smells(
             result["playbook"]["plays"].append(play_result)
 
         result["playbook"]["metrics"]["large_task"] = num_large_task
-        result["playbook"]["metrics"]["inconsistent_naming_convention"] = (
-            naming_convention
-        )
+        result["playbook"]["metrics"][
+            "inconsistent_naming_convention"
+        ] = naming_convention
         result["playbook"]["metrics"]["long_task_name"] = task_name
 
     return result, findings, lint_results
@@ -429,6 +438,7 @@ def execute_for_single_file(
 
 def format_ansible_lint_results(lint_results):
     from .external.ansible_lint import lint_issue_line, lint_issue_path
+
     formatted = []
 
     for issue in lint_results:

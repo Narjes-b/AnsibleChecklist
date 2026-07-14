@@ -137,6 +137,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
 
     from .report.findings import RULE_CATALOG
     from .document import inspect_document
+    from .detectors.paper_candidates import detect_paper_candidates
     from .external.gitleaks import scan_with_gitleaks
     from .external.ansible_lint import scan_with_ansible_lint
     from .external.install_gitleaks import GITLEAKS_PATH
@@ -179,6 +180,28 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
             lint_results=file_lint,
             run_external=False,
         )
+        structurally_analyzed_file = metrics is not None
+
+        # Source and role-layout checks are safe for empty/metadata documents
+        # that the playbook parser correctly refuses to treat as task lists.
+        # Keep the structural status as "skipped", but retain these findings
+        # in the project-wide JSON/SARIF rollups.
+        report_metrics = metrics
+        report_result = result
+        if not structurally_analyzed_file:
+            source_metrics = detect_paper_candidates(yaml_file)
+            if any(
+                value
+                for key, value in source_metrics.items()
+                if not key.endswith("_details")
+            ):
+                report_metrics = source_metrics
+                report_result = {
+                    "playbook": {
+                        "metrics": {"WarningUnusedIncludeVars": []},
+                        "plays": [],
+                    }
+                }
 
         formatted = format_ansible_lint_results(lint_results)
         write_AnsibleLint_results_to_txt(
@@ -187,7 +210,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         write_GitLeaks_results_to_txt(findings, out_dir / "gitleaks.txt")
 
         file_findings = build_findings_list(
-            metrics, result, findings, lint_results, yaml_file
+            report_metrics, report_result, findings, lint_results, yaml_file
         )
         all_findings.extend(file_findings)
 
@@ -196,7 +219,9 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
                 "file": _relative_or_self(yaml_file, scan_root),
                 "parse_status": document_info.parse_status,
                 "document_type": document_info.document_type,
-                "structural_status": "analyzed" if metrics is not None else "skipped",
+                "structural_status": (
+                    "analyzed" if structurally_analyzed_file else "skipped"
+                ),
                 "gitleaks_status": gitleaks_result.status,
                 "ansible_lint_status": lint_result.status,
                 "errors": sum(1 for f in file_findings if f["severity"] == "error"),
@@ -205,7 +230,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
                 "total": len(file_findings),
             }
         )
-        if metrics is not None:
+        if structurally_analyzed_file:
             structurally_analyzed += 1
         if document_info.diagnostics:
             diagnostics.append(
@@ -227,9 +252,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         finding_path = Path(finding_file)
         if not finding_path.is_absolute():
             finding_path = Path(scan_root) / finding_path
-        external_findings = build_findings_list(
-            None, None, [finding], [], finding_path
-        )
+        external_findings = build_findings_list(None, None, [finding], [], finding_path)
         all_findings.extend(external_findings)
         summary_rows.append(
             {
@@ -301,8 +324,16 @@ def _write_rollups(all_findings, summary_rows, diagnostics, output_root, scan_ro
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                "file", "parse_status", "document_type", "structural_status",
-                "gitleaks_status", "ansible_lint_status", "errors", "warnings", "notes", "total",
+                "file",
+                "parse_status",
+                "document_type",
+                "structural_status",
+                "gitleaks_status",
+                "ansible_lint_status",
+                "errors",
+                "warnings",
+                "notes",
+                "total",
             ],
         )
         writer.writeheader()

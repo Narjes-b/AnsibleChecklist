@@ -852,3 +852,19 @@ playbook- and play-level large/complex checks, working GitLeaks +
 ansible-lint integration, and the full test suite passing with the
 `pythonpath` bridge removed (confirmed the package resolves genuinely from
 anywhere, not just via a pytest-only workaround).
+
+## 2026-07-14 — paper-derived detector expansion
+
+Implemented nine previously missing static checks in
+`detectors/paper_candidates.py`: complex expressions, incomplete tasks, long
+statements, unstructured roles/modules, empty abstractions, excessive nesting,
+missing abstractions, broken role dependencies, and unguarded variables. They
+are integrated into raw metrics, assessed results, per-file CSV, flat JSON
+findings, and SARIF. Role-wide checks select one anchor file so a project scan
+does not repeat the same structural finding for every YAML file in a role.
+
+Added `tests/test_paper_candidates.py` with direct algorithm tests and an
+end-to-end parser/findings assertion. Current local result: 130 passing tests;
+one environment failure remains because the active virtual environment lacks
+the `ansible-lint` executable. Full design and limitations are recorded in
+`PAPER_SMELLS_IMPLEMENTATION.md`.

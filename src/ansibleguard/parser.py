@@ -3,6 +3,7 @@ from ansibleguard.detectors.detect_large_play import calculate_metrics_play
 from ansibleguard.detectors.large_task import calculate_metrics_task
 from ansibleguard.detectors.high_coupling import high_coupling
 from ansibleguard.detectors.duplicate_code import duplicate_code
+
 # from include_vars import detect_unnecessary_include_vars
 
 from ansibleguard.detectors.set_fact import set_fact
@@ -41,14 +42,16 @@ from ansibleguard.detectors.include_vars import detect_unused_include_vars
 from ansibleguard.detectors.missing_validate_certs import detect_missing_validate_certs
 from ansibleguard.detectors.deprecated_modules import detect_deprecated_modules
 from ansibleguard.detectors.missing_tags import detect_missing_tags
-from ansibleguard.detectors.shell_instead_of_module import detect_shell_instead_of_module
+from ansibleguard.detectors.shell_instead_of_module import (
+    detect_shell_instead_of_module,
+)
 from ansibleguard.detectors.handler_issues import detect_handler_issues
+from ansibleguard.detectors.paper_candidates import detect_paper_candidates
 import pandas as pd
 import csv
 import json
 import yaml
 from ansibleguard.document import inspect_document
-
 
 ##def read_specific_values():
 ##  specific_values = {}
@@ -116,15 +119,14 @@ def mainn(yaml_file_path):
         yaml_file_path
     )
     missing_tags_count, missing_tags_details = detect_missing_tags(yaml_file_path)
-    shell_mod_count, shell_mod_details = detect_shell_instead_of_module(
-        yaml_file_path
-    )
+    shell_mod_count, shell_mod_details = detect_shell_instead_of_module(yaml_file_path)
     (
         missing_handler_count,
         missing_handler_details,
         unused_handler_count,
         unused_handler_details,
     ) = detect_handler_issues(yaml_file_path)
+    paper_candidate_metrics = detect_paper_candidates(yaml_file_path)
 
     main_metrics = {
         "playbook_metrics": metrics_playbook,
@@ -160,6 +162,7 @@ def mainn(yaml_file_path):
         "missing_handlers_details": missing_handler_details,
         "unused_handlers": unused_handler_count,
         "unused_handlers_details": unused_handler_details,
+        **paper_candidate_metrics,
         "plays": [],
     }
 

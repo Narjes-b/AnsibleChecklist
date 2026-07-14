@@ -52,9 +52,9 @@ Every file goes through exactly three stages, always in this order:
 ```
 Stage 1 (Measure)
   parser.py's mainn()
-    ↓ calls about 16 different small detector files, one per smell,
-      each living in its own .py file (detectors/large_task.py,
-      detectors/overridden_keys.py, detectors/set_fact.py, etc.)
+    ↓ calls the detector modules, including the shared paper-candidate engine,
+      using focused modules for older checks and one shared traversal module
+      for the nine paper-derived checks
     ↓ combines all their results into one big dictionary called
       "main_metrics" — this is the raw, unjudged data
 
@@ -371,6 +371,26 @@ rather than this project's own code.
 
 ---
 
+### Paper-derived source, structure, and variable smells
+
+Nine related checks are implemented in `detectors/paper_candidates.py` and
+share safe YAML loading and recursive task traversal:
+
+- **Complex Expression** scores Jinja and conditional syntax.
+- **Incomplete Task** finds unresolved `TODO`/`FIXME`/`HACK`/`XXX` markers.
+- **Long Statement** finds physical lines longer than 120 characters.
+- **Unstructured Module** validates conventional role entry points.
+- **Empty Abstraction** finds empty documents and nested task sections.
+- **Excessive Nesting** finds tasks below more than three nested wrappers.
+- **Missing Abstraction** finds large task collections with no role/include use.
+- **Broken Role Dependency** finds missing, self-referential, and cyclic roles.
+- **Unguarded Variable** compares Jinja references with visible definitions and
+  recognizes `default`, `d`, and `is defined` guards.
+
+These checks produce counts plus detail records and flow through CSV, JSON, and
+SARIF like the older detectors. See `PAPER_SMELLS_IMPLEMENTATION.md` for exact
+algorithms, thresholds, role-wide deduplication, and false-positive limits.
+
 ## Part 5 — How it all comes together for one file
 
 Walking through exactly what happens when the tool analyzes a single file,
@@ -382,14 +402,16 @@ start to finish:
 2. That calls `parser.py`'s `mainn()`, which:
    - Parses the YAML (safely — returns `None` and stops here if the file
      can't even be parsed, e.g. an unsupported `!vault` tag).
-   - Calls all ~16 individual detector functions, each measuring its own
+   - Calls all detector functions, each measuring its own
      specific thing.
    - Assembles every result into one big dictionary, including a `"plays"`
      list where each play's own metrics are paired up with the tasks that
      belong to it (matched by `play_id`).
 3. Back in `execute_for_single_file()`, if `mainn()` returned `None`
-   (unparseable file), the whole thing stops cleanly here with a skip
-   message — nothing further is written for this file.
+   (unparseable or non-playbook file), structural analysis stops cleanly.
+   The CLI can still run the safe source/role paper checks so empty files,
+   TODO markers, long lines, and role-layout problems remain visible in the
+   project-wide JSON/SARIF rollups while structural status stays `skipped`.
 4. Otherwise, the raw dictionary is written straight to
    `Technical_Analysis.json` — this is the "before judging" snapshot.
 5. `smells.py`'s `assess_code_smells()` takes that same dictionary,

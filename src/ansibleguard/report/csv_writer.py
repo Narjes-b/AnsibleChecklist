@@ -37,6 +37,15 @@ def write_results_to_csv(all_results, file_path):
             "Shell Instead of Module",
             "Missing Handlers",
             "Unused Handlers",
+            "Complex Expressions",
+            "Incomplete Tasks",
+            "Long Statements",
+            "Unstructured Modules",
+            "Empty Abstractions",
+            "Excessive Nesting",
+            "Missing Abstractions",
+            "Broken Role Dependencies",
+            "Unguarded Variables",
             "Design Smells",
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -58,9 +67,11 @@ def write_results_to_csv(all_results, file_path):
                     "Large Playbook": metrics.get("large_playbook", ""),
                     "Unnecessary set_fact": metrics.get("unecessary_set_fact", ""),
                     "Overriding Facts": metrics.get("overriding_facts", ""),
-                    "Incohesive Playbook": incohesive_playbook_value
-                    if incohesive_playbook_value is not None
-                    else "",
+                    "Incohesive Playbook": (
+                        incohesive_playbook_value
+                        if incohesive_playbook_value is not None
+                        else ""
+                    ),
                     "Unecessary Abstraction": metrics.get("unecessary_abstraction", ""),
                     "Insufficient Modularization": metrics.get(
                         "insufficient_modularization", ""
@@ -85,24 +96,25 @@ def write_results_to_csv(all_results, file_path):
                     "Missing File Extension": metrics.get(
                         "missing_files_extension", ""
                     ),
-                    "Missing Validate Certs": metrics.get(
-                        "missing_validate_certs", ""
-                    ),
-                    "Deprecated Modules": metrics.get(
-                        "deprecated_modules", ""
-                    ),
-                    "Missing Tags": metrics.get(
-                        "missing_tags", ""
-                    ),
+                    "Missing Validate Certs": metrics.get("missing_validate_certs", ""),
+                    "Deprecated Modules": metrics.get("deprecated_modules", ""),
+                    "Missing Tags": metrics.get("missing_tags", ""),
                     "Shell Instead of Module": metrics.get(
                         "shell_instead_of_module", ""
                     ),
-                    "Missing Handlers": metrics.get(
-                        "missing_handlers", ""
+                    "Missing Handlers": metrics.get("missing_handlers", ""),
+                    "Unused Handlers": metrics.get("unused_handlers", ""),
+                    "Complex Expressions": metrics.get("complex_expressions", ""),
+                    "Incomplete Tasks": metrics.get("incomplete_tasks", ""),
+                    "Long Statements": metrics.get("long_statements", ""),
+                    "Unstructured Modules": metrics.get("unstructured_modules", ""),
+                    "Empty Abstractions": metrics.get("empty_abstractions", ""),
+                    "Excessive Nesting": metrics.get("excessive_nesting", ""),
+                    "Missing Abstractions": metrics.get("missing_abstractions", ""),
+                    "Broken Role Dependencies": metrics.get(
+                        "broken_role_dependencies", ""
                     ),
-                    "Unused Handlers": metrics.get(
-                        "unused_handlers", ""
-                    ),
+                    "Unguarded Variables": metrics.get("unguarded_variables", ""),
                     "Design Smells": metrics.get("ansible_lint_issues", ""),
                 }
             )

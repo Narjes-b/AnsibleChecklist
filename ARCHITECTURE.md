@@ -53,8 +53,10 @@ ansibleguard.cli   (run via the installed `ansibleguard` command — arbitrary
   │     │     │     ├── detectors/file_extensions.py           [was files_extensions.py]
   │     │     │     ├── detectors/bool_filters.py              [was filters_for_comparison.py]
   │     │     │     ├── detectors/credentials_in_log.py        [was credentials_leaking_in_log.py]
-  │     │     │     └── detectors/include_vars.py
+  │     │     │     ├── detectors/include_vars.py
   │     │     │           (→ ansibleguard.report.text_writer.write_unused_vars_to_txt)
+  │     │     │     └── detectors/paper_candidates.py
+  │     │     │           (9 source/task/role checks sharing one safe traversal engine)
   │     │     │
   │     │     ├── smells.assess_code_smells()  [inside smells.py itself]
   │     │     │     — takes parser's raw metrics + thresholds.csv,
@@ -79,6 +81,9 @@ ansibleguard.cli   (run via the installed `ansibleguard` command — arbitrary
 See `OUTPUT_FORMATS.md` for what each of the three project-wide output layers
 (per-file reports, `summary.csv`, `findings.json`/`findings.sarif`) is
 actually for and when to use which.
+
+The algorithms, thresholds, role-anchor deduplication, and limitations of the
+nine paper-derived checks are specified in `PAPER_SMELLS_IMPLEMENTATION.md`.
 
 Every arrow between sibling modules inside the same subpackage
 (`detectors/`, `external/`, `report/`) is now a real relative import

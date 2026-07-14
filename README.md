@@ -91,6 +91,19 @@ external tools.
 | Missing Bool Filter | A `when:` condition looks boolean-ish but skips the `| bool` filter |
 | Unnecessary Dependency | An `include_vars:` file is pulled in but none of its variables are used |
 | Credentials Leaking In Log | A task handles a secret-looking value without `no_log: true` |
+| Complex Expression | A Jinja or conditional expression has excessive syntactic complexity |
+| Incomplete Task | Source still contains `TODO`, `FIXME`, `HACK`, or `XXX` work markers |
+| Long Statement | A YAML source line exceeds 120 characters |
+| Empty Abstraction | A YAML task structure or block/rescue/always section is empty |
+| Excessive Nesting | Block/rescue/always nesting exceeds three levels |
+| Missing Abstraction | A large task file uses no roles or task includes |
+| Unguarded Variable | A Jinja variable has no visible definition or default/defined guard |
+
+### Role/project structure
+| Smell | What it means |
+|---|---|
+| Unstructured Module | A role is missing a conventional `main.yml` entry point |
+| Broken Role Dependency | Local role dependencies are missing, cyclic, or self-referential |
 
 ### Play-level
 | Smell | What it means |
@@ -114,7 +127,9 @@ external tools.
 | Design Smells | General best-practice violations, via `ansible-lint` |
 
 Full explanations of *how* each check actually works are in
-[`docs/HOW_IT_WORKS.md`](docs/HOW_IT_WORKS.md).
+[`HOW_IT_WORKS.md`](HOW_IT_WORKS.md). The paper-derived checks and their
+limitations are documented in
+[`PAPER_SMELLS_IMPLEMENTATION.md`](PAPER_SMELLS_IMPLEMENTATION.md).
 
 ---
 
@@ -162,7 +177,7 @@ ansibleguard/
 │       ├── config.py              # all shared paths/settings
 │       ├── parser.py              # orchestrates one playbook's full analysis
 │       ├── smells.py              # threshold logic — decides which smells fire
-│       ├── detectors/             # one file per smell (large_task.py, high_coupling.py, ...)
+│       ├── detectors/             # detector modules; paper candidates share paper_candidates.py
 │       ├── external/              # wrappers around gitleaks and ansible-lint
 │       ├── report/                # csv_writer.py, text_writer.py, findings.py, sarif_writer.py
 │       └── thresholds.csv         # every threshold value, one CSV

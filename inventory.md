@@ -1,9 +1,9 @@
 # AnsibleChecklist — Implemented Smell Inventory
 
-> **Branch:** `refactoring`  
-> **Last updated:** 2026-07-12  
-> **Total smells:** 31 (24 custom detectors + 1 external tool + 6 new)  
-> **Test suite:** 118 passing, 4 pre-existing platform failures
+> **Branch:** `sarif-validation-support`
+> **Last updated:** 2026-07-14
+> **Total smells:** 40 (39 internal/integrated rules + 1 external tool)
+> **Test suite:** 130 passing; 1 local environment failure (`ansible-lint` executable absent)
 
 ---
 
@@ -403,9 +403,60 @@ These were added in the current development cycle and are not present on the `le
 
 ---
 
+## PAPER-DERIVED STATIC DETECTORS (9)
+
+These checks were selected from the configuration-smell paper mapping because
+they have defensible static Ansible equivalents. Their shared implementation is
+documented fully in `PAPER_SMELLS_IMPLEMENTATION.md`.
+
+### 31. Complex Expression
+
+Scores operators, comparisons, filters, grouping, indexing, and length in
+Jinja/conditional expressions. A score of 6 or more produces a warning.
+
+### 32. Incomplete Task
+
+Reports source lines containing unresolved `TODO`, `FIXME`, `HACK`, or `XXX`
+markers.
+
+### 33. Long Statement
+
+Reports physical YAML source lines longer than 120 characters as notes.
+
+### 34. Unstructured Module
+
+Checks role entry points and existing standard role directories for a
+`main.yml`/`main.yaml` file. One anchor file represents each role.
+
+### 35. Empty Abstraction
+
+Reports empty YAML documents and explicit empty `block`, `rescue`, or `always`
+sections.
+
+### 36. Excessive Nesting
+
+Reports tasks nested below more than three `block`/`rescue`/`always` wrappers.
+
+### 37. Missing Abstraction
+
+Reports files with more than ten leaf tasks and no role or task-include usage.
+
+### 38. Broken Role Dependency
+
+Builds the local `roles/*/meta/main.yml` dependency graph and reports missing
+local dependencies, self-dependencies, and cycles as correctness errors.
+
+### 39. Unguarded Variable
+
+Reports Jinja references without a visible definition or `default`/`d`/`is
+defined` guard. Runtime and externally supplied variables can cause false
+positives, so this rule is a warning.
+
+---
+
 ## 🔧 EXTERNAL TOOLS (1)
 
-### 31. Design Smells (ansible-lint)
+### 40. Design Smells (ansible-lint)
 
 | Field | Value |
 |-------|-------|
@@ -425,9 +476,9 @@ These were added in the current development cycle and are not present on the `le
 
 | Severity | Count | Smells |
 |----------|-------|--------|
-| **error** | 5 | Hardcoded Credentials, Credentials Leaking, Overridden Keys, Insecure Permissions, Missing Handlers |
-| **warning** | 11 | Missing validate_certs, Missing Bool Filter, Overriding Facts, Duplicated Code, High Coupling, Large Playbook, Complex Playbook, Insufficient Modularization, Large Play, Large Task, Deprecated Modules, Shell Instead of Module, Unused Handlers |
-| **note** | 16 | All style, naming, cohesion, and informational smells |
+| **error** | 6 | Existing errors plus Broken Role Dependency |
+| **warning** | 21 | Existing warnings plus seven new heuristic/structural warnings |
+| **note** | 13 | Existing notes plus Long Statement |
 
 ### By Category
 
@@ -482,11 +533,10 @@ report/text_writer.py        # Human-readable TXT report
 
 | Metric | Value |
 |--------|-------|
-| Test files | 39 |
-| Total tests | 123 |
-| Passing | 118 |
-| Pre-existing failures | 4 (platform-specific: ansible-lint `grp`, SARIF path sep., sem_cohesion Unicode) |
-| Skipped | 1 (insecure_permissions — on `lion` branch only) |
+| Test files | 40 |
+| Total tests | 131 |
+| Passing | 130 |
+| Environment failures | 1 (`ansible-lint` executable absent locally) |
 
 ---
 

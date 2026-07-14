@@ -14,7 +14,9 @@ def test_parse_failure_still_emits_gitleaks_finding(tmp_path, monkeypatch):
         "completed",
         [{"File": "vars.yaml", "StartLine": 1, "Description": "AWS key"}],
     )
-    monkeypatch.setattr("ansibleguard.external.gitleaks.scan_with_gitleaks", lambda *a, **k: fake)
+    monkeypatch.setattr(
+        "ansibleguard.external.gitleaks.scan_with_gitleaks", lambda *a, **k: fake
+    )
     monkeypatch.setattr(
         "ansibleguard.external.ansible_lint.scan_with_ansible_lint",
         lambda *a, **k: ToolResult("completed"),
@@ -69,3 +71,26 @@ def test_repository_without_yaml_still_keeps_gitleaks_findings(tmp_path, monkeyp
     assert run["discovered"] == 0
     findings = json.loads((output / "findings.json").read_text())
     assert findings[0]["file"].endswith(".env")
+
+
+def test_empty_yaml_keeps_source_detector_finding_without_structural_analysis(
+    tmp_path, monkeypatch
+):
+    target = tmp_path / "empty.yml"
+    target.write_text("")
+    monkeypatch.setattr(
+        "ansibleguard.external.gitleaks.scan_with_gitleaks",
+        lambda *a, **k: ToolResult("completed"),
+    )
+    monkeypatch.setattr(
+        "ansibleguard.external.ansible_lint.scan_with_ansible_lint",
+        lambda *a, **k: ToolResult("completed"),
+    )
+
+    output = tmp_path / "output"
+    run = analyze_path(target, output)
+
+    assert run["structurally_analyzed"] == 0
+    findings = json.loads((output / "findings.json").read_text())
+    assert {finding["rule_id"] for finding in findings} == {"empty-abstraction"}
+    assert ",empty,skipped," in (output / "summary.csv").read_text()
