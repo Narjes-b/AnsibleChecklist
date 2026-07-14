@@ -115,15 +115,16 @@ def mainn(yaml_file_path):
     deprecated_mod_count, deprecated_mod_details = detect_deprecated_modules(
         yaml_file_path
     )
-    missing_tags_count, missing_tags_details = detect_missing_tags(
-        yaml_file_path
-    )
+    missing_tags_count, missing_tags_details = detect_missing_tags(yaml_file_path)
     shell_mod_count, shell_mod_details = detect_shell_instead_of_module(
         yaml_file_path
     )
-    missing_handler_count, missing_handler_details, unused_handler_count, unused_handler_details = detect_handler_issues(
-        yaml_file_path
-    )
+    (
+        missing_handler_count,
+        missing_handler_details,
+        unused_handler_count,
+        unused_handler_details,
+    ) = detect_handler_issues(yaml_file_path)
 
     main_metrics = {
         "playbook_metrics": metrics_playbook,
