@@ -217,4 +217,4 @@ resource relationships.
 | `b902b6d` | Added nine configuration-paper detectors. |
 | `a98aef1` | Added the 38-item paper coverage matrix. |
 | `54a1570` | Added seven additional review-checklist detectors and the canonical catalog. |
-| Current expansion | Added four partial-coverage rules, seven Git-aware rules, and this complete implementation record. |
+| `98ac114` | Added four partial-coverage rules, seven Git-aware rules, and this complete implementation record. |
