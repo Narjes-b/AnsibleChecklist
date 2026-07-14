@@ -33,7 +33,7 @@ Limitations: string-based pattern matching cannot understand shell
 """
 
 import re
-import yaml
+from ansibleguard.detectors.source_lines import load_with_lines, source_line
 
 
 # Pattern → (module, args description)
@@ -167,11 +167,8 @@ def detect_shell_instead_of_module(yaml_file_path):
           count:   int — number of flagged shell/command tasks
           details: list[dict] — {"task_name", "command", "module", "issue"}
     """
-    try:
-        with open(yaml_file_path, "r", encoding="utf-8") as f:
-            playbook = yaml.safe_load(f)
-    except (yaml.YAMLError, FileNotFoundError) as e:
-        print(f"Could not parse {yaml_file_path}: {e}")
+    playbook = load_with_lines(yaml_file_path)
+    if playbook is None:
         return 0, []
 
     all_tasks = _collect_all_tasks(playbook)
@@ -201,7 +198,7 @@ def detect_shell_instead_of_module(yaml_file_path):
                     "command": cmd[:80] + ("..." if len(cmd) > 80 else ""),
                     "module": module_name,
                     "issue": message,
-                    "line": None,
+                    "line": source_line(task),
                 })
                 break  # One match per task
 

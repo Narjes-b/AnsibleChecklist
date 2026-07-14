@@ -27,9 +27,10 @@ from .config import (
 
 from .config import THRESHOLDS_FILE
 from .external.install_gitleaks import GITLEAKS_PATH
+from .detector_config import load_detector_config
 
 
-def read_thresholds():
+def read_thresholds(path=None):
     thresholds = {}
     with open(THRESHOLDS_FILE, "r") as f:
         reader = csv.reader(f)
@@ -40,6 +41,10 @@ def read_thresholds():
                 continue
             key, value = row[0], float(row[1])
             thresholds[key] = value
+    if path is not None:
+        for key, value in load_detector_config(path).get("thresholds", {}).items():
+            if key in thresholds:
+                thresholds[key] = float(value)
     return thresholds
 
 
@@ -406,7 +411,7 @@ def execute_for_single_file(
     result = None
     metrics = None
 
-    thresholds = read_thresholds()
+    thresholds = read_thresholds(yaml_file_path)
 
     try:
         print(f"Analyzing file {yaml_file_path}...")

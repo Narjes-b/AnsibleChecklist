@@ -13,6 +13,7 @@ import re
 
 import yaml
 
+from ansibleguard.detector_config import load_detector_config
 from ansibleguard.document import AnsibleSafeLoader
 
 NESTED_SECTIONS = ("block", "rescue", "always")
@@ -178,7 +179,7 @@ def _walk_values(value, key=None):
         yield key, value
 
 
-def detect_complex_expressions(path, threshold=6):
+def detect_complex_expressions(path, threshold=6, length_threshold=100):
     document, text = _load(path)
     details = []
     seen = set()
@@ -199,7 +200,7 @@ def detect_complex_expressions(path, threshold=6):
                 + normalized.count("[")
                 + normalized.count("?")
             )
-            if len(normalized) > 100:
+            if len(normalized) > length_threshold:
                 score += 2
             if score >= threshold:
                 details.append(
@@ -299,7 +300,9 @@ def detect_missing_abstraction(path, threshold=10):
 def detect_empty_abstractions(path):
     document, text = _load(path)
     details = []
-    if document in (None, [], {}):
+    variable_directories = {"defaults", "vars", "group_vars", "host_vars"}
+    is_variable_file = bool(variable_directories.intersection(Path(path).parts))
+    if document in (None, [], {}) and not is_variable_file:
         details.append({"line": 1, "issue": "YAML abstraction is empty."})
     for task, _ in _iter_tasks(document):
         for section in NESTED_SECTIONS:
@@ -464,8 +467,8 @@ def detect_broken_role_dependencies(path):
     return len(unique), list(unique.values())
 
 
-def _collect_defined_variables(document, path):
-    defined = set(COMMON_VARIABLES)
+def _collect_defined_variables(document, path, known_variables=()):
+    defined = set(COMMON_VARIABLES) | set(known_variables)
     if isinstance(document, list):
         for entry in document:
             if not isinstance(entry, dict):
@@ -496,12 +499,29 @@ def _collect_defined_variables(document, path):
                 variables, _ = _load(role_root / directory_name / f"main.{suffix}")
                 if isinstance(variables, dict):
                     defined.update(variables)
+    # Inventory variables can live beside any project ancestor. Loading these
+    # visible repository definitions avoids treating normal group/host vars as
+    # unguarded merely because they are not declared in the current playbook.
+    seen_variable_files = set()
+    for parent in (Path(path).resolve().parent, *Path(path).resolve().parents):
+        for directory_name in ("group_vars", "host_vars"):
+            directory = parent / directory_name
+            if not directory.is_dir():
+                continue
+            for pattern in ("*.yml", "*.yaml"):
+                for variable_file in directory.rglob(pattern):
+                    if variable_file in seen_variable_files:
+                        continue
+                    seen_variable_files.add(variable_file)
+                    variables, _ = _load(variable_file)
+                    if isinstance(variables, dict):
+                        defined.update(variables)
     return defined
 
 
-def detect_unguarded_variables(path):
+def detect_unguarded_variables(path, known_variables=()):
     document, text = _load(path)
-    defined = _collect_defined_variables(document, path)
+    defined = _collect_defined_variables(document, path, known_variables)
     details = []
     seen = set()
     for _, value in _walk_values(document):
@@ -518,6 +538,7 @@ def detect_unguarded_variables(path):
                     variable in defined
                     or variable in JINJA_WORDS
                     or variable in guarded
+                    or variable.startswith("ansible_")
                 ):
                     continue
                 # Filter/function names occur after a pipe or as calls.
@@ -542,16 +563,29 @@ def detect_unguarded_variables(path):
 
 def detect_paper_candidates(path):
     """Run every detector and return metric/detail pairs."""
+    thresholds = load_detector_config(path)["thresholds"]
     detectors = {
-        "complex_expressions": detect_complex_expressions,
+        "complex_expressions": lambda value: detect_complex_expressions(
+            value,
+            thresholds["complex_expression_score"],
+            thresholds["complex_expression_length"],
+        ),
         "incomplete_tasks": detect_incomplete_tasks,
-        "long_statements": detect_long_statements,
+        "long_statements": lambda value: detect_long_statements(
+            value, thresholds["long_statement_length"]
+        ),
         "unstructured_modules": detect_unstructured_module,
         "empty_abstractions": detect_empty_abstractions,
-        "excessive_nesting": detect_excessive_nesting,
-        "missing_abstractions": detect_missing_abstraction,
+        "excessive_nesting": lambda value: detect_excessive_nesting(
+            value, thresholds["excessive_nesting_depth"]
+        ),
+        "missing_abstractions": lambda value: detect_missing_abstraction(
+            value, thresholds["missing_abstraction_tasks"]
+        ),
         "broken_role_dependencies": detect_broken_role_dependencies,
-        "unguarded_variables": detect_unguarded_variables,
+        "unguarded_variables": lambda value: detect_unguarded_variables(
+            value, load_detector_config(value)["rules"]["known_variables"]
+        ),
     }
     result = {}
     for metric, detector in detectors.items():

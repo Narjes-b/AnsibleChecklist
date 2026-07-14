@@ -13,6 +13,23 @@ import json
 from pathlib import Path
 
 
+def write_findings_to_txt(findings, file_path, mode="w", title="Normalized findings"):
+    """Write every normalized rule in a human-readable, line-addressable form."""
+    with open(file_path, mode, encoding="utf-8") as txtfile:
+        if mode == "a":
+            txtfile.write("\n")
+        txtfile.write(f"### {title.upper()} ###\n\n")
+        if not findings:
+            txtfile.write("No findings detected.\n")
+            return
+        for finding in findings:
+            txtfile.write(
+                "- [{severity}] {rule_id} at {file}:{line}: {message}\n".format(
+                    **finding
+                )
+            )
+
+
 def write_GitLeaks_results_to_txt(findings, file_path):
     output_file = Path(file_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure dir exists

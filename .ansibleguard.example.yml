@@ -1,0 +1,27 @@
+# Copy this file to .ansibleguard.yml at the project root and adjust it.
+thresholds:
+  # Every existing thresholds.csv key may also be overridden here, for
+  # example LOC_playbook, num_tasks_playbook, similarity, or task_name_len.
+  complex_expression_score: 6
+  complex_expression_length: 100
+  long_statement_length: 120
+  excessive_nesting_depth: 3
+  missing_abstraction_tasks: 10
+
+rules:
+  default_credentials:
+    - admin
+    - admin123
+    - changeme
+    - password
+    - root
+    - secret
+  # Python regular expressions added to the built-in mutating command list.
+  additional_mutating_command_patterns: []
+  # Variables supplied by inventory plugins, CI, or extra-vars and therefore
+  # not visible in repository YAML.
+  known_variables: []
+
+suppressions:
+  # Use stable IDs from ALL_DETECTED_SMELLS.md.
+  disabled_rules: []

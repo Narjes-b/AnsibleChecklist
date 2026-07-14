@@ -7,13 +7,14 @@ import pandas as pd
 from nltk.stem import WordNetLemmatizer
 
 from ..config import THRESHOLDS_FILE
+from ..detector_config import load_detector_config
 
 # Initialisation du lemmatiseur et du modèle Spacy
 lemmatizer = WordNetLemmatizer()
 nlp = spacy.load("en_core_web_lg")
 
 
-def read_thresholds():
+def read_thresholds(path=None):
     thresholds = {}
     with open(THRESHOLDS_FILE, "r") as f:
         reader = csv.reader(f)
@@ -24,13 +25,17 @@ def read_thresholds():
                 continue
             key, value = row[0], float(row[1])
             thresholds[key] = value
+    if path is not None:
+        for key, value in load_detector_config(path).get("thresholds", {}).items():
+            if key in thresholds:
+                thresholds[key] = float(value)
     return thresholds
 
 
 def calculate_similarity(file_path):
     metrics = calculate_metrics_play(file_path)
     incohesive = 0
-    thresholds = read_thresholds()
+    thresholds = read_thresholds(file_path)
     if metrics:
         for i, play_metrics in enumerate(metrics["Plays"]):
             df = pd.DataFrame([play_metrics])

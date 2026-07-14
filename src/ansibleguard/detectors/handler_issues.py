@@ -31,12 +31,12 @@ Limitations: single-file analysis cannot see handlers from included
   task files or imported playbooks.
 """
 
-import yaml
+from ansibleguard.detectors.source_lines import load_with_lines, source_line
 
 
 def _collect_handlers(playbook):
     """Collect all handler names from every play in the playbook."""
-    handlers = set()
+    handlers = {}
     if isinstance(playbook, list):
         for entry in playbook:
             if not isinstance(entry, dict):
@@ -44,13 +44,13 @@ def _collect_handlers(playbook):
             if "handlers" in entry and isinstance(entry["handlers"], list):
                 for handler in entry["handlers"]:
                     if isinstance(handler, dict) and "name" in handler:
-                        handlers.add(handler["name"])
+                        handlers[handler["name"]] = source_line(handler)
     return handlers
 
 
 def _collect_notifies(playbook):
     """Collect all notify values from every task in the playbook."""
-    notifies = set()
+    notifies = {}
 
     def recurse(tasks):
         for task in tasks:
@@ -59,11 +59,11 @@ def _collect_notifies(playbook):
             if "notify" in task:
                 val = task["notify"]
                 if isinstance(val, str):
-                    notifies.add(val)
+                    notifies[val] = source_line(task, "notify")
                 elif isinstance(val, list):
                     for item in val:
                         if isinstance(item, str):
-                            notifies.add(item)
+                            notifies[item] = source_line(task, "notify")
             for section in ("block", "rescue", "always"):
                 if section in task and isinstance(task[section], list):
                     recurse(task[section])
@@ -107,11 +107,8 @@ def detect_handler_issues(yaml_file_path):
           unused_count:    int — handlers never notified
           unused_details:  list[dict] — {"handler_name", "issue"}
     """
-    try:
-        with open(yaml_file_path, "r", encoding="utf-8") as f:
-            playbook = yaml.safe_load(f)
-    except (yaml.YAMLError, FileNotFoundError) as e:
-        print(f"Could not parse {yaml_file_path}: {e}")
+    playbook = load_with_lines(yaml_file_path)
+    if playbook is None:
         return 0, [], 0, []
 
     handlers = _collect_handlers(playbook)
@@ -127,7 +124,7 @@ def detect_handler_issues(yaml_file_path):
                     f"Notify references handler '{n}' which is not defined "
                     f"in this playbook. The notification will silently fail."
                 ),
-                "line": None,
+                "line": notifies[n],
             })
 
     # Unused handlers: defined but never notified
@@ -140,7 +137,7 @@ def detect_handler_issues(yaml_file_path):
                     f"Handler '{h}' is defined but never notified. "
                     f"It will never execute."
                 ),
-                "line": None,
+                "line": handlers[h],
             })
 
     return len(missing_details), missing_details, len(unused_details), unused_details

@@ -1,6 +1,20 @@
 import csv
 
 
+FINDING_FIELDS = ("file", "line", "rule_id", "severity", "message")
+
+
+def write_findings_to_csv(findings, file_path):
+    """Write the normalized finding contract, including project-level rules."""
+    with open(file_path, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=FINDING_FIELDS)
+        writer.writeheader()
+        writer.writerows(
+            {field: finding.get(field, "") for field in FINDING_FIELDS}
+            for finding in findings
+        )
+
+
 def write_results_to_csv(all_results, file_path):
     with open(file_path, "w", newline="") as csvfile:
         fieldnames = [

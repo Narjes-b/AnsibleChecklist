@@ -23,7 +23,7 @@ Limitations: the deprecated module list is manually maintained and
   must be updated as new deprecations are announced.
 """
 
-import yaml
+from ansibleguard.detectors.source_lines import load_with_lines, source_line
 
 # Map of deprecated module names → recommended replacement.
 # Sourced from Ansible porting guides and module documentation.
@@ -141,11 +141,8 @@ def detect_deprecated_modules(yaml_file_path):
           count:   int — number of tasks using deprecated modules
           details: list[dict] — {"task_name", "module", "replacement", "issue"}
     """
-    try:
-        with open(yaml_file_path, "r", encoding="utf-8") as f:
-            playbook = yaml.safe_load(f)
-    except (yaml.YAMLError, FileNotFoundError) as e:
-        print(f"Could not parse {yaml_file_path}: {e}")
+    playbook = load_with_lines(yaml_file_path)
+    if playbook is None:
         return 0, []
 
     all_tasks = _collect_all_tasks(playbook)
@@ -180,7 +177,7 @@ def detect_deprecated_modules(yaml_file_path):
                         f"Module '{key}' is deprecated. "
                         f"Use '{_DEPRECATED_MODULES[key]}' instead."
                     ),
-                    "line": None,
+                    "line": source_line(task, key),
                 })
                 break  # One module per task
             # Check aliased modules (short names — still supported but
@@ -195,7 +192,7 @@ def detect_deprecated_modules(yaml_file_path):
                         f"Consider using FQCN '{_ALIASED_MODULES[key]}' "
                         f"for future-proofing."
                     ),
-                    "line": None,
+                    "line": source_line(task, key),
                 })
                 break
 

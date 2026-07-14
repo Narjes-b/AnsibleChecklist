@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import re
 import subprocess
 
@@ -37,22 +38,58 @@ def _repository_root(target):
     return Path(output.strip()) if output else None
 
 
-def _changed_files(root):
-    output = _git(
-        root,
-        "diff-tree",
-        "--root",
-        "--no-commit-id",
-        "--name-status",
-        "-r",
-        "HEAD",
+def _valid_commit(root, revision):
+    return bool(
+        revision
+        and _git(root, "rev-parse", "--verify", f"{revision}^{{commit}}")
     )
+
+
+def _review_range(root):
+    head = os.environ.get("ANSIBLEGUARD_HEAD_SHA") or "HEAD"
+    if not _valid_commit(root, head):
+        head = "HEAD"
+    requested_base = os.environ.get("ANSIBLEGUARD_BASE_SHA")
+    if requested_base and _valid_commit(root, requested_base):
+        base = requested_base
+    else:
+        parent = f"{head}^"
+        base = parent if _valid_commit(root, parent) else None
+    return base, head
+
+
+def _changed_files(root, base, head):
+    if base:
+        output = _git(root, "diff", "--name-status", f"{base}...{head}")
+    else:
+        output = _git(
+            root,
+            "diff-tree",
+            "--root",
+            "--no-commit-id",
+            "--name-status",
+            "-r",
+            head,
+        )
     changes = []
     for line in (output or "").splitlines():
         parts = line.split("\t")
         if len(parts) >= 2:
             changes.append((parts[0], parts[-1]))
     return changes
+
+
+def _commit_messages(root, base, head):
+    revision = f"{base}..{head}" if base else head
+    output = _git(root, "log", "--format=%H%x1f%B%x1e", revision) or ""
+    messages = []
+    for record in output.split("\x1e"):
+        record = record.strip()
+        if "\x1f" not in record:
+            continue
+        commit, message = record.split("\x1f", 1)
+        messages.append((commit, message.rstrip()))
+    return messages
 
 
 def _is_configuration(path):
@@ -68,8 +105,8 @@ def _is_test(path):
     return bool(parts & {"test", "tests", "molecule"})
 
 
-def _detail(rule_file, issue):
-    return {"file": rule_file, "line": 1, "issue": issue}
+def _detail(rule_file, issue, **metadata):
+    return {"file": rule_file, "line": 1, "issue": issue, **metadata}
 
 
 def detect_project_review_smells(target):
@@ -77,13 +114,12 @@ def detect_project_review_smells(target):
     if root is None:
         return {}
 
-    changes = _changed_files(root)
+    base, head = _review_range(root)
+    changes = _changed_files(root, base, head)
     changed_paths = [path for _, path in changes]
     configuration_changes = [path for path in changed_paths if _is_configuration(path)]
     test_changes = [path for path in changed_paths if _is_test(path)]
-    message = (_git(root, "show", "-s", "--format=%B", "HEAD") or "").rstrip()
-    lines = message.splitlines()
-    subject = lines[0] if lines else ""
+    messages = _commit_messages(root, base, head)
     results = {
         "missing_release_notes": [],
         "missing_bug_references": [],
@@ -102,52 +138,59 @@ def detect_project_review_smells(target):
         results["missing_release_notes"].append(
             _detail(
                 configuration_changes[0],
-                "The latest configuration change adds no release-note file.",
+                "The review range changes configuration without adding a release-note file.",
+                base=base,
+                head=head,
             )
         )
 
-    if BUG_WORD_RE.search(subject) and not BUG_REFERENCE_RE.search(message):
-        results["missing_bug_references"].append(
-            _detail(
-                ".",
-                "Bug/fix commit message has no Closes-Bug, Related-Bug, or bug-number reference.",
-            )
-        )
-
-    for reference in DEPENDS_ON_RE.findall(message):
-        if not VALID_DEPENDENCY_RE.search(reference):
-            results["invalid_depends_on_references"].append(
+    for commit, message in messages:
+        lines = message.splitlines()
+        subject = lines[0] if lines else ""
+        if BUG_WORD_RE.search(subject) and not BUG_REFERENCE_RE.search(message):
+            results["missing_bug_references"].append(
                 _detail(
                     ".",
-                    f"Depends-On reference '{reference}' is not a review URL or Change-Id.",
+                    "Bug/fix commit message has no Closes-Bug, Related-Bug, or bug-number reference.",
+                    commit=commit,
+                )
+            )
+        for reference in DEPENDS_ON_RE.findall(message):
+            if not VALID_DEPENDENCY_RE.search(reference):
+                results["invalid_depends_on_references"].append(
+                    _detail(
+                        ".",
+                        f"Depends-On reference '{reference}' is not a review URL or Change-Id.",
+                        commit=commit,
+                    )
+                )
+
+        format_problems = []
+        if len(subject) > 50:
+            format_problems.append(f"subject is {len(subject)} characters (maximum 50)")
+        if len(lines) > 1 and lines[1].strip():
+            format_problems.append("subject is not followed by a blank line")
+        long_body_lines = [
+            number for number, line in enumerate(lines[2:], 3) if len(line) > 72
+        ]
+        if long_body_lines:
+            format_problems.append(f"body lines exceed 72 characters: {long_body_lines}")
+        if format_problems:
+            results["commit_message_format_issues"].append(
+                _detail(
+                    ".",
+                    "Commit message format: " + "; ".join(format_problems) + ".",
+                    commit=commit,
                 )
             )
 
-    format_problems = []
-    if len(subject) > 50:
-        format_problems.append(f"subject is {len(subject)} characters (maximum 50)")
-    if len(lines) > 1 and lines[1].strip():
-        format_problems.append("subject is not followed by a blank line")
-    long_body_lines = [
-        number for number, line in enumerate(lines[2:], 3) if len(line) > 72
-    ]
-    if long_body_lines:
-        format_problems.append(f"body lines exceed 72 characters: {long_body_lines}")
-    if format_problems:
-        results["commit_message_format_issues"].append(
-            _detail(".", "Commit message format: " + "; ".join(format_problems) + ".")
-        )
-
-    has_parent = _git(root, "rev-parse", "HEAD^") is not None
-    if has_parent:
+    if base:
         for status, path in changes:
             if not status.startswith("M"):
                 continue
-            old_text = _git(root, "show", f"HEAD^:{path}")
-            current_path = root / path
-            try:
-                new_text = current_path.read_text(encoding="utf-8")
-            except OSError, UnicodeDecodeError:
+            old_text = _git(root, "show", f"{base}:{path}")
+            new_text = _git(root, "show", f"{head}:{path}")
+            if new_text is None:
                 continue
             old_header = "\n".join((old_text or "").splitlines()[:20])
             new_header = "\n".join(new_text.splitlines()[:20])
@@ -155,7 +198,9 @@ def detect_project_review_smells(target):
                 results["removed_copyright_notices"].append(
                     _detail(
                         path,
-                        "A copyright notice present in the parent revision was removed.",
+                        "A copyright notice present at the review base was removed.",
+                        base=base,
+                        head=head,
                     )
                 )
 
@@ -163,7 +208,9 @@ def detect_project_review_smells(target):
         results["missing_test_updates"].append(
             _detail(
                 configuration_changes[0],
-                "Configuration files changed in HEAD without a test or Molecule change.",
+                "Configuration files changed in the review range without a test or Molecule change.",
+                base=base,
+                head=head,
             )
         )
 
@@ -179,7 +226,9 @@ def detect_project_review_smells(target):
         results["untested_override_changes"].append(
             _detail(
                 override_changes[0],
-                "Defaults/vars changed without a corresponding test change for overrides.",
+                "Defaults/vars changed in the review range without a corresponding override test.",
+                base=base,
+                head=head,
             )
         )
 

@@ -26,7 +26,7 @@ Limitations: does not detect validate_certs set via variable
   (e.g., validate_certs: "{{ verify_ssl }}").
 """
 
-import yaml
+from ansibleguard.detectors.source_lines import load_with_lines, source_line
 
 
 # Modules that support HTTPS connections and accept validate_certs
@@ -83,11 +83,8 @@ def detect_missing_validate_certs(yaml_file_path):
           count:   int — number of tasks with validate_certs disabled
           details: list[dict] — {"task_name", "module", "issue"} per flagged task
     """
-    try:
-        with open(yaml_file_path, "r", encoding="utf-8") as f:
-            playbook = yaml.safe_load(f)
-    except (yaml.YAMLError, FileNotFoundError) as e:
-        print(f"Could not parse {yaml_file_path}: {e}")
+    playbook = load_with_lines(yaml_file_path)
+    if playbook is None:
         return 0, []
 
     all_tasks = _collect_all_tasks(playbook)
@@ -100,13 +97,19 @@ def detect_missing_validate_certs(yaml_file_path):
         for module_name in _HTTPS_MODULES:
             if module_name in task:
                 module_params = task[module_name]
-                _check_params(task_name, module_name, module_params, details)
+                _check_params(
+                    task_name,
+                    module_name,
+                    module_params,
+                    details,
+                    source_line(task, module_name),
+                )
                 break  # A task has only one module
 
     return len(details), details
 
 
-def _check_params(task_name, module_name, module_params, details):
+def _check_params(task_name, module_name, module_params, details, line=1):
     """Check if validate_certs is explicitly disabled in module parameters."""
     params = module_params if isinstance(module_params, dict) else {}
     val = params.get("validate_certs")
@@ -119,7 +122,7 @@ def _check_params(task_name, module_name, module_params, details):
                 "TLS certificate validation is disabled, making the "
                 "connection vulnerable to MITM attacks."
             ),
-            "line": None,
+            "line": line,
         })
 
 

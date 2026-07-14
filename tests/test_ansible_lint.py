@@ -39,6 +39,10 @@ def test_missing_binary_degrades_to_empty_list(fixtures_dir, monkeypatch):
         return subprocess.run(cmd, **kwargs)
 
     monkeypatch.setattr(subprocess, "run", fake_run)
+    monkeypatch.setattr(
+        "ansibleguard.external.ansible_lint._ansible_lint_executable",
+        lambda: "ansible-lint",
+    )
 
     fixture = fixtures_dir / "ansible_lint_clean.yml"
     result = run_ansible_lint(str(fixture))

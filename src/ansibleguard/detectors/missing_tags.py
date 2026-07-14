@@ -27,7 +27,7 @@ Limitations: does not check tag naming conventions; does not detect
   when a block provides tags to its children.
 """
 
-import yaml
+from ansibleguard.detectors.source_lines import load_with_lines, source_line
 
 
 def _collect_all_tasks(playbook):
@@ -78,11 +78,8 @@ def detect_missing_tags(yaml_file_path):
           count:   int — number of tasks without tags
           details: list[dict] — {"task_name", "issue"} per flagged task
     """
-    try:
-        with open(yaml_file_path, "r", encoding="utf-8") as f:
-            playbook = yaml.safe_load(f)
-    except (yaml.YAMLError, FileNotFoundError) as e:
-        print(f"Could not parse {yaml_file_path}: {e}")
+    playbook = load_with_lines(yaml_file_path)
+    if playbook is None:
         return 0, []
 
     all_tasks = _collect_all_tasks(playbook)
@@ -96,7 +93,7 @@ def detect_missing_tags(yaml_file_path):
             details.append({
                 "task_name": task_name,
                 "issue": "Task has no tags — cannot be targeted with --tags or --skip-tags.",
-                "line": None,
+                "line": source_line(task),
             })
 
     return len(details), details

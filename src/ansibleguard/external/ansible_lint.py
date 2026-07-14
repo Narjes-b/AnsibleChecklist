@@ -1,8 +1,25 @@
 import subprocess
 import json
+import os
 from pathlib import Path
+import shutil
+import sys
+import tempfile
 
 from .gitleaks import ToolResult
+
+
+def _ansible_lint_executable():
+    """Find ansible-lint beside the running Python before consulting PATH.
+
+    Console scripts installed in a virtual environment are siblings of its
+    Python executable, but callers may invoke ``.venv/bin/pytest`` without
+    adding ``.venv/bin`` to PATH.
+    """
+    sibling = Path(sys.executable).with_name("ansible-lint")
+    if sibling.is_file():
+        return str(sibling)
+    return shutil.which("ansible-lint") or "ansible-lint"
 
 
 def lint_issue_path(issue):
@@ -27,10 +44,15 @@ def lint_issue_line(issue):
 def scan_with_ansible_lint(target_path, output_format="json"):
     """Run ansible-lint and distinguish a clean scan from a tool failure."""
     try:
-        cmd = ["ansible-lint", str(target_path)]
+        cmd = [_ansible_lint_executable(), str(target_path)]
         if output_format == "json":
             cmd += ["-f", "json"]
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        env = os.environ.copy()
+        env.setdefault(
+            "ANSIBLE_LOCAL_TEMP",
+            str(Path(tempfile.gettempdir()) / "ansibleguard-ansible-tmp"),
+        )
+        result = subprocess.run(cmd, capture_output=True, text=True, env=env)
     except (FileNotFoundError, OSError) as exc:
         return ToolResult("tool-error", message=str(exc))
 

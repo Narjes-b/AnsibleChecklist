@@ -6,6 +6,10 @@ from pathlib import Path
 import re
 import stat
 
+from ansibleguard.detector_config import (
+    load_detector_config,
+    mutating_command_pattern,
+)
 from ansibleguard.detectors.paper_candidates import (
     NESTED_SECTIONS,
     _iter_tasks,
@@ -147,7 +151,7 @@ def _walk_mappings(value):
             yield from _walk_mappings(child)
 
 
-def detect_default_credentials(path):
+def detect_default_credentials(path, known_values=None):
     document, text = _load(path)
     details = []
     seen = set()
@@ -160,7 +164,11 @@ def detect_default_credentials(path):
             normalized = str(value).strip().lower()
             if "{{" in normalized or "$ansible_vault" in normalized:
                 continue
-            if normalized not in DEFAULT_CREDENTIALS and normalized != str(key).lower():
+            credential_values = {
+                str(item).lower()
+                for item in (known_values if known_values is not None else DEFAULT_CREDENTIALS)
+            }
+            if normalized not in credential_values and normalized != str(key).lower():
                 continue
             identity = (str(key), normalized)
             if identity in seen:
@@ -184,7 +192,7 @@ def _command_text(value):
     return ""
 
 
-def detect_non_idempotent_commands(path):
+def detect_non_idempotent_commands(path, command_pattern=None):
     document, text = _load(path)
     details = []
     for task, _ in _iter_tasks(document):
@@ -198,7 +206,7 @@ def detect_non_idempotent_commands(path):
         guarded = any(key in args for key in ("creates", "removes")) or any(
             key in task for key in ("changed_when", "check_mode")
         )
-        if MUTATING_COMMAND_RE.search(command) and not guarded:
+        if (command_pattern or MUTATING_COMMAND_RE).search(command) and not guarded:
             details.append(
                 {
                     "line": _task_line(text, task),
@@ -331,10 +339,15 @@ def detect_undocumented_complex_tasks(path):
 
 
 def detect_review_checklist_smells(path):
+    config = load_detector_config(path)
     detectors = {
         "insecure_permissions": detect_insecure_permissions,
-        "default_credentials": detect_default_credentials,
-        "non_idempotent_commands": detect_non_idempotent_commands,
+        "default_credentials": lambda value: detect_default_credentials(
+            value, config["rules"]["default_credentials"]
+        ),
+        "non_idempotent_commands": lambda value: detect_non_idempotent_commands(
+            value, mutating_command_pattern(config, MUTATING_COMMAND_RE)
+        ),
         "silent_error_suppressions": detect_silent_error_suppression,
         "redundant_default_values": detect_redundant_default_values,
         "shell_environment_exports": detect_shell_environment_exports,

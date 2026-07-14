@@ -130,12 +130,14 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
     )
     from .report.text_writer import (
         write_AnsibleLint_results_to_txt,
+        write_findings_to_txt,
         write_GitLeaks_results_to_txt,
     )
     from .report.findings import build_findings_list
     from .report.sarif_writer import write_sarif
 
     from .report.findings import RULE_CATALOG
+    from .detector_config import filter_findings
     from .document import inspect_document
     from .detectors.paper_candidates import detect_paper_candidates
     from .detectors.review_checklist import detect_review_checklist_smells
@@ -217,6 +219,13 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         file_findings = build_findings_list(
             report_metrics, report_result, findings, lint_results, yaml_file
         )
+        file_findings = filter_findings(file_findings, yaml_file)
+        write_findings_to_txt(
+            file_findings,
+            out_dir / "Play_Level_Analysis.txt",
+            mode="a",
+            title="All file findings",
+        )
         all_findings.extend(file_findings)
 
         summary_rows.append(
@@ -255,6 +264,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         project_findings = build_findings_list(
             project_metrics, project_result, [], [], scan_root
         )
+        project_findings = filter_findings(project_findings, scan_root)
         if project_findings:
             all_findings.extend(project_findings)
             summary_rows.append(
@@ -285,6 +295,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         if not finding_path.is_absolute():
             finding_path = Path(scan_root) / finding_path
         external_findings = build_findings_list(None, None, [finding], [], finding_path)
+        external_findings = filter_findings(external_findings, scan_root)
         all_findings.extend(external_findings)
         summary_rows.append(
             {
@@ -320,7 +331,14 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
             }
         )
 
-    _write_rollups(all_findings, summary_rows, diagnostics, output_root, scan_root)
+    _write_rollups(
+        all_findings,
+        summary_rows,
+        diagnostics,
+        project_metrics,
+        output_root,
+        scan_root,
+    )
 
     print(
         f"[✔] {len(yaml_files)} file(s) discovered; "
@@ -341,10 +359,14 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
     }
 
 
-def _write_rollups(all_findings, summary_rows, diagnostics, output_root, scan_root):
+def _write_rollups(
+    all_findings, summary_rows, diagnostics, project_metrics, output_root, scan_root
+):
     import csv
     import json as _json
     from .report.sarif_writer import write_sarif
+    from .report.csv_writer import write_findings_to_csv
+    from .report.text_writer import write_findings_to_txt
 
     # summary.csv -- one row per file, ranked worst-first, for "which files
     # actually need attention" at a glance instead of opening N CSVs by hand.
@@ -376,6 +398,14 @@ def _write_rollups(all_findings, summary_rows, diagnostics, output_root, scan_ro
     with open(findings_json_path, "w", encoding="utf-8") as f:
         _json.dump(all_findings, f, indent=2)
 
+    findings_csv_path = output_root / "findings.csv"
+    findings_txt_path = output_root / "findings.txt"
+    write_findings_to_csv(all_findings, findings_csv_path)
+    write_findings_to_txt(all_findings, findings_txt_path)
+
+    with open(output_root / "review_metrics.json", "w", encoding="utf-8") as f:
+        _json.dump(project_metrics, f, indent=2)
+
     with open(output_root / "diagnostics.json", "w", encoding="utf-8") as f:
         _json.dump(diagnostics, f, indent=2)
 
@@ -384,7 +414,8 @@ def _write_rollups(all_findings, summary_rows, diagnostics, output_root, scan_ro
     write_sarif(all_findings, sarif_path, repo_root=scan_root)
 
     print(
-        f"[✔] Rollups written: {summary_csv_path}, {findings_json_path}, {sarif_path}"
+        f"[✔] Rollups written: {summary_csv_path}, {findings_json_path}, "
+        f"{findings_csv_path}, {findings_txt_path}, {sarif_path}"
     )
 
 

@@ -8,6 +8,10 @@ def _git(repo, *args):
     subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True)
 
 
+def _git_output(repo, *args):
+    return subprocess.check_output(["git", "-C", str(repo), *args], text=True).strip()
+
+
 def _write(path, content):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
@@ -93,3 +97,28 @@ def test_git_review_metadata_accepts_complete_change(tmp_path):
     assert all(
         value == 0 for key, value in metrics.items() if not key.endswith("_details")
     )
+
+
+def test_git_review_metadata_checks_the_complete_pr_range(tmp_path, monkeypatch):
+    repo = _init_repo(tmp_path)
+    _write(repo / "README.md", "base\n")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-q", "-m", "Initial state")
+    base = _git_output(repo, "rev-parse", "HEAD")
+
+    _write(repo / "roles" / "web" / "tasks" / "main.yml", "- debug: msg=hello\n")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-q", "-m", "Fix role behavior")
+    _write(repo / "README.md", "latest documentation\n")
+    _git(repo, "add", ".")
+    _git(repo, "commit", "-q", "-m", "Update documentation")
+    head = _git_output(repo, "rev-parse", "HEAD")
+
+    monkeypatch.setenv("ANSIBLEGUARD_BASE_SHA", base)
+    monkeypatch.setenv("ANSIBLEGUARD_HEAD_SHA", head)
+    metrics = detect_project_review_smells(repo)
+
+    assert metrics["missing_release_notes"] == 1
+    assert metrics["missing_test_updates"] == 1
+    assert metrics["missing_bug_references"] == 1
+    assert metrics["missing_bug_references_details"][0]["commit"] != head
