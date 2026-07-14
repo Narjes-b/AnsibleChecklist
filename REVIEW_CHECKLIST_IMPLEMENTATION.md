@@ -98,6 +98,5 @@ changing structural classification.
 
 `tests/test_review_checklist.py` covers positive and negative cases plus
 parser-to-finding integration. The local full-suite result after this addition
-is 134 passing tests and one environment failure because `ansible-lint` is not
+is 138 passing tests and one environment failure because `ansible-lint` is not
 installed in the active virtual environment.
-

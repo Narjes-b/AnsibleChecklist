@@ -2,11 +2,11 @@
 
 This is the canonical list of rules that are active in the current branch.
 Unlike historical inventories, inclusion here requires both a live
-`RULE_CATALOG` entry and a path that can produce a finding. There are **46
-active rules**: 44 internal rules, one GitLeaks rule, and one general
+`RULE_CATALOG` entry and a path that can produce a finding. There are **57
+active rules**: 55 internal rules, one GitLeaks rule, and one general
 `ansible-lint` rule.
 
-The paper's 38 review criteria and these 46 rules are not one-to-one. One paper
+The paper's 38 review criteria and these 57 rules are not one-to-one. One paper
 criterion can need several narrow detectors, while many existing size, naming,
 cohesion, and security smells are outside that paper checklist. This is why the
 tool can have more active smells than directly covered paper criteria.
@@ -77,6 +77,22 @@ tool can have more active smells than directly covered paper criteria.
 |---|---|---|---|
 | `ansible-lint-issue` | warning | Every issue returned by the integrated `ansible-lint` JSON scan becomes a finding. | Requires the executable and compatible runtime dependencies. |
 
+## Strengthened partial and Git-review rules
+
+| Rule | Severity | How it is detected | Main limitation |
+|---|---|---|---|
+| `unused-registered-variable` | note | Collected `register` names are compared with all other scalar references in the file. | Cross-file/dynamic uses are invisible. |
+| `unscoped-shell-variable` | warning | Shell `$VAR` references are compared with task/play environment mappings, inline assignments, and standard process variables. | Host-provided custom environment variables can be intentional. |
+| `invalid-task-attribute-type` | error | Universal boolean, integer, mapping, and tags task attributes are type-checked. | Collection-specific module schemas remain ansible-lint's responsibility. |
+| `invalid-numeric-value` | error | Literal ports and retry/timing controls are checked for valid numeric ranges. | Templated and service-specific ranges are unresolved. |
+| `missing-release-note` | note | A latest commit changing production YAML must add a release-note file. | Some internal changes legitimately need no public note. |
+| `missing-bug-reference` | note | Bug/fix commit subjects require a recognized numeric bug trailer/reference. | External issue existence is not verified. |
+| `invalid-depends-on-reference` | warning | Present `Depends-On` trailers must be review URLs or Gerrit Change-Ids. | The tool cannot infer when an absent dependency was required. |
+| `commit-message-format` | note | Latest commit subject/body lengths and blank separation are validated. | Project-specific exceptions are not modeled. |
+| `removed-copyright-notice` | warning | Modified file headers in HEAD are compared with the parent revision. | Renames and notices outside the first 20 lines are not compared. |
+| `missing-test-update` | warning | Production-YAML changes in HEAD require a test/tests/Molecule co-change. | Co-change does not prove meaningful test coverage. |
+| `untested-override-change` | warning | Defaults/vars changes require a test or Molecule co-change. | Tests are not executed or semantically matched to each option. |
+
 ## Output path
 
 Every rule above is normalized by `report/findings.py` to `file`, `line`,
@@ -87,5 +103,6 @@ source/role checks also contribute project rollup findings for skipped YAML
 documents.
 
 For implementation details of the two recent detector bundles, see
-`PAPER_SMELLS_IMPLEMENTATION.md` and `REVIEW_CHECKLIST_IMPLEMENTATION.md`. For
+`PAPER_SMELLS_IMPLEMENTATION.md`, `REVIEW_CHECKLIST_IMPLEMENTATION.md`, and
+`PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md`. For
 the 38-criterion paper comparison, see `CODE_REVIEW_CHECKLIST_COVERAGE.md`.

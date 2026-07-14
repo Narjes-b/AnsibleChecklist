@@ -880,7 +880,21 @@ passing tests; one local environment failure remains because `ansible-lint` is
 not installed.
 
 `REVIEW_CHECKLIST_IMPLEMENTATION.md` documents their algorithms and limits.
-`CODE_REVIEW_CHECKLIST_COVERAGE.md` now records 12 directly covered, 11
-partially covered, and 15 missing paper criteria. `ALL_DETECTED_SMELLS.md` is
-the canonical code-backed catalog of all 46 active rules and explains why the
+At that milestone, `CODE_REVIEW_CHECKLIST_COVERAGE.md` recorded 12 directly
+covered, 11 partially covered, and 15 missing paper criteria.
+`ALL_DETECTED_SMELLS.md` catalogued 46 active rules and explained why the
 active-rule count is larger than the paper's directly covered checklist count.
+
+## 2026-07-14 — partial completion and Git-aware review checks
+
+Added four source rules in `partial_checklist.py` for unused registered results,
+unscoped shell variables, universal task-attribute types, and numeric ranges.
+Added seven one-per-project checks in `review_metadata.py` for release notes,
+bug references, Depends-On syntax, commit formatting, copyright preservation,
+test co-changes, and override-test co-changes. Git-aware rules inspect HEAD and
+its parent and do not duplicate findings for every YAML file.
+
+The live catalog now contains 57 rules. Paper coverage is 15 direct, 15
+partial, and 8 missing criteria. Exact algorithms and limitations are in
+`PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md`; the entire work session is
+recorded in first person in `SESSION_IMPLEMENTATION_REPORT.md`.

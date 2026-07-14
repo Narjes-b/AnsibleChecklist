@@ -2,8 +2,8 @@
 
 > **Branch:** `sarif-validation-support`
 > **Last updated:** 2026-07-14
-> **Total smells:** 46 (44 internal rules + GitLeaks + ansible-lint)
-> **Test suite:** 134 passing; 1 local environment failure (`ansible-lint` executable absent)
+> **Total smells:** 57 (55 internal rules + GitLeaks + ansible-lint)
+> **Test suite:** 138 passing; 1 local environment failure (`ansible-lint` executable absent)
 
 ---
 
@@ -490,9 +490,60 @@ comment.
 
 ---
 
+## PARTIAL-COVERAGE AND GIT REVIEW RULES (11)
+
+These rules strengthen partially automatable criteria and add one-per-project
+latest-commit checks. See `PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md`.
+
+### 46. Unused Registered Variable
+
+Reports `register` results never referenced elsewhere in the file.
+
+### 47. Unscoped Shell Variable
+
+Reports shell variable references absent from task/play environment mappings.
+
+### 48. Invalid Task Attribute Type
+
+Validates universal boolean, integer, mapping, and tag task attributes.
+
+### 49. Invalid Numeric Value
+
+Validates literal port ranges and nonnegative timing/retry controls.
+
+### 50. Missing Release Note
+
+Checks whether a latest commit changing production YAML adds a release note.
+
+### 51. Missing Bug Reference
+
+Checks bug/fix commit messages for a recognized bug-number reference.
+
+### 52. Invalid Depends-On Reference
+
+Validates present dependency trailers as review URLs or Gerrit Change-Ids.
+
+### 53. Commit Message Format
+
+Checks subject length, blank separation, and body line length.
+
+### 54. Removed Copyright Notice
+
+Compares modified file headers in HEAD with the parent revision.
+
+### 55. Missing Test Update
+
+Requires test/Molecule co-changes when production YAML changes.
+
+### 56. Untested Override Change
+
+Requires test co-changes when defaults or variable sources change.
+
+---
+
 ## 🔧 EXTERNAL TOOLS (1)
 
-### 46. Design Smells (ansible-lint)
+### 57. Design Smells (ansible-lint)
 
 | Field | Value |
 |-------|-------|
@@ -572,9 +623,9 @@ report/text_writer.py        # Human-readable TXT report
 
 | Metric | Value |
 |--------|-------|
-| Test files | 41 |
-| Total tests | 135 |
-| Passing | 134 |
+| Test files | 43 |
+| Total tests | 139 |
+| Passing | 138 |
 | Environment failures | 1 (`ansible-lint` executable absent locally) |
 
 ---

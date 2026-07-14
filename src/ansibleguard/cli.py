@@ -139,6 +139,8 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
     from .document import inspect_document
     from .detectors.paper_candidates import detect_paper_candidates
     from .detectors.review_checklist import detect_review_checklist_smells
+    from .detectors.partial_checklist import detect_partial_checklist_smells
+    from .detectors.review_metadata import detect_project_review_smells
     from .external.gitleaks import scan_with_gitleaks
     from .external.ansible_lint import scan_with_ansible_lint
     from .external.install_gitleaks import GITLEAKS_PATH
@@ -192,6 +194,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         if not structurally_analyzed_file:
             source_metrics = detect_paper_candidates(yaml_file)
             source_metrics.update(detect_review_checklist_smells(yaml_file))
+            source_metrics.update(detect_partial_checklist_smells(yaml_file))
             if any(
                 value
                 for key, value in source_metrics.items()
@@ -241,6 +244,33 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
                     "stage": "yaml-parse",
                     "status": document_info.parse_status,
                     "message": "; ".join(document_info.diagnostics),
+                }
+            )
+
+    project_metrics = detect_project_review_smells(scan_root)
+    if project_metrics:
+        project_result = {
+            "playbook": {"metrics": {"WarningUnusedIncludeVars": []}, "plays": []}
+        }
+        project_findings = build_findings_list(
+            project_metrics, project_result, [], [], scan_root
+        )
+        if project_findings:
+            all_findings.extend(project_findings)
+            summary_rows.append(
+                {
+                    "file": ".",
+                    "parse_status": "not-applicable",
+                    "document_type": "review-metadata",
+                    "structural_status": "not-applicable",
+                    "gitleaks_status": gitleaks_result.status,
+                    "ansible_lint_status": lint_result.status,
+                    "errors": sum(f["severity"] == "error" for f in project_findings),
+                    "warnings": sum(
+                        f["severity"] == "warning" for f in project_findings
+                    ),
+                    "notes": sum(f["severity"] == "note" for f in project_findings),
+                    "total": len(project_findings),
                 }
             )
 

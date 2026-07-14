@@ -250,6 +250,61 @@ RULE_CATALOG = {
         "category": "documentation",
         "description": "A complex task lacks a nearby explanatory comment.",
     },
+    "unused-registered-variable": {
+        "level": "note",
+        "category": "maintainability",
+        "description": "A registered task result is never referenced.",
+    },
+    "unscoped-shell-variable": {
+        "level": "warning",
+        "category": "correctness",
+        "description": "A shell variable is not declared in Ansible's environment mapping.",
+    },
+    "invalid-task-attribute-type": {
+        "level": "error",
+        "category": "correctness",
+        "description": "A common Ansible task attribute has the wrong YAML type.",
+    },
+    "invalid-numeric-value": {
+        "level": "error",
+        "category": "correctness",
+        "description": "A numeric task/module value is outside its valid range.",
+    },
+    "missing-release-note": {
+        "level": "note",
+        "category": "documentation",
+        "description": "The latest configuration change has no release note.",
+    },
+    "missing-bug-reference": {
+        "level": "note",
+        "category": "documentation",
+        "description": "A bug-fix commit message has no bug reference.",
+    },
+    "invalid-depends-on-reference": {
+        "level": "warning",
+        "category": "dependencies",
+        "description": "A Depends-On trailer is malformed.",
+    },
+    "commit-message-format": {
+        "level": "note",
+        "category": "documentation",
+        "description": "The latest commit message violates the review format.",
+    },
+    "removed-copyright-notice": {
+        "level": "warning",
+        "category": "legal",
+        "description": "A copyright notice was removed by the latest commit.",
+    },
+    "missing-test-update": {
+        "level": "warning",
+        "category": "testing",
+        "description": "Configuration changed without a corresponding test change.",
+    },
+    "untested-override-change": {
+        "level": "warning",
+        "category": "testing",
+        "description": "Defaults or variables changed without an override test change.",
+    },
 }
 
 
@@ -428,12 +483,23 @@ def build_findings_list(
         ("redundant_default_values_details", "redundant-default-value"),
         ("shell_environment_exports_details", "shell-environment-export"),
         ("undocumented_complex_tasks_details", "undocumented-complex-task"),
+        ("unused_registered_variables_details", "unused-registered-variable"),
+        ("unscoped_shell_variables_details", "unscoped-shell-variable"),
+        ("invalid_task_attribute_types_details", "invalid-task-attribute-type"),
+        ("invalid_numeric_values_details", "invalid-numeric-value"),
+        ("missing_release_notes_details", "missing-release-note"),
+        ("missing_bug_references_details", "missing-bug-reference"),
+        ("invalid_depends_on_references_details", "invalid-depends-on-reference"),
+        ("commit_message_format_issues_details", "commit-message-format"),
+        ("removed_copyright_notices_details", "removed-copyright-notice"),
+        ("missing_test_updates_details", "missing-test-update"),
+        ("untested_override_changes_details", "untested-override-change"),
     )
     for details_key, rule_id in paper_detail_rules:
         for detail in metrics.get(details_key, []) or []:
             out.append(
                 _finding(
-                    file,
+                    detail.get("file", file),
                     detail.get("line", 1),
                     rule_id,
                     detail.get("issue", RULE_CATALOG[rule_id]["description"]),

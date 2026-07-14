@@ -53,6 +53,10 @@ def write_results_to_csv(all_results, file_path):
             "Redundant Default Values",
             "Shell Environment Exports",
             "Undocumented Complex Tasks",
+            "Unused Registered Variables",
+            "Unscoped Shell Variables",
+            "Invalid Task Attribute Types",
+            "Invalid Numeric Values",
             "Design Smells",
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -139,6 +143,16 @@ def write_results_to_csv(all_results, file_path):
                     "Undocumented Complex Tasks": metrics.get(
                         "undocumented_complex_tasks", ""
                     ),
+                    "Unused Registered Variables": metrics.get(
+                        "unused_registered_variables", ""
+                    ),
+                    "Unscoped Shell Variables": metrics.get(
+                        "unscoped_shell_variables", ""
+                    ),
+                    "Invalid Task Attribute Types": metrics.get(
+                        "invalid_task_attribute_types", ""
+                    ),
+                    "Invalid Numeric Values": metrics.get("invalid_numeric_values", ""),
                     "Design Smells": metrics.get("ansible_lint_issues", ""),
                 }
             )

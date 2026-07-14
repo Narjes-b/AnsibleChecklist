@@ -57,8 +57,12 @@ ansibleguard.cli   (run via the installed `ansibleguard` command — arbitrary
   │     │     │           (→ ansibleguard.report.text_writer.write_unused_vars_to_txt)
   │     │     │     ├── detectors/paper_candidates.py
   │     │     │           (9 source/task/role checks sharing one safe traversal engine)
-  │     │     │     └── detectors/review_checklist.py
+  │     │     │     ├── detectors/review_checklist.py
   │     │     │           (7 security/reliability/review-checklist checks)
+  │     │     │     ├── detectors/partial_checklist.py
+  │     │     │     │     (4 variable/type/value partial-coverage checks)
+  │     │     │     └── detectors/review_metadata.py
+  │     │     │           (7 latest-commit checks, emitted once per project)
   │     │     │
   │     │     ├── smells.assess_code_smells()  [inside smells.py itself]
   │     │     │     — takes parser's raw metrics + thresholds.csv,

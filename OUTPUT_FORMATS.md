@@ -162,7 +162,8 @@ are flagged in `REFACTOR_PLAN.md` as not yet empirically justified.
   (GitLeaks), `credentials-leaking-in-log`, `overriden-keys` (a duplicate
   key silently discards data — a real bug, not style), and
   `broken-role-dependency`, `insecure-permissions`, and
-  `default-credentials`.
+  `default-credentials`, `invalid-task-attribute-type`, and
+  `invalid-numeric-value`.
 - **`warning`** — don't break anything today, but increase bug risk:
   `missing-bool-filters`, `overriding-facts`, `duplicated-code`,
   `high-coupling`, `large-playbook`/`complex-playbook`/`large-play`/
@@ -171,12 +172,16 @@ are flagged in `REFACTOR_PLAN.md` as not yet empirically justified.
   `missing-abstraction`, `unguarded-variable`, ansible-lint's own findings (no clean severity field to
   inherit from most ansible-lint output modes), plus
   `non-idempotent-command`, `silent-error-suppression`, and
-  `shell-environment-export`.
+  `shell-environment-export`, `unscoped-shell-variable`,
+  `invalid-depends-on-reference`, `removed-copyright-notice`,
+  `missing-test-update`, and `untested-override-change`.
 - **`note`** — style/maintainability, low consequence: `unnamed-play`/
   `unnamed-task`, `long-task-name`, `inconsistent-naming-convention`,
   `missing-file-extension`, `unnecessary-abstraction`,
   `long-statement`,
   `redundant-default-value`, `undocumented-complex-task`,
+  `unused-registered-variable`, `missing-release-note`,
+  `missing-bug-reference`, `commit-message-format`,
   `incohesive-playbook`/`incohesive-play` (a soft NLP-based signal that
   can misfire on real, fine code — deliberately not weighted as `error`).
 

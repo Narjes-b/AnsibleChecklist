@@ -141,6 +141,8 @@ The authoritative list of all active rules is
 [`ALL_DETECTED_SMELLS.md`](ALL_DETECTED_SMELLS.md), while
 [`CODE_REVIEW_CHECKLIST_COVERAGE.md`](CODE_REVIEW_CHECKLIST_COVERAGE.md)
 maps them back to the paper's 38 review criteria.
+The strengthened partial and Git-aware checks are documented in
+[`PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md`](PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md).
 
 ---
 

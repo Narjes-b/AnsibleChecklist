@@ -119,6 +119,10 @@ def assess_code_smells(
         "redundant_default_values",
         "shell_environment_exports",
         "undocumented_complex_tasks",
+        "unused_registered_variables",
+        "unscoped_shell_variables",
+        "invalid_task_attribute_types",
+        "invalid_numeric_values",
     ):
         result["playbook"]["metrics"][metric_name] = metrics.get(metric_name, 0)
 
