@@ -34,7 +34,7 @@ missing.
 
 | # | Paper topic | Checklist criterion | Implemented? | Current coverage or gap |
 |---:|---|---|---|---|
-| 1 | Documentation | Add a release note for the change | **Partial** | Git-aware `missing-release-note` requires a release-note file when HEAD changes production YAML; it cannot know whether an internal change is intentionally exempt. |
+| 1 | Documentation | Add a release note for the change | **Partial** | Git-aware `missing-release-note` requires a release-note file when the review range changes production YAML; it cannot know whether an internal change is intentionally exempt. |
 | 2 | Documentation | Add a bug report for newly detected bugs | **Partial** | `missing-bug-reference` requires bug/fix commits to reference a tracker number, but it cannot create or verify the external report. |
 | 3 | Documentation | Add explanatory inline comments | **Partial** | `undocumented-complex-task` requires a nearby comment for structurally complex tasks, but comment quality and simple-task documentation remain human judgments. |
 | 4 | Documentation | Record `Depends-On` information in the commit message | **Partial** | Present `Depends-On` trailers are validated as review URLs or Gerrit Change-Ids; whether a missing trailer was required cannot be inferred. |
@@ -59,14 +59,14 @@ missing.
 | 23 | Best practices | Emit warnings for exceptional situations | **Partial** | `silent-error-suppression` reports ignored/disabled failures whose results are not registered, but cannot prove whether another warning path exists. |
 | 24 | Best practices | Do not duplicate code | **Yes** | `duplicate_code.py` detects repeated task bodies. |
 | 25 | Best practices | Avoid lint failures such as bad whitespace or indentation | **Yes** | The integrated `ansible-lint` scan covers syntax, whitespace, and formatting violations when its executable is installed. |
-| 26 | Best practices | Preserve copyright notices | **Yes** | `removed-copyright-notice` compares modified file headers in HEAD with the parent revision. |
+| 26 | Best practices | Preserve copyright notices | **Yes** | `removed-copyright-notice` compares modified file headers at the committed review base and head. |
 | 27 | Compatibility | Check parameter-value compatibility | **No** | Some invalid values may be caught externally, but cross-service and cross-version value compatibility is not modeled. |
 | 28 | Compatibility | Check parameter-type compatibility | **Partial** | `invalid-task-attribute-type` validates universal task attributes and ansible-lint validates module schemas; templated/runtime values remain unresolved. |
 | 29 | Compatibility | Avoid deprecated options or parameters | **No** | The live deprecated detector covers modules and aliases, not module-option deprecations. |
 | 30 | Compatibility | Avoid deprecated code structures | **Partial** | Deprecated modules, FQCN guidance, boolean-condition rules, and `ansible-lint` cover some structures, not a complete version-aware syntax model. |
 | 31 | Dependencies | Check configuration dependencies and ordering | **Partial** | `high-coupling` and `broken-role-dependency` identify dependency quantity, missing roles, self-dependencies, and cycles, but not correct runtime ordering. |
 | 32 | Dependencies | Notify handlers between dependent tasks | **Partial** | Missing and unused handler references are checked; the tool cannot always determine that a service-changing task should notify a particular handler. |
-| 33 | Test | Update tests when configuration changes | **Yes** | Git-aware `missing-test-update` requires a test/tests/Molecule co-change when HEAD changes production YAML. |
+| 33 | Test | Update tests when configuration changes | **Yes** | Git-aware `missing-test-update` requires a test/tests/Molecule co-change when the review range changes production YAML. |
 | 34 | Test | Test option overrides | **Partial** | `untested-override-change` requires tests when defaults/vars change and `overriding-facts` checks conflicts; test assertion quality is not measured. |
 | 35 | Test | Test whether assigned values are correct | **No** | No test-suite execution or coverage-to-configuration mapping is integrated. |
 | 36 | Security | Do not leave default credentials | **Yes** | `default-credentials` detects conservative well-known credential values; GitLeaks adds broader hardcoded-secret coverage. |
@@ -75,10 +75,11 @@ missing.
 
 ## Directly covered checklist items
 
-The twelve directly covered criteria include variable initialization, boolean
-filters, redundant defaults, file extensions, task naming, native DSL/module
-preference, coherent naming, duplicate-code avoidance, lint cleanliness,
-default credentials, credential-log protection, and resource permissions.
+The fifteen directly covered criteria are commit-message format, variable
+initialization, redundant defaults, boolean filtering, file extensions, task
+naming, native DSL/module preference, coherent naming, duplicate-code
+avoidance, lint cleanliness, copyright preservation, test co-changes, default
+credentials, credential-log protection, and resource permissions.
 
 ## Important interpretation
 

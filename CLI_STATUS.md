@@ -1,15 +1,19 @@
 # AnsibleGuard — CLI Development Status
 
-Companion to `PROJECT_STATUS.md` (detector bug log), `ARCHITECTURE.md` (call
-graph), `TESTING.md` (pytest inventory), `OUTPUT_FORMATS.md` (what each of
-the three project-wide output layers is for), and `REFACTOR_PLAN.md`
-(packaging roadmap, Part 3 of which this file tracks progress against).
+> Historical implementation log. Current verified state (July 14, 2026): 57
+> active rules, 144 passing tests, normalized JSON/CSV/text/SARIF output,
+> complete PR base-to-head review analysis, configurable suppressions, and a
+> successful fresh-environment ansible-lint run. Older counts below are retained
+> only as chronological evidence of what was true at that development stage.
+
+Companion to `PROJECT_STATUS.md` (detector bug log), `ARCHITECTURE.md` (current
+call graph), and `OUTPUT_FORMATS.md` (current output contract).
 This file answers: where are we on making this tool runnable against an
 arbitrary real project, not just our fixed `TestData/tasks/` folder.
 
 > **Note:** the packaging work this file tracked has since completed —
 > the project is now installed via `pip install -e .` with an `ansibleguard`
-> command (see `REFACTOR_PLAN.md`). File paths below have been updated to
+> command. File paths below have been updated to
 > the current `src/ansibleguard/...` locations; the bug narrative itself is
 > unchanged, since it describes real bugs found and fixed during this CLI
 > development work, before the later file-move refactor.
@@ -224,9 +228,9 @@ file's opening section names as the whole point of the CLI:
   current path is `oasis-tcs/sarif-spec/main/sarif-2.1/schema/...`.
 - **`ansibleguard/cli.py`'s `analyze_path()`** — now also accumulates a flat findings
   list and a per-file summary row across the whole run, writing
-  `summary.csv`, `findings.json`, and `findings.sarif` once at the end,
-  purely additive alongside every existing per-file report. See
-  `OUTPUT_FORMATS.md` for what each of the three output layers is for.
+  project summary, diagnostics, review metrics, and normalized
+  JSON/CSV/text/SARIF once at the end, alongside every per-file report. See
+  `OUTPUT_FORMATS.md` for the current contract.
 
 **Real per-line location data** was also added this round —
 `detectors/large_task.py`, `detectors/large_play.py`, `detectors/unnamed_play.py`,
@@ -244,27 +248,29 @@ returned `0`, for every file, always; `parser.py`'s per-play
 collision with `is_unnamed()`. Both confirmed and fixed — see
 `PROJECT_STATUS.md`.
 
-## Not yet done
+## Historical follow-up list
+
+This list records what was open at this stage of CLI development. Current
+resolution: GitLeaks scans the target independently and retains unparseable and
+non-YAML findings; findings/SARIF have permanent regression tests; output
+parity, configuration, exact legacy lines, and PR ranges are now tested. The
+current backlog is in `README.md`.
 
 - `collect_yaml_files()` and `output_dir_for()` now have real pytest
   coverage (`tests/test_cli.py`, added this round) — the item below about
   no pytest coverage is resolved.
 - ~~`collect_yaml_files()` still has no pytest coverage of its own~~ —
   resolved, see above.
-- The GitLeaks-on-unparseable-files gap noted above (Bug B): a file that
-  fails `mainn()`'s own YAML parse never gets scanned for hardcoded
-  secrets at all, even though GitLeaks' content-scan doesn't technically
-  require valid YAML. Real coverage gap, still not addressed.
+- ~~The GitLeaks-on-unparseable-files gap noted above~~ — resolved by running
+  GitLeaks once against the scan target independently of structural parsing.
 - Output location default (`./ansibleguard-output`) and the collision-safe
   `output_dir_for()` path-mirroring scheme are implemented and now proven
   against a real nested project (`large-ansible/roles/tomcat/defaults/main.yml`
   correctly produced its own output directory distinct from
   `small-ansible/roles/tomcat/defaults/main.yml`'s) — no longer just a
   sketch.
-- No pytest coverage yet for `report/findings.py`/`report/sarif_writer.py` themselves —
-  verified this round via direct manual testing (including real SARIF
-  schema validation) but not yet locked in as permanent regression tests
-  the way everything else in `tests/` is.
+- ~~No pytest coverage for findings/SARIF~~ — resolved by `test_findings.py`,
+  `test_sarif_writer.py`, and `test_output_contract.py`.
 - Given how many real bugs this exact "run it against real third-party
   data" process has now found (2 in `mainn()`/`execute_for_single_file()`,
   1 more in `assess_code_smells()`'s `play_special_chars` check, 2 more

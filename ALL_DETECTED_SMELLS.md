@@ -85,20 +85,21 @@ tool can have more active smells than directly covered paper criteria.
 | `unscoped-shell-variable` | warning | Shell `$VAR` references are compared with task/play environment mappings, inline assignments, and standard process variables. | Host-provided custom environment variables can be intentional. |
 | `invalid-task-attribute-type` | error | Universal boolean, integer, mapping, and tags task attributes are type-checked. | Collection-specific module schemas remain ansible-lint's responsibility. |
 | `invalid-numeric-value` | error | Literal ports and retry/timing controls are checked for valid numeric ranges. | Templated and service-specific ranges are unresolved. |
-| `missing-release-note` | note | A latest commit changing production YAML must add a release-note file. | Some internal changes legitimately need no public note. |
+| `missing-release-note` | note | A PR/review range changing production YAML must add a release-note file. | Some internal changes legitimately need no public note. |
 | `missing-bug-reference` | note | Bug/fix commit subjects require a recognized numeric bug trailer/reference. | External issue existence is not verified. |
 | `invalid-depends-on-reference` | warning | Present `Depends-On` trailers must be review URLs or Gerrit Change-Ids. | The tool cannot infer when an absent dependency was required. |
-| `commit-message-format` | note | Latest commit subject/body lengths and blank separation are validated. | Project-specific exceptions are not modeled. |
-| `removed-copyright-notice` | warning | Modified file headers in HEAD are compared with the parent revision. | Renames and notices outside the first 20 lines are not compared. |
-| `missing-test-update` | warning | Production-YAML changes in HEAD require a test/tests/Molecule co-change. | Co-change does not prove meaningful test coverage. |
+| `commit-message-format` | note | Every review-range commit's subject/body lengths and blank separation are validated. | Project-specific exceptions are not modeled. |
+| `removed-copyright-notice` | warning | Modified file headers are compared between the committed review base and head. | Renames and notices outside the first 20 lines are not compared. |
+| `missing-test-update` | warning | Production-YAML changes in the review range require a test/tests/Molecule co-change. | Co-change does not prove meaningful test coverage. |
 | `untested-override-change` | warning | Defaults/vars changes require a test or Molecule co-change. | Tests are not executed or semantically matched to each option. |
 
 ## Output path
 
 Every rule above is normalized by `report/findings.py` to `file`, `line`,
 `rule_id`, `severity`, and `message`. The same normalized records feed
-`findings.json` and SARIF, while corresponding counts are exposed in per-file
-technical JSON and CSV. External findings survive structural YAML skips; safe
+`findings.json`, `findings.csv`, `findings.txt`, and SARIF. Corresponding counts
+are exposed in per-file technical JSON and CSV, and normalized findings are
+appended to the per-file text report. External findings survive structural YAML skips; safe
 source/role checks also contribute project rollup findings for skipped YAML
 documents.
 

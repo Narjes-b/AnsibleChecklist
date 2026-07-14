@@ -3,7 +3,7 @@
 > **Branch:** `sarif-validation-support`
 > **Last updated:** 2026-07-14
 > **Total smells:** 57 (55 internal rules + GitLeaks + ansible-lint)
-> **Test suite:** 138 passing; 1 local environment failure (`ansible-lint` executable absent)
+> **Test suite:** 144 passing; no environment failures
 
 ---
 
@@ -74,7 +74,7 @@ These detect active security vulnerabilities — hardcoded secrets, credential e
 | **Evidence** | CIS Benchmark §6.1 (file permissions); OWASP A05:2021 (Security Misconfiguration); POSIX file permission model (`stat.S_IWOTH`, `stat.S_IROTH`) |
 | **Strategy** | Walks all tasks. Checks `mode` on common file-managing modules, including FQCN forms. Parses octal modes to permission bits and recognizes symbolic grants to `other`/`all`. World-write is always reported; world-read is reported for sensitive tasks. |
 | **Confidence** | Medium — octal parsing robust; sensitive-keyword heuristic for world-readable detection |
-| **FP Risk** | Low — bitmask analysis is deterministic; symbolic modes not yet parsed |
+| **FP Risk** | Low — bitmask and supported symbolic-mode analysis are deterministic |
 | **Limitations** | Variable-computed modes cannot be resolved; module coverage focuses on common file-managing modules. |
 
 ### 5. Missing Handlers (notify → missing)
@@ -513,7 +513,8 @@ Validates literal port ranges and nonnegative timing/retry controls.
 
 ### 50. Missing Release Note
 
-Checks whether a latest commit changing production YAML adds a release note.
+Checks whether the complete base-to-head review range changes production YAML
+without adding a release note.
 
 ### 51. Missing Bug Reference
 
@@ -529,7 +530,7 @@ Checks subject length, blank separation, and body line length.
 
 ### 54. Removed Copyright Notice
 
-Compares modified file headers in HEAD with the parent revision.
+Compares modified file headers at the committed review base and head.
 
 ### 55. Missing Test Update
 
@@ -623,10 +624,10 @@ report/text_writer.py        # Human-readable TXT report
 
 | Metric | Value |
 |--------|-------|
-| Test files | 43 |
-| Total tests | 139 |
-| Passing | 138 |
-| Environment failures | 1 (`ansible-lint` executable absent locally) |
+| Test modules | 42 |
+| Total tests | 144 |
+| Passing | 144 |
+| Environment failures | 0 |
 
 ---
 

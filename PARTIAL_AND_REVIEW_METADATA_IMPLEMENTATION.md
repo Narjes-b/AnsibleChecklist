@@ -39,12 +39,12 @@ runtime value is unknown.
 ## Git-aware review coverage
 
 The implementation lives in `detectors/review_metadata.py`. It locates the Git
-root and inspects the latest commit. It emits project findings once, rather
-than once per YAML file.
+root and inspects the complete base-to-head review range. It emits project
+findings once, rather than once per YAML file.
 
 ### Missing Release Note
 
-When HEAD changes production YAML but adds no file under
+When the review range changes production YAML but adds no file under
 `releasenotes/notes/` or `release_notes/`, `missing-release-note` is emitted.
 Not every internal change requires a public note, so this remains a note and
 partial checklist coverage.
@@ -70,13 +70,14 @@ This directly implements the format described by the paper checklist.
 
 ### Removed Copyright Notice
 
-For modified files, `removed-copyright-notice` compares the first 20 lines of
-HEAD with the parent revision. A copyright marker present before and absent
-after is reported. This checks preservation rather than imposing a new header.
+For modified files, `removed-copyright-notice` compares the first 20 lines at
+the committed base and head revisions. A copyright marker present before and
+absent after is reported. This checks preservation rather than imposing a new
+header.
 
 ### Missing Test Update
 
-`missing-test-update` reports a latest commit that changes production YAML but
+`missing-test-update` reports a review range that changes production YAML but
 changes nothing under `test`, `tests`, or `molecule`. It proves co-change, not
 test correctness, so generated or separately maintained tests remain a limit.
 
@@ -97,5 +98,6 @@ project finding points at a changed path.
 `tests/test_partial_checklist.py` covers used/unused registers, scoped/unscoped
 shell variables, valid/invalid types, and numeric ranges.
 `tests/test_review_metadata.py` creates real temporary Git repositories and
-tests both an incomplete review commit and a fully documented/tested commit.
-
+tests an incomplete review commit, a fully documented/tested commit, and a
+multi-commit base-to-head range where the relevant configuration change is not
+the latest commit.

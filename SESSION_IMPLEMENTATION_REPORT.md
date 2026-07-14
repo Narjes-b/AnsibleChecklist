@@ -135,7 +135,7 @@ detector count/details
   -> smells.py assessed metrics
   -> csv_writer.py per-file columns
   -> findings.py normalized rule/severity/message
-  -> findings.json and findings.sarif
+  -> findings.json, findings.csv, findings.txt, and findings.sarif
 ```
 
 For empty, vars, metadata, or otherwise structurally skipped YAML, the CLI runs
@@ -159,9 +159,8 @@ I added focused tests for every new family:
   both an incomplete review commit and a fully documented/tested commit;
 - `test_cli_statuses.py` verifies that safe findings survive structural skips.
 
-The final local suite contains 139 tests: 138 pass. The remaining failure is
-environmental: the active virtual environment does not contain the
-`ansible-lint` executable expected by `test_ansible_lint.py`.
+The final local suite now contains 144 passing tests. I also verified the
+ansible-lint wrapper in a newly created temporary virtual environment.
 
 ## Documentation produced
 
@@ -182,9 +181,10 @@ I created and maintained the following documentation:
 
 - Active finding rules: **57**.
 - Paper checklist coverage: **15 direct**, **15 partial**, **8 missing**.
-- Tests: **138 passing**, **1 environment failure**.
+- Tests: **144 passing**, including fresh-environment ansible-lint validation.
 - Parsing behavior: resilient document classification preserved.
-- Output behavior: all applicable rules flow to CSV, JSON, and SARIF.
+- Output behavior: all applicable rules flow to normalized CSV, JSON, text,
+  and SARIF, with raw Git review metrics retained separately.
 - Repository: original `Narjes-b/AnsibleChecklist` remote retained.
 
 ## Remaining checklist gaps
@@ -205,6 +205,32 @@ I left these visible instead of converting weak guesses into high-noise rules.
 The next defensible improvement would be collection-aware module schema and
 deprecation metadata, followed by execution-order modeling for known Ansible
 resource relationships.
+
+## Final hardening pass
+
+I completed the seven follow-up priorities as a single consistency pass. I
+unified normalized outputs across JSON, CSV, text, and SARIF; added a raw Git
+review metrics file; and made the legacy per-file text report include every
+normalized rule. I replaced fallback locations in five older detector groups
+with parser-derived YAML coordinates and locked their exact lines in tests.
+
+I changed review metadata analysis from a latest-commit check to a complete
+base-to-head PR analysis. The workflow now fetches full history, supplies both
+SHAs, checks every commit message, and compares copyright content at committed
+revisions. I also introduced one `.ansibleguard.yml` configuration surface for
+threshold overrides, detector-specific values, externally supplied variables,
+and rule suppressions.
+
+For validation, I added cross-format contract tests and a reproducible corpus
+runner. The 56-file corpus exposed false positives in empty variable files and
+runtime/inventory variables; I corrected both sources and recorded the before
+and after behavior in `CORPUS_VALIDATION.md`. Finally, I made local
+`ansible-lint` resolution independent of the caller's PATH and moved its Ansible
+temporary directory to a writable location.
+
+I worked on all seven requested areas. I did not calculate an artificial
+precision/recall percentage because the corpus has no ground-truth labels; that
+is the only remaining research limitation, and it is documented explicitly.
 
 ## Commit history for this session
 

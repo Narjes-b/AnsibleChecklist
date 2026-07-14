@@ -1,14 +1,19 @@
 # AnsibleChecklist — Debugging Status
 
+> Historical detector-debugging log. Current verified state (July 14, 2026):
+> 57 active rules, 144 passing tests, normalized JSON/CSV/text/SARIF output,
+> complete base-to-head PR checks, configurable thresholds/options/suppressions,
+> and successful fresh-environment ansible-lint execution. Milestone counts and
+> open-item statements later in this file describe their original point in the
+> chronology; current priorities are listed in `README.md` and `ARCHITECTURE.md`.
+
 ## What this project does
-Analyzes Ansible playbooks for IaC code smells (large playbooks/plays/tasks,
-unnamed plays/tasks, duplicate keys, unused `set_fact`, missing bool filters,
-credential leaks, hardcoded secrets via GitLeaks, and `ansible-lint` issues),
-then writes results to CSV, TXT, and JSON reports.
+Analyzes Ansible projects with 55 internal IaC/security/review rules plus
+GitLeaks and ansible-lint, then writes normalized CSV, text, JSON, and SARIF.
 
 ## How to run it — UPDATED, package refactor complete
 The project is now a real installable package (`src/ansibleguard/`; see
-`REFACTOR_PLAN.md` for the rationale and the step-by-step move log). The old
+`CLI_STATUS.md` for the historical move log). The old
 "must `cd AnsibleGuard/` first, bare imports only resolve from that
 directory" constraint described in earlier versions of this doc **no longer
 applies** — every internal import is now either fully relative
@@ -24,15 +29,15 @@ ansibleguard playbook.yml -o ./results/     # or a single file, custom output di
 
 This recursively finds every `.yml`/`.yaml` file under the target (excluding
 `molecule/`, `.github/`, `.git/`, `.venv/`, `venv/`) and writes results to
-`<output>/<file_stem>/`:
+collision-safe mirrored directories below `<output>/`:
 - `IaC_Smells.csv` — one-row summary per playbook
 - `Play_Level_Analysis.txt` — human-readable per-play/per-task smell report
 - `Technical_Analysis.json` — raw metrics before threshold evaluation
 - `ansiblelint.txt`, `gitleaks.txt` — external tool output
 
-plus three project-wide rollup files written once at the end of a full
-`ansibleguard <target>` run: `summary.csv`, `findings.json`, and
-`findings.sarif` (see `OUTPUT_FORMATS.md`).
+plus project-wide `summary.csv`, normalized `findings.json`, `findings.csv`,
+`findings.txt`, `findings.sarif`, raw `review_metrics.json`, and
+`diagnostics.json` (see `OUTPUT_FORMATS.md`).
 
 The old direct-script entry point (`python smellsDetector.py` against a
 fixed `config.yaml_files_folder`) is superseded by `ansibleguard.smells`
@@ -411,7 +416,7 @@ passing, and via a manual regression check that the bare-boolean fix
 (above) still works with no interference from the new recursion.
 
 **Process note, worth repeating:** this is the concrete argument for why
-the pytest suite (Part 4 of `REFACTOR_PLAN.md`) takes priority over trusting
+the executable pytest suite takes priority over trusting
 status-doc claims going forward — a doc entry said "fixed," looked
 authoritative, and was wrong. A test that actually executes the real code
 against a concrete fixture can't drift out of sync the way a written status
@@ -717,7 +722,7 @@ per-entry guard so one malformed item only skips itself.
 Built out this round to give the pipeline a real front door onto arbitrary
 projects (not just `config.py`'s hardcoded fixture folder) and a
 PR-bot-ready output shape, not just the existing per-file reports. Full
-design rationale and what each of the three project-wide output layers is
+design rationale and the current project-wide output contract
 for now lives in `OUTPUT_FORMATS.md`. Highlights:
 - `output_dir_for()`'s collision-safe naming was verified against a real
   collision, not a hypothetical one — two different roles' `tasks/main.yml`
@@ -728,10 +733,14 @@ for now lives in `OUTPUT_FORMATS.md`. Highlights:
 - The rule/severity catalog in `findings.py` is explicitly a stated,
   provisional judgment call (security > correctness > style tiers), not
   an empirically calibrated one — flagged for a future pass against the
-  project's own `Literature_review/` sources, the same way `thresholds.csv`
-  itself is flagged as needing calibration in `REFACTOR_PLAN.md`.
+  project's research sources, the same way `thresholds.csv` itself needs
+  calibration against a labeled corpus.
 
-## Known issues / not yet fixed
+## Historical known-issue snapshot
+
+The numbered list below is preserved as debugging history and is not the
+current backlog. Several referenced flat files were removed or superseded by
+the package refactor. Use `README.md` for the current limitations.
 
 1. **`requirements.txt`**: `requests=2.34.2` (duplicate, invalid `=` instead
    of `==`) and `pytest=9.1.1` (same) — `pip install -r requirements.txt`
@@ -746,8 +755,8 @@ for now lives in `OUTPUT_FORMATS.md`. Highlights:
    its own copy of the same `is_large_play` bug (pre-fix) and its own local
    CSV/TXT writer functions instead of using `write_to_csv.py`/`write_to_text.py`.
    Nothing imports it. Decide: delete it, or clearly mark it deprecated.
-5. **`exceptions.py`** is empty — `explanation.md` describes it as holding
-   custom exception classes, but nothing is implemented.
+5. **Historical `exceptions.py` item** — the unused file and its old
+   explanation document are no longer part of the packaged source tree.
 6. **`include_vars.py`**: the "used variable" regex only matches
    `{{ var_name }}` with a single space and no filter — misses
    `{{var_name}}` (no spaces) and `{{ var_name | default(...) }}`, so real
@@ -783,9 +792,8 @@ for now lives in `OUTPUT_FORMATS.md`. Highlights:
 
 ## Structural / architecture critique
 Bug-fixing was the first pass; the pipeline runs correctly end-to-end. The
-structural pass described below has now **also been completed** — see
-`REFACTOR_PLAN.md` for the target design and `REFACTOR_PLAN.md`'s companion
-runbook for the exact step-by-step move log. Status per item:
+structural pass described below has now **also been completed**. The historical
+move sequence is retained in `CLI_STATUS.md`. Status per item:
 
 1. ~~**No package structure**~~ — **RESOLVED**. Everything now lives under
    `src/ansibleguard/` (`detectors/`, `external/`, `report/`, plus
@@ -817,7 +825,7 @@ runbook for the exact step-by-step move log. Status per item:
 6. **Mixed French/English naming** — file names de-abbreviated and made
    English-only during the refactor (`overriden_keys.py` → `overridden_keys.py`
    fixing the typo, `unecessary_abs.py` → `unnecessary_abstraction.py`, etc.),
-   done as its own dedicated commit per `REFACTOR_PLAN.md`'s convention. Still
+   done as its own dedicated historical commit. Still
    **open**: internal French function/variable names inside file bodies
    (`compter_tasks_dans_play`, `nombre_tasks`, `analyser_tasks`) were out of
    scope for the file-move refactor and haven't been touched — worth a
@@ -864,9 +872,9 @@ findings, and SARIF. Role-wide checks select one anchor file so a project scan
 does not repeat the same structural finding for every YAML file in a role.
 
 Added `tests/test_paper_candidates.py` with direct algorithm tests and an
-end-to-end parser/findings assertion. Current local result: 130 passing tests;
-one environment failure remains because the active virtual environment lacks
-the `ansible-lint` executable. Full design and limitations are recorded in
+end-to-end parser/findings assertion. At this milestone the local result was
+130 passing tests with one environment failure; the current result is 144
+passing. Full design and limitations are recorded in
 `PAPER_SMELLS_IMPLEMENTATION.md`.
 
 ## 2026-07-14 — additional code-review checklist automation
@@ -875,9 +883,9 @@ Added seven live rules in `detectors/review_checklist.py`: insecure
 permissions, default credentials, non-idempotent commands, silent error
 suppression, redundant role-default values, shell environment exports, and
 undocumented complex tasks. All seven flow through parser metrics, assessed
-results, per-file CSV, JSON findings, and SARIF. The full suite now has 134
-passing tests; one local environment failure remains because `ansible-lint` is
-not installed.
+results, per-file CSV, JSON findings, and SARIF. At this milestone the suite had
+134 passing tests and one environment failure; the current result is 144
+passing with ansible-lint verified from a clean environment.
 
 `REVIEW_CHECKLIST_IMPLEMENTATION.md` documents their algorithms and limits.
 At that milestone, `CODE_REVIEW_CHECKLIST_COVERAGE.md` recorded 12 directly
@@ -891,10 +899,24 @@ Added four source rules in `partial_checklist.py` for unused registered results,
 unscoped shell variables, universal task-attribute types, and numeric ranges.
 Added seven one-per-project checks in `review_metadata.py` for release notes,
 bug references, Depends-On syntax, commit formatting, copyright preservation,
-test co-changes, and override-test co-changes. Git-aware rules inspect HEAD and
-its parent and do not duplicate findings for every YAML file.
+test co-changes, and override-test co-changes. These rules were initially
+implemented for HEAD and its parent and do not duplicate findings for every
+YAML file.
 
 The live catalog now contains 57 rules. Paper coverage is 15 direct, 15
 partial, and 8 missing criteria. Exact algorithms and limitations are in
 `PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md`; the entire work session is
 recorded in first person in `SESSION_IMPLEMENTATION_REPORT.md`.
+
+## 2026-07-14 — seven-priority hardening and documentation reconciliation
+
+Unified normalized output across JSON, CSV, text, SARIF, and per-file text;
+added raw `review_metrics.json`; added exact ruamel lines to five legacy
+detector groups; expanded Git checks to the complete base-to-head range; added
+cross-format contract tests; centralized thresholds, detector options, known
+variables, and suppressions; validated 56 corpus files and tuned two false-
+positive sources; and verified ansible-lint from a clean virtual environment.
+
+Current result: 57 live rules, 15 direct/15 partial/8 missing checklist
+criteria, and 144 passing tests. `README.md` and `ARCHITECTURE.md` are the
+authoritative current operational and engineering guides.

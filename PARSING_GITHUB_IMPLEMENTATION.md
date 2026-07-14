@@ -1,5 +1,12 @@
 # Parsing, GitLeaks, and GitHub PR Integration
 
+> Historical implementation log with later validation appendices. Current
+> verified state (July 14, 2026): repository-wide GitLeaks findings survive
+> parse skips and non-YAML input, Git review rules analyze the complete
+> base-to-head range, all normalized JSON/CSV/text/SARIF outputs are tested, and
+> the full suite has 144 passing tests. Older command transcripts and counts are
+> retained as chronological evidence.
+
 This document records the implementation that separated Ansible structural
 analysis from content-only secret scanning. It explains what changed, why it
 changed, and how to use and verify the new workflow.

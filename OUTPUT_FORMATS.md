@@ -10,7 +10,8 @@ at for what.**
 > (`src/ansibleguard/...`, `pip install -e .`) — `cli.py` below is
 > `ansibleguard/cli.py`, invoked via the installed `ansibleguard` command
 > (e.g. `ansibleguard ~/my-project/ -o ./results/`), not
-> `python3 cli.py`. See `REFACTOR_PLAN.md` for the full move log.
+> `python3 cli.py`. Historical packaging details are recorded in
+> `CLI_STATUS.md`.
 
 There are three layers, each answering a different question, aimed at a
 different consumer. They're built from the exact same underlying data —
@@ -32,9 +33,12 @@ ansibleguard/cli.py analyze_path(target, output_root)
   ├── LAYER 2 — project-wide rollup (one file each, covering every analyzed file)
   │     output_root/summary.csv
   │
-  └── LAYER 3 — flat, tool-consumable findings (one file each, covering every analyzed file)
+  └── LAYER 3 — normalized findings (each covers file and Git review rules)
         output_root/findings.json
+        output_root/findings.csv
+        output_root/findings.txt
         output_root/findings.sarif
+        output_root/review_metrics.json
 ```
 
 ---
@@ -88,7 +92,7 @@ start") without needing any tooling beyond a spreadsheet.
 
 ---
 
-## Layer 3 — `findings.json` / `findings.sarif`: flat, tool-consumable findings
+## Layer 3 — normalized JSON, CSV, text, and SARIF findings
 
 **Question it answers:** "Give me every individual problem, as one flat
 list, with enough detail that a machine (not a human reading prose) can
@@ -116,9 +120,12 @@ GitLeaks findings, ansible-lint issues) down to one consistent record:
 }
 ```
 
-`findings.json` is exactly a list of these, in our own plain, readable
-format — useful for anything that wants to read the data without knowing
-what SARIF is.
+`findings.json` is the canonical list. `findings.csv` has the same five fields
+for spreadsheets, `findings.txt` renders the same records for humans, and SARIF
+maps the same records to Code Scanning. `review_metrics.json` retains raw Git
+review-range counts and details. The normalized section appended to each
+`Play_Level_Analysis.txt` uses the same records, so newer detectors are visible
+in the legacy human-readable report too.
 
 ### Why SARIF specifically
 
@@ -155,7 +162,7 @@ in `report/sarif_writer.py` handles this.
 
 This is a judgment call, stated as such, not an empirically calibrated
 scale — worth being upfront about, the same way `thresholds.csv`'s values
-are flagged in `REFACTOR_PLAN.md` as not yet empirically justified.
+are documented as not yet empirically calibrated against a labeled corpus.
 `report/findings.py`'s `RULE_CATALOG` groups by *consequence*:
 
 - **`error`** — real security/correctness problems: `hardcoded-credentials`
@@ -197,7 +204,9 @@ not a finished answer.
 As of this round, real per-line location data (via `ruamel.yaml`, not a
 line-1 fallback) is available for: `overriden-keys`, `unnamed-play`,
 `unnamed-task`, `large-play`, `large-task`, `long-task-name`,
-`inconsistent-naming-convention`, and `credentials-leaking-in-log`. GitLeaks
+`inconsistent-naming-convention`, `credentials-leaking-in-log`, `missing-tags`,
+`deprecated-module`, `missing-validate-certs`, `shell-instead-of-module`,
+`missing-handler`, and `unused-handler`. GitLeaks
 and ansible-lint findings already carried real line data from those tools
 themselves. Playbook-level counts (`large-playbook`, `high-coupling`, etc.)
 are inherently file-wide, not tied to one line, so `line: 1` there is
@@ -211,4 +220,4 @@ arguably already correct, not a gap.
 |---|---|
 | "What exactly is wrong with this one file?" | 1 — `Technical_Analysis.json` / `Play_Level_Analysis.txt` |
 | "Which files in this project need attention first?" | 2 — `summary.csv` |
-| "Feed this into CI / GitHub Code Scanning / an AI filtering layer" | 3 — `findings.sarif` (GitHub-native) or `findings.json` (anything else) |
+| "Feed this into CI / GitHub Code Scanning / an AI filtering layer" | 3 — normalized JSON/CSV/text/SARIF |
