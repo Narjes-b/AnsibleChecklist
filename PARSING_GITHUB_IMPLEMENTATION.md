@@ -4,7 +4,7 @@
 > verified state (July 14, 2026): repository-wide GitLeaks findings survive
 > parse skips and non-YAML input, Git review rules analyze the complete
 > base-to-head range, all normalized JSON/CSV/text/SARIF outputs are tested, and
-> the full suite has 144 passing tests. Older command transcripts and counts are
+> the full suite has 163 passing tests. Older command transcripts and counts are
 > retained as chronological evidence.
 
 This document records the implementation that separated Ansible structural

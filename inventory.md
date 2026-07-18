@@ -1,9 +1,11 @@
 # AnsibleChecklist — Implemented Smell Inventory
 
 > **Branch:** `sarif-validation-support`
-> **Last updated:** 2026-07-14
-> **Total smells:** 57 (55 internal rules + GitLeaks + ansible-lint)
-> **Test suite:** 144 passing; no environment failures
+> **Last updated:** 2026-07-18
+> **Total smells:** 60 (58 internal rules + GitLeaks + ansible-lint)
+> **Profiles:** all 60 rules are assigned to core, extended, review, or external families; see `RESEARCH_PROFILES_IMPLEMENTATION.md`.
+>
+> **Test suite:** 163 passing; no environment failures
 
 ---
 
@@ -542,9 +544,31 @@ Requires test co-changes when defaults or variable sources change.
 
 ---
 
+## FORMERLY MISSING CHECKLIST RULES (3)
+
+Full algorithms and limitations are in
+`MISSING_CHECKLIST_IMPLEMENTATION.md`.
+
+### 57. Variable Use Before Definition
+
+Reports a Jinja/condition reference to a registered result or `set_fact` value
+when a later task in the same linear section is its only visible definition.
+
+### 58. Unexpected Task Location
+
+Reports invalid role-file document shapes, plays embedded under roles, and
+handler-only `listen` attributes placed under tasks.
+
+### 59. Deprecated Module Option
+
+Compares supplied module arguments with installed `ansible-doc` deprecation
+metadata and configured project overrides.
+
+---
+
 ## 🔧 EXTERNAL TOOLS (1)
 
-### 57. Design Smells (ansible-lint)
+### 60. Design Smells (ansible-lint)
 
 | Field | Value |
 |-------|-------|
@@ -564,22 +588,26 @@ Requires test co-changes when defaults or variable sources change.
 
 | Severity | Count | Smells |
 |----------|-------|--------|
-| **error** | 7 | Security/correctness findings that can cause direct harm or silent failure |
-| **warning** | 24 | Maintainability, reliability, and likely correctness risks |
-| **note** | 15 | Style, documentation, naming, and lower-confidence semantic findings |
+| **error** | 10 | Security/correctness findings that can cause direct harm or silent failure |
+| **warning** | 31 | Maintainability, reliability, and likely correctness risks |
+| **note** | 19 | Style, documentation, naming, and lower-confidence semantic findings |
 
 ### By Category
 
 | Category | Count |
 |----------|-------|
 | Security | 5 |
-| Correctness | 8 |
-| Maintainability | 14 |
+| Correctness | 12 |
+| Maintainability | 15 |
 | Style | 11 |
-| Structure | 3 |
-| Semantic (NLP) | 2 |
+| Structure | 4 |
+| Cohesion (NLP) | 2 |
 | Reliability | 1 |
-| Documentation | 1 |
+| Documentation | 4 |
+| Testing | 2 |
+| Dependencies | 1 |
+| Legal | 1 |
+| Compatibility | 1 |
 | Lint (external) | 1 |
 
 ### By Confidence
@@ -624,9 +652,9 @@ report/text_writer.py        # Human-readable TXT report
 
 | Metric | Value |
 |--------|-------|
-| Test modules | 42 |
-| Total tests | 144 |
-| Passing | 144 |
+| Test modules | 44 |
+| Total tests | 153 |
+| Passing | 153 |
 | Environment failures | 0 |
 
 ---

@@ -1,0 +1,6 @@
+project,description,opendev_url,selected,revision
+openstack/openstack-ansible-os_nova,OpenStack-Ansible Nova role,https://opendev.org/openstack/openstack-ansible-os_nova.git,true,
+openstack/openstack-ansible,Integrated OpenStack-Ansible deployment repository,https://opendev.org/openstack/openstack-ansible.git,true,
+openstack/kolla-ansible,Kolla deployment using Ansible,https://opendev.org/openstack/kolla-ansible.git,true,
+openstack/kayobe,Bare-metal and OpenStack deployment automation,https://opendev.org/openstack/kayobe.git,true,
+openstack/ansible-collection-kolla,Kolla Ansible collection,https://opendev.org/openstack/ansible-collection-kolla.git,true,

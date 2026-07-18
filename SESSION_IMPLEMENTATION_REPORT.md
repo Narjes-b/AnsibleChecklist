@@ -159,7 +159,7 @@ I added focused tests for every new family:
   both an incomplete review commit and a fully documented/tested commit;
 - `test_cli_statuses.py` verifies that safe findings survive structural skips.
 
-The final local suite now contains 144 passing tests. I also verified the
+The final local suite now contains 163 passing tests. I also verified the
 ansible-lint wrapper in a newly created temporary virtual environment.
 
 ## Documentation produced
@@ -173,15 +173,16 @@ I created and maintained the following documentation:
 - `REVIEW_CHECKLIST_IMPLEMENTATION.md` — the seven additional source checks;
 - `PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md` — strengthened partial and
   Git-aware checks;
+- `MISSING_CHECKLIST_IMPLEMENTATION.md` — three formerly missing criteria;
 - `ALL_DETECTED_SMELLS.md` — canonical live-code catalog of every active rule;
 - updates to README, architecture, output-format, project-status, and inventory
   documents.
 
 ## Final measured state
 
-- Active finding rules: **57**.
-- Paper checklist coverage: **15 direct**, **15 partial**, **8 missing**.
-- Tests: **144 passing**, including fresh-environment ansible-lint validation.
+- Active finding rules: **60**.
+- Paper checklist coverage: **15 direct**, **18 partial**, **5 missing**.
+- Tests: **163 passing**, including profile, classified-input, study-pipeline, and fresh-environment validation.
 - Parsing behavior: resilient document classification preserved.
 - Output behavior: all applicable rules flow to normalized CSV, JSON, text,
   and SARIF, with raw Git review metrics retained separately.
@@ -189,22 +190,20 @@ I created and maintained the following documentation:
 
 ## Remaining checklist gaps
 
-The eight criteria still marked missing require information or intent that the
-current analyzer cannot establish reliably:
+Three former gaps now have conservative automation: objective role-file
+placement, linear use-before-definition ordering, and deprecated module-option
+metadata. The five criteria still marked missing require information or intent
+that the current analyzer cannot establish reliably:
 
-- placing a task in the semantically correct file;
-- proving the correct execution order inside a file;
 - enforcing a blank-line convention before configuration groups;
 - knowing which deprecated parameters must be set to `UNDEF` across versions;
 - following changing OpenStack IRC/process conventions;
 - proving cross-service parameter-value compatibility;
-- maintaining a complete version-aware deprecated-option database;
 - proving that tests assert the assigned values correctly.
 
 I left these visible instead of converting weak guesses into high-noise rules.
-The next defensible improvement would be collection-aware module schema and
-deprecation metadata, followed by execution-order modeling for known Ansible
-resource relationships.
+The next defensible improvement is configurable value/type schemas, followed by
+execution-order modeling for known Ansible resource relationships.
 
 ## Final hardening pass
 

@@ -1,11 +1,15 @@
 # AnsibleGuard
 
+New contributors and project reviewers should begin with
+[START_HERE.md](START_HERE.md). It gives the required reading order, current
+research status, reproduction commands, and next implementation tickets.
+
 AnsibleGuard is a static-analysis CLI for Ansible configuration code. It scans
-a playbook or an entire repository, combines 55 internal rules with GitLeaks
+a playbook or an entire repository, combines 58 internal rules with GitLeaks
 and ansible-lint, and emits one normalized set of findings in JSON, CSV, text,
 and SARIF.
 
-The current implementation contains **57 active finding rules**, preserves
+The current implementation contains **60 active finding rules**, preserves
 findings from invalid or non-playbook YAML where applicable, reports precise
 source lines for task-level rules, and includes Git-aware checks for complete
 pull-request ranges.
@@ -14,6 +18,8 @@ pull-request ranges.
 
 - Recursively discovers `.yml` and `.yaml` files while excluding generated,
   virtual-environment, Molecule, and Git metadata directories.
+- Generates auditable row-level file classifications and can restrict research
+  scans to a complete, validated `included=true` manifest population.
 - Classifies playbooks, task files, variable/default files, metadata, empty
   documents, inline Vault values, encrypted Vault files, and invalid YAML.
 - Detects structural, maintainability, security, idempotency, variable,
@@ -76,6 +82,35 @@ Scan one file and choose the output directory:
 ansibleguard playbook.yml --output ./analysis-results
 ```
 
+Scan only the explicitly included files in a complete classification manifest:
+
+```bash
+ansibleguard /path/to/ansible-project \
+  --file-manifest /path/to/project-files.csv \
+  --output ./classified-results
+```
+
+Manifest mode rejects missing/stale rows, unsafe paths, duplicate paths,
+unknown classes, and unexplained exclusions before analysis starts. The output
+records the exact manifest hash in `file_selection.json`.
+
+Separate technical, snapshot, core, extended, and review questions:
+
+```bash
+ansibleguard /path/to/ansible-project --profile technical-full
+ansibleguard /path/to/ansible-project --profile review-range
+
+ansibleguard /path/to/ansible-project \
+  --file-manifest /path/to/project-files.csv \
+  --profile snapshot-source
+```
+
+Research profiles do not run aggregate external tools. Snapshot profiles do
+not run Git review rules. The exact allowlist and hash are written to
+`run_metadata.json`; `research-core` remains provisional pending calibration.
+The three source research profiles require `--file-manifest`; the CLI rejects
+recursive source selection for those profiles.
+
 Control the exit policy:
 
 ```bash
@@ -91,7 +126,8 @@ Available options:
 ```text
 usage: ansibleguard [-h] [--gitleaks-path PATH]
                     [--fail-on {never,error,warning,tool-error,parse-error}]
-                    [-o OUTPUT]
+                    [-o OUTPUT] [--file-manifest FILE_MANIFEST]
+                    [--profile {technical-full,snapshot-source,research-core,extended-ansible,review-range}]
                     target
 ```
 
@@ -114,6 +150,7 @@ uses the nearest `.ansibleguard.yml`. The configuration can:
 - define project-specific default credential values;
 - add regular expressions for mutating commands;
 - declare variables supplied by inventory plugins, CI, or `--extra-vars`;
+- supplement installed Ansible metadata with project option deprecations;
 - disable findings by stable rule ID.
 
 Example:
@@ -129,6 +166,11 @@ rules:
     - '\bcustomctl\s+apply\b'
   known_variables:
     - deployment_environment
+  deprecated_module_options:
+    ansible.builtin.example:
+      old_option:
+        replacement: new_option
+        removed_in: "3.0"
 
 suppressions:
   disabled_rules:
@@ -141,7 +183,7 @@ metrics remain available for auditability.
 
 ## Detection coverage
 
-The 57 rules are grouped into the following areas:
+The 60 rules are grouped into the following areas:
 
 | Area | Examples |
 |---|---|
@@ -152,6 +194,7 @@ The 57 rules are grouped into the following areas:
 | Security | hardcoded/default credentials, credential logging, insecure permissions, disabled TLS validation |
 | Reliability | missing handlers, unused handlers, invalid task types, invalid numeric values, silent error suppression |
 | Idempotency and modules | non-idempotent commands, shell alternatives, deprecated modules, file extensions |
+| Ordering and compatibility | use-before-definition, misplaced role content, deprecated module options |
 | Documentation and review | missing tags, unfinished markers, complex-task comments, release notes, bug references |
 | External analysis | GitLeaks findings and ansible-lint issues |
 
@@ -232,7 +275,7 @@ Run the full suite:
 .venv/bin/pytest -q
 ```
 
-Current verified result: **144 passed**.
+Current verified result: **153 passed**.
 
 Run the reproducible detector-corpus baseline:
 
@@ -271,8 +314,8 @@ false-positive tuning performed from that run are recorded in
 - The bundled corpus is not labeled with ground truth, so its results support
   candidate-rate and manual-sample validation but not an honest precision or
   recall percentage.
-- Fifteen of the paper's 38 checklist criteria are direct matches, fifteen are
-  partially automated, and eight still require information or reviewer intent
+- Fifteen of the paper's 38 checklist criteria are direct matches, eighteen are
+  partially automated, and five still require information or reviewer intent
   that is not reliably observable by static analysis.
 - Cross-file and runtime variable resolution is necessarily incomplete when
   values arrive through dynamic inventory, external secret stores, CI, or
@@ -288,6 +331,7 @@ false-positive tuning performed from that run are recorded in
 
 | Document | Purpose |
 |---|---|
+| [START_HERE.md](START_HERE.md) | Required first read: ordered documentation map, current state, reproduction, and continuation |
 | [ALL_DETECTED_SMELLS.md](ALL_DETECTED_SMELLS.md) | Canonical live rule catalog |
 | [inventory.md](inventory.md) | Detailed detection strategies and false-positive risks |
 | [CODE_REVIEW_CHECKLIST_COVERAGE.md](CODE_REVIEW_CHECKLIST_COVERAGE.md) | Mapping to all 38 research criteria |
@@ -300,6 +344,14 @@ false-positive tuning performed from that run are recorded in
 | [PAPER_SMELLS_IMPLEMENTATION.md](PAPER_SMELLS_IMPLEMENTATION.md) | Paper-derived detector implementation |
 | [REVIEW_CHECKLIST_IMPLEMENTATION.md](REVIEW_CHECKLIST_IMPLEMENTATION.md) | Review-checklist detector implementation |
 | [PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md](PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md) | Partial and Git-aware checks |
+| [MISSING_CHECKLIST_IMPLEMENTATION.md](MISSING_CHECKLIST_IMPLEMENTATION.md) | Three formerly missing checklist checks |
+| [CLASSIFIED_FILE_MANIFEST_IMPLEMENTATION.md](CLASSIFIED_FILE_MANIFEST_IMPLEMENTATION.md) | Auditable file classification, manifest validation, CLI selection, and real Nova evidence |
+| [WHAT_IS_A_SNAPSHOT_STUDY.md](WHAT_IS_A_SNAPSHOT_STUDY.md) | Boundary between a frozen source state and review/history evidence |
+| [RESEARCH_PROFILES_IMPLEMENTATION.md](RESEARCH_PROFILES_IMPLEMENTATION.md) | Explicit profile allowlists, execution separation, metadata, and Nova results |
+| [OPENSTACK_ANSIBLE_REAL_PROJECT_TESTING_PLAN.md](OPENSTACK_ANSIBLE_REAL_PROJECT_TESTING_PLAN.md) | Full empirical-study methodology |
+| [LOCAL_OPENSTACK_STUDY_WORKFLOW.md](LOCAL_OPENSTACK_STUDY_WORKFLOW.md) | Exact local discovery, collection, pilot, and pre-PR commands |
+| [RESEARCH_PROFILE_AND_CALIBRATION_PLAN.md](RESEARCH_PROFILE_AND_CALIBRATION_PLAN.md) | Why scaling is gated and how files/rules/findings become research evidence |
+| [STUDY_SCRIPTS_REFERENCE.md](STUDY_SCRIPTS_REFERENCE.md) | Complete behavior, rationale, schemas, commands, and limits for study scripts |
 | [PARSING_GITHUB_IMPLEMENTATION.md](PARSING_GITHUB_IMPLEMENTATION.md) | Historical parsing/GitHub implementation log |
 | [PROJECT_STATUS.md](PROJECT_STATUS.md) | Historical detector debugging log plus current status |
 | [CLI_STATUS.md](CLI_STATUS.md) | Historical CLI implementation log plus current status |

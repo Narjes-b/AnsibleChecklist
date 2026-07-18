@@ -24,6 +24,7 @@ DEFAULT_CONFIG = {
         ],
         "additional_mutating_command_patterns": [],
         "known_variables": [],
+        "deprecated_module_options": {},
     },
     "suppressions": {"disabled_rules": []},
 }

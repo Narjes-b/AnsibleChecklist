@@ -21,6 +21,7 @@ The run processed all 56 discovered YAML files. The final baseline was:
 | shell instead of module | 2 | 2 |
 | undocumented complex tasks | 5 | 2 |
 | unguarded variables | 20 | 6 |
+| variable use before definition | 1 | 1 |
 
 ## Corrections made from the corpus results
 
@@ -44,6 +45,6 @@ rule-ID suppressions to `.ansibleguard.yml` instead of silently ignoring them.
 
 This is a candidate-rate and manual-sample validation, not a statistical
 precision/recall claim. The bundled corpus has no labeled ground truth for all
-57 rules, so an exact false-positive percentage cannot be calculated honestly.
+60 rules, so an exact false-positive percentage cannot be calculated honestly.
 The reproducible script prints counts and up to five source-located samples per
 active metric so the corpus can be labeled in a later research pass.

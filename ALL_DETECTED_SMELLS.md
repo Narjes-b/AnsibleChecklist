@@ -2,14 +2,20 @@
 
 This is the canonical list of rules that are active in the current branch.
 Unlike historical inventories, inclusion here requires both a live
-`RULE_CATALOG` entry and a path that can produce a finding. There are **57
-active rules**: 55 internal rules, one GitLeaks rule, and one general
+`RULE_CATALOG` entry and a path that can produce a finding. There are **60
+active rules**: 58 internal rules, one GitLeaks rule, and one general
 `ansible-lint` rule.
 
-The paper's 38 review criteria and these 57 rules are not one-to-one. One paper
+The paper's 38 review criteria and these 60 rules are not one-to-one. One paper
 criterion can need several narrow detectors, while many existing size, naming,
 cohesion, and security smells are outside that paper checklist. This is why the
 tool can have more active smells than directly covered paper criteria.
+
+Execution profiles do not change this canonical catalog. They select explicit
+subsets: 51 internal rules in `snapshot-source`, a provisional 8-rule
+`research-core`, 43 disjoint `extended-ansible` rules, and 7 `review-range`
+rules; the 2 aggregate external rules are technical-only. See
+`RESEARCH_PROFILES_IMPLEMENTATION.md` for the exact versioned mapping.
 
 ## Security and correctness
 
@@ -29,6 +35,7 @@ tool can have more active smells than directly covered paper criteria.
 | `non-idempotent-command` | warning | Recognized mutating shell/command/raw operations must have `creates`, `removes`, or change guards. | Arbitrary shell behavior is not interpreted. |
 | `silent-error-suppression` | warning | `ignore_errors: true`/`failed_when: false` without `register` is reported. | Independent warning paths cannot be associated reliably. |
 | `shell-environment-export` | warning | `export NAME=value` in command-like tasks is detected and mapped to `environment:`. | A self-contained shell export can be intentional. |
+| `variable-use-before-definition` | error | A Jinja/condition reference is compared with later `register` and `set_fact` definitions in the same linear task section. | Dynamic control flow and external definitions are deliberately excluded. |
 
 ## Size, structure, and maintainability
 
@@ -51,6 +58,8 @@ tool can have more active smells than directly covered paper criteria.
 | `excessive-nesting` | warning | Recursive block/rescue/always depth greater than three is reported. | Depth alone does not measure conceptual complexity. |
 | `missing-abstraction` | warning | More than ten leaf tasks without role/task includes triggers the rule. | Intentionally self-contained files may trigger. |
 | `redundant-default-value` | note | Role defaults are compared with exact task/play vars and `set_fact` values. | Only same-role static values are available. |
+| `unexpected-task-location` | warning | Role-file document shapes, embedded plays, and handler-only `listen` placement are validated. | Business-purpose placement remains a human/project-policy decision. |
+| `deprecated-module-option` | warning | Supplied task arguments are compared with installed Ansible deprecation metadata and project overrides. | Removed/unavailable collection metadata can be absent. |
 
 ## Style, naming, documentation, and semantics
 
@@ -103,7 +112,8 @@ appended to the per-file text report. External findings survive structural YAML 
 source/role checks also contribute project rollup findings for skipped YAML
 documents.
 
-For implementation details of the two recent detector bundles, see
+For implementation details of the recent detector bundles, see
 `PAPER_SMELLS_IMPLEMENTATION.md`, `REVIEW_CHECKLIST_IMPLEMENTATION.md`, and
-`PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md`. For
+`PARTIAL_AND_REVIEW_METADATA_IMPLEMENTATION.md`, and
+`MISSING_CHECKLIST_IMPLEMENTATION.md`. For
 the 38-criterion paper comparison, see `CODE_REVIEW_CHECKLIST_COVERAGE.md`.

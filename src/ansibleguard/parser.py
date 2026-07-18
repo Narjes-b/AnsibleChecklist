@@ -49,6 +49,7 @@ from ansibleguard.detectors.handler_issues import detect_handler_issues
 from ansibleguard.detectors.paper_candidates import detect_paper_candidates
 from ansibleguard.detectors.review_checklist import detect_review_checklist_smells
 from ansibleguard.detectors.partial_checklist import detect_partial_checklist_smells
+from ansibleguard.detectors.missing_checklist import detect_missing_checklist_smells
 import pandas as pd
 import csv
 import json
@@ -131,6 +132,7 @@ def mainn(yaml_file_path):
     paper_candidate_metrics = detect_paper_candidates(yaml_file_path)
     review_checklist_metrics = detect_review_checklist_smells(yaml_file_path)
     partial_checklist_metrics = detect_partial_checklist_smells(yaml_file_path)
+    missing_checklist_metrics = detect_missing_checklist_smells(yaml_file_path)
 
     main_metrics = {
         "playbook_metrics": metrics_playbook,
@@ -169,6 +171,7 @@ def mainn(yaml_file_path):
         **paper_candidate_metrics,
         **review_checklist_metrics,
         **partial_checklist_metrics,
+        **missing_checklist_metrics,
         "plays": [],
     }
 

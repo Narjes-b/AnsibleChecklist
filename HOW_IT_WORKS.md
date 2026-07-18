@@ -20,9 +20,38 @@ findings.
 
 ## Step 1: discover the target
 
-The CLI accepts a file or directory. Directory scans recursively collect
-`.yml` and `.yaml` files while skipping `.git`, `.github`, `.ansible`, virtual
-environments, Molecule scenarios, and prior `ansibleguard-output` directories.
+The CLI accepts a file or directory. By default, directory scans recursively
+collect `.yml` and `.yaml` files while skipping `.git`, `.github`, `.ansible`,
+virtual environments, Molecule scenarios, and prior `ansibleguard-output`
+directories.
+
+Research scans may instead provide `--file-manifest`. The row-level classifier
+first records every repository YAML candidate, its class, parse/document type,
+LOC, inclusion decision, and reason. Before scanning, the CLI checks that the
+manifest and current target contain exactly the same YAML paths and rejects
+unsafe, duplicate, unexplained, missing, or stale rows. Only `included=true`
+rows enter the YAML analysis loop.
+
+Both modes write `file_selection.json`. Manifest mode includes the exact CSV's
+SHA-256, class counts, included count, project, and commit identity.
+
+## Step 1A: select the execution profile
+
+Profiles answer different questions before findings are aggregated:
+
+- `technical-full` runs all 60 rules, GitLeaks, ansible-lint, and Git review;
+- `snapshot-source` runs 51 internal source rules and no review/external stage;
+- `research-core` runs the provisional eight-rule primary allowlist;
+- `extended-ansible` runs the 43 disjoint non-core source rules;
+- `review-range` processes no source files and evaluates seven Git rules.
+
+The three source research profiles require a complete classification manifest.
+This makes it impossible to calculate findings over recursively discovered
+YAML while dividing by a classified production-file denominator.
+
+Every catalog rule belongs to one scientific family. Adding a rule without a
+family fails profile validation. `run_metadata.json` records the exact allowed
+IDs and a deterministic rule-list hash.
 
 Per-file output mirrors the source path without the extension. This prevents
 files such as `roles/web/tasks/main.yml` and `roles/db/tasks/main.yml` from
@@ -39,6 +68,13 @@ GitLeaks and ansible-lint run once against the requested target.
   tool's source line.
 - A missing, crashing, or malformed tool result becomes a diagnostic, not a
   code smell.
+
+In manifest-enabled `technical-full` mode, ansible-lint messages are retained
+only when they match an included YAML path. GitLeaks continues its
+repository-wide security scan so non-YAML secrets are not lost, but findings
+attached to excluded YAML are not added to the rollup. Research profiles mark
+external tools `not-requested`; source snapshot profiles leave
+`review_metrics.json` empty.
 
 The ansible-lint wrapper can find the console script beside the active virtual
 environment's Python even when that directory is absent from PATH.
@@ -187,7 +223,8 @@ duplicated task names, duplicated task bodies, and duplicate YAML keys.
 
 Rules detect unused `set_fact` and registered variables, conflicting facts,
 unused `include_vars`, redundant role-default assignments, unguarded variables,
-and shell variables that do not persist across tasks.
+shell variables that do not persist across tasks, and registered/fact values
+used before a later task defines them.
 
 The unguarded-variable rule loads visible play/task/role definitions plus
 repository `group_vars` and `host_vars`, accepts `default`, `d`, and
@@ -205,7 +242,14 @@ content-based hardcoded-secret detection across YAML and non-YAML files.
 Rules cover mutating commands without repeat-safe guards, shell commands with
 native module alternatives, silent failure suppression, missing/unused
 handlers, invalid attribute types, invalid numeric ranges, and deprecated or
-short-name modules.
+short-name modules. Installed Ansible option metadata and project overrides
+also identify deprecated module parameters.
+
+### Role placement
+
+Role files are checked for objective placement errors: task lists under
+defaults/vars/meta, mappings under tasks/handlers, plays inside role
+directories, and handler-only `listen` attributes under tasks.
 
 ### Documentation and review
 
@@ -233,10 +277,11 @@ scope for the whole project. Raw metrics are never deleted by suppression.
 
 ## Verification
 
-The full suite currently reports **144 passed**. `test_output_contract.py`
+The full suite currently reports **153 passed**. `test_output_contract.py`
 locks JSON/CSV/text/SARIF parity, `test_review_metadata.py` locks multi-commit
 PR behavior, `test_legacy_detector_lines.py` locks exact locations, and
-`test_detector_config.py` locks thresholds/options/suppressions.
+`test_detector_config.py` locks thresholds/options/suppressions, and
+`test_missing_checklist.py` covers the three newly automated criteria.
 
 Run:
 

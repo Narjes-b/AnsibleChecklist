@@ -467,7 +467,9 @@ def detect_broken_role_dependencies(path):
     return len(unique), list(unique.values())
 
 
-def _collect_defined_variables(document, path, known_variables=()):
+def _collect_defined_variables(
+    document, path, known_variables=(), include_task_definitions=True
+):
     defined = set(COMMON_VARIABLES) | set(known_variables)
     if isinstance(document, list):
         for entry in document:
@@ -483,11 +485,12 @@ def _collect_defined_variables(document, path, known_variables=()):
     for task, _ in _iter_tasks(document):
         if isinstance(task.get("vars"), dict):
             defined.update(task["vars"])
-        if task.get("register"):
+        if include_task_definitions and task.get("register"):
             defined.add(str(task["register"]))
-        for key in ("set_fact", "ansible.builtin.set_fact"):
-            if isinstance(task.get(key), dict):
-                defined.update(task[key])
+        if include_task_definitions:
+            for key in ("set_fact", "ansible.builtin.set_fact"):
+                if isinstance(task.get(key), dict):
+                    defined.update(task[key])
         loop_control = task.get("loop_control")
         if isinstance(loop_control, dict) and loop_control.get("loop_var"):
             defined.add(str(loop_control["loop_var"]))

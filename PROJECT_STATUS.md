@@ -1,14 +1,18 @@
 # AnsibleChecklist — Debugging Status
 
-> Historical detector-debugging log. Current verified state (July 14, 2026):
-> 57 active rules, 144 passing tests, normalized JSON/CSV/text/SARIF output,
+> Historical detector-debugging log. Current verified state (July 18, 2026):
+> 60 active rules, 163 passing tests, normalized JSON/CSV/text/SARIF output,
 > complete base-to-head PR checks, configurable thresholds/options/suppressions,
 > and successful fresh-environment ansible-lint execution. Milestone counts and
 > open-item statements later in this file describe their original point in the
 > chronology; current priorities are listed in `README.md` and `ARCHITECTURE.md`.
 
+Current research infrastructure also includes complete file-classification
+manifests and five execution profiles. Start with `START_HERE.md`; see
+`RESEARCH_PROFILES_IMPLEMENTATION.md` for the frozen Nova profile validation.
+
 ## What this project does
-Analyzes Ansible projects with 55 internal IaC/security/review rules plus
+Analyzes Ansible projects with 58 internal IaC/security/review rules plus
 GitLeaks and ansible-lint, then writes normalized CSV, text, JSON, and SARIF.
 
 ## How to run it — UPDATED, package refactor complete
@@ -917,6 +921,37 @@ cross-format contract tests; centralized thresholds, detector options, known
 variables, and suppressions; validated 56 corpus files and tuned two false-
 positive sources; and verified ansible-lint from a clean virtual environment.
 
-Current result: 57 live rules, 15 direct/15 partial/8 missing checklist
-criteria, and 144 passing tests. `README.md` and `ARCHITECTURE.md` are the
+At the end of this milestone the result was 57 live rules, 15 direct/15
+partial/8 missing checklist criteria, and 144 passing tests. `README.md` and
+`ARCHITECTURE.md` are the
 authoritative current operational and engineering guides.
+
+## 2026-07-18 — three formerly missing checklist criteria
+
+Added `missing_checklist.py` with `variable-use-before-definition`,
+`unexpected-task-location`, and `deprecated-module-option`. The option rule
+uses cached installed `ansible-doc` metadata plus `.ansibleguard.yml`
+overrides; ordering is limited to linear task sections; placement is limited to
+objective role-file structure and handler attributes.
+
+All three rules flow through raw metrics, assessed results, legacy CSV, and
+normalized JSON/CSV/text/SARIF. The corpus validator now includes this bundle
+and found one use-before-definition candidate in the 56-file corpus. Current
+result: 60 live rules, 15 direct/18 partial/5 missing checklist criteria, and
+163 passing tests.
+
+## 2026-07-18 — OpenStack real-project study foundation
+
+Added OpenDev-first discovery, clone/SHA-freeze collection, and a manifest-
+driven technical pilot runner. Live discovery produced 150 candidates, 81 of
+which are active. The first real pilot cloned and scanned
+`openstack/openstack-ansible-os_nova` at commit
+`e06c7bceef3f7c365828116b7aadea6fc2d3e22b`.
+
+The scan completed without diagnostics but exposed research-validity gates:
+the repository contained 122 YAML files while only 28 were classified as
+production Ansible and 8 as test Ansible, and 823 of 1,175 technical findings
+were `unguarded-variable`. The full corpus is intentionally paused until a
+classified snapshot profile and OpenStack cross-file variable calibration are
+implemented. Exact local commands and pre-PR gates are in
+`LOCAL_OPENSTACK_STUDY_WORKFLOW.md`.

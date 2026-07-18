@@ -39,6 +39,9 @@ ansibleguard/cli.py analyze_path(target, output_root)
         output_root/findings.txt
         output_root/findings.sarif
         output_root/review_metrics.json
+        output_root/diagnostics.json
+        output_root/file_selection.json
+        output_root/run_metadata.json
 ```
 
 ---
@@ -221,3 +224,24 @@ arguably already correct, not a gap.
 | "What exactly is wrong with this one file?" | 1 — `Technical_Analysis.json` / `Play_Level_Analysis.txt` |
 | "Which files in this project need attention first?" | 2 — `summary.csv` |
 | "Feed this into CI / GitHub Code Scanning / an AI filtering layer" | 3 — normalized JSON/CSV/text/SARIF |
+| "Which exact file population produced this result?" | 3 — `file_selection.json` |
+| "Which rules and execution stages produced it?" | 3 — `run_metadata.json` |
+
+## File-selection provenance
+
+`file_selection.json` distinguishes ordinary recursive discovery from a
+research classification-manifest scan. Manifest scans record the absolute
+manifest path, SHA-256, candidate and included counts, class distribution,
+projects, and frozen commit SHAs. This file proves which selection artifact
+produced an output directory; it does not replace the row-level CSV itself.
+
+## Run/profile provenance
+
+`run_metadata.json` records the target, embedded file-selection metadata,
+external-tool statuses, and selected profile. Profile data includes the
+complete ordered rule IDs, count, SHA-256, source/review/external execution
+flags, provisional/operational status, and research-eligibility state.
+
+For source snapshot profiles, `review_metrics.json` must be `{}` and external
+statuses must be `not-requested`. This is an experimental-boundary check, not a
+tool error.

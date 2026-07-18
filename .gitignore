@@ -6,3 +6,10 @@ ansibleguard-output/
 results/
 test-output/
 validation/
+study/cache/
+study/repositories/
+study/snapshots/
+study/history/
+study/analysis/
+study/logs/
+study/manifests/*-frozen.csv

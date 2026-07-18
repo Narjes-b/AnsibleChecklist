@@ -71,6 +71,9 @@ def write_results_to_csv(all_results, file_path):
             "Unscoped Shell Variables",
             "Invalid Task Attribute Types",
             "Invalid Numeric Values",
+            "Variable Use Before Definition",
+            "Unexpected Task Locations",
+            "Deprecated Module Options",
             "Design Smells",
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -167,6 +170,15 @@ def write_results_to_csv(all_results, file_path):
                         "invalid_task_attribute_types", ""
                     ),
                     "Invalid Numeric Values": metrics.get("invalid_numeric_values", ""),
+                    "Variable Use Before Definition": metrics.get(
+                        "variable_use_before_definition", ""
+                    ),
+                    "Unexpected Task Locations": metrics.get(
+                        "unexpected_task_locations", ""
+                    ),
+                    "Deprecated Module Options": metrics.get(
+                        "deprecated_module_options", ""
+                    ),
                     "Design Smells": metrics.get("ansible_lint_issues", ""),
                 }
             )

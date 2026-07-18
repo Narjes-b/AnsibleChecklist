@@ -11,7 +11,9 @@ ansibleguard command
   │
   └── cli.main()
       └── cli.analyze_path(target, output_root)
+          ├── profiles.profile_definition()
           ├── collect_yaml_files()
+          │   └── optional file_manifest.included_files_from_manifest()
           ├── external.gitleaks.scan_with_gitleaks(target)
           ├── external.ansible_lint.scan_with_ansible_lint(target)
           ├── for each YAML file
@@ -31,7 +33,9 @@ ansibleguard command
               ├── summary.csv
               ├── findings.json / .csv / .txt / .sarif
               ├── review_metrics.json
-              └── diagnostics.json
+              ├── diagnostics.json
+              ├── file_selection.json
+              └── run_metadata.json
 ```
 
 External tools are executed once per scan target. Their findings are matched
@@ -44,17 +48,20 @@ non-YAML files remain in the project rollups.
 |---|---|
 | `src/ansibleguard/cli.py` | Discovery, external-tool orchestration, file/project aggregation, exit policy |
 | `src/ansibleguard/document.py` | Safe loading and document classification |
+| `src/ansibleguard/file_manifest.py` | Row-level repository classification, manifest validation, and selection provenance |
+| `src/ansibleguard/profiles.py` | Complete rule-family partition, execution flags, filtering, and profile hashes |
 | `src/ansibleguard/parser.py` | Calls internal detectors for one structurally analyzable document |
 | `src/ansibleguard/smells.py` | Applies legacy thresholds and writes legacy per-file reports |
 | `src/ansibleguard/detector_config.py` | `.ansibleguard.yml` lookup, merging, options, and normalized suppressions |
 | `src/ansibleguard/detectors/` | Internal rule implementations |
 | `src/ansibleguard/detectors/source_lines.py` | Shared ruamel loader and exact YAML coordinates |
 | `src/ansibleguard/external/` | GitLeaks installation/execution and ansible-lint execution |
-| `src/ansibleguard/report/findings.py` | Canonical 57-rule catalog and finding normalization |
+| `src/ansibleguard/report/findings.py` | Canonical 60-rule catalog and finding normalization |
 | `src/ansibleguard/report/csv_writer.py` | Legacy metric CSV and normalized finding CSV |
 | `src/ansibleguard/report/text_writer.py` | Legacy and normalized human-readable reports |
 | `src/ansibleguard/report/sarif_writer.py` | SARIF 2.1.0 conversion and stable fingerprints |
 | `scripts/validate_detector_corpus.py` | Reproducible source-detector corpus baseline |
+| `scripts/classify_study_files.py` | Generate per-project classification manifests from frozen study rows |
 
 ## Document classification
 
@@ -72,6 +79,25 @@ The run summary distinguishes:
 
 Tool failures are written to `diagnostics.json`; they are not converted into
 code findings.
+
+Repository population classification is a separate layer owned by
+`file_manifest.py`. It assigns every YAML candidate one controlled file class
+and a reason. The collector derives aggregate counts from those same rows, so
+the counted and scanned population cannot drift because of duplicated
+classification implementations. `--file-manifest` requires complete path
+coverage and scans only explicit inclusions.
+
+## Execution profiles
+
+Profile selection controls both rule output and stage execution. Source
+profiles never call the Git review detector. `review-range` does not send YAML
+through source detectors. External tools execute only for `technical-full`.
+Filtering happens before per-file/project normalized rollups are written, so
+JSON, CSV, text, and SARIF contain the same profile population.
+
+`profiles.py` validates that all catalog IDs are assigned exactly once among
+research-core, extended-Ansible, review-range, or external-tool families.
+`technical-full` is their union; `snapshot-source` is core plus extended.
 
 ## Detector families
 
@@ -99,6 +125,12 @@ documentation for complex tasks.
 `partial_checklist.py` detects unused registered variables, unscoped shell
 variables, invalid task attribute types, and invalid numeric values.
 
+### Formerly missing checklist rules
+
+`missing_checklist.py` detects linear variable use before a later
+`register`/`set_fact`, objectively misplaced role content, and deprecated
+module options from installed Ansible metadata plus project overrides.
+
 ### Legacy candidate modules with exact locations
 
 Missing tags, deprecated modules, disabled certificate validation,
@@ -124,7 +156,8 @@ The nearest `.ansibleguard.yml` is merged over built-in defaults. New detector
 thresholds read directly from this configuration. Legacy thresholds start with
 `src/ansibleguard/thresholds.csv` and accept same-name overrides from the YAML
 file. The configuration also controls default credential values, additional
-mutating-command patterns, known runtime variables, and disabled rule IDs.
+mutating-command patterns, known runtime variables, deprecated module-option
+overrides, and disabled rule IDs.
 
 Finding suppressions happen after normalization and before project formats are
 written. This keeps JSON, CSV, text, and SARIF aligned without deleting raw
@@ -181,11 +214,13 @@ and uses a writable temporary Ansible directory.
 | External wrappers | `test_ansible_lint.py`, `test_gitleaks_hardcoded_credentials.py` |
 | Rule normalization/catalog | `test_findings.py` |
 | Internal detectors | Remaining detector-specific test modules |
+| Formerly missing checklist criteria | `test_missing_checklist.py` |
+| OpenStack study pipeline | `test_study_scripts.py` |
 
 Current complete suite:
 
 ```text
-144 passed
+153 passed
 ```
 
 ## Reproducible verification

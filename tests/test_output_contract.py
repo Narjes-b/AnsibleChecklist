@@ -74,5 +74,7 @@ def test_all_normalized_output_files_are_created_for_an_empty_scan(tmp_path, mon
         "findings.sarif",
         "diagnostics.json",
         "review_metrics.json",
+        "file_selection.json",
+        "run_metadata.json",
     ):
         assert (output / name).is_file()

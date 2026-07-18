@@ -11,6 +11,7 @@ from ansibleguard.cli import collect_yaml_files
 from ansibleguard.detectors.deprecated_modules import detect_deprecated_modules
 from ansibleguard.detectors.handler_issues import detect_handler_issues
 from ansibleguard.detectors.missing_tags import detect_missing_tags
+from ansibleguard.detectors.missing_checklist import detect_missing_checklist_smells
 from ansibleguard.detectors.missing_validate_certs import detect_missing_validate_certs
 from ansibleguard.detectors.paper_candidates import detect_paper_candidates
 from ansibleguard.detectors.partial_checklist import detect_partial_checklist_smells
@@ -30,6 +31,7 @@ def validate(root):
             detect_paper_candidates,
             detect_review_checklist_smells,
             detect_partial_checklist_smells,
+            detect_missing_checklist_smells,
         ):
             metrics.update(detector(path))
         missing_handlers, missing_details, unused_handlers, unused_details = (

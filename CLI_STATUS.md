@@ -1,7 +1,32 @@
 # AnsibleGuard — CLI Development Status
 
-> Historical implementation log. Current verified state (July 14, 2026): 57
-> active rules, 144 passing tests, normalized JSON/CSV/text/SARIF output,
+## Current research-input extension
+
+The historical default below remains available for technical/security scans,
+but research scans no longer have to analyze every recursively discovered
+YAML file. The CLI now accepts `--file-manifest`, validates complete row-level
+coverage, and processes only explicit `included=true` files. Selection mode,
+manifest SHA-256, class counts, project, and commit are written to
+`file_selection.json`.
+
+The reusable implementation is in `src/ansibleguard/file_manifest.py`; frozen
+study repositories are classified by `scripts/classify_study_files.py`. See
+`CLASSIFIED_FILE_MANIFEST_IMPLEMENTATION.md` for the complete contract and the
+28-file Nova validation run.
+
+## Current profile separation
+
+`--profile` now chooses `technical-full`, `snapshot-source`, `research-core`,
+`extended-ansible`, or `review-range`. The CLI skips stages not requested by
+the profile, filters every normalized output consistently, and writes the
+allowlist/hash to `run_metadata.json`. Source snapshot profiles no longer
+produce Git review findings; review-range processes no source files.
+
+See `RESEARCH_PROFILES_IMPLEMENTATION.md` for the implementation and frozen
+Nova evidence.
+
+> Historical implementation log. Current verified state (July 18, 2026): 60
+> active rules, 163 passing tests, normalized JSON/CSV/text/SARIF output,
 > complete PR base-to-head review analysis, configurable suppressions, and a
 > successful fresh-environment ansible-lint run. Older counts below are retained
 > only as chronological evidence of what was true at that development stage.

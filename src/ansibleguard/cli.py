@@ -17,11 +17,15 @@ EXCLUDE_DIRS = {
 }
 
 
-def collect_yaml_files(target: Path) -> list[Path]:
+def collect_yaml_files(target: Path, file_manifest: Path | None = None) -> list[Path]:
     """Find every .yml/.yaml file under target, recursively, skipping
     directories that contain real YAML but aren't Ansible production
     content (Molecule test scenarios, CI config, etc.)."""
     target = Path(target)
+    if file_manifest is not None:
+        from .file_manifest import included_files_from_manifest
+
+        return included_files_from_manifest(target, file_manifest)
     if target.is_file():
         return [target]
 
@@ -106,7 +110,13 @@ def _lint_findings_for_file(findings, yaml_file, scan_root):
     return matched
 
 
-def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
+def analyze_path(
+    target: Path,
+    output_root: Path,
+    gitleaks_path=None,
+    file_manifest: Path | None = None,
+    profile: str = "technical-full",
+):
     """
     Run the existing per-file analysis + report-writing pipeline
     (smellsDetector.py's execute_for_single_file + the ansible-lint/gitleaks
@@ -142,21 +152,43 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
     from .detectors.paper_candidates import detect_paper_candidates
     from .detectors.review_checklist import detect_review_checklist_smells
     from .detectors.partial_checklist import detect_partial_checklist_smells
+    from .detectors.missing_checklist import detect_missing_checklist_smells
     from .detectors.review_metadata import detect_project_review_smells
     from .external.gitleaks import scan_with_gitleaks
     from .external.ansible_lint import scan_with_ansible_lint
     from .external.install_gitleaks import GITLEAKS_PATH
+    from .external.gitleaks import ToolResult
+    from .profiles import filter_profile_findings, profile_definition, profile_metadata
+    from .file_manifest import FileManifestError
 
     target = Path(target)
     output_root = Path(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
 
-    yaml_files = collect_yaml_files(target)
-    print(f"Found {len(yaml_files)} YAML file(s) to analyze.")
+    definition = profile_definition(profile)
+    if definition["requires_manifest"] and file_manifest is None:
+        raise FileManifestError(
+            f"profile {profile} requires --file-manifest so the scanned and "
+            "counted source populations are identical"
+        )
+    selected_yaml_files = collect_yaml_files(target, file_manifest)
+    yaml_files = selected_yaml_files if definition["source_analysis"] else []
+    if file_manifest is None:
+        print(f"Found {len(selected_yaml_files)} YAML file(s) for profile {profile}.")
+    else:
+        print(
+            f"Selected {len(selected_yaml_files)} YAML file(s) from classification "
+            f"manifest {file_manifest} for profile {profile}."
+        )
 
     scan_root = target if target.is_dir() else target.parent
-    gitleaks_result = scan_with_gitleaks(target, gitleaks_path or GITLEAKS_PATH)
-    lint_result = scan_with_ansible_lint(target)
+    if definition["external_tools"]:
+        gitleaks_result = scan_with_gitleaks(target, gitleaks_path or GITLEAKS_PATH)
+        lint_result = scan_with_ansible_lint(target)
+    else:
+        message = f"External tools are not requested by profile {profile}."
+        gitleaks_result = ToolResult("not-requested", message=message)
+        lint_result = ToolResult("not-requested", message=message)
     structurally_analyzed = 0
     all_findings = []
     summary_rows = []
@@ -197,6 +229,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
             source_metrics = detect_paper_candidates(yaml_file)
             source_metrics.update(detect_review_checklist_smells(yaml_file))
             source_metrics.update(detect_partial_checklist_smells(yaml_file))
+            source_metrics.update(detect_missing_checklist_smells(yaml_file))
             if any(
                 value
                 for key, value in source_metrics.items()
@@ -220,6 +253,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
             report_metrics, report_result, findings, lint_results, yaml_file
         )
         file_findings = filter_findings(file_findings, yaml_file)
+        file_findings = filter_profile_findings(file_findings, profile)
         write_findings_to_txt(
             file_findings,
             out_dir / "Play_Level_Analysis.txt",
@@ -256,7 +290,9 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
                 }
             )
 
-    project_metrics = detect_project_review_smells(scan_root)
+    project_metrics = (
+        detect_project_review_smells(scan_root) if definition["review_analysis"] else {}
+    )
     if project_metrics:
         project_result = {
             "playbook": {"metrics": {"WarningUnusedIncludeVars": []}, "plays": []}
@@ -265,6 +301,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
             project_metrics, project_result, [], [], scan_root
         )
         project_findings = filter_findings(project_findings, scan_root)
+        project_findings = filter_profile_findings(project_findings, profile)
         if project_findings:
             all_findings.extend(project_findings)
             summary_rows.append(
@@ -287,6 +324,9 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
     # Repository-wide gitleaks also covers non-YAML files. Preserve those
     # findings in JSON/SARIF instead of silently dropping them merely because
     # they never enter the structural Ansible loop above.
+    selected_yaml = {
+        _relative_or_self(path, scan_root).replace(os.sep, "/") for path in yaml_files
+    }
     for finding in gitleaks_result.findings:
         if id(finding) in consumed_gitleaks_ids:
             continue
@@ -294,8 +334,16 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         finding_path = Path(finding_file)
         if not finding_path.is_absolute():
             finding_path = Path(scan_root) / finding_path
+        finding_relative = _relative_or_self(finding_path, scan_root).replace(os.sep, "/")
+        if (
+            file_manifest is not None
+            and finding_path.suffix.lower() in {".yml", ".yaml"}
+            and finding_relative not in selected_yaml
+        ):
+            continue
         external_findings = build_findings_list(None, None, [finding], [], finding_path)
         external_findings = filter_findings(external_findings, scan_root)
+        external_findings = filter_profile_findings(external_findings, profile)
         all_findings.extend(external_findings)
         summary_rows.append(
             {
@@ -312,7 +360,8 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
             }
         )
 
-    if gitleaks_result.status != "completed":
+    failed_statuses = {"tool-error"}
+    if gitleaks_result.status in failed_statuses:
         diagnostics.append(
             {
                 "file": ".",
@@ -321,7 +370,7 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
                 "message": gitleaks_result.message,
             }
         )
-    if lint_result.status != "completed":
+    if lint_result.status in failed_statuses:
         diagnostics.append(
             {
                 "file": ".",
@@ -331,6 +380,20 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
             }
         )
 
+    selection_metadata = {"mode": "recursive-discovery"}
+    if file_manifest is not None:
+        from .file_manifest import file_manifest_metadata
+
+        selection_metadata = file_manifest_metadata(file_manifest)
+    run_metadata = {
+        "profile": profile_metadata(profile),
+        "target": str(target.resolve()),
+        "file_selection": selection_metadata,
+        "tools": {
+            "gitleaks": gitleaks_result.status,
+            "ansible_lint": lint_result.status,
+        },
+    }
     _write_rollups(
         all_findings,
         summary_rows,
@@ -338,21 +401,26 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
         project_metrics,
         output_root,
         scan_root,
+        selection_metadata,
+        run_metadata,
     )
 
     print(
-        f"[✔] {len(yaml_files)} file(s) discovered; "
+        f"[✔] {len(selected_yaml_files)} file(s) selected; "
+        f"{len(yaml_files)} source file(s) processed; "
         f"{structurally_analyzed} structurally analyzed; "
         f"gitleaks={gitleaks_result.status}; ansible-lint={lint_result.status}. "
         f"Results under {output_root}"
     )
     print(f"[✔] {len(all_findings)} total finding(s) across all files.")
     return {
-        "discovered": len(yaml_files),
+        "discovered": len(selected_yaml_files),
+        "processed": len(yaml_files),
         "structurally_analyzed": structurally_analyzed,
         "findings": all_findings,
-        "tool_errors": int(gitleaks_result.status != "completed")
-        + int(lint_result.status != "completed"),
+        "tool_errors": int(gitleaks_result.status in failed_statuses)
+        + int(lint_result.status in failed_statuses),
+        "profile": profile,
         "parse_failures": sum(
             row["parse_status"] in {"invalid", "read-error"} for row in summary_rows
         ),
@@ -360,7 +428,14 @@ def analyze_path(target: Path, output_root: Path, gitleaks_path=None):
 
 
 def _write_rollups(
-    all_findings, summary_rows, diagnostics, project_metrics, output_root, scan_root
+    all_findings,
+    summary_rows,
+    diagnostics,
+    project_metrics,
+    output_root,
+    scan_root,
+    selection_metadata,
+    run_metadata,
 ):
     import csv
     import json as _json
@@ -409,6 +484,12 @@ def _write_rollups(
     with open(output_root / "diagnostics.json", "w", encoding="utf-8") as f:
         _json.dump(diagnostics, f, indent=2)
 
+    with open(output_root / "file_selection.json", "w", encoding="utf-8") as f:
+        _json.dump(selection_metadata, f, indent=2)
+
+    with open(output_root / "run_metadata.json", "w", encoding="utf-8") as f:
+        _json.dump(run_metadata, f, indent=2)
+
     # findings.sarif -- GitHub Code Scanning-native shape.
     sarif_path = output_root / "findings.sarif"
     write_sarif(all_findings, sarif_path, repo_root=scan_root)
@@ -422,6 +503,7 @@ def _write_rollups(
 def main(argv=None):
     import argparse
     import sys
+    from .file_manifest import FileManifestError
 
     argv = list(argv) if argv is not None else sys.argv[1:]
     if argv == ["install-tools"]:
@@ -457,13 +539,39 @@ def main(argv=None):
         default=Path("./ansibleguard-output"),
         help="Where to write reports (default: ./ansibleguard-output)",
     )
+    parser.add_argument(
+        "--file-manifest",
+        type=Path,
+        help=(
+            "CSV classification manifest; analyze only rows with included=true "
+            "after validating complete repository coverage"
+        ),
+    )
+    from .profiles import PROFILE_NAMES
+
+    parser.add_argument(
+        "--profile",
+        choices=PROFILE_NAMES,
+        default="technical-full",
+        help="Rule/execution profile (default: technical-full)",
+    )
     args = parser.parse_args(argv)
 
     if not args.target.exists():
         print(f"Error: target path does not exist: {args.target}", file=sys.stderr)
         sys.exit(1)
 
-    run = analyze_path(args.target, args.output, args.gitleaks_path)
+    try:
+        run = analyze_path(
+            args.target,
+            args.output,
+            args.gitleaks_path,
+            args.file_manifest,
+            args.profile,
+        )
+    except FileManifestError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        sys.exit(2)
     severities = {finding["severity"] for finding in run.get("findings", [])}
     should_fail = {
         "never": False,

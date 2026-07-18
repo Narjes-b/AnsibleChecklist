@@ -21,6 +21,15 @@ rules:
   # Variables supplied by inventory plugins, CI, or extra-vars and therefore
   # not visible in repository YAML.
   known_variables: []
+  # Project-specific deprecations supplement metadata from the installed
+  # Ansible collections. Module names may be short or fully qualified.
+  deprecated_module_options: {}
+  # Example:
+  # deprecated_module_options:
+  #   ansible.builtin.example:
+  #     old_option:
+  #       replacement: new_option
+  #       removed_in: "3.0"
 
 suppressions:
   # Use stable IDs from ALL_DETECTED_SMELLS.md.

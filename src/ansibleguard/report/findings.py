@@ -305,6 +305,21 @@ RULE_CATALOG = {
         "category": "testing",
         "description": "Defaults or variables changed without an override test change.",
     },
+    "variable-use-before-definition": {
+        "level": "error",
+        "category": "correctness",
+        "description": "A task uses a registered result or fact before a later task defines it.",
+    },
+    "unexpected-task-location": {
+        "level": "warning",
+        "category": "structure",
+        "description": "An Ansible document or handler-only task is placed in the wrong role directory.",
+    },
+    "deprecated-module-option": {
+        "level": "warning",
+        "category": "compatibility",
+        "description": "A task uses a deprecated Ansible module option.",
+    },
 }
 
 
@@ -494,6 +509,9 @@ def build_findings_list(
         ("removed_copyright_notices_details", "removed-copyright-notice"),
         ("missing_test_updates_details", "missing-test-update"),
         ("untested_override_changes_details", "untested-override-change"),
+        ("variable_use_before_definition_details", "variable-use-before-definition"),
+        ("unexpected_task_locations_details", "unexpected-task-location"),
+        ("deprecated_module_options_details", "deprecated-module-option"),
     )
     for details_key, rule_id in paper_detail_rules:
         for detail in metrics.get(details_key, []) or []:

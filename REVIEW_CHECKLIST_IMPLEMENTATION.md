@@ -98,5 +98,5 @@ changing structural classification.
 
 `tests/test_review_checklist.py` covers positive and negative cases plus
 parser-to-finding integration. The local full-suite result after this addition
-is 144 passing tests with no environment failure. ansible-lint executable
+is 163 passing tests with no environment failure. ansible-lint executable
 resolution and its writable temporary directory are covered separately.
