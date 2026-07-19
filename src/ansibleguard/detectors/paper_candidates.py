@@ -137,6 +137,43 @@ def _line_for(text, needle, start=0):
     return 1
 
 
+def _line_for_expression(text, expression):
+    """Locate an expression even when YAML folds it across source lines."""
+    normalized = re.sub(r"\s+", " ", str(expression).strip())
+    if not normalized:
+        return 1
+
+    flattened = []
+    source_lines = []
+    previous_was_space = False
+    for line_number, line in enumerate(text.splitlines(), 1):
+        for character in line:
+            if character.isspace():
+                if not previous_was_space:
+                    flattened.append(" ")
+                    source_lines.append(line_number)
+                previous_was_space = True
+            else:
+                flattened.append(character)
+                source_lines.append(line_number)
+                previous_was_space = False
+        if not previous_was_space:
+            flattened.append(" ")
+            source_lines.append(line_number)
+            previous_was_space = True
+
+    position = "".join(flattened).find(normalized)
+    if position >= 0:
+        return source_lines[position]
+
+    # Keep a useful fallback for parser-normalized values that cannot be
+    # matched byte-for-byte, but never assume line 1 merely because a
+    # multiline prefix was searched on a single physical line.
+    prefix = normalized[:80]
+    position = "".join(flattened).find(prefix)
+    return source_lines[position] if position >= 0 else 1
+
+
 def _iter_tasks(document):
     """Yield ``(task, nesting_depth)`` for task-like mappings."""
 
@@ -205,7 +242,7 @@ def detect_complex_expressions(path, threshold=6, length_threshold=100):
             if score >= threshold:
                 details.append(
                     {
-                        "line": _line_for(text, normalized[:24]),
+                        "line": _line_for_expression(text, normalized),
                         "score": score,
                         "expression": normalized,
                         "issue": f"Jinja/conditional expression complexity is {score} (threshold {threshold}).",
@@ -234,6 +271,8 @@ def detect_long_statements(path, threshold=120):
     _, text = _load(path)
     details = []
     for line_number, line in enumerate(text.splitlines(), 1):
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
         length = len(line.expandtabs(2))
         if length > threshold:
             details.append(
@@ -322,13 +361,28 @@ def _role_context(path):
     path = Path(path).resolve()
     parts = path.parts
     indexes = [i for i, part in enumerate(parts) if part == "roles"]
-    if not indexes:
-        return None, None
-    index = indexes[-1]
-    if index + 1 >= len(parts):
-        return None, None
-    roles_dir = Path(*parts[: index + 1])
-    return roles_dir, roles_dir / parts[index + 1]
+    if indexes:
+        index = indexes[-1]
+        if index + 1 >= len(parts):
+            return None, None
+        roles_dir = Path(*parts[: index + 1])
+        return roles_dir, roles_dir / parts[index + 1]
+
+    # Many Galaxy/OpenStack repositories are themselves one role, so their
+    # paths are <repository>/tasks/main.yml rather than
+    # <repository>/roles/<role>/tasks/main.yml.  A metadata entry point plus
+    # a recognized role directory is enough to identify that layout without
+    # treating every ordinary project directory as a role.
+    for parent in path.parents:
+        if parent.name not in ROLE_DIRS:
+            continue
+        role_root = parent.parent
+        if any(
+            (role_root / "meta" / f"main.{suffix}").is_file()
+            for suffix in ("yml", "yaml")
+        ):
+            return None, role_root
+    return None, None
 
 
 def _role_anchor(role_root):
@@ -392,33 +446,40 @@ def _dependency_names(meta_document):
 def detect_broken_role_dependencies(path):
     path = Path(path).resolve()
     roles_dir, role_root = _role_context(path)
-    if roles_dir is None:
+    if role_root is None:
         return 0, []
-    project_anchors = sorted(
-        anchor
-        for candidate_role in roles_dir.iterdir()
-        if candidate_role.is_dir()
-        for anchor in [_role_anchor(candidate_role)]
-        if anchor is not None
-    )
+    standalone = roles_dir is None
+    if standalone:
+        anchor = _role_anchor(role_root)
+        project_anchors = [anchor] if anchor is not None else []
+        role_roots = {role_root.name: role_root}
+    else:
+        role_roots = {
+            directory.name: directory
+            for directory in roles_dir.iterdir()
+            if directory.is_dir()
+        }
+        project_anchors = sorted(
+            anchor
+            for candidate_role in role_roots.values()
+            for anchor in [_role_anchor(candidate_role)]
+            if anchor is not None
+        )
     if project_anchors and path != project_anchors[0]:
         return 0, []
 
     graph = defaultdict(list)
     details = []
-    role_names = {
-        directory.name for directory in roles_dir.iterdir() if directory.is_dir()
-    }
+    role_names = set(role_roots)
     for role_name in role_names:
         meta = None
         for suffix in ("yml", "yaml"):
-            candidate = roles_dir / role_name / "meta" / f"main.{suffix}"
+            candidate = role_roots[role_name] / "meta" / f"main.{suffix}"
             if candidate.exists():
                 meta, _ = _load(candidate)
                 break
         for dependency in _dependency_names(meta):
             local_name = dependency.rsplit(".", 1)[-1]
-            graph[role_name].append(local_name)
             if local_name == role_name:
                 details.append(
                     {
@@ -428,7 +489,13 @@ def detect_broken_role_dependencies(path):
                         "issue": f"Role '{role_name}' depends on itself.",
                     }
                 )
-            elif "." not in dependency and local_name not in role_names:
+                continue
+            graph[role_name].append(local_name)
+            if (
+                not standalone
+                and "." not in dependency
+                and local_name not in role_names
+            ):
                 details.append(
                     {
                         "line": 1,

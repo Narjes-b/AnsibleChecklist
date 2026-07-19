@@ -69,6 +69,36 @@ def test_source_and_task_level_paper_detectors(tmp_path):
     assert "optional_value" not in {detail["variable"] for detail in details}
 
 
+def test_long_statement_ignores_comment_only_lines(tmp_path):
+    playbook = _write(
+        tmp_path / "long-lines.yml",
+        "# " + "comment " * 30 + "\nvalue: " + "x" * 130 + "\n",
+    )
+
+    count, details = detect_long_statements(playbook)
+
+    assert count == 1
+    assert details[0]["line"] == 2
+
+
+def test_multiline_complex_expression_reports_opening_jinja_line(tmp_path):
+    playbook = _write(
+        tmp_path / "multiline.yml",
+        """---
+result: >-
+  {{
+    first_value | default(
+      (second_value == 'yes') | ternary(third_value, fourth_value))
+  }}
+""",
+    )
+
+    count, details = detect_complex_expressions(playbook)
+
+    assert count == 1
+    assert details[0]["line"] == 3
+
+
 def test_role_structure_and_dependency_detectors(tmp_path):
     role_a = tmp_path / "roles" / "role_a"
     role_b = tmp_path / "roles" / "role_b"
@@ -95,6 +125,34 @@ def test_role_structure_and_dependency_detectors(tmp_path):
     assert dependency_count >= 2
     assert "missing_role" in messages
     assert "cycle" in messages.lower()
+
+
+def test_standalone_role_structure_and_self_dependency_are_detected(tmp_path):
+    role = tmp_path / "standalone_role"
+    anchor = _write(
+        role / "handlers" / "main.yml",
+        "- name: Existing handler\n  debug:\n    msg: ok\n",
+    )
+    _write(role / "meta" / "main.yml", "dependencies:\n  - standalone_role\n")
+
+    structure_count, structure_details = detect_unstructured_module(anchor)
+    dependency_count, dependency_details = detect_broken_role_dependencies(anchor)
+
+    assert structure_count == 1
+    assert "tasks/main" in structure_details[0]["issue"]
+    assert dependency_count == 1
+    assert "depends on itself" in dependency_details[0]["issue"]
+
+
+def test_standalone_external_dependency_is_not_assumed_broken(tmp_path):
+    role = tmp_path / "standalone_role"
+    anchor = _write(
+        role / "tasks" / "main.yml",
+        "- name: Existing task\n  debug:\n    msg: ok\n",
+    )
+    _write(role / "meta" / "main.yml", "dependencies:\n  - external_galaxy_role\n")
+
+    assert detect_broken_role_dependencies(anchor) == (0, [])
 
 
 def test_new_metrics_flow_through_parser_and_findings(tmp_path):
