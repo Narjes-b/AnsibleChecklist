@@ -1,0 +1,25 @@
+project,example_type,rule_id,path,line,observed_result,human_label,plain_reason
+openstack/ansible-collection-kolla,positive,incomplete-task,roles/baremetal/tasks/configure-ceph-for-zun.yml,32,finding,direct_operational_match,The source contains a TODO comment at this line.
+openstack/ansible-collection-kolla,positive,complex-expression,roles/docker/tasks/config.yml,36,finding,direct_operational_match,The multiline Jinja expression has many filters and conditions and exceeds the configured complexity threshold.
+openstack/ansible-collection-kolla,positive,missing-abstraction,roles/docker/tasks/config.yml,1,finding,context_sensitive_match,The file exceeds the configured leaf-task threshold but whether it should be split is a human design judgment.
+openstack/ansible-collection-kolla,positive,long-statement,roles/docker_sdk/defaults/main.yml,62,finding,direct_operational_match,The physical source line exceeds 120 characters.
+openstack/kayobe,positive,complex-expression,ansible/apparmor-libvirt.yml,5,finding,direct_operational_match,The expression exceeds the configured complexity threshold.
+openstack/kayobe,positive,long-statement,ansible/baremetal-compute-register.yml,31,finding,direct_operational_match,The physical source line exceeds 120 characters.
+openstack/kayobe,positive,missing-abstraction,ansible/control-host-configure.yml,1,finding,context_sensitive_match,The file exceeds the configured leaf-task threshold but whether it should be split is a human design judgment.
+openstack/kayobe,positive,incomplete-task,ansible/fail2ban.yml,16,finding,direct_operational_match,The source contains a TODO comment at this line.
+openstack/kayobe,positive,unstructured-module,ansible/roles/bootstrap/tasks/main.yml,1,finding,context_sensitive_match,The role has vars/Debian.yml and vars/RedHat.yml but no vars/main.yml; this may be intentional dynamic loading.
+openstack/kayobe,positive,empty-abstraction,etc/kayobe/hostname.yml,1,finding,context_sensitive_match,The parsed YAML has only comments and no data; an example configuration file may intentionally be empty.
+openstack/kolla-ansible,positive,complex-expression,ansible/certificates.yml,5,finding,direct_operational_match,The expression exceeds the configured complexity threshold.
+openstack/kolla-ansible,positive,long-statement,ansible/group_vars/all/aodh.yml,10,finding,direct_operational_match,The physical source line exceeds 120 characters.
+openstack/kolla-ansible,positive,incomplete-task,ansible/group_vars/all/valkey.yml,24,finding,direct_operational_match,The source contains an unresolved TODO comment at this line.
+openstack/kolla-ansible,positive,empty-abstraction,ansible/roles/bifrost/tasks/check.yml,1,finding,context_sensitive_match,The file contains only the YAML document marker and may intentionally act as a no-op task file.
+openstack/kolla-ansible,positive,missing-abstraction,ansible/roles/certificates/tasks/generate.yml,1,finding,context_sensitive_match,The file exceeds the configured leaf-task threshold but whether it should be split is a human design judgment.
+openstack/openstack-ansible,positive,complex-expression,inventory/group_vars/adjutant_all/haproxy_service.yml,29,finding,direct_operational_match,The expression reaches the configured complexity threshold.
+openstack/openstack-ansible,positive,long-statement,inventory/group_vars/adjutant_all/haproxy_service.yml,28,finding,direct_operational_match,The physical source line exceeds 120 characters.
+openstack/openstack-ansible-os_nova,positive,complex-expression,defaults/main.yml,17,finding,direct_operational_match,The expression exceeds the configured complexity threshold.
+openstack/openstack-ansible-os_nova,positive,long-statement,defaults/main.yml,44,finding,direct_operational_match,The physical source line exceeds 120 characters.
+openstack/ansible-collection-kolla,negative,all-research-core-rules,roles/apparmor_libvirt/tasks/main.yml,1,no_finding,expected_clean,The small include-task file has no observed research-core trigger.
+openstack/kayobe,negative,all-research-core-rules,ansible/bootstrap.yml,1,no_finding,expected_clean,The short role-based play has no observed research-core trigger.
+openstack/kolla-ansible,negative,all-research-core-rules,ansible/bifrost.yml,1,no_finding,expected_clean,The short role-based play has no observed research-core trigger.
+openstack/openstack-ansible,negative,all-research-core-rules,etc/openstack_deploy/user_secrets.yml,1,no_finding,expected_clean,The deployment variable template has no observed research-core trigger.
+openstack/openstack-ansible-os_nova,negative,all-research-core-rules,handlers/main.yml,1,no_finding,expected_clean,The role handler file has no observed research-core trigger.

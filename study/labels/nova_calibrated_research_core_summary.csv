@@ -1,0 +1,4 @@
+project,commit_sha,profile,rule_id,findings_reviewed,true_positives,false_positives,uncertain,valid_locations,invalid_locations,semantic_precision,location_validity,status
+openstack/openstack-ansible-os_nova,e06c7bceef3f7c365828116b7aadea6fc2d3e22b,research-core,complex-expression,38,38,0,0,38,0,1.0000,1.0000,positive-findings-calibrated
+openstack/openstack-ansible-os_nova,e06c7bceef3f7c365828116b7aadea6fc2d3e22b,research-core,long-statement,39,39,0,0,39,0,1.0000,1.0000,positive-findings-calibrated
+openstack/openstack-ansible-os_nova,e06c7bceef3f7c365828116b7aadea6fc2d3e22b,research-core,ALL_POSITIVE_FINDINGS,77,77,0,0,77,0,1.0000,1.0000,negative-validation-still-required
