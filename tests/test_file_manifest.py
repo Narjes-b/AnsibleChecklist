@@ -92,6 +92,38 @@ def test_manifest_selects_only_included_files_and_requires_complete_coverage(tmp
         included_files_from_manifest(repository, manifest)
 
 
+def test_classifier_handles_deployment_config_and_dependency_manifests(tmp_path):
+    repository = tmp_path / "repository"
+    config = repository / "etc" / "kayobe"
+    config.mkdir(parents=True)
+    (config / "globals.yml").write_text("deployment_mode: production\n")
+    (repository / "ansible-role-requirements.yml").write_text(
+        "- name: external_role\n  src: example.external_role\n"
+    )
+    notes = repository / " releasenotes" / "notes"
+    notes.mkdir(parents=True)
+    (notes / "change.yml").write_text("features:\n  - New behavior\n")
+
+    by_path = {
+        row["path"]: row for row in classify_repository(repository)
+    }
+
+    assert by_path["etc/kayobe/globals.yml"]["file_class"] == "production_ansible"
+    assert by_path["etc/kayobe/globals.yml"]["included"] == "true"
+    assert (
+        by_path["ansible-role-requirements.yml"]["classification_reason"]
+        == "ansible_dependency_manifest"
+    )
+    assert by_path["ansible-role-requirements.yml"]["included"] == "false"
+    assert by_path[" releasenotes/notes/change.yml"]["file_class"] == (
+        "documentation_example"
+    )
+    manifest = write_file_manifest(by_path.values(), tmp_path / "classified.csv")
+    assert included_files_from_manifest(repository, manifest) == [
+        config / "globals.yml"
+    ]
+
+
 def test_manifest_rejects_repository_escape_paths(tmp_path):
     repository = _repository(tmp_path)
     rows = classify_repository(repository)

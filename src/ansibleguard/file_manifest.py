@@ -51,6 +51,21 @@ ANSIBLE_PARTS = {
     "vars",
 }
 ANSIBLE_DATA_PARTS = {"files", "templates"}
+ANSIBLE_CONFIGURATION_PREFIXES = {
+    ("etc", "kayobe"),
+    ("etc", "kolla"),
+    ("etc", "openstack_deploy"),
+}
+DEPENDENCY_MANIFEST_FILENAMES = {
+    "ansible-collection-requirements.yml",
+    "ansible-collection-requirements.yaml",
+    "ansible-role-requirements.yml",
+    "ansible-role-requirements.yaml",
+    "requirements-core.yml",
+    "requirements-core.yaml",
+    "requirements.yml",
+    "requirements.yaml",
+}
 CI_FILENAMES = {
     ".gitlab-ci.yml",
     ".gitlab-ci.yaml",
@@ -120,8 +135,9 @@ def classify_yaml_file(path: Path, repository: Path) -> dict[str, str]:
     path = Path(path)
     repository = Path(repository)
     relative = path.relative_to(repository)
-    parts = {part.lower() for part in relative.parts}
-    name = relative.name.lower()
+    normalized_parts = tuple(part.strip().lower() for part in relative.parts)
+    parts = set(normalized_parts)
+    name = relative.name.strip().lower()
 
     if path.is_symlink():
         parse_status = "not-inspected"
@@ -142,7 +158,7 @@ def classify_yaml_file(path: Path, repository: Path) -> dict[str, str]:
         document_type = info.document_type
         loc = _physical_loc(path)
 
-        top_level = relative.parts[0].lower()
+        top_level = normalized_parts[0]
         if parts & GENERATED_PARTS:
             file_class = "generated_or_vendor"
             reason = "generated_or_vendor_path"
@@ -168,6 +184,15 @@ def classify_yaml_file(path: Path, repository: Path) -> dict[str, str]:
         elif parts & TEST_PARTS:
             file_class = "test_ansible"
             reason = "ansible_test_path"
+        elif name in DEPENDENCY_MANIFEST_FILENAMES:
+            file_class = "other_yaml"
+            reason = "ansible_dependency_manifest"
+        elif (
+            normalized_parts[:2] in ANSIBLE_CONFIGURATION_PREFIXES
+            and info.document_type in {"empty", "vars"}
+        ):
+            file_class = "production_ansible"
+            reason = "ansible_deployment_configuration_path"
         elif info.document_type in {"playbook", "tasks"}:
             file_class = "production_ansible"
             reason = "ansible_playbook_or_task_shape"
@@ -276,9 +301,9 @@ def included_files_from_manifest(target: Path, manifest_path: Path) -> list[Path
     declared: dict[str, tuple[Path, bool]] = {}
     root = target.resolve()
     for row_number, row in enumerate(rows, 2):
-        raw_path = str(row.get("path") or "").strip()
+        raw_path = str(row.get("path") or "")
         relative = Path(raw_path)
-        if not raw_path or relative.is_absolute() or ".." in relative.parts:
+        if not raw_path.strip() or relative.is_absolute() or ".." in relative.parts:
             raise FileManifestError(
                 f"row {row_number}: path must be a safe repository-relative path"
             )
