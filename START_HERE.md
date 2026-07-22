@@ -42,6 +42,11 @@ technical scan, and trace findings through the code.
 8. **`CODE_REVIEW_CHECKLIST_COVERAGE.md`** — mapping to the 38 criteria from the
    supplied checklist paper.
 
+For a slower explanation that combines the implementation, mathematics,
+complexity, inspiration, and checklist status of all 60 IDs, read
+**`ULTIMATE_SMELL_CATALOG.md`**. The external-tool boundary is explained in
+**`ANSIBLE_LINT_GITLEAKS_OVERLAP.md`**.
+
 Do not use historical implementation files as the canonical rule list. The
 three files above describe the current detector surface.
 
@@ -59,6 +64,15 @@ three files above describe the current detector surface.
 14. **`LOCAL_OPENSTACK_STUDY_WORKFLOW.md`** — exact commands.
 15. **`STUDY_SCRIPTS_REFERENCE.md`** — input/output schemas and behavior of
     every supplied and active script.
+
+Two beginner-oriented companions are available:
+
+- **`REAL_REPOSITORY_TESTING_ZERO_TO_HERO.md`** walks from project discovery
+  through manifests, profiles, validation, calibration, statistics, and
+  contribution;
+- **`SANER24_PAPER_AND_ANSIBLEGUARD_APPROACH.md`** explains the SANER'24 paper,
+  maps its 12 Puppet smells to Ansible candidates, and states what is and is
+  not implemented here.
 
 ### 4. Read historical logs only when needed
 
@@ -93,13 +107,15 @@ project: openstack/openstack-ansible-os_nova
 commit:  e06c7bceef3f7c365828116b7aadea6fc2d3e22b
 YAML candidates: 122
 production files selected: 28
-snapshot-source findings: 1,091
-provisional research-core findings: 78
-extended-Ansible findings: 1,013
+snapshot-source findings: 777
+provisional research-core findings: 77
+extended-Ansible findings: 700
 review-range findings: 3
 ```
 
-These are calibration results, not publishable empirical conclusions.
+These are the post-standalone-role-fix calibration results recorded in
+`FIVE_PROJECT_OPENSTACK_PILOT_RESULTS_SIMPLE.md`, not publishable empirical
+conclusions.
 
 ### Not complete
 

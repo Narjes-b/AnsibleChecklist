@@ -39,6 +39,19 @@ The canonical rule inventory is [ALL_DETECTED_SMELLS.md](ALL_DETECTED_SMELLS.md)
 The comparison with the 38-criterion research checklist is in
 [CODE_REVIEW_CHECKLIST_COVERAGE.md](CODE_REVIEW_CHECKLIST_COVERAGE.md).
 
+For slow, beginner-friendly explanations and current implementation audits,
+use:
+
+- [ULTIMATE_SMELL_CATALOG.md](ULTIMATE_SMELL_CATALOG.md) for every rule's
+  purpose, algorithm, mathematics, complexity, inspiration, and checklist
+  status;
+- [REAL_REPOSITORY_TESTING_ZERO_TO_HERO.md](REAL_REPOSITORY_TESTING_ZERO_TO_HERO.md)
+  for the complete real-repository workflow;
+- [SANER24_PAPER_AND_ANSIBLEGUARD_APPROACH.md](SANER24_PAPER_AND_ANSIBLEGUARD_APPROACH.md)
+  for the Puppet-paper method and the exact relationship to this project;
+- [ANSIBLE_LINT_GITLEAKS_OVERLAP.md](ANSIBLE_LINT_GITLEAKS_OVERLAP.md) for
+  external-tool capabilities, overlap, and remaining integration gaps.
+
 ## Requirements
 
 - Python 3.10 or newer
