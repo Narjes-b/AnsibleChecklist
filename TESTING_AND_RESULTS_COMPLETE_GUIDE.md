@@ -329,9 +329,10 @@ study/analysis/five-project-pilot/
         └── review-range/
 ```
 
-There is currently no `technical-full` result in the five-project pilot
-directory. The existing four profile directories deliberately disable
-external tools.
+The four research/review profiles deliberately disable external tools. The
+completed `technical-full` results are kept in the separate directory:
+
+[`study/analysis/five-project-technical-full`](study/analysis/five-project-technical-full)
 
 ## 7. How the five-project profile tests are run
 
@@ -441,6 +442,30 @@ study/analysis/five-project-technical-full/
         └── mirrored per-file directories
 ```
 
+### Current completed `technical-full` run
+
+The five-repository `technical-full` run completed on 2026-07-27. All five
+`run_metadata.json` files report:
+
+```text
+profile.name = technical-full
+tools.gitleaks = completed
+tools.ansible_lint = completed
+diagnostics = 0
+```
+
+| Repository | Included files | All findings | `ansible-lint-issue` | `hardcoded-credentials` |
+|---|---:|---:|---:|---:|
+| `openstack/ansible-collection-kolla` | 42 | 453 | 77 | 0 |
+| `openstack/kayobe` | 342 | 6,339 | 2,626 | 0 |
+| `openstack/kolla-ansible` | 1,228 | 8,222 | 425 | 1 |
+| `openstack/openstack-ansible-os_nova` | 28 | 797 | 17 | 0 |
+| `openstack/openstack-ansible` | 216 | 946 | 213 | 1 |
+
+The corresponding logs are under:
+
+[`study/logs/five-project-technical-full`](study/logs/five-project-technical-full)
+
 ## 9. Running AnsibleGuard directly
 
 To analyze one file or repository without the study runner:
@@ -531,8 +556,9 @@ Its principal columns are:
 | `notes` | Note-severity findings for the file |
 | `total` | Total normalized findings for the file |
 
-In the current five-project research outputs, `gitleaks_status` and
-`ansible_lint_status` are `not-requested`.
+In `five-project-pilot`, the research-profile outputs record
+`gitleaks_status=not-requested` and `ansible_lint_status=not-requested`. In
+`five-project-technical-full`, both statuses are `completed`.
 
 ### `findings.csv` and `findings.json`
 
@@ -659,7 +685,7 @@ The original ansible-lint rule, such as `name[missing]` or
 `yaml[key-duplicates]`, is collapsed under the common
 `ansible-lint-issue` rule in normalized results.
 
-### Current five-project pilot status
+### Current research-profile status
 
 The current five-project pilot has 5,568 `ansiblelint.txt` files because
 per-file report files are created for the three source profiles:
@@ -700,8 +726,21 @@ fqcn[action-core]
 name[casing]
 ```
 
-To generate ansible-lint findings for the five frozen repositories, run the
-separate `technical-full` command from Section 8.
+### Current five-project `technical-full` status
+
+Actual ansible-lint findings for all five frozen repositories are now stored
+under:
+
+[`study/analysis/five-project-technical-full`](study/analysis/five-project-technical-full)
+
+There are 3,358 normalized `ansible-lint-issue` findings across the five
+completed runs. The raw findings are mirrored into each analyzed source
+file’s `ansiblelint.txt`, while normalized versions appear in each project’s
+`findings.json`, `findings.csv`, `findings.txt`, and `findings.sarif`.
+
+For example:
+
+[`study/analysis/five-project-technical-full/openstack__openstack-ansible-os_nova/e06c7bceef3f7c365828116b7aadea6fc2d3e22b/tasks/main/ansiblelint.txt`](study/analysis/five-project-technical-full/openstack__openstack-ansible-os_nova/e06c7bceef3f7c365828116b7aadea6fc2d3e22b/tasks/main/ansiblelint.txt)
 
 ## 13. Where GitLeaks findings are stored
 
@@ -730,14 +769,20 @@ Repository-wide GitLeaks findings from non-YAML files are retained in the
 project-wide normalized output even though those files do not enter the
 Ansible YAML structural-analysis loop.
 
-Like ansible-lint, GitLeaks is not requested by the present research profiles.
-Run `technical-full` to obtain it.
+Like ansible-lint, GitLeaks is not requested by the research profiles. It
+completed for all five current `technical-full` runs. Two normalized
+`hardcoded-credentials` findings were produced: one in `kolla-ansible` and one
+in `openstack-ansible`.
 
 ## 14. Logs
 
 Current five-project logs are stored in:
 
 [`study/logs/five-project-pilot`](study/logs/five-project-pilot)
+
+The completed `technical-full` logs are stored separately in:
+
+[`study/logs/five-project-technical-full`](study/logs/five-project-technical-full)
 
 Naming structure:
 
@@ -1141,11 +1186,16 @@ Use this order:
    [`study/manifests/file-classification`](study/manifests/file-classification)
    to see every included and excluded YAML file.
 4. Enter
-   [`study/analysis/five-project-pilot`](study/analysis/five-project-pilot).
+   [`study/analysis/five-project-pilot`](study/analysis/five-project-pilot)
+   for research/review profiles, or
+   [`study/analysis/five-project-technical-full`](study/analysis/five-project-technical-full)
+   for the combined internal, GitLeaks, and ansible-lint run.
 5. Choose a repository.
 6. Enter its full SHA directory.
-7. Choose `research-core`, `extended-ansible`, `snapshot-source`, or
-   `review-range`.
+7. In `five-project-pilot`, choose `research-core`, `extended-ansible`,
+   `snapshot-source`, or `review-range`. In
+   `five-project-technical-full`, the SHA directory itself is the profile
+   result root.
 8. Read `run_metadata.json`.
 9. Read `file_selection.json`.
 10. Read `diagnostics.json`.
@@ -1153,8 +1203,10 @@ Use this order:
 12. Filter `findings.csv`.
 13. Follow a finding’s file path into its mirrored per-file directory.
 14. Read `Play_Level_Analysis.txt` and `Technical_Analysis.json`.
-15. Remember that current `ansiblelint.txt` and `gitleaks.txt` files have no
-    findings because external tools were not requested.
+15. In research-profile results, `ansiblelint.txt` and `gitleaks.txt` have
+    headings only because external tools were not requested. In
+    `five-project-technical-full`, they contain the completed external-tool
+    output.
 
 ## 24. Which files are authoritative for which question?
 
