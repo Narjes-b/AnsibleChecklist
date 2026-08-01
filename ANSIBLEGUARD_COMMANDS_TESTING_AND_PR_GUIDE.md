@@ -462,6 +462,20 @@ an exit trap to delete it, and install an exact commit rather than a branch.
 The full implemented workflow and results are documented in
 `PRIVATE_REPOSITORY_LIVE_PR_FINAL_REPORT.md`.
 
+For private repositories where code scanning is unavailable to the workflow,
+keep complete report artifacts authoritative and make only SARIF upload
+best-effort:
+
+```yaml
+- name: Upload SARIF
+  continue-on-error: true
+  uses: github/codeql-action/upload-sarif@v4
+```
+
+Do not make provider diagnostics or the PR comparison best-effort. Those remain
+the blocking correctness/security boundary. A normal push may observe the
+existing baseline, while a PR compares exact base and head occurrences.
+
 ### Personal-token fallback, not used in this experiment
 
 Temporary private-repository option: have an authorized repository owner

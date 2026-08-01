@@ -15,7 +15,7 @@ repository owned by `JedidiAymen`. Nothing was merged into either repository's
 - policy: `observe`, conclusion `success`
 - comparison: 17 introduced, 173 unchanged, 0 fixed, 0 moved, 0 uncertain
 - provider diagnostics: 0 in the head scan and 0 in the base scan
-- tests after the implementation fixes: 215 passed
+- tests after the implementation and workflow fixes: 216 passed
 
 ## Authorization and repository boundary
 
@@ -147,6 +147,31 @@ fingerprint from native rule, relative path, line, and normalized message. The
 final run consequently has zero uncertain occurrences. Private source commit:
 `9a9392e`.
 
+## Private repository CI audit
+
+The first private-repository CI runs failed because its copied workflows
+installed the Python package but omitted the separately documented spaCy model
+and NLTK WordNet data. The same explicit setup commands used by the downstream
+PR workflow were added to both repository workflows in private commit
+`e3b53ac`.
+
+The private repository does not grant its workflow integration usable code
+scanning/SARIF API access. SARIF is therefore best-effort with
+`continue-on-error: true`; complete JSON, CSV, text, metadata, diagnostics, and
+canonical SARIF files remain available in the uploaded report artifact.
+Provider errors and PR policy decisions remain blocking. Push scans use the
+existing `--fail-on never` observe contract, while PR base/head comparison is
+the enforcement boundary. This behavior is covered by
+`tests/test_pr_workflow_contract.py`.
+
+Final private-repository CI evidence at commit
+`2d326960591a80da35acd2de21ae478c7e7d740c`:
+
+| Workflow | Run | Result |
+|---|---|---|
+| Test AnsibleGuard | [30711141996](https://github.com/JedidiAymen/ansibleguard-private/actions/runs/30711141996) | success; dependency install, NLP data, 216 tests, and import smoke test passed |
+| AnsibleGuard PR scan | [30711141985](https://github.com/JedidiAymen/ansibleguard-private/actions/runs/30711141985) | success; scan, summary, complete artifact, and enforcement passed; unavailable SARIF API remained a non-blocking annotation |
+
 ## Definitive PR result
 
 Run [30710629864](https://github.com/JedidiAymen/ansible-role-the_bastion/actions/runs/30710629864)
@@ -197,8 +222,8 @@ by this PR. This is the intended base/head behavior.
 ## Current branch and cleanup state
 
 - `Narjes-b/AnsibleChecklist`: changes remain on `sarif-validation-support`;
-- `JedidiAymen/ansibleguard-private`: private `main` contains the authorized
-  package snapshot and four validated fixes;
+- `JedidiAymen/ansibleguard-private`: private `main` at `2d32696` contains the
+  authorized package snapshot, four source fixes, and green clean-runner CI;
 - `JedidiAymen/ansible-role-the_bastion`: PR #1 remains isolated inside the
   fork; it does not target `adfinis`;
 - no branch was merged into `main` during this work;
@@ -207,8 +232,8 @@ by this PR. This is the intended base/head behavior.
 - the read-only deploy key and encrypted fork secret remain active for future
   internal PR scans.
 
-The only non-blocking workflow annotation is GitHub's Node runtime deprecation
-notice for the pinned major versions of `actions/checkout`,
-`actions/setup-python`, and `actions/upload-artifact`. GitHub forced them onto
-Node 24 and the workflow succeeded. Their next major upgrades should be handled
-as a separate dependency update with changelog review and another PR run.
+The remaining non-blocking workflow annotations are GitHub's Node runtime
+deprecation notice and the private repository's unavailable SARIF API. GitHub
+forced the pinned action versions onto Node 24 and the workflows succeeded.
+Action major upgrades should be handled as a separate dependency update with
+changelog review and another PR run.

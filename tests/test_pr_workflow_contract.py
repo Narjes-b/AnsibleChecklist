@@ -31,3 +31,13 @@ def test_pr_workflow_blocks_tool_errors_and_protects_fork_sarif_uploads():
     assert 'item["status"] == "tool-error"' in text
     assert "github.event.pull_request.head.repo.full_name == github.repository" in text
     assert "if-no-files-found: error" in text
+
+
+def test_sarif_is_optional_and_push_scans_observe_the_existing_baseline():
+    text = WORKFLOW.read_text(encoding="utf-8")
+
+    sarif_step = text.split("- name: Upload SARIF", 1)[1].split(
+        "- name: Upload detailed reports", 1
+    )[0]
+    assert "continue-on-error: true" in sarif_step
+    assert "Push scan completed in observe mode" in text

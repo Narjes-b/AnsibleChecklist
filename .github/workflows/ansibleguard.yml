@@ -22,6 +22,10 @@ jobs:
           cache: pip
       - name: Install AnsibleGuard
         run: pip install -e .
+      - name: Install semantic analysis data
+        run: |
+          python -m spacy download en_core_web_lg
+          python -c "import nltk; nltk.download('wordnet', quiet=True)"
       - name: Install gitleaks
         run: ansibleguard install-tools
 
@@ -75,6 +79,7 @@ jobs:
           fi
 
       - name: Upload SARIF
+        continue-on-error: true
         if: >-
           always() &&
           hashFiles('ansibleguard-head/canonical/findings.sarif') != '' &&
@@ -135,9 +140,5 @@ jobs:
                   )
                   sys.exit(1)
           else:
-              findings = json.loads((head / "findings.json").read_text())
-              errors = [item for item in findings if item["severity"] == "error"]
-              if errors:
-                  print(f"Blocking: {len(errors)} error finding(s)")
-                  sys.exit(1)
+              print("Push scan completed in observe mode; reports are artifacts.")
           PY

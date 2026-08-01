@@ -18,6 +18,10 @@ jobs:
           cache: pip
       - name: Install package and test dependencies
         run: pip install -e '.[dev]'
+      - name: Install semantic analysis data
+        run: |
+          python -m spacy download en_core_web_lg
+          python -c "import nltk; nltk.download('wordnet', quiet=True)"
       - name: Run tests
         run: pytest -q
       - name: Package import smoke test
