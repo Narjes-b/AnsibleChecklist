@@ -172,6 +172,11 @@ Final private-repository CI evidence at commit
 | Test AnsibleGuard | [30711141996](https://github.com/JedidiAymen/ansibleguard-private/actions/runs/30711141996) | success; dependency install, NLP data, 216 tests, and import smoke test passed |
 | AnsibleGuard PR scan | [30711141985](https://github.com/JedidiAymen/ansibleguard-private/actions/runs/30711141985) | success; scan, summary, complete artifact, and enforcement passed; unavailable SARIF API remained a non-blocking annotation |
 
+The same clean-runner workflow correction was pushed to the original
+`sarif-validation-support` feature branch. Its
+[run 30711312201](https://github.com/Narjes-b/AnsibleChecklist/actions/runs/30711312201)
+completed successfully at commit `0dac9b7`; no merge to `main` was required.
+
 ## Definitive PR result
 
 Run [30710629864](https://github.com/JedidiAymen/ansible-role-the_bastion/actions/runs/30710629864)
