@@ -1,5 +1,11 @@
 # Private repository and live pull-request final report
 
+> **2026-08-01 annotation update:** The workflow now publishes introduced
+> canonical occurrences directly as GitHub file/line annotations and as a
+> readable job-summary table. Guarded SARIF remains an additional presentation
+> layer. Implementation, commands, safety rules, and live verification are in
+> `PR_ANNOTATIONS_IMPLEMENTATION_AND_USE.md`.
+
 ## Result
 
 The isolated fork PR now runs AnsibleGuard successfully from a private source

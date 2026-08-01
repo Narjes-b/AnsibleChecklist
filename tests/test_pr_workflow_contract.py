@@ -41,3 +41,15 @@ def test_sarif_is_optional_and_push_scans_observe_the_existing_baseline():
     )[0]
     assert "continue-on-error: true" in sarif_step
     assert "Push scan completed in observe mode" in text
+
+
+def test_pr_workflow_publishes_introduced_annotations_and_summary():
+    text = WORKFLOW.read_text(encoding="utf-8")
+
+    annotation_step = text.split(
+        "- name: Publish introduced PR annotations", 1
+    )[1].split("- name: Publish scan summary", 1)[0]
+    assert "github.event_name == 'pull_request'" in annotation_step
+    assert "hashFiles('ansibleguard-pr-decision.json') != ''" in annotation_step
+    assert "ansibleguard-pr-annotations ansibleguard-pr-decision.json" in annotation_step
+    assert '--summary "$GITHUB_STEP_SUMMARY"' in annotation_step

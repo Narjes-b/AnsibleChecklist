@@ -38,6 +38,8 @@ pull-request ranges.
 The canonical rule inventory is [ALL_DETECTED_SMELLS.md](ALL_DETECTED_SMELLS.md).
 The comparison with the 38-criterion research checklist is in
 [CODE_REVIEW_CHECKLIST_COVERAGE.md](CODE_REVIEW_CHECKLIST_COVERAGE.md).
+The PR annotation implementation and developer workflow are in
+[PR_ANNOTATIONS_IMPLEMENTATION_AND_USE.md](PR_ANNOTATIONS_IMPLEMENTATION_AND_USE.md).
 
 For slow, beginner-friendly explanations and current implementation audits,
 use:

@@ -42,7 +42,7 @@ Useful focused suites:
 .venv/bin/python -m pytest -q tests/test_occurrences.py tests/test_output_contract.py
 
 # PR comparison and workflow contract
-.venv/bin/python -m pytest -q tests/test_pr_comparison.py tests/test_pr_workflow_contract.py
+.venv/bin/python -m pytest -q tests/test_pr_comparison.py tests/test_pr_annotations.py tests/test_pr_workflow_contract.py
 
 # GitHub discovery and reproducible repository collection
 .venv/bin/python -m pytest -q tests/test_github_discovery.py tests/test_study_scripts.py

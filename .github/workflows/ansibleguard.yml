@@ -62,6 +62,16 @@ jobs:
         if: github.event_name == 'push'
         run: ansibleguard . -o ansibleguard-head --profile technical-full --fail-on never
 
+      - name: Publish introduced PR annotations
+        if: >-
+          always() &&
+          github.event_name == 'pull_request' &&
+          hashFiles('ansibleguard-pr-decision.json') != ''
+        run: >-
+          ansibleguard-pr-annotations ansibleguard-pr-decision.json
+          --limit 50
+          --summary "$GITHUB_STEP_SUMMARY"
+
       - name: Publish scan summary
         if: always() && hashFiles('ansibleguard-head/summary.csv') != ''
         run: |

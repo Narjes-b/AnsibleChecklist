@@ -28,6 +28,7 @@ dev = [
 
 [project.scripts]
 ansibleguard = "ansibleguard.cli:main"
+ansibleguard-pr-annotations = "ansibleguard.report.pr_annotations:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
