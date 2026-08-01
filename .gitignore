@@ -9,6 +9,7 @@ validation/
 study/cache/
 study/repositories/
 study/snapshots/
+study/snapshots-*/
 study/history/
 study/analysis/
 study/logs/

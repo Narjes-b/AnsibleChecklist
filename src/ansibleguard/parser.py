@@ -40,7 +40,10 @@ from ansibleguard.detectors.credentials_leaking_in_log import (
 
 from ansibleguard.detectors.include_vars import detect_unused_include_vars
 from ansibleguard.detectors.missing_validate_certs import detect_missing_validate_certs
-from ansibleguard.detectors.deprecated_modules import detect_deprecated_modules
+from ansibleguard.detectors.deprecated_modules import (
+    detect_deprecated_modules,
+    detect_redirected_modules,
+)
 from ansibleguard.detectors.missing_tags import detect_missing_tags
 from ansibleguard.detectors.shell_instead_of_module import (
     detect_shell_instead_of_module,
@@ -50,6 +53,7 @@ from ansibleguard.detectors.paper_candidates import detect_paper_candidates
 from ansibleguard.detectors.review_checklist import detect_review_checklist_smells
 from ansibleguard.detectors.partial_checklist import detect_partial_checklist_smells
 from ansibleguard.detectors.missing_checklist import detect_missing_checklist_smells
+from ansibleguard.detectors.file_kinds import detect_file_kind_smells
 import pandas as pd
 import csv
 import json
@@ -121,6 +125,9 @@ def mainn(yaml_file_path):
     deprecated_mod_count, deprecated_mod_details = detect_deprecated_modules(
         yaml_file_path
     )
+    redirected_mod_count, redirected_mod_details = detect_redirected_modules(
+        yaml_file_path
+    )
     missing_tags_count, missing_tags_details = detect_missing_tags(yaml_file_path)
     shell_mod_count, shell_mod_details = detect_shell_instead_of_module(yaml_file_path)
     (
@@ -133,6 +140,7 @@ def mainn(yaml_file_path):
     review_checklist_metrics = detect_review_checklist_smells(yaml_file_path)
     partial_checklist_metrics = detect_partial_checklist_smells(yaml_file_path)
     missing_checklist_metrics = detect_missing_checklist_smells(yaml_file_path)
+    file_kind_metrics = detect_file_kind_smells(yaml_file_path)
 
     main_metrics = {
         "playbook_metrics": metrics_playbook,
@@ -160,6 +168,8 @@ def mainn(yaml_file_path):
         "missing_validate_certs_details": missing_certs_details,
         "deprecated_modules": deprecated_mod_count,
         "deprecated_modules_details": deprecated_mod_details,
+        "redirected_modules": redirected_mod_count,
+        "redirected_modules_details": redirected_mod_details,
         "missing_tags": missing_tags_count,
         "missing_tags_details": missing_tags_details,
         "shell_instead_of_module": shell_mod_count,
@@ -172,6 +182,7 @@ def mainn(yaml_file_path):
         **review_checklist_metrics,
         **partial_checklist_metrics,
         **missing_checklist_metrics,
+        **file_kind_metrics,
         "plays": [],
     }
 

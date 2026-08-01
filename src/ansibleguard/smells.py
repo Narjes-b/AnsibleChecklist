@@ -94,6 +94,9 @@ def assess_code_smells(
     result["playbook"]["metrics"]["deprecated_modules"] = metrics.get(
         "deprecated_modules", 0
     )
+    result["playbook"]["metrics"]["redirected_modules"] = metrics.get(
+        "redirected_modules", 0
+    )
 
     result["playbook"]["metrics"]["missing_tags"] = metrics.get("missing_tags", 0)
 
@@ -118,6 +121,7 @@ def assess_code_smells(
         "broken_role_dependencies",
         "unguarded_variables",
         "insecure_permissions",
+        "unsafe_file_writes",
         "default_credentials",
         "non_idempotent_commands",
         "silent_error_suppressions",

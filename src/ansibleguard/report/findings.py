@@ -16,6 +16,11 @@ retune later (e.g. once thresholds.csv gets an empirical calibration pass,
 or against the project's own Literature_review/ sources).
 """
 
+from __future__ import annotations
+
+import hashlib
+
+
 # level: SARIF's three practical severities -- "error", "warning", "note".
 # category: informal grouping, not part of SARIF itself, just useful when
 # eyeballing findings.json directly.
@@ -150,6 +155,11 @@ RULE_CATALOG = {
         "category": "maintainability",
         "description": "A deprecated Ansible module is in use and may break in future versions.",
     },
+    "redirected-module": {
+        "level": "note",
+        "category": "compatibility",
+        "description": "A legacy module name should use its current collection FQCN.",
+    },
     "missing-tags": {
         "level": "note",
         "category": "style",
@@ -220,10 +230,30 @@ RULE_CATALOG = {
         "category": "security",
         "description": "A managed resource grants unsafe permissions to other users.",
     },
+    "unsafe-file-write": {
+        "level": "warning",
+        "category": "reliability",
+        "description": "A file operation disables Ansible's atomic-write protection.",
+    },
     "default-credentials": {
         "level": "error",
         "category": "security",
         "description": "A credential uses a well-known default value.",
+    },
+    "plaintext-sensitive-variable": {
+        "level": "warning",
+        "category": "security",
+        "description": "A sensitive variable is stored as a plaintext literal.",
+    },
+    "unpinned-ansible-dependency": {
+        "level": "warning",
+        "category": "dependencies",
+        "description": "An Ansible role or collection dependency has no fixed version.",
+    },
+    "role-variable-precedence-collision": {
+        "level": "warning",
+        "category": "correctness",
+        "description": "A role variable is defined in both defaults and vars.",
     },
     "non-idempotent-command": {
         "level": "warning",
@@ -323,15 +353,74 @@ RULE_CATALOG = {
 }
 
 
-def _finding(file, line, rule_id, message):
+CONCEPT_IDS = {
+    "hardcoded-credentials": "hardcoded-secret",
+    "credentials-leaking-in-log": "credential-log-exposure",
+    "overriden-keys": "duplicate-mapping-key",
+    "deprecated-modules": "module-deprecation",
+    "shell-instead-of-module": "shell-module-migration",
+    "silent-error-suppression": "unhandled-failure-suppression",
+}
+
+EXTERNAL_CONCEPT_IDS = {
+    "deprecated-module": "module-deprecation",
+    "command-instead-of-module": "shell-module-migration",
+    "no-log-password": "credential-log-exposure",
+    "ignore-errors": "unhandled-failure-suppression",
+    "yaml[key-duplicates]": "duplicate-mapping-key",
+}
+
+
+def _finding(
+    file,
+    line,
+    rule_id,
+    message,
+    *,
+    provider="ansibleguard",
+    native_rule_id=None,
+    native_severity=None,
+    native_categories=None,
+    native_fingerprint=None,
+    help_url=None,
+    scan_mode=None,
+):
     catalog_entry = RULE_CATALOG.get(rule_id, {"level": "warning"})
-    return {
+    native_rule_id = native_rule_id or rule_id
+    concept_id = EXTERNAL_CONCEPT_IDS.get(
+        native_rule_id, CONCEPT_IDS.get(rule_id, rule_id)
+    )
+    finding = {
         "file": str(file),
         "line": int(line) if line else 1,
         "rule_id": rule_id,
         "severity": catalog_entry["level"],
         "message": message,
+        "provider": provider,
+        "native_rule_id": native_rule_id,
+        "concept_id": concept_id,
     }
+    if native_severity:
+        finding["native_severity"] = str(native_severity)
+    if native_categories:
+        finding["native_categories"] = list(native_categories)
+    if native_fingerprint:
+        finding["native_fingerprint"] = str(native_fingerprint)
+    if help_url:
+        finding["help_url"] = str(help_url)
+    if scan_mode:
+        finding["scan_mode"] = str(scan_mode)
+    identity = "|".join(
+        (
+            finding["provider"],
+            finding["native_rule_id"],
+            finding["file"].replace("\\", "/"),
+            str(finding["line"]),
+            finding["message"],
+        )
+    )
+    finding["finding_id"] = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    return finding
 
 
 def build_findings_list(
@@ -354,7 +443,21 @@ def build_findings_list(
     for f in gitleaks_findings or []:
         line = f.get("StartLine") or f.get("startLine") or 1
         desc = f.get("Description") or f.get("RuleID") or "Hardcoded secret detected"
-        out.append(_finding(file, line, "hardcoded-credentials", desc))
+        out.append(
+            _finding(
+                file,
+                line,
+                "hardcoded-credentials",
+                desc,
+                provider="gitleaks",
+                native_rule_id=(
+                    f.get("RuleID") or f.get("ruleID") or "gitleaks-secret"
+                ),
+                native_severity="error",
+                native_fingerprint=f.get("Fingerprint") or f.get("fingerprint"),
+                scan_mode=f.get("_scan_mode") or f.get("ScanMode") or "dir",
+            )
+        )
 
     # ansible-lint is also target-level and may produce useful load/syntax
     # findings for documents our structural detector cannot analyze.
@@ -365,7 +468,25 @@ def build_findings_list(
         message = (
             issue.get("message") or issue.get("description") or "ansible-lint issue"
         )
-        out.append(_finding(file, line, "ansible-lint-issue", message))
+        out.append(
+            _finding(
+                file,
+                line,
+                "ansible-lint-issue",
+                message,
+                provider="ansible-lint",
+                native_rule_id=(
+                    issue.get("check_name")
+                    or issue.get("rule_id")
+                    or issue.get("ruleId")
+                    or "ansible-lint-issue"
+                ),
+                native_severity=issue.get("severity") or issue.get("level"),
+                native_categories=issue.get("categories") or (),
+                native_fingerprint=issue.get("fingerprint"),
+                help_url=issue.get("url"),
+            )
+        )
 
     if not metrics or not result:
         return out
@@ -432,6 +553,16 @@ def build_findings_list(
                 f"{detail.get('issue', 'deprecated module')}",
             )
         )
+    for detail in metrics.get("redirected_modules_details", []) or []:
+        out.append(
+            _finding(
+                file,
+                detail.get("line", 1),
+                "redirected-module",
+                f"Task '{detail.get('task_name', 'Unknown')}': "
+                f"{detail.get('issue', 'legacy module redirect')}",
+            )
+        )
 
     # --- missing_tags: per-task details ---
     for detail in metrics.get("missing_tags_details", []) or []:
@@ -492,6 +623,7 @@ def build_findings_list(
         ("broken_role_dependencies_details", "broken-role-dependency"),
         ("unguarded_variables_details", "unguarded-variable"),
         ("insecure_permissions_details", "insecure-permissions"),
+        ("unsafe_file_writes_details", "unsafe-file-write"),
         ("default_credentials_details", "default-credentials"),
         ("non_idempotent_commands_details", "non-idempotent-command"),
         ("silent_error_suppressions_details", "silent-error-suppression"),
@@ -512,6 +644,12 @@ def build_findings_list(
         ("variable_use_before_definition_details", "variable-use-before-definition"),
         ("unexpected_task_locations_details", "unexpected-task-location"),
         ("deprecated_module_options_details", "deprecated-module-option"),
+        ("plaintext_sensitive_variables_details", "plaintext-sensitive-variable"),
+        ("unpinned_ansible_dependencies_details", "unpinned-ansible-dependency"),
+        (
+            "role_variable_precedence_collisions_details",
+            "role-variable-precedence-collision",
+        ),
     )
     for details_key, rule_id in paper_detail_rules:
         for detail in metrics.get(details_key, []) or []:

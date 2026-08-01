@@ -32,15 +32,37 @@ def _to_repo_relative(file_path, repo_root):
         return Path(file_path).name
 
 
-def _build_rules():
+def _build_rules(all_findings=()):
     rules = []
+    seen = set()
     for rule_id, meta in RULE_CATALOG.items():
+        seen.add(rule_id)
         rules.append(
             {
                 "id": rule_id,
                 "shortDescription": {"text": meta["description"]},
                 "defaultConfiguration": {"level": meta["level"]},
                 "properties": {"category": meta.get("category", "general")},
+            }
+        )
+    for finding in all_findings:
+        rule_id = finding["rule_id"]
+        if rule_id in seen:
+            continue
+        seen.add(rule_id)
+        rules.append(
+            {
+                "id": rule_id,
+                "shortDescription": {
+                    "text": f"Canonical AnsibleGuard occurrence: {rule_id}."
+                },
+                "defaultConfiguration": {
+                    "level": finding.get("severity", "warning")
+                },
+                "properties": {
+                    "category": "canonical-occurrence",
+                    "concept_id": finding.get("concept_id", rule_id),
+                },
             }
         )
     return rules
@@ -75,6 +97,12 @@ def build_sarif(all_findings, repo_root):
                         fingerprint_source.encode("utf-8")
                     ).hexdigest()
                 },
+                "properties": {
+                    "provider": f.get("provider", "ansibleguard"),
+                    "native_rule_id": f.get("native_rule_id", f["rule_id"]),
+                    "concept_id": f.get("concept_id", f["rule_id"]),
+                    "detectors": f.get("detectors", []),
+                },
             }
         )
 
@@ -88,7 +116,7 @@ def build_sarif(all_findings, repo_root):
                         "name": TOOL_NAME,
                         "informationUri": TOOL_INFO_URI,
                         "version": TOOL_VERSION,
-                        "rules": _build_rules(),
+                        "rules": _build_rules(all_findings),
                     }
                 },
                 "results": results,

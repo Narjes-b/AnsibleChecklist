@@ -5,6 +5,8 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
+import hashlib
+from importlib.metadata import PackageNotFoundError, version
 
 from .gitleaks import ToolResult
 
@@ -43,8 +45,45 @@ def lint_issue_line(issue):
 
 def scan_with_ansible_lint(target_path, output_format="json"):
     """Run ansible-lint and distinguish a clean scan from a tool failure."""
+    target_path = Path(target_path).resolve()
+    working_directory = target_path if target_path.is_dir() else target_path.parent
+    lint_target = "." if target_path.is_dir() else target_path.name
+    executable = _ansible_lint_executable()
+    config_path = next(
+        (
+            working_directory / name
+            for name in (
+                ".ansible-lint",
+                ".ansible-lint.yml",
+                ".ansible-lint.yaml",
+                ".config/ansible-lint.yml",
+                ".config/ansible-lint.yaml",
+            )
+            if (working_directory / name).is_file()
+        ),
+        None,
+    )
     try:
-        cmd = [_ansible_lint_executable(), str(target_path)]
+        package_version = version("ansible-lint")
+    except PackageNotFoundError:
+        package_version = None
+    metadata = {
+        "provider": "ansible-lint",
+        "version": package_version,
+        "executable": executable,
+        "cwd": str(working_directory),
+        "target": lint_target,
+        "format": output_format,
+        "dependency_mode": "offline-no-auto-install",
+        "config": str(config_path) if config_path else "defaults",
+        "config_sha256": (
+            hashlib.sha256(config_path.read_bytes()).hexdigest()
+            if config_path
+            else None
+        ),
+    }
+    try:
+        cmd = [executable, lint_target, "--offline"]
         if output_format == "json":
             cmd += ["-f", "json"]
         env = os.environ.copy()
@@ -52,21 +91,38 @@ def scan_with_ansible_lint(target_path, output_format="json"):
             "ANSIBLE_LOCAL_TEMP",
             str(Path(tempfile.gettempdir()) / "ansibleguard-ansible-tmp"),
         )
-        result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=working_directory,
+        )
     except (FileNotFoundError, OSError) as exc:
-        return ToolResult("tool-error", message=str(exc))
+        return ToolResult("tool-error", message=str(exc), metadata=metadata)
 
     if result.returncode not in (0, 2):
         return ToolResult(
             "tool-error",
             message=(result.stderr or result.stdout or "Unknown ansible-lint failure").strip(),
+            metadata=metadata,
         )
     if output_format != "json":
-        return ToolResult("completed", [result.stdout.strip()] if result.stdout.strip() else [])
+        return ToolResult(
+            "completed",
+            [result.stdout.strip()] if result.stdout.strip() else [],
+            metadata=metadata,
+        )
     try:
-        return ToolResult("completed", json.loads(result.stdout or "[]"))
+        return ToolResult(
+            "completed", json.loads(result.stdout or "[]"), metadata=metadata
+        )
     except json.JSONDecodeError as exc:
-        return ToolResult("tool-error", message=f"Invalid ansible-lint JSON: {exc}")
+        return ToolResult(
+            "tool-error",
+            message=f"Invalid ansible-lint JSON: {exc}",
+            metadata=metadata,
+        )
 
 def run_ansible_lint(target_path, output_format="json"):
     """

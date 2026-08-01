@@ -115,7 +115,7 @@ def _physical_loc(path: Path) -> int:
 
 
 def yaml_candidates(repository: Path) -> list[Path]:
-    """Return every YAML path under a repository except Git internals."""
+    """Return repository YAML, excluding Git and generated Ansible cache data."""
     repository = Path(repository)
     candidates = []
     for path in repository.rglob("*"):
@@ -124,7 +124,9 @@ def yaml_candidates(repository: Path) -> list[Path]:
         ):
             continue
         relative = path.relative_to(repository)
-        if ".git" in {part.lower() for part in relative.parts}:
+        if {".git", ".ansible"} & {
+            part.lower() for part in relative.parts
+        }:
             continue
         candidates.append(path)
     return sorted(candidates)
@@ -238,7 +240,9 @@ def write_file_manifest(rows, output_path: Path) -> Path:
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=MANIFEST_FIELDS)
+        writer = csv.DictWriter(
+            stream, fieldnames=MANIFEST_FIELDS, lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
     return output_path

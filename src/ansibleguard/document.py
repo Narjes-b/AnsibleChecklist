@@ -88,6 +88,8 @@ def inspect_document(path) -> DocumentInfo:
     except yaml.YAMLError as exc:
         return DocumentInfo(path, "invalid", "unknown", diagnostics=[str(exc)])
 
+    if not documents:
+        return DocumentInfo(path, "empty", "empty")
     if len(documents) != 1:
         return DocumentInfo(
             path,

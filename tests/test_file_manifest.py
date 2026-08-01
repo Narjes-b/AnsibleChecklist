@@ -74,6 +74,35 @@ def test_classifier_emits_one_explained_row_per_yaml_candidate(tmp_path):
     }
 
 
+def test_classifier_ignores_ansible_runtime_cache(tmp_path):
+    repository = _repository(tmp_path)
+    cached = repository / ".ansible" / "roles" / "downloaded" / "tasks"
+    cached.mkdir(parents=True)
+    (cached / "main.yml").write_text("- debug:\n    msg: cache\n")
+
+    paths = {row["path"] for row in classify_repository(repository)}
+
+    assert not any(path.startswith(".ansible/") for path in paths)
+
+
+def test_comment_only_group_vars_are_empty_production_ansible(tmp_path):
+    repository = tmp_path / "repository"
+    group_vars = repository / "inventory" / "sample" / "group_vars" / "all"
+    group_vars.mkdir(parents=True)
+    (group_vars / "cloud.yml").write_text(
+        "# Enable this provider when needed\n# provider_enabled: true\n",
+        encoding="utf-8",
+    )
+
+    row = classify_repository(repository)[0]
+
+    assert row["parse_status"] == "empty"
+    assert row["document_type"] == "empty"
+    assert row["file_class"] == "production_ansible"
+    assert row["classification_reason"] == "ansible_role_or_inventory_path"
+    assert row["included"] == "true"
+
+
 def test_manifest_selects_only_included_files_and_requires_complete_coverage(tmp_path):
     repository = _repository(tmp_path)
     rows = classify_repository(repository)

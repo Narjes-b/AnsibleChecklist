@@ -25,22 +25,22 @@ Limitations: the deprecated module list is manually maintained and
 
 from ansibleguard.detectors.source_lines import load_with_lines, source_line
 
-# Map of deprecated module names → recommended replacement.
-# Sourced from Ansible porting guides and module documentation.
-# Last updated: Ansible 9.x / core 2.16 deprecations.
+# Conservative fallback for real deprecations. Installed Ansible metadata is
+# consulted first; moved/redirected names are deliberately kept separate.
 _DEPRECATED_MODULES = {
-    # --- Docker (moved to community.docker collection) ---
     "docker": "community.docker.docker_container",
+    "netscaler": "community.network.netscaler_*",
+    "win_msi": "ansible.windows.win_package",
+    "include": "include_tasks or import_tasks",
+    "vsphere_guest": "community.vmware.vmware_guest",
+}
+
+_REDIRECTED_MODULES = {
     "docker_container": "community.docker.docker_container",
     "docker_image": "community.docker.docker_image",
     "docker_network": "community.docker.docker_network",
     "docker_volume": "community.docker.docker_volume",
     "docker_compose": "community.docker.docker_compose_v2",
-    "docker_swarm": "community.docker.docker_swarm",
-    "docker_secret": "community.docker.docker_secret",
-    "docker_config": "community.docker.docker_config",
-    "docker_stack": "community.docker.docker_stack",
-    # --- AWS (moved to amazon.aws / community.aws collections) ---
     "ec2": "amazon.aws.ec2_instance",
     "ec2_ami": "amazon.aws.ec2_ami",
     "ec2_key": "amazon.aws.ec2_key",
@@ -56,34 +56,17 @@ _DEPRECATED_MODULES = {
     "iam": "amazon.aws.iam_role",
     "iam_policy": "amazon.aws.iam_policy",
     "route53": "amazon.aws.route53",
-    # --- Networking ---
-    "netscaler": "community.network.netscaler_*",
     "bigip": "community.network.bigip_*",
     "ios_command": "cisco.ios.ios_command",
     "ios_config": "cisco.ios.ios_config",
     "nxos_command": "cisco.nxos.nxos_command",
     "eos_command": "arista.eos.eos_command",
-    # --- Windows ---
-    "win_msi": "ansible.windows.win_package",
     "win_robocopy": "ansible.windows.win_robocopy",
     "win_chocolatey": "chocolatey.chocolatey.win_chocolatey",
-    # --- Core deprecations ---
-    "include": "include_tasks or import_tasks (use include_tasks for dynamic, import_tasks for static)",
-    "action": "use dedicated module instead of low-level action plugin",
-    # --- VMware ---
-    "vsphere_guest": "community.vmware.vmware_guest",
     "vsphere_copy": "community.vmware.vmware_deployovf",
-    # --- OpenStack ---
     "os_server": "openstack.cloud.server",
     "os_volume": "openstack.cloud.volume",
     "os_network": "openstack.cloud.network",
-}
-
-# Modules that are short names (unqualified) that still work but should
-# use FQCN for clarity. These are NOT deprecated — they are still
-# supported — but Ansible recommends using FQCN for future-proofing.
-# Severity: note (informational).
-_ALIASED_MODULES = {
     "authorized_key": "ansible.posix.authorized_key",
     "firewalld": "ansible.posix.firewalld",
     "mount": "ansible.posix.mount",
@@ -97,6 +80,25 @@ _ALIASED_MODULES = {
     "git_config": "community.general.git_config",
     "npm": "community.general.npm",
 }
+
+
+def _installed_deprecation(module_name):
+    from ansibleguard.detectors.missing_checklist import _module_document
+
+    metadata = _module_document(module_name)
+    doc = metadata.get("doc", {}) if isinstance(metadata, dict) else {}
+    deprecated = (
+        metadata.get("deprecated") if isinstance(metadata, dict) else None
+    ) or (doc.get("deprecated") if isinstance(doc, dict) else None)
+    return deprecated if isinstance(deprecated, dict) else {}
+
+
+def _replacement(metadata):
+    return (
+        metadata.get("alternative")
+        or metadata.get("replacement")
+        or metadata.get("use_instead")
+    )
 
 
 def _collect_all_tasks(playbook):
@@ -167,35 +169,49 @@ def detect_deprecated_modules(yaml_file_path):
         for key in task:
             if key in meta_keys:
                 continue
-            # Check deprecated modules
-            if key in _DEPRECATED_MODULES:
+            installed = _installed_deprecation(str(key))
+            fallback = _DEPRECATED_MODULES.get(key)
+            if installed or fallback:
+                replacement = _replacement(installed) or fallback
+                replacement_text = (
+                    f" Use '{replacement}' instead." if replacement else ""
+                )
                 details.append({
                     "task_name": task_name,
                     "module": key,
-                    "replacement": _DEPRECATED_MODULES[key],
-                    "issue": (
-                        f"Module '{key}' is deprecated. "
-                        f"Use '{_DEPRECATED_MODULES[key]}' instead."
+                    "replacement": replacement,
+                    "metadata_source": (
+                        "installed-ansible-doc" if installed else "curated-fallback"
                     ),
+                    "issue": f"Module '{key}' is deprecated.{replacement_text}",
                     "line": source_line(task, key),
                 })
                 break  # One module per task
-            # Check aliased modules (short names — still supported but
-            # FQCN recommended for future-proofing)
-            elif key in _ALIASED_MODULES:
+
+    return len(details), details
+
+
+def detect_redirected_modules(yaml_file_path):
+    """Report legacy redirects/FQCN advice without calling them deprecated."""
+    playbook = load_with_lines(yaml_file_path)
+    if playbook is None:
+        return 0, []
+    details = []
+    for task in _collect_all_tasks(playbook):
+        task_name = task.get("name", "Unnamed task")
+        for key in task:
+            if key in _REDIRECTED_MODULES:
                 details.append({
                     "task_name": task_name,
                     "module": key,
-                    "replacement": _ALIASED_MODULES[key],
+                    "replacement": _REDIRECTED_MODULES[key],
                     "issue": (
-                        f"Module '{key}' uses a short name. "
-                        f"Consider using FQCN '{_ALIASED_MODULES[key]}' "
-                        f"for future-proofing."
+                        f"Module name '{key}' is a legacy redirect or short "
+                        f"name. Prefer '{_REDIRECTED_MODULES[key]}'."
                     ),
                     "line": source_line(task, key),
                 })
                 break
-
     return len(details), details
 
 

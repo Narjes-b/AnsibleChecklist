@@ -73,6 +73,50 @@ def test_repository_without_yaml_still_keeps_gitleaks_findings(tmp_path, monkeyp
     assert findings[0]["file"].endswith(".env")
 
 
+def test_pr_shas_add_history_scan_without_merging_scan_modes(tmp_path, monkeypatch):
+    target = tmp_path / "project"
+    target.mkdir()
+    (target / ".env").write_text("TOKEN=secret\n")
+    monkeypatch.setenv("ANSIBLEGUARD_BASE_SHA", "a" * 40)
+    monkeypatch.setenv("ANSIBLEGUARD_HEAD_SHA", "b" * 40)
+    monkeypatch.setattr(
+        "ansibleguard.external.gitleaks.scan_with_gitleaks",
+        lambda *a, **k: ToolResult(
+            "completed",
+            [{"File": ".env", "StartLine": 1, "Description": "Tree token"}],
+        ),
+    )
+    monkeypatch.setattr(
+        "ansibleguard.external.gitleaks.scan_git_range_with_gitleaks",
+        lambda *a, **k: ToolResult(
+            "completed",
+            [
+                {
+                    "File": ".env",
+                    "StartLine": 1,
+                    "Description": "History token",
+                    "_scan_mode": "git-range",
+                }
+            ],
+        ),
+    )
+    monkeypatch.setattr(
+        "ansibleguard.external.ansible_lint.scan_with_ansible_lint",
+        lambda *a, **k: ToolResult("completed"),
+    )
+
+    output = tmp_path / "output"
+    analyze_path(target, output)
+
+    occurrences = json.loads((output / "occurrences.json").read_text())
+    assert {item["scan_mode"] for item in occurrences} == {"dir", "git-range"}
+    metadata = json.loads((output / "run_metadata.json").read_text())
+    assert set(metadata["tool_details"]["gitleaks"]) >= {
+        "tree",
+        "git_range",
+    }
+
+
 def test_empty_yaml_keeps_source_detector_finding_without_structural_analysis(
     tmp_path, monkeypatch
 ):

@@ -1,18 +1,35 @@
 import csv
 
 
-FINDING_FIELDS = ("file", "line", "rule_id", "severity", "message")
+FINDING_FIELDS = (
+    "file",
+    "line",
+    "rule_id",
+    "severity",
+    "message",
+    "provider",
+    "native_rule_id",
+    "concept_id",
+    "native_severity",
+    "finding_id",
+)
 
 
-def write_findings_to_csv(findings, file_path):
+def write_findings_to_csv(findings, file_path, include_schema_version=False):
     """Write the normalized finding contract, including project-level rules."""
+    fieldnames = (
+        ("schema_version", *FINDING_FIELDS)
+        if include_schema_version
+        else FINDING_FIELDS
+    )
     with open(file_path, "w", newline="", encoding="utf-8") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=FINDING_FIELDS)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(
-            {field: finding.get(field, "") for field in FINDING_FIELDS}
-            for finding in findings
-        )
+        for finding in findings:
+            row = {field: finding.get(field, "") for field in FINDING_FIELDS}
+            if include_schema_version:
+                row["schema_version"] = 2
+            writer.writerow(row)
 
 
 def write_results_to_csv(all_results, file_path):

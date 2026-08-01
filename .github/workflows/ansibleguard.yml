@@ -24,43 +24,120 @@ jobs:
         run: pip install -e .
       - name: Install gitleaks
         run: ansibleguard install-tools
-      - name: Scan repository
+
+      - name: Scan pull-request head
+        if: github.event_name == 'pull_request'
         env:
           ANSIBLEGUARD_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           ANSIBLEGUARD_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: ansibleguard . -o ansibleguard-output --fail-on never
+        run: ansibleguard . -o ansibleguard-head --profile pr --fail-on never
+
+      - name: Scan pull-request base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_TREE: ${{ runner.temp }}/ansibleguard-base
+          ANSIBLEGUARD_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          ANSIBLEGUARD_HEAD_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git worktree add --detach "$BASE_TREE" "$BASE_SHA"
+          ansibleguard "$BASE_TREE" -o ansibleguard-base --profile pr --fail-on never
+
+      - name: Compare base and head
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          python scripts/compare_pr_results.py \
+            ansibleguard-base/canonical/occurrences.json \
+            ansibleguard-head/canonical/occurrences.json \
+            --policy observe \
+            --head-output ansibleguard-head \
+            -o ansibleguard-pr-decision.json
+
+      - name: Scan pushed branch
+        if: github.event_name == 'push'
+        run: ansibleguard . -o ansibleguard-head --profile technical-full --fail-on never
+
       - name: Publish scan summary
-        if: always()
+        if: always() && hashFiles('ansibleguard-head/summary.csv') != ''
         run: |
           echo '## AnsibleGuard scan' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Detailed reports are attached as a workflow artifact. Findings are uploaded to Code Scanning.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Raw detector results and canonical occurrences are attached as an artifact.' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
           echo '```csv' >> "$GITHUB_STEP_SUMMARY"
-          head -n 21 ansibleguard-output/summary.csv >> "$GITHUB_STEP_SUMMARY"
+          head -n 21 ansibleguard-head/summary/summary.csv >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+          if test -f ansibleguard-pr-decision.json; then
+            echo '' >> "$GITHUB_STEP_SUMMARY"
+            echo '### Pull-request comparison' >> "$GITHUB_STEP_SUMMARY"
+            python -c "import json; p=json.load(open('ansibleguard-pr-decision.json')); print(json.dumps(p['policy'], indent=2))" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Upload SARIF
-        if: always() && hashFiles('ansibleguard-output/findings.sarif') != ''
+        if: >-
+          always() &&
+          hashFiles('ansibleguard-head/canonical/findings.sarif') != '' &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository)
         uses: github/codeql-action/upload-sarif@v4
         with:
-          sarif_file: ansibleguard-output/findings.sarif
+          sarif_file: ansibleguard-head/canonical/findings.sarif
           category: ansibleguard
+
       - name: Upload detailed reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ansibleguard-results
-          path: ansibleguard-output/
-      - name: Enforce error policy
+          path: |
+            ansibleguard-head/
+            ansibleguard-base/
+            ansibleguard-pr-decision.json
+          if-no-files-found: error
+
+      - name: Enforce policy
         run: |
           python - <<'PY'
           import json
+          import os
+          import pathlib
           import sys
-          findings = json.load(open('ansibleguard-output/findings.json'))
-          diagnostics = json.load(open('ansibleguard-output/diagnostics.json'))
-          errors = [item for item in findings if item['severity'] == 'error']
-          tool_errors = [item for item in diagnostics if item['status'] == 'tool-error']
-          if errors or tool_errors:
-              print(f"Blocking: {len(errors)} error finding(s), {len(tool_errors)} tool error(s)")
+
+          head = pathlib.Path("ansibleguard-head")
+          diagnostic_files = [head / "diagnostics.json"]
+          base_diagnostics = pathlib.Path("ansibleguard-base/diagnostics.json")
+          if base_diagnostics.exists():
+              diagnostic_files.append(base_diagnostics)
+          diagnostics = [
+              item
+              for diagnostic_file in diagnostic_files
+              for item in json.loads(diagnostic_file.read_text())
+          ]
+          tool_errors = [item for item in diagnostics if item["status"] == "tool-error"]
+          if tool_errors:
+              print(f"Blocking: {len(tool_errors)} external-tool error(s)")
               sys.exit(1)
+
+          decision = pathlib.Path("ansibleguard-pr-decision.json")
+          if (
+              os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
+              and not decision.exists()
+          ):
+              print("Blocking: pull-request comparison did not produce a decision")
+              sys.exit(1)
+          if decision.exists():
+              policy = json.loads(decision.read_text())["policy"]
+              if policy["conclusion"] == "failure":
+                  print(
+                      "Blocking introduced occurrences:",
+                      ", ".join(policy["blocking_occurrence_ids"]),
+                  )
+                  sys.exit(1)
+          else:
+              findings = json.loads((head / "findings.json").read_text())
+              errors = [item for item in findings if item["severity"] == "error"]
+              if errors:
+                  print(f"Blocking: {len(errors)} error finding(s)")
+                  sys.exit(1)
           PY

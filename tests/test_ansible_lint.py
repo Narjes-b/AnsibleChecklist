@@ -72,3 +72,27 @@ def test_structured_lint_result_distinguishes_missing_binary(monkeypatch):
     result = scan_with_ansible_lint("playbook.yml")
     assert result.status == "tool-error"
     assert "missing" in result.message
+
+
+def test_ansible_lint_runs_from_scanned_project_root(tmp_path, monkeypatch):
+    import json
+    import subprocess
+
+    target = tmp_path / "project"
+    target.mkdir()
+    (target / "site.yml").write_text("- debug:\n    msg: ok\n", encoding="utf-8")
+    captured = {}
+
+    def fake_run(command, **kwargs):
+        captured["command"] = command
+        captured["cwd"] = kwargs["cwd"]
+        return subprocess.CompletedProcess(command, 0, json.dumps([]), "")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    result = scan_with_ansible_lint(target)
+    assert result.status == "completed"
+    assert captured["cwd"] == target.resolve()
+    assert captured["command"][1] == "."
+    assert "--offline" in captured["command"]
+    assert result.metadata["cwd"] == str(target.resolve())
+    assert result.metadata["dependency_mode"] == "offline-no-auto-install"

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ansibleguard://schemas/output-v2.json",
+  "title": "AnsibleGuard output contract v2",
+  "type": "object",
+  "required": ["schema_version", "contract", "kind"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "contract": {"const": "ansibleguard://schemas/output-v2.json"},
+    "kind": {
+      "enum": [
+        "raw-findings",
+        "canonical-occurrences",
+        "diagnostics",
+        "run-metadata",
+        "file-selection",
+        "review-metrics",
+        "run-report",
+        "legacy-layout",
+        "pr-comparison"
+      ]
+    },
+    "items": {"type": "array"},
+    "counts": {"type": "object"},
+    "artifacts": {"type": "object"},
+    "comparison": {"type": "object"},
+    "policy": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": ["raw-findings", "canonical-occurrences", "diagnostics"]
+          }
+        }
+      },
+      "then": {"required": ["items"]}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "run-report"}}},
+      "then": {"required": ["status", "profile", "counts", "artifacts"]}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "pr-comparison"}}},
+      "then": {"required": ["comparison", "policy"]}
+    }
+  ]
+}

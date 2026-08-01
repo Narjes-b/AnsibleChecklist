@@ -101,6 +101,58 @@ def test_collection_clones_selected_repository_and_freezes_sha(tmp_path):
     assert load_collected(frozen)[0]["commit_sha"] == expected_sha
 
 
+def test_collection_screening_flag_does_not_imply_final_selection(tmp_path):
+    manifest = tmp_path / "screening.csv"
+    manifest.write_text(
+        "project,collect_for_screening,selected\n"
+        "example/screen,true,false\n"
+        "example/final,false,true\n"
+        "example/ignored,false,false\n",
+        encoding="utf-8",
+    )
+
+    assert [row["project"] for row in read_selected(manifest)] == [
+        "example/screen",
+        "example/final",
+    ]
+
+
+def test_collection_supports_github_rows_and_records_postclone_gates(tmp_path):
+    source = tmp_path / "github-source"
+    expected_sha = _create_repository(source)
+    row = {
+        "project": "example/ansible-role-web",
+        "source_host": "github",
+        "source_url": "https://github.com/example/ansible-role-web",
+        "clone_url": str(source),
+        "html_url": "https://github.com/example/ansible-role-web",
+        "stars": "150",
+        "star_band": "100-999",
+        "forks": "20",
+        "license_spdx": "MIT",
+        "merged_prs_last_24_months": "7",
+        "preclone_eligible": "true",
+    }
+
+    result = collect_row(row, tmp_path / "repositories")
+
+    assert result["status"] == "collected"
+    assert result["commit_sha"] == expected_sha
+    assert result["source_host"] == "github"
+    assert result["opendev_url"] == ""
+    assert result["github_url"] == row["html_url"]
+    assert result["stars"] == "150"
+    assert result["yaml_loc"] == 8
+    assert result["production_ansible_yaml_file_percent"] == 33.33
+    assert result["production_ansible_yaml_loc_percent"] == 37.5
+    assert result["ansible_touching_commits"] == 1
+    assert result["eligibility_status"] == "ineligible"
+    assert "fewer-than-80-commits" in result["eligibility_reasons"]
+    assert "insufficient-recent-pr-or-contributor-activity" not in result[
+        "eligibility_reasons"
+    ]
+
+
 def test_pilot_runner_refuses_a_repository_that_moved(tmp_path, monkeypatch):
     repository = tmp_path / "repository"
     expected_sha = _create_repository(repository)

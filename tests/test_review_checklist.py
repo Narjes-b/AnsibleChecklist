@@ -6,6 +6,7 @@ from ansibleguard.detectors.review_checklist import (
     detect_shell_environment_exports,
     detect_silent_error_suppression,
     detect_undocumented_complex_tasks,
+    detect_unsafe_file_writes,
 )
 from ansibleguard.parser import mainn
 from ansibleguard.report.findings import build_findings_list
@@ -51,7 +52,9 @@ def test_security_reliability_and_environment_checks(tmp_path):
     assert detect_insecure_permissions(playbook)[0] == 1
     assert detect_default_credentials(playbook)[0] == 1
     assert detect_non_idempotent_commands(playbook)[0] == 1
-    assert detect_silent_error_suppression(playbook)[0] == 1
+    suppression_count, suppression_details = detect_silent_error_suppression(playbook)
+    assert suppression_count == 2
+    assert any("never inspected later" in item["issue"] for item in suppression_details)
     assert detect_shell_environment_exports(playbook)[0] == 1
 
 
@@ -128,3 +131,18 @@ def test_review_checks_flow_to_findings(tmp_path):
     rule_ids = {finding["rule_id"] for finding in findings}
     assert "insecure-permissions" in rule_ids
     assert "default-credentials" in rule_ids
+
+
+def test_private_key_group_read_and_unsafe_writes_are_reported(tmp_path):
+    playbook = _write(
+        tmp_path / "permissions.yml",
+        """- name: Install private key
+  copy:
+    content: key
+    dest: /root/.ssh/id_rsa
+    mode: "0640"
+    unsafe_writes: true
+""",
+    )
+    assert detect_insecure_permissions(playbook)[0] == 1
+    assert detect_unsafe_file_writes(playbook)[0] == 1

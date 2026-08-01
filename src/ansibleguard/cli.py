@@ -154,11 +154,23 @@ def analyze_path(
     from .detectors.partial_checklist import detect_partial_checklist_smells
     from .detectors.missing_checklist import detect_missing_checklist_smells
     from .detectors.review_metadata import detect_project_review_smells
-    from .external.gitleaks import scan_with_gitleaks
+    from .detectors.file_kinds import (
+        detect_file_kind_smells,
+        detect_role_variable_precedence_collisions,
+    )
+    from .external.gitleaks import (
+        scan_git_range_with_gitleaks,
+        scan_with_gitleaks,
+    )
     from .external.ansible_lint import scan_with_ansible_lint
     from .external.install_gitleaks import GITLEAKS_PATH
     from .external.gitleaks import ToolResult
-    from .profiles import filter_profile_findings, profile_definition, profile_metadata
+    from .profiles import (
+        filter_profile_findings,
+        profile_definition,
+        profile_metadata,
+        provider_enabled,
+    )
     from .file_manifest import FileManifestError
 
     target = Path(target)
@@ -182,18 +194,46 @@ def analyze_path(
         )
 
     scan_root = target if target.is_dir() else target.parent
-    if definition["external_tools"]:
-        gitleaks_result = scan_with_gitleaks(target, gitleaks_path or GITLEAKS_PATH)
+    if provider_enabled(profile, "gitleaks"):
+        binary_path = gitleaks_path or GITLEAKS_PATH
+        tree_result = scan_with_gitleaks(target, binary_path)
+        base_sha = os.environ.get("ANSIBLEGUARD_BASE_SHA")
+        head_sha = os.environ.get("ANSIBLEGUARD_HEAD_SHA")
+        if target.is_dir() and base_sha and head_sha:
+            history_result = scan_git_range_with_gitleaks(
+                target, binary_path, base_sha, head_sha
+            )
+            statuses = {tree_result.status, history_result.status}
+            gitleaks_result = ToolResult(
+                "tool-error" if "tool-error" in statuses else "completed",
+                findings=tree_result.findings + history_result.findings,
+                message="; ".join(
+                    message
+                    for message in (tree_result.message, history_result.message)
+                    if message
+                ),
+                metadata={
+                    "provider": "gitleaks",
+                    "tree": tree_result.metadata,
+                    "git_range": history_result.metadata,
+                },
+            )
+        else:
+            gitleaks_result = tree_result
+    else:
+        message = f"GitLeaks is not requested by profile {profile}."
+        gitleaks_result = ToolResult("not-requested", message=message)
+    if provider_enabled(profile, "ansible-lint"):
         lint_result = scan_with_ansible_lint(target)
     else:
-        message = f"External tools are not requested by profile {profile}."
-        gitleaks_result = ToolResult("not-requested", message=message)
+        message = f"ansible-lint is not requested by profile {profile}."
         lint_result = ToolResult("not-requested", message=message)
     structurally_analyzed = 0
     all_findings = []
     summary_rows = []
     diagnostics = []
     consumed_gitleaks_ids = set()
+    consumed_lint_ids = set()
 
     for yaml_file in yaml_files:
         out_dir = output_dir_for(scan_root, yaml_file, output_root)
@@ -207,6 +247,7 @@ def analyze_path(
         )
         consumed_gitleaks_ids.update(id(finding) for finding in file_gitleaks)
         file_lint = _lint_findings_for_file(lint_result.findings, yaml_file, scan_root)
+        consumed_lint_ids.update(id(finding) for finding in file_lint)
 
         findings, lint_results, result, metrics = execute_for_single_file(
             yaml_file,
@@ -230,6 +271,7 @@ def analyze_path(
             source_metrics.update(detect_review_checklist_smells(yaml_file))
             source_metrics.update(detect_partial_checklist_smells(yaml_file))
             source_metrics.update(detect_missing_checklist_smells(yaml_file))
+            source_metrics.update(detect_file_kind_smells(yaml_file))
             if any(
                 value
                 for key, value in source_metrics.items()
@@ -321,6 +363,26 @@ def analyze_path(
                 }
             )
 
+    repository_source_metrics = (
+        detect_role_variable_precedence_collisions(scan_root)
+        if definition["source_analysis"] and target.is_dir()
+        else {}
+    )
+    if repository_source_metrics:
+        project_result = {
+            "playbook": {"metrics": {"WarningUnusedIncludeVars": []}, "plays": []}
+        }
+        source_project_findings = build_findings_list(
+            repository_source_metrics, project_result, [], [], scan_root
+        )
+        source_project_findings = filter_findings(
+            source_project_findings, scan_root
+        )
+        source_project_findings = filter_profile_findings(
+            source_project_findings, profile
+        )
+        all_findings.extend(source_project_findings)
+
     # Repository-wide gitleaks also covers non-YAML files. Preserve those
     # findings in JSON/SARIF instead of silently dropping them merely because
     # they never enter the structural Ansible loop above.
@@ -360,6 +422,44 @@ def analyze_path(
             }
         )
 
+    # Lint-only profiles deliberately skip internal structural analysis. Keep
+    # every native ansible-lint result by normalizing any result not consumed
+    # in the per-file loop above.
+    for finding in lint_result.findings:
+        if id(finding) in consumed_lint_ids:
+            continue
+        from .external.ansible_lint import lint_issue_path
+
+        finding_file = lint_issue_path(finding) or "."
+        finding_path = Path(finding_file)
+        if not finding_path.is_absolute():
+            finding_path = Path(scan_root) / finding_path
+        external_findings = build_findings_list(None, None, [], [finding], finding_path)
+        external_findings = filter_findings(external_findings, scan_root)
+        external_findings = filter_profile_findings(external_findings, profile)
+        all_findings.extend(external_findings)
+        if external_findings:
+            summary_rows.append(
+                {
+                    "file": _relative_or_self(finding_path, scan_root),
+                    "parse_status": "not-applicable",
+                    "document_type": "ansible-lint",
+                    "structural_status": "not-applicable",
+                    "gitleaks_status": gitleaks_result.status,
+                    "ansible_lint_status": lint_result.status,
+                    "errors": sum(
+                        item["severity"] == "error" for item in external_findings
+                    ),
+                    "warnings": sum(
+                        item["severity"] == "warning" for item in external_findings
+                    ),
+                    "notes": sum(
+                        item["severity"] == "note" for item in external_findings
+                    ),
+                    "total": len(external_findings),
+                }
+            )
+
     failed_statuses = {"tool-error"}
     if gitleaks_result.status in failed_statuses:
         diagnostics.append(
@@ -392,6 +492,10 @@ def analyze_path(
         "tools": {
             "gitleaks": gitleaks_result.status,
             "ansible_lint": lint_result.status,
+        },
+        "tool_details": {
+            "gitleaks": gitleaks_result.metadata,
+            "ansible_lint": lint_result.metadata,
         },
     }
     _write_rollups(
@@ -437,66 +541,21 @@ def _write_rollups(
     selection_metadata,
     run_metadata,
 ):
-    import csv
-    import json as _json
-    from .report.sarif_writer import write_sarif
-    from .report.csv_writer import write_findings_to_csv
-    from .report.text_writer import write_findings_to_txt
+    from .report.output_contract import write_rollups_v2
 
-    # summary.csv -- one row per file, ranked worst-first, for "which files
-    # actually need attention" at a glance instead of opening N CSVs by hand.
-    summary_rows_sorted = sorted(
-        summary_rows, key=lambda r: (-r["errors"], -r["warnings"], -r["total"])
+    paths = write_rollups_v2(
+        all_findings,
+        summary_rows,
+        diagnostics,
+        project_metrics,
+        output_root,
+        scan_root,
+        selection_metadata,
+        run_metadata,
     )
-    summary_csv_path = output_root / "summary.csv"
-    with open(summary_csv_path, "w", newline="") as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=[
-                "file",
-                "parse_status",
-                "document_type",
-                "structural_status",
-                "gitleaks_status",
-                "ansible_lint_status",
-                "errors",
-                "warnings",
-                "notes",
-                "total",
-            ],
-        )
-        writer.writeheader()
-        writer.writerows(summary_rows_sorted)
-
-    # findings.json -- the flat shape itself, in our own readable format.
-    findings_json_path = output_root / "findings.json"
-    with open(findings_json_path, "w", encoding="utf-8") as f:
-        _json.dump(all_findings, f, indent=2)
-
-    findings_csv_path = output_root / "findings.csv"
-    findings_txt_path = output_root / "findings.txt"
-    write_findings_to_csv(all_findings, findings_csv_path)
-    write_findings_to_txt(all_findings, findings_txt_path)
-
-    with open(output_root / "review_metrics.json", "w", encoding="utf-8") as f:
-        _json.dump(project_metrics, f, indent=2)
-
-    with open(output_root / "diagnostics.json", "w", encoding="utf-8") as f:
-        _json.dump(diagnostics, f, indent=2)
-
-    with open(output_root / "file_selection.json", "w", encoding="utf-8") as f:
-        _json.dump(selection_metadata, f, indent=2)
-
-    with open(output_root / "run_metadata.json", "w", encoding="utf-8") as f:
-        _json.dump(run_metadata, f, indent=2)
-
-    # findings.sarif -- GitHub Code Scanning-native shape.
-    sarif_path = output_root / "findings.sarif"
-    write_sarif(all_findings, sarif_path, repo_root=scan_root)
-
     print(
-        f"[✔] Rollups written: {summary_csv_path}, {findings_json_path}, "
-        f"{findings_csv_path}, {findings_txt_path}, {sarif_path}"
+        f"[✔] Rollups written: {paths['summary']}, {paths['findings']}, "
+        f"{paths['sarif']}, {paths['report']}"
     )
 
 

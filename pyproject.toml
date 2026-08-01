@@ -8,22 +8,22 @@ version = "0.1.0"
 description = "IaC smell detector for Ansible playbooks"
 requires-python = ">=3.10"
 dependencies = [
-    "pyyaml",
+    "pyyaml>=6.0,<7",
     "ruamel.yaml==0.19.1",
-    "regex",
-    "pandas",
-    "spacy",
-    "nltk",
-    "ansiblemetrics",
-    "ansible-lint",
-    "ansible-compat",
-    "requests",
+    "regex>=2024.11,<2027",
+    "pandas>=2.2,<4",
+    "spacy>=3.8,<4",
+    "nltk>=3.9,<4",
+    "ansiblemetrics==0.4.2",
+    "ansible-lint>=26.4,<27",
+    "ansible-compat>=26.3,<27",
+    "requests>=2.32,<3",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "jsonschema",
+    "pytest>=8,<10",
+    "jsonschema>=4.23,<5",
 ]
 
 [project.scripts]
@@ -33,4 +33,4 @@ ansibleguard = "ansibleguard.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-ansibleguard = ["thresholds.csv"]
+ansibleguard = ["thresholds.csv", "report/schemas/*.json"]

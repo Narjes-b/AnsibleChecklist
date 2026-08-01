@@ -23,10 +23,20 @@ def write_findings_to_txt(findings, file_path, mode="w", title="Normalized findi
             txtfile.write("No findings detected.\n")
             return
         for finding in findings:
+            provider = finding.get("provider", "ansibleguard")
+            native_rule_id = finding.get(
+                "native_rule_id", finding.get("rule_id", "unknown")
+            )
+            concept_id = finding.get(
+                "concept_id", finding.get("rule_id", "unknown")
+            )
+            concept_suffix = (
+                f"({concept_id}) " if concept_id != native_rule_id else ""
+            )
             txtfile.write(
-                "- [{severity}] {rule_id} at {file}:{line}: {message}\n".format(
-                    **finding
-                )
+                f"- [{finding['severity']}] {provider}/{native_rule_id} "
+                f"{concept_suffix}at {finding['file']}:{finding['line']}: "
+                f"{finding['message']}\n"
             )
 
 
@@ -34,8 +44,25 @@ def write_GitLeaks_results_to_txt(findings, file_path):
     output_file = Path(file_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure dir exists
 
+    safe_fields = (
+        "RuleID",
+        "Description",
+        "File",
+        "StartLine",
+        "EndLine",
+        "Entropy",
+        "Fingerprint",
+        "Tags",
+        # Backward-compatible aliases used by older adapters and tests.
+        "rule",
+        "file",
+    )
+    redacted = [
+        {field: finding[field] for field in safe_fields if field in finding}
+        for finding in findings or []
+    ]
     with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(findings, f, indent=2)
+        json.dump(redacted, f, indent=2)
 
     print(f"[✔] GitLeaks analysis saved to {file_path}")
 

@@ -106,7 +106,7 @@ def detect_insecure_permissions(path):
     for task, _ in _iter_tasks(document):
         candidates = []
         if "mode" in task:
-            candidates.append(("task", task["mode"]))
+            candidates.append(("task", task["mode"], task))
         for module_name, value in task.items():
             short_name = str(module_name).split(".")[-1]
             if (
@@ -114,16 +114,47 @@ def detect_insecure_permissions(path):
                 and isinstance(value, dict)
                 and "mode" in value
             ):
-                candidates.append((module_name, value["mode"]))
-        for module_name, mode in candidates:
+                candidates.append((module_name, value["mode"], value))
+        for module_name, mode, module_args in candidates:
             parsed = _mode_to_int(mode)
             task_text = str(task).lower()
             sensitive = bool(
                 SENSITIVE_KEY_RE.search(task_text) or "private" in task_text
             )
+            destination = str(
+                module_args.get("path")
+                or module_args.get("dest")
+                or module_args.get("name")
+                or ""
+            ).lower()
+            private_material = bool(
+                "private_key" in task_text
+                or "id_rsa" in destination
+                or "id_ed25519" in destination
+                or destination.endswith((".pem", ".key"))
+            )
+            is_directory = module_args.get("state") == "directory"
             issue = None
-            if parsed is not None and parsed & stat.S_IWOTH:
+            if parsed is not None and parsed & (stat.S_ISUID | stat.S_ISGID):
+                issue = "Managed permissions unexpectedly set setuid or setgid bits."
+            elif (
+                parsed is not None
+                and is_directory
+                and parsed & stat.S_IWOTH
+                and not parsed & stat.S_ISVTX
+            ):
+                issue = (
+                    "World-writable directory has no sticky bit, allowing users "
+                    "to remove or replace each other's entries."
+                )
+            elif parsed is not None and parsed & stat.S_IWOTH:
                 issue = "World-writable permissions grant write access to other users."
+            elif (
+                parsed is not None
+                and private_material
+                and parsed & (stat.S_IRGRP | stat.S_IROTH)
+            ):
+                issue = "Private key material is readable by group or other users."
             elif parsed is not None and sensitive and parsed & stat.S_IROTH:
                 issue = "A sensitive resource is readable by other users."
             elif _symbolic_world_write(mode):
@@ -138,6 +169,27 @@ def detect_insecure_permissions(path):
                         "issue": issue,
                     }
                 )
+    return len(details), details
+
+
+def detect_unsafe_file_writes(path):
+    document, text = _load(path)
+    details = []
+    for task, _ in _iter_tasks(document):
+        for module_name, value in task.items():
+            if not isinstance(value, dict) or value.get("unsafe_writes") is not True:
+                continue
+            details.append(
+                {
+                    "line": _task_line(text, task),
+                    "task_name": task.get("name", "Unnamed task"),
+                    "module": str(module_name),
+                    "issue": (
+                        "unsafe_writes: true disables atomic file replacement "
+                        "and can expose partial or corrupted content."
+                    ),
+                }
+            )
     return len(details), details
 
 
@@ -221,15 +273,38 @@ def detect_non_idempotent_commands(path, command_pattern=None):
 def detect_silent_error_suppression(path):
     document, text = _load(path)
     details = []
-    for task, _ in _iter_tasks(document):
+    tasks = [task for task, _ in _iter_tasks(document)]
+    for index, task in enumerate(tasks):
         ignores_errors = task.get("ignore_errors") is True
         disables_failure = task.get("failed_when") is False
-        if (ignores_errors or disables_failure) and not task.get("register"):
+        if not (ignores_errors or disables_failure):
+            continue
+        registered = task.get("register")
+        later_text = str(tasks[index + 1 :])
+        result_is_inspected = bool(
+            registered
+            and re.search(rf"\b{re.escape(str(registered))}\b", later_text)
+        )
+        if not result_is_inspected:
+            mechanism = (
+                "ignore_errors: true"
+                if ignores_errors
+                else "failed_when: false"
+            )
+            recovery = (
+                f" Registered result '{registered}' is never inspected later."
+                if registered
+                else " No result is registered for later recovery."
+            )
             details.append(
                 {
                     "line": _task_line(text, task),
                     "task_name": task.get("name", "Unnamed task"),
-                    "issue": "Task suppresses failure without registering the result for warning or recovery handling.",
+                    "mechanism": mechanism,
+                    "issue": (
+                        f"Task uses {mechanism} without observable recovery "
+                        f"handling.{recovery}"
+                    ),
                 }
             )
     return len(details), details
@@ -342,6 +417,7 @@ def detect_review_checklist_smells(path):
     config = load_detector_config(path)
     detectors = {
         "insecure_permissions": detect_insecure_permissions,
+        "unsafe_file_writes": detect_unsafe_file_writes,
         "default_credentials": lambda value: detect_default_credentials(
             value, config["rules"]["default_credentials"]
         ),
