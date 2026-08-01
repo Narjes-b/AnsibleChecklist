@@ -503,8 +503,10 @@ is used.
 After the two commits were pushed, GitHub reported PR #1 as `CONFLICTING`
 because `main` has five commits not present on this branch. A proposed
 `git merge origin/main` approval was interrupted and rejected by the user.
-The command made no repository change: there is no `MERGE_HEAD`, no conflict
-state, and local/remote `sarif-validation-support` both remain at `c951801`.
+The command made no repository change: there was no `MERGE_HEAD` or conflict
+state, and immediately after interruption local/remote
+`sarif-validation-support` both remained at `c951801`. Later documentation-only
+commits do not integrate `main`.
 
 Per the user's instruction, this session will not merge, rebase, or otherwise
 integrate `main`. PR #1 therefore remains open with its existing base and
