@@ -1,11 +1,16 @@
 # AnsibleChecklist — Implemented Smell Inventory
 
 > **Branch:** `sarif-validation-support`
-> **Last updated:** 2026-07-18
-> **Total smells:** 60 (58 internal rules + GitLeaks + ansible-lint)
-> **Profiles:** all 60 rules are assigned to core, extended, review, or external families; see `RESEARCH_PROFILES_IMPLEMENTATION.md`.
+> **Last updated:** 2026-07-30
+> **Total smells:** 65 (63 internal rules + GitLeaks + ansible-lint)
+> **Profiles:** all 65 rules are assigned to core, extended, review, or external families; see `RESEARCH_PROFILES_IMPLEMENTATION.md`.
 >
-> **Test suite:** 163 passing; no environment failures
+> **Current verification:** see `README.md`
+>
+> **New rule details:** `redirected-module`, `unsafe-file-write`,
+> `plaintext-sensitive-variable`, `unpinned-ansible-dependency`, and
+> `role-variable-precedence-collision` are documented in
+> `DEVELOPER_PROFILES_OVERLAP_PR_IMPLEMENTATION.md`.
 
 ---
 

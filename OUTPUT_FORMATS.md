@@ -1,5 +1,12 @@
 # AnsibleGuard — Output Formats: The Three Ways Results Are Presented
 
+> **Current v2 contract:** New scans start at `summary/report.json` and
+> organize artifacts under `summary/`, `raw/`, `canonical/`, `metadata/`, and
+> `legacy/`. Root filenames described in this older layer walkthrough remain
+> compatibility aliases for one release. See
+> [OUTPUT_CONTRACT_V2_SIX_CHANGES.md](OUTPUT_CONTRACT_V2_SIX_CHANGES.md) for
+> authoritative paths, schemas, columns, and migration rules.
+
 Companion to `ARCHITECTURE.md` (call graph), `PROJECT_STATUS.md` (bug
 log), and `CLI_STATUS.md` (CLI development log). This file answers one
 question: **when you run the `ansibleguard` command against a project,
@@ -123,9 +130,10 @@ GitLeaks findings, ansible-lint issues) down to one consistent record:
 }
 ```
 
-`findings.json` is the canonical list. `findings.csv` has the same five fields
-for spreadsheets, `findings.txt` renders the same records for humans, and SARIF
-maps the same records to Code Scanning. `review_metrics.json` retains raw Git
+Root `findings.json` is now the backward-compatible raw provider list. The
+versioned raw list is `raw/findings.json`; the developer-facing grouped list is
+`canonical/occurrences.json`. Canonical CSV, text, and SARIF render those
+grouped occurrences. `review_metrics.json` retains raw Git
 review-range counts and details. The normalized section appended to each
 `Play_Level_Analysis.txt` uses the same records, so newer detectors are visible
 in the legacy human-readable report too.

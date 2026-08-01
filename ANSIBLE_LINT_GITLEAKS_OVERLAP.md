@@ -14,17 +14,66 @@ Yes, AnsibleGuard overlaps with both tools.
   and role-graph rules are not provided by GitLeaks and do not have a direct
   ansible-lint equivalent.
 
-This audit was checked on 22 July 2026 against:
+This audit was rechecked on 28 July 2026 against:
 
 - locally installed ansible-lint 26.4.0 with ansible-core 2.21.0;
+- current ansible-lint documentation and the 26.6.0 release published on
+  30 June 2026;
 - the 53 top-level rules returned locally by `ansible-lint -L`;
 - the [official ansible-lint rule index](https://docs.ansible.com/projects/lint/rules/);
 - AnsibleGuard's pinned GitLeaks 8.30.1 binary;
 - the 222 rules in the [official GitLeaks 8.30.1 default configuration](https://github.com/gitleaks/gitleaks/blob/v8.30.1/config/gitleaks.toml);
 - the [official GitLeaks usage/configuration documentation](https://github.com/gitleaks/gitleaks).
 
-The versions matter. `ansible-lint` is not pinned in `pyproject.toml`, so a
-fresh installation can expose different rules or behavior.
+The versions matter. The environment used by this repository is not the newest
+published ansible-lint environment, and `ansible-lint` is not pinned in
+`pyproject.toml`. A fresh installation can therefore expose different rules,
+profiles, output schemas, or behavior. The
+[official PyPI release history](https://pypi.org/project/ansible-lint/) is the
+authority for published ansible-lint versions. GitLeaks 8.30.1 is currently
+the latest release and its official release includes platform-specific
+checksums, but AnsibleGuard's installer does not yet verify them.
+
+## Definitions used in this audit
+
+The word “overlap” can otherwise hide several different situations.
+
+| Term | Simple definition | Example here |
+|---|---|---|
+| Exact integration | AnsibleGuard calls another tool and renames its result | every GitLeaks result becomes `hardcoded-credentials` |
+| Detector overlap | two independent implementations target substantially the same condition | `overriden-keys` and `yaml[key-duplicates]` |
+| Partial overlap | the tools share some positive cases but use different predicates | `insecure-permissions` and `risky-file-permissions` |
+| Adjacent concern | the subject is related but the detected condition is different | `missing-handler` and ansible-lint's `no-handler` |
+| Complement | one tool detects a class the other tool intentionally does not | GitLeaks secrets versus AnsibleGuard role graphs |
+| Duplicate occurrence | one physical problem is emitted more than once | one shell task reported by an internal and external rule |
+| Native identity | the original tool, rule/subrule, version, and evidence fields | `ansible-lint/no-changed-when`, not only `ansible-lint-issue` |
+| Baseline | an approved set of pre-existing findings used to identify new debt | a frozen report from the protected branch |
+| Ratchet | old approved debt is tolerated, but a PR cannot add new debt | block only fingerprints introduced by the PR |
+
+These are operational definitions for this project. They should be copied into
+the paper's methods section if overlap counts are reported.
+
+The operational rollout is specified separately in
+[`PULL_REQUEST_PROFILES_AND_TESTING_PLAN.md`](PULL_REQUEST_PROFILES_AND_TESTING_PLAN.md).
+
+## Where this is implemented in the repository
+
+| Concern | Current code | What it does today |
+|---|---|---|
+| profile populations | [`src/ansibleguard/profiles.py`](src/ansibleguard/profiles.py) | makes both external aggregate IDs technical-only |
+| top-level orchestration | [`src/ansibleguard/cli.py`](src/ansibleguard/cli.py) | runs each external tool once, matches results to files, and writes rollups |
+| ansible-lint wrapper | [`src/ansibleguard/external/ansible_lint.py`](src/ansibleguard/external/ansible_lint.py) | executes target-level JSON lint and returns structured tool status |
+| GitLeaks wrapper | [`src/ansibleguard/external/gitleaks.py`](src/ansibleguard/external/gitleaks.py) | runs current-tree `detect --no-git` and loads JSON |
+| GitLeaks installer | [`src/ansibleguard/external/install_gitleaks.py`](src/ansibleguard/external/install_gitleaks.py) | pins 8.30.1, downloads it, but does not verify the published checksum |
+| normalization/catalog | [`src/ansibleguard/report/findings.py`](src/ansibleguard/report/findings.py) | maps GitLeaks to `hardcoded-credentials` and ansible-lint to `ansible-lint-issue` |
+| legacy raw output | [`src/ansibleguard/report/text_writer.py`](src/ansibleguard/report/text_writer.py) | writes raw per-file GitLeaks objects; this must be redacted |
+| SARIF | [`src/ansibleguard/report/sarif_writer.py`](src/ansibleguard/report/sarif_writer.py) | converts normalized findings and creates stable-looking hashes from current fields |
+| PR workflow | [`.github/workflows/ansibleguard.yml`](.github/workflows/ansibleguard.yml) | runs `technical-full`, uploads SARIF/artifacts, and applies the current error/tool-error gate |
+| wrapper tests | [`tests/test_ansible_lint.py`](tests/test_ansible_lint.py), [`tests/test_gitleaks_hardcoded_credentials.py`](tests/test_gitleaks_hardcoded_credentials.py) | cover basic success/failure/config behavior, not the complete production contract |
+| profile tests | [`tests/test_profiles.py`](tests/test_profiles.py) | prove research profiles do not execute external tools |
+
+The more detector-by-detector code comparison is retained in
+[`ANSIBLEGUARD_EXTERNAL_TOOL_OVERLAP.md`](ANSIBLEGUARD_EXTERNAL_TOOL_OVERLAP.md).
 
 ## Do not confuse the three tools
 
@@ -635,6 +684,31 @@ families in separate tables.
 
 ## The biggest current integration gaps
 
+### 0. raw GitLeaks records can be uploaded as artifacts
+
+This is the most urgent implementation issue.
+
+`src/ansibleguard/report/text_writer.py` writes the complete raw GitLeaks
+objects into each per-file `gitleaks.txt`. GitLeaks JSON records can contain
+the matched secret and source match, not only safe metadata. The current
+`.github/workflows/ansibleguard.yml` uploads the complete
+`ansibleguard-output/` directory.
+
+Therefore a credential already committed to a PR could be copied into a CI
+artifact and exposed to everyone who can read that artifact. Normalized
+`findings.json` and SARIF currently use only the description, file, and line,
+which is safer; the legacy raw file is the problem.
+
+Required correction before production enforcement:
+
+1. never persist `Secret`, `Match`, or surrounding source text;
+2. retain only rule ID, redacted fingerprint, file, line, entropy, and safe
+   tags;
+3. add a test that plants a synthetic canary value and proves the value is
+   absent from every output file and workflow log;
+4. rotate/revoke a real credential immediately if one is ever detected—hiding
+   the finding does not make the credential safe.
+
 ### 1. ansible-lint native identity is lost
 
 Current output records:
@@ -691,6 +765,262 @@ defaults were extended or replaced.
 GitLeaks still supports `detect`, but official documentation directs new use
 to `dir`, `git`, or `stdin`. Updating to `dir` should be covered by a pinned
 version test so output compatibility is deliberate.
+
+### 7. ansible-lint is not guaranteed to run from the target project root
+
+The wrapper passes the target path but does not set `cwd` on
+`subprocess.run`. The
+[official configuration documentation](https://docs.ansible.com/projects/lint/configuring/)
+and [usage documentation](https://docs.ansible.com/projects/lint/usage/)
+require execution from the project root for correct configuration discovery,
+file discovery, and dependency resolution. Running `ansibleguard
+/other/project` from this repository can therefore load the wrong
+configuration or dependencies.
+
+The wrapper should resolve the target repository root, run ansible-lint with
+that directory as `cwd`, and use paths relative to that root. Tests must invoke
+AnsibleGuard both from the target root and from an unrelated directory and
+require identical results.
+
+### 8. ansible-lint output compatibility is version-sensitive
+
+The current parser expects a list of issue dictionaries from `-f json`.
+Current ansible-lint documentation describes SARIF output for `--format
+sarif`/`json`. That is a strong reason not to assume a stable undocumented
+shape across upgrades.
+
+Use explicit SARIF output, validate its schema, preserve native rule IDs, and
+contract-test the exact pinned ansible-lint version. A dependency upgrade must
+be a reviewed change with a before/after rule and fixture report.
+
+### 9. severity and suppressions lose their native meaning
+
+All ansible-lint findings receive AnsibleGuard warning severity even when the
+native rule is fatal, ignored, experimental, or unskippable. All GitLeaks
+findings receive error severity. The normalized record also does not preserve
+whether an ansible-lint finding was ignored or which target configuration
+enabled it.
+
+Native severity/status and AnsibleGuard policy severity must be separate
+fields. Otherwise a policy decision can be mistaken for a property of the
+external tool.
+
+### 10. the GitLeaks installer does not verify release checksums
+
+`install_gitleaks.py` pins 8.30.1 but downloads and extracts the archive
+without checking the checksum published with the
+[official 8.30.1 release](https://github.com/gitleaks/gitleaks/releases/tag/v8.30.1).
+Pinning a version is not sufficient supply-chain verification. The expected
+SHA-256 must be pinned per supported platform, verified before extraction, and
+recorded in run metadata.
+
+### 11. full-tree PR scans confuse old debt with new debt
+
+`gitleaks detect --no-git` and target-level ansible-lint scan the checked-out
+tree. A PR can fail because of a finding that already exists on the base
+branch. Conversely, `--no-git` cannot answer whether the PR introduced and
+then deleted a secret in an intermediate commit.
+
+The PR policy needs two explicitly named questions:
+
+- **tree delta:** which normalized findings exist at head but not at base?
+- **commit-range secrets:** which secret findings occur in the commits or
+  patches between base and head?
+
+Do not combine those denominators into one prevalence count.
+
+### 12. tool maintenance and rule drift remain external threats
+
+The GitLeaks repository currently states that future releases are intended for
+security patches rather than new features. Even without feature releases,
+configuration rules, allowlists, decoders, and provider token formats can
+become stale. ansible-lint explicitly recommends newer Ansible versions and is
+opinionated/configurable. A reproducible study must freeze versions; a
+production service must also have a deliberate upgrade and revalidation
+process. Those are different goals.
+
+## Limitations of the three approaches
+
+### ansible-lint limitations
+
+- It is a linter for proven Ansible practices, syntax, formatting, schemas,
+  module arguments, and packaging—not a general secret scanner, defect
+  predictor, or Git-review analyzer.
+- Results depend on profile, `enable_list`, `skip_list`, warning policy,
+  yamllint configuration, installed collections, roles, Ansible version, and
+  execution directory.
+- `syntax-check` can stop further processing of a file. Missing dependencies or
+  an unsuitable test environment can look like source problems.
+- Some rules are opt-in or experimental; profile documentation can also list
+  not-yet-implemented rules. A documented profile name is not proof that every
+  named rule executed.
+- It is intentionally opinionated and allows per-line or project
+  suppressions. A clean result means “clean under this configuration,” not
+  “defect-free.”
+- Static checks cannot prove runtime idempotence, target-host behavior,
+  privilege boundaries, or the correctness of values injected by inventory,
+  Vault, dynamic includes, plugins, or external systems.
+
+The official docs themselves describe the tool as opinionated, explain
+configuration-dependent rule selection, and document cases where suppressions
+are appropriate:
+[overview](https://docs.ansible.com/projects/lint/),
+[configuration](https://docs.ansible.com/projects/lint/configuring/), and
+[usage](https://docs.ansible.com/projects/lint/usage/).
+
+### GitLeaks limitations
+
+- Pattern/keyword/entropy rules cannot understand Ansible execution semantics.
+- `dir` sees current files; `git` sees Git history/patches. Neither mode should
+  silently stand in for the other.
+- Generic patterns produce false positives; incomplete patterns, skipped file
+  types, and missing provider rules produce false negatives.
+- A detected token is not necessarily active, and GitLeaks does not validate
+  provider credentials by contacting the provider.
+- A custom config can replace defaults; allowlists and baselines can hide real
+  findings if governed poorly.
+- Encodings, generated files, archives, large files, binary formats, and rule
+  evolution affect coverage.
+- A scanner report is itself sensitive if it contains the secret.
+
+The peer-reviewed comparative study by Basak et al. reported that detector
+choice changes both precision and recall and attributed false positives to
+generic regular expressions/entropy and false negatives to faulty expressions,
+skipped file types, and insufficient rulesets:
+[paper preprint](https://arxiv.org/abs/2307.00714),
+[ESEM 2023 DOI](https://doi.org/10.1109/ESEM56168.2023.10304853).
+Those values describe the evaluated versions and benchmark; they must not be
+presented as permanent properties of GitLeaks 8.30.1.
+
+### AnsibleGuard limitations
+
+- Many rules are heuristics or threshold-based smells, not proofs of defects.
+- Cross-file variable, include, role, inventory, plugin, and runtime resolution
+  is incomplete. `unguarded-variable` is correctly quarantined outside the
+  provisional research core.
+- The normalized external rule identity, version, configuration provenance,
+  and deduplication contract are incomplete.
+- Full-tree technical results mix source, external-tool, and review-range
+  questions unless the consumer uses the explicit research profiles.
+- Semantic similarity depends on the bundled NLP model and on English-like
+  names; this threatens construct validity.
+- The tool performs static analysis only. It does not run playbooks against
+  real hosts and cannot establish operational safety or idempotence.
+- Existing validation is promising but does not yet establish precision and
+  recall for every rule across the target population.
+
+The need for deeper flow reasoning is supported by GASEL's Ansible-specific
+control/data-flow work
+([MSR 2023 DOI](https://doi.org/10.1109/MSR59073.2023.00079)).
+The broader IaC smell lineage should cite SLAC
+([ESEC/FSE 2020 DOI](https://doi.org/10.1145/3408897)) and GLITCH
+([ASE 2022 preprint](https://arxiv.org/abs/2205.14371)). These papers motivate
+the constructs; they do not automatically validate AnsibleGuard's
+implementations.
+
+## How AnsibleGuard can build above the two tools
+
+The defensible strategy is orchestration plus new analysis—not cloning.
+
+### Layer 1 — preserve external evidence faithfully
+
+Create a richer finding schema:
+
+```text
+tool
+tool_version
+native_rule_id
+native_subrule_id
+native_severity
+policy_severity
+file
+line
+column
+safe_fingerprint
+scan_mode
+config_sha256
+baseline_sha256
+message
+```
+
+Never retain raw secret material. Record the exact binary/package checksum,
+effective configuration hash, command mode, and target commit.
+
+### Layer 2 — use Ansible semantics the external tools do not provide
+
+Invest in project-level symbol and role graphs, include/import resolution,
+variable-definition provenance, handler/notify edges, and review-range
+evidence. These are plausible scientific contributions because they answer
+questions that pattern-based secret scanning and conventional lint rules do
+not.
+
+### Layer 3 — explain and deduplicate overlap
+
+Keep every raw detector result for traceability, then produce a separate
+canonical-occurrence view. An occurrence can group findings by normalized
+path, source span, concept, and evidence fingerprint. Never delete the
+detector identities: agreement between independent tools is useful data.
+
+Report at least:
+
+1. raw findings by detector;
+2. unique physical occurrences;
+3. agreements/disagreements between detectors;
+4. manually confirmed true/false positives;
+5. results stratified by source, review, and external-tool family.
+
+### Layer 4 — use different policy for PRs and research
+
+PRs need fast feedback, a base-to-head ratchet, safe redaction, and clear
+blocking rules. Research needs frozen snapshots, manifests, fixed versions,
+stable constructs, manual labels, and no silent baselines. The same detector
+engine can serve both, but the populations and decisions must remain separate.
+
+### Layer 5 — compare complementary tools experimentally
+
+Do not integrate more tools merely to increase the finding count. Evaluate
+them on a labeled Ansible corpus first:
+
+| Candidate | What it adds | Main caution |
+|---|---|---|
+| KICS | Ansible-aware cloud-resource security/misconfiguration policies | cloud-resource scope is different from maintainability smells |
+| Checkov | Ansible/cloud policy-as-code, graph/context policies, SARIF | broad framework and policy population; overlap must be mapped |
+| TruffleHog | secret verification and additional detectors | verification can make network calls and has safety/reproducibility implications |
+| GitHub secret scanning | provider-backed push protection in GitHub workflows | platform/plan coverage and supported-secret patterns differ |
+| Semgrep Secrets | semantic/entropy secret detection and validation | product/licensing and cloud workflow affect reproducibility |
+
+Primary product sources:
+[KICS Ansible query catalog](https://docs.kics.io/latest/queries/all-queries/),
+[Checkov repository and supported frameworks](https://github.com/bridgecrewio/checkov),
+[TruffleHog repository](https://github.com/trufflesecurity/trufflehog),
+[GitHub push protection](https://docs.github.com/en/code-security/concepts/secret-security/push-protection),
+and [Semgrep Secrets](https://semgrep.dev/products/semgrep-secrets).
+
+For the paper, run candidates on the same frozen files, versions, configuration,
+and labels. Compare precision, recall, F1, unique contribution, agreement, and
+runtime. Do not compare raw counts from different file populations.
+
+## Claims the paper can and cannot make now
+
+Safe claims:
+
+- AnsibleGuard integrates GitLeaks 8.30.1 and locally installed ansible-lint
+  26.4.0 in `technical-full`.
+- The current wrappers collapse native external identities.
+- Several internal rules have substantial or partial overlap with
+  ansible-lint, while the listed flow/graph/review rules have no direct
+  equivalent in the evaluated tool versions.
+- Research profiles deliberately exclude aggregate external findings.
+
+Claims that require new evidence:
+
+- “AnsibleGuard is more accurate than ansible-lint/GitLeaks.”
+- “AnsibleGuard detects all Ansible defects or secrets.”
+- “A rule has high precision/recall” without rule-level labeled data.
+- “A finding caused a failure” without causal evidence.
+- “No overlap” based only on rule names.
+- “The tools are independent” for `hardcoded-credentials` or
+  `ansible-lint-issue`, because those are integrations.
 
 ## Recommended division of responsibility
 

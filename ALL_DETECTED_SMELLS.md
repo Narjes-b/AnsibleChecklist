@@ -2,18 +2,18 @@
 
 This is the canonical list of rules that are active in the current branch.
 Unlike historical inventories, inclusion here requires both a live
-`RULE_CATALOG` entry and a path that can produce a finding. There are **60
-active rules**: 58 internal rules, one GitLeaks rule, and one general
+`RULE_CATALOG` entry and a path that can produce a finding. There are **65
+active rules**: 63 internal rules, one GitLeaks rule, and one general
 `ansible-lint` rule.
 
-The paper's 38 review criteria and these 60 rules are not one-to-one. One paper
+The paper's 38 review criteria and these 65 rules are not one-to-one. One paper
 criterion can need several narrow detectors, while many existing size, naming,
 cohesion, and security smells are outside that paper checklist. This is why the
 tool can have more active smells than directly covered paper criteria.
 
 Execution profiles do not change this canonical catalog. They select explicit
-subsets: 51 internal rules in `snapshot-source`, a provisional 8-rule
-`research-core`, 43 disjoint `extended-ansible` rules, and 7 `review-range`
+subsets: 56 internal rules in `snapshot-source`, a provisional 8-rule
+`research-core`, 48 disjoint `extended-ansible` rules, and 7 `review-range`
 rules; the 2 aggregate external rules are technical-only. See
 `RESEARCH_PROFILES_IMPLEMENTATION.md` for the exact versioned mapping.
 
@@ -25,6 +25,7 @@ rules; the 2 aggregate external rules are technical-only. See
 | `credentials-leaking-in-log` | error | Sensitive-keyword tasks are checked for task/play-level `no_log: true`. | Keyword heuristic cannot understand every custom secret. |
 | `insecure-permissions` | error | File-module modes are parsed; world-write and world-readable sensitive resources are reported. | Variable-computed modes are unresolved. |
 | `default-credentials` | error | Credential-like keys are compared with conservative well-known default values. | Product-specific defaults outside the list are missed. |
+| `plaintext-sensitive-variable` | warning | Literal sensitive values in vars/defaults/group/host vars are reported without copying the value. | Runtime lookups and project-specific names require calibration. |
 | `missing-validate-certs` | warning | `uri`/`get_url` tasks explicitly setting `validate_certs: false` are reported. | Templated values cannot be evaluated. |
 | `overriden-keys` | error | Ruamel/source-depth analysis finds duplicate YAML keys inside the same task. | Complex YAML constructs may reduce source-span accuracy. |
 | `missing-handler` | error | `notify` names are cross-referenced with handlers defined in the file. | Included/role handlers outside the file are invisible. |
@@ -36,6 +37,7 @@ rules; the 2 aggregate external rules are technical-only. See
 | `silent-error-suppression` | warning | `ignore_errors: true`/`failed_when: false` without `register` is reported. | Independent warning paths cannot be associated reliably. |
 | `shell-environment-export` | warning | `export NAME=value` in command-like tasks is detected and mapped to `environment:`. | A self-contained shell export can be intentional. |
 | `variable-use-before-definition` | error | A Jinja/condition reference is compared with later `register` and `set_fact` definitions in the same linear task section. | Dynamic control flow and external definitions are deliberately excluded. |
+| `role-variable-precedence-collision` | warning | The same role key in defaults/main and vars/main is reported because vars prevents normal overrides. | Deliberate fixed role vars can be intentional. |
 
 ## Size, structure, and maintainability
 
@@ -48,7 +50,8 @@ rules; the 2 aggregate external rules are technical-only. See
 | `large-task` | warning | Per-task LOC is compared with the task-size threshold. | LOC does not equal semantic complexity. |
 | `high-coupling` | warning | Imports, includes, and roles—including FQCN forms—are counted. | It counts links but not their architectural necessity. |
 | `duplicated-code` | warning | Canonicalized task bodies, excluding names, are compared for exact duplication. | Semantically equal but differently ordered bodies may be missed. |
-| `deprecated-modules` | warning | Module names are checked against curated deprecation and alias/FQCN maps. | The mapping must be maintained with Ansible releases. |
+| `deprecated-modules` | warning | Installed `ansible-doc` deprecation metadata is checked with a conservative removed-module fallback. | Results depend on installed Ansible/collections. |
+| `redirected-module` | note | Legacy redirects and short names are separated from true deprecations and mapped to current FQCNs. | Project collection resolution can make some short names acceptable. |
 | `shell-instead-of-module` | warning | Common shell command patterns are mapped to native Ansible modules. | Complex or uncommon commands are not understood. |
 | `unused-handler` | warning | Defined handler names not present in collected notifications are reported. | Notifications from other files are invisible. |
 | `complex-expression` | warning | Jinja/condition operators, filters, comparisons, grouping, indexing, and length form a score. | Syntactic complexity can overstate difficulty. |
@@ -60,6 +63,8 @@ rules; the 2 aggregate external rules are technical-only. See
 | `redundant-default-value` | note | Role defaults are compared with exact task/play vars and `set_fact` values. | Only same-role static values are available. |
 | `unexpected-task-location` | warning | Role-file document shapes, embedded plays, and handler-only `listen` placement are validated. | Business-purpose placement remains a human/project-policy decision. |
 | `deprecated-module-option` | warning | Supplied task arguments are compared with installed Ansible deprecation metadata and project overrides. | Removed/unavailable collection metadata can be absent. |
+| `unpinned-ansible-dependency` | warning | Requirements and external role meta dependencies are checked for an explicit version. | Short local sibling-role dependencies are intentionally excluded. |
+| `unsafe-file-write` | warning | File-capable module arguments using `unsafe_writes: true` are reported. | Some broken or overlay filesystems genuinely require unsafe writes. |
 
 ## Style, naming, documentation, and semantics
 
@@ -104,9 +109,10 @@ rules; the 2 aggregate external rules are technical-only. See
 
 ## Output path
 
-Every rule above is normalized by `report/findings.py` to `file`, `line`,
-`rule_id`, `severity`, and `message`. The same normalized records feed
-`findings.json`, `findings.csv`, `findings.txt`, and SARIF. Corresponding counts
+Every rule above is normalized by `report/findings.py` with provider, native
+rule, concept, file, line, severity, and message. Raw records feed
+`raw/findings.*`; grouped occurrences feed `canonical/occurrences.*` and
+SARIF. Corresponding counts
 are exposed in per-file technical JSON and CSV, and normalized findings are
 appended to the per-file text report. External findings survive structural YAML skips; safe
 source/role checks also contribute project rollup findings for skipped YAML

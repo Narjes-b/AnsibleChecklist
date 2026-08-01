@@ -1,5 +1,10 @@
 # Five Real OpenStack Projects: Simple Testing Results
 
+> **Newer output-contract run:** This document describes the earlier
+> profile/calibration pilot. The fresh `technical-full` output-v2 validation
+> is documented in
+> [FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md](FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md).
+
 ## First: what did we do?
 
 We tested AnsibleGuard on five real OpenStack projects.

@@ -1,5 +1,10 @@
 # Local OpenStack Ansible study workflow
 
+> **Output v2 note:** Fresh technical-full results use
+> `study/analysis/five-project-technical-full-v2/` and start at each
+> repository's `summary/report.json`. See
+> `FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md`.
+
 For the decision rationale, evidence gates, and detector-calibration work, see
 [RESEARCH_PROFILE_AND_CALIBRATION_PLAN.md](RESEARCH_PROFILE_AND_CALIBRATION_PLAN.md).
 For a function-by-function account of the supplied and active scripts, see

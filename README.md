@@ -5,11 +5,11 @@ New contributors and project reviewers should begin with
 research status, reproduction commands, and next implementation tickets.
 
 AnsibleGuard is a static-analysis CLI for Ansible configuration code. It scans
-a playbook or an entire repository, combines 58 internal rules with GitLeaks
+a playbook or an entire repository, combines internal rules with GitLeaks
 and ansible-lint, and emits one normalized set of findings in JSON, CSV, text,
 and SARIF.
 
-The current implementation contains **60 active finding rules**, preserves
+The current implementation contains **65 active finding rules**, preserves
 findings from invalid or non-playbook YAML where applicable, reports precise
 source lines for task-level rules, and includes Git-aware checks for complete
 pull-request ranges.
@@ -111,6 +111,11 @@ Separate technical, snapshot, core, extended, and review questions:
 
 ```bash
 ansibleguard /path/to/ansible-project --profile technical-full
+ansibleguard /path/to/ansible-project --profile developer-fast
+ansibleguard /path/to/ansible-project --profile security
+ansibleguard /path/to/ansible-project --profile lint
+ansibleguard /path/to/ansible-project --profile quality
+ansibleguard /path/to/ansible-project --profile pr
 ansibleguard /path/to/ansible-project --profile review-range
 
 ansibleguard /path/to/ansible-project \
@@ -140,7 +145,7 @@ Available options:
 usage: ansibleguard [-h] [--gitleaks-path PATH]
                     [--fail-on {never,error,warning,tool-error,parse-error}]
                     [-o OUTPUT] [--file-manifest FILE_MANIFEST]
-                    [--profile {technical-full,snapshot-source,research-core,extended-ansible,review-range}]
+                    [--profile {technical-full,developer-fast,security,lint,quality,pr,snapshot-source,research-core,extended-ansible,review-range}]
                     target
 ```
 
@@ -196,7 +201,7 @@ metrics remain available for auditability.
 
 ## Detection coverage
 
-The 60 rules are grouped into the following areas:
+The 65 rules are grouped into the following areas:
 
 | Area | Examples |
 |---|---|
@@ -222,6 +227,25 @@ rollups:
 
 ```text
 ansibleguard-output/
+├── summary/
+│   ├── report.json
+│   ├── summary.csv
+│   └── diagnostics.json
+├── raw/
+│   ├── findings.json
+│   ├── findings.csv
+│   └── findings.txt
+├── canonical/
+│   ├── occurrences.json
+│   ├── occurrences.csv
+│   ├── occurrences.txt
+│   └── findings.sarif
+├── metadata/
+│   ├── run.json
+│   ├── file-selection.json
+│   └── review-metrics.json
+├── legacy/
+│   └── layout.json
 ├── <mirrored/path/without-extension>/
 │   ├── Technical_Analysis.json
 │   ├── IaC_Smells.csv
@@ -230,6 +254,8 @@ ansibleguard-output/
 │   └── gitleaks.txt
 ├── summary.csv
 ├── findings.json
+├── findings.raw.json
+├── occurrences.json
 ├── findings.csv
 ├── findings.txt
 ├── findings.sarif
@@ -254,13 +280,18 @@ Normalized findings share this schema:
 - `Play_Level_Analysis.txt` contains the legacy play/task view plus every
   normalized finding for that file.
 - `summary.csv` ranks analyzed files by severity and finding count.
-- `findings.json`, `findings.csv`, `findings.txt`, and `findings.sarif` represent
-  the same normalized finding set.
+- `findings.json` and `findings.raw.json` preserve every normalized provider
+  result. `occurrences.json` groups overlapping detectors without deleting
+  their evidence, and SARIF uses those canonical occurrences.
+- `findings.csv` and `findings.txt` retain provider, native-rule, and shared
+  concept identity.
 - `review_metrics.json` retains raw project-level Git review counts/details.
 - `diagnostics.json` records parse and external-tool failures separately from
   code findings.
 
 See [OUTPUT_FORMATS.md](OUTPUT_FORMATS.md) for the complete contract.
+The six v2 organization changes and migration policy are explained in
+[OUTPUT_CONTRACT_V2_SIX_CHANGES.md](OUTPUT_CONTRACT_V2_SIX_CHANGES.md).
 
 ## Pull-request analysis
 
@@ -288,7 +319,7 @@ Run the full suite:
 .venv/bin/pytest -q
 ```
 
-Current verified result: **153 passed**.
+Current verified result: **197 passed**.
 
 Run the reproducible detector-corpus baseline:
 
@@ -351,6 +382,12 @@ false-positive tuning performed from that run are recorded in
 | [HOW_IT_WORKS.md](HOW_IT_WORKS.md) | Detector and pipeline walkthrough |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Package architecture and verification guide |
 | [OUTPUT_FORMATS.md](OUTPUT_FORMATS.md) | Report schemas and intended consumers |
+| [OUTPUT_CONTRACT_V2_SIX_CHANGES.md](OUTPUT_CONTRACT_V2_SIX_CHANGES.md) | Organized output v2, schemas, canonical CSV/text, summary index, and compatibility migration |
+| [PULL_REQUEST_TESTING_STEP_BY_STEP.md](PULL_REQUEST_TESTING_STEP_BY_STEP.md) | Local and GitHub PR testing, policies, expected cases, and acceptance checklist |
+| [FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md](FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md) | Final five-repository technical-full v2 results and validation |
+| [DEVELOPER_PROFILES_OVERLAP_PR_IMPLEMENTATION.md](DEVELOPER_PROFILES_OVERLAP_PR_IMPLEMENTATION.md) | Developer profiles, provider provenance, overlap decisions, PR ratcheting, file-kind checks, and dependency hardening |
+| [GITHUB_MULTI_ECOSYSTEM_AND_PR_SESSION.md](GITHUB_MULTI_ECOSYSTEM_AND_PR_SESSION.md) | Detailed GitHub discovery conditions, implementation log, dependency decisions, real scans, and PR work |
+| [GITHUB_MULTI_ECOSYSTEM_FINAL_RESULTS.md](GITHUB_MULTI_ECOSYSTEM_FINAL_RESULTS.md) | Simple final results for the cross-band native-GitHub pilot |
 | [CORPUS_VALIDATION.md](CORPUS_VALIDATION.md) | Reproducible corpus baseline and tuning results |
 | [SEVEN_PRIORITY_IMPLEMENTATION.md](SEVEN_PRIORITY_IMPLEMENTATION.md) | Latest hardening implementation record |
 | [SESSION_IMPLEMENTATION_REPORT.md](SESSION_IMPLEMENTATION_REPORT.md) | First-person professional session summary |

@@ -30,12 +30,12 @@ ansibleguard command
           ├── detectors.review_metadata.detect_project_review_smells()
           ├── retain non-YAML GitLeaks findings
           └── write project rollups
-              ├── summary.csv
-              ├── findings.json / .csv / .txt / .sarif
-              ├── review_metrics.json
-              ├── diagnostics.json
-              ├── file_selection.json
-              └── run_metadata.json
+              └── report.output_contract.write_rollups_v2()
+                  ├── summary/report.json + summary.csv + diagnostics.json
+                  ├── raw/findings.json + .csv + .txt
+                  ├── canonical/occurrences.json + .csv + .txt + SARIF
+                  ├── metadata/run.json + file-selection.json
+                  └── one-release root compatibility aliases
 ```
 
 External tools are executed once per scan target. Their findings are matched
@@ -56,7 +56,9 @@ non-YAML files remain in the project rollups.
 | `src/ansibleguard/detectors/` | Internal rule implementations |
 | `src/ansibleguard/detectors/source_lines.py` | Shared ruamel loader and exact YAML coordinates |
 | `src/ansibleguard/external/` | GitLeaks installation/execution and ansible-lint execution |
-| `src/ansibleguard/report/findings.py` | Canonical 60-rule catalog and finding normalization |
+| `src/ansibleguard/report/findings.py` | Canonical 65-rule catalog and finding normalization |
+| `src/ansibleguard/report/output_contract.py` | Versioned layout, report index, summaries, and compatibility aliases |
+| `src/ansibleguard/report/occurrences.py` | Cross-provider canonical occurrence grouping |
 | `src/ansibleguard/report/csv_writer.py` | Legacy metric CSV and normalized finding CSV |
 | `src/ansibleguard/report/text_writer.py` | Legacy and normalized human-readable reports |
 | `src/ansibleguard/report/sarif_writer.py` | SARIF 2.1.0 conversion and stable fingerprints |
@@ -91,7 +93,8 @@ coverage and scans only explicit inclusions.
 
 Profile selection controls both rule output and stage execution. Source
 profiles never call the Git review detector. `review-range` does not send YAML
-through source detectors. External tools execute only for `technical-full`.
+through source detectors. External tools run only for profiles that request
+them, including `technical-full`, `security`, `lint`, and `pr`.
 Filtering happens before per-file/project normalized rollups are written, so
 JSON, CSV, text, and SARIF contain the same profile population.
 

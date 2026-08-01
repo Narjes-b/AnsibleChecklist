@@ -12,8 +12,9 @@ below.
 
 ## The project in one paragraph
 
-AnsibleGuard is a Python static-analysis CLI for Ansible. It normalizes 60
-internal/external/review rules into JSON, CSV, text, and SARIF. The current
+AnsibleGuard is a Python static-analysis CLI for Ansible. It normalizes 65
+internal/external/review rules into versioned raw and canonical JSON, CSV,
+text, and SARIF. The current
 research goal is an Ansible-specific empirical extension inspired by the
 supervisor's Puppet smell paper, using real OpenStack projects from OpenDev.
 It is not a strict replication. Repository collection, frozen SHAs, auditable
@@ -31,19 +32,21 @@ calibration and manual validation are the next phase.
 4. **`ARCHITECTURE.md`** — modules, call flow, detector families, and technical
    ownership.
 5. **`OUTPUT_FORMATS.md`** — what every generated file means.
+6. **`OUTPUT_CONTRACT_V2_SIX_CHANGES.md`** — the organized v2 layout,
+   schemas, richer summaries, and compatibility migration.
 
 After these five, the reader should be able to install the package, run a
 technical scan, and trace findings through the code.
 
 ### 2. Understand what is detected
 
-6. **`ALL_DETECTED_SMELLS.md`** — canonical inventory of all 60 active IDs.
-7. **`inventory.md`** — detailed strategies and false-positive limitations.
-8. **`CODE_REVIEW_CHECKLIST_COVERAGE.md`** — mapping to the 38 criteria from the
+7. **`ALL_DETECTED_SMELLS.md`** — canonical inventory of active IDs.
+8. **`inventory.md`** — detailed strategies and false-positive limitations.
+9. **`CODE_REVIEW_CHECKLIST_COVERAGE.md`** — mapping to the 38 criteria from the
    supplied checklist paper.
 
 For a slower explanation that combines the implementation, mathematics,
-complexity, inspiration, and checklist status of all 60 IDs, read
+complexity, inspiration, and checklist status of the rule catalog, read
 **`ULTIMATE_SMELL_CATALOG.md`**. The external-tool boundary is explained in
 **`ANSIBLE_LINT_GITLEAKS_OVERLAP.md`**.
 
@@ -87,7 +90,7 @@ decisions, but they are not the first source for current behavior.
 ### Complete
 
 - package installation and `ansibleguard` CLI;
-- 60 normalized rule IDs and multiple output formats;
+- 65 normalized rule IDs and versioned raw/canonical output formats;
 - safe YAML/Ansible document parsing;
 - OpenDev-first candidate discovery;
 - human-selected five-project pilot manifest;
@@ -95,10 +98,13 @@ decisions, but they are not the first source for current behavior.
 - one-row-per-YAML classification manifests;
 - complete/safe manifest validation in the scanner;
 - real Nova-role technical and classified scans;
-- five explicit execution profiles;
+- operational developer/security/lint/quality/PR profiles plus controlled
+  research profiles;
 - source snapshot versus review-range separation;
 - profile/file-selection hashes in output metadata;
 - automated tests for the above.
+- organized output contract v2 with schemas and compatibility aliases;
+- five-repository `technical-full` v2 validation with zero diagnostics.
 
 ### Real pilot evidence
 
@@ -117,6 +123,10 @@ These are the post-standalone-role-fix calibration results recorded in
 `FIVE_PROJECT_OPENSTACK_PILOT_RESULTS_SIMPLE.md`, not publishable empirical
 conclusions.
 
+The newer output-contract validation is recorded in
+`FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md`: 1,856 selected production files,
+13,439 raw findings, 10,927 canonical occurrences, and zero diagnostics.
+
 ### Not complete
 
 - stratified human validation of file classes;
@@ -124,11 +134,12 @@ conclusions.
 - precision calibration of `unguarded-variable`;
 - manually labeled positive and negative detector examples;
 - supervisor approval/freeze of the eight-rule provisional core;
-- native ansible-lint/GitLeaks rule identity;
-- research occurrence normalization/deduplication;
+- real-repository calibration of native-provider and canonical-occurrence data;
 - five-project calibrated pilot;
 - full-corpus selection and execution;
 - longitudinal Git/Gerrit/statistical analysis.
+
+For PR verification, use `PULL_REQUEST_TESTING_STEP_BY_STEP.md`.
 
 ## Make the project work locally
 

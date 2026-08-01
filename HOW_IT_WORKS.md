@@ -39,10 +39,10 @@ SHA-256, class counts, included count, project, and commit identity.
 
 Profiles answer different questions before findings are aggregated:
 
-- `technical-full` runs all 60 rules, GitLeaks, ansible-lint, and Git review;
-- `snapshot-source` runs 51 internal source rules and no review/external stage;
+- `technical-full` runs all 65 rules, GitLeaks, ansible-lint, and Git review;
+- `snapshot-source` runs 56 internal source rules and no review/external stage;
 - `research-core` runs the provisional eight-rule primary allowlist;
-- `extended-ansible` runs the 43 disjoint non-core source rules;
+- `extended-ansible` runs the 48 disjoint non-core source rules;
 - `review-range` processes no source files and evaluates seven Git rules.
 
 The three source research profiles require a complete classification manifest.
@@ -188,16 +188,17 @@ Per-file reports preserve backward compatibility:
 
 Project reports provide the consistent integration contract:
 
-- `summary.csv` — worst-first file triage;
-- `findings.json` — canonical normalized list;
-- `findings.csv` — spreadsheet representation;
-- `findings.txt` — human representation;
-- `findings.sarif` — GitHub Code Scanning representation;
-- `review_metrics.json` — raw Git project metrics;
-- `diagnostics.json` — parse and tool failures.
+- `summary/report.json` — versioned entry point and artifact index;
+- `summary/summary.csv` — triage with raw/canonical/provider counts;
+- `raw/findings.json|csv|txt` — lossless provider evidence;
+- `canonical/occurrences.json|csv|txt` — grouped developer-visible problems;
+- `canonical/findings.sarif` — grouped GitHub Code Scanning results;
+- `metadata/` — run, selection, and review provenance;
+- `summary/diagnostics.json` — parse and tool failures.
 
-The four normalized finding formats are produced from the same in-memory list,
-and end-to-end tests assert occurrence-count parity.
+Compatibility root aliases remain for one release. The organized documents
+are produced from the same in-memory raw and canonical populations, and
+end-to-end tests assert parity.
 
 ## Rule families
 
@@ -277,7 +278,8 @@ scope for the whole project. Raw metrics are never deleted by suppression.
 
 ## Verification
 
-The full suite currently reports **153 passed**. `test_output_contract.py`
+The current full-suite count is recorded in `README.md`.
+`test_output_contract.py`
 locks JSON/CSV/text/SARIF parity, `test_review_metadata.py` locks multi-commit
 PR behavior, `test_legacy_detector_lines.py` locks exact locations, and
 `test_detector_config.py` locks thresholds/options/suppressions, and

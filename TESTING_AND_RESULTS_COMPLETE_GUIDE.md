@@ -1,5 +1,14 @@
 # Complete guide to AnsibleGuard testing, profiles, manifests, snapshots, and results
 
+> **Output v2 update:** New scans use `summary/report.json` and organize
+> results under `summary/`, `raw/`, `canonical/`, `metadata/`, and `legacy/`.
+> Root paths in older examples remain compatibility aliases for one release.
+> See [OUTPUT_CONTRACT_V2_SIX_CHANGES.md](OUTPUT_CONTRACT_V2_SIX_CHANGES.md).
+> Fresh v2 evidence is in
+> [FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md](FIVE_REPOSITORY_OUTPUT_V2_FINAL_RESULTS.md);
+> PR testing is in
+> [PULL_REQUEST_TESTING_STEP_BY_STEP.md](PULL_REQUEST_TESTING_STEP_BY_STEP.md).
+
 This document explains:
 
 - how AnsibleGuard repository testing is run;

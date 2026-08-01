@@ -22,6 +22,13 @@ proof by themselves.
 
 Current audited state on 22 July 2026:
 
+> **30 July 2026 update:** The live catalog now contains 65 IDs. The five
+> additions are `redirected-module`, `unsafe-file-write`,
+> `plaintext-sensitive-variable`, `unpinned-ansible-dependency`, and
+> `role-variable-precedence-collision`. Their implementation and limitations
+> are documented in `DEVELOPER_PROFILES_OVERLAP_PR_IMPLEMENTATION.md`. The
+> dated 22 July inventory below is retained as the earlier audit snapshot.
+
 - 60 active normalized rule IDs;
 - 58 internal rules;
 - one GitLeaks aggregation rule;
