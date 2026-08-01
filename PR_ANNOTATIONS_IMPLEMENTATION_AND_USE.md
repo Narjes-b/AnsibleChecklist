@@ -153,6 +153,38 @@ custom `primaryLocationLineHash`, but GitHub calculated a different value for
 unchanged head findings. The field was removed so GitHub can calculate its own
 line fingerprint. This does not change AnsibleGuard occurrence IDs or PR
 comparison; it only removes misleading SARIF-upload noise. A second live run is
-recorded here after it completes.
+recorded below.
+
+Final clean validation:
+
+- run: [30712135183](https://github.com/JedidiAymen/ansible-role-the_bastion/actions/runs/30712135183)
+- demo head: `ba7708929f2e8a775a9cc8c721ab4c777c757fcf`
+- private package pin: `f6c8c626c09ae82af58a76457831ec1b23c22543`
+- workflow conclusion: success
+- AnsibleGuard annotations: 17
+- severity presentation: 3 failures, 9 warnings, 5 notices
+- annotation file: `tasks/ansibleguard_pr_demo.yml`
+- annotated lines: 1, 5, 8, 9, 15, and 19
+- inconsistent fingerprint warnings: 0
+- unrelated runner annotation: 1 Node.js deprecation warning from GitHub
+  Actions dependencies
+
+All workflow stages passed: private install, GitLeaks installation, head scan,
+base scan, comparison, annotations, readable summary, SARIF upload, artifact
+upload, and policy enforcement. GitHub's check-run API reported 18 total
+annotations: the 17 intended AnsibleGuard results plus the unrelated runner
+deprecation warning.
+
+Commits and branches used:
+
+- original feature branch `sarif-validation-support`: annotation commit
+  `8902f5a` and SARIF cleanup `b02891c`;
+- private package branch `pr-annotations`: annotation commit `5f32798` and
+  SARIF cleanup `f6c8c62`;
+- demonstration branch `ansibleguard-known-errors-demo`: workflow commit
+  `46166b0` and final pin `ba77089`.
+
+Neither the original repository's `main` nor the private package repository's
+`main` was merged or updated.
 
 No work in this session merges or pushes to `main`.

@@ -5,6 +5,10 @@
 > readable job-summary table. Guarded SARIF remains an additional presentation
 > layer. Implementation, commands, safety rules, and live verification are in
 > `PR_ANNOTATIONS_IMPLEMENTATION_AND_USE.md`.
+> Final annotation run
+> [30712135183](https://github.com/JedidiAymen/ansible-role-the_bastion/actions/runs/30712135183)
+> passed with 17 intended AnsibleGuard file/line annotations and no SARIF
+> inconsistent-fingerprint warnings.
 
 ## Result
 
