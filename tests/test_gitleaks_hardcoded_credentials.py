@@ -47,6 +47,42 @@ def test_target_local_gitleaks_config_is_passed_to_binary(tmp_path, monkeypatch)
     assert "--redact=100" in captured["command"]
 
 
+def test_fingerprints_are_stable_across_checkout_roots(tmp_path, monkeypatch):
+    import json
+    import subprocess
+    from ansibleguard.external.gitleaks import scan_with_gitleaks
+
+    target = tmp_path / "separate-worktree"
+    target.mkdir()
+    secret_file = target / "vars.yml"
+    secret_file.write_text("password: synthetic\n", encoding="utf-8")
+
+    def fake_run(command, **kwargs):
+        report = command[command.index("--report-path") + 1]
+        with open(report, "w", encoding="utf-8") as stream:
+            json.dump(
+                [
+                    {
+                        "File": str(secret_file),
+                        "StartLine": 1,
+                        "RuleID": "generic-api-key",
+                        "Fingerprint": (
+                            f"{secret_file}:generic-api-key:1"
+                        ),
+                    }
+                ],
+                stream,
+            )
+        return subprocess.CompletedProcess(command, 1, "", "")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    finding = scan_with_gitleaks(target, "/fake/gitleaks").findings[0]
+
+    assert finding["File"] == "vars.yml"
+    assert finding["Fingerprint"] == "vars.yml:generic-api-key:1"
+    assert finding["_scan_mode"] == "dir"
+
+
 def test_git_range_scan_uses_validated_shas_and_marks_provenance(
     tmp_path, monkeypatch
 ):

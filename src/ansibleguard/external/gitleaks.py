@@ -35,6 +35,33 @@ class ToolResult:
     metadata: dict = field(default_factory=dict)
 
 
+def _normalize_findings(findings, scan_root, scan_mode):
+    """Make GitLeaks evidence stable across equivalent checkout locations."""
+    root = Path(scan_root).resolve()
+    for finding in findings:
+        raw_file = Path(str(finding.get("File") or finding.get("file") or ""))
+        if raw_file.is_absolute():
+            try:
+                normalized_file = raw_file.resolve().relative_to(root).as_posix()
+            except ValueError:
+                normalized_file = raw_file.as_posix()
+        else:
+            normalized_file = raw_file.as_posix().removeprefix("./")
+
+        if normalized_file:
+            finding["File"] = normalized_file
+        finding["_scan_mode"] = scan_mode
+
+        fingerprint_key = (
+            "Fingerprint" if "Fingerprint" in finding else "fingerprint"
+        )
+        if finding.get(fingerprint_key) and normalized_file:
+            rule_id = finding.get("RuleID") or finding.get("ruleID") or "unknown"
+            line = finding.get("StartLine") or finding.get("startLine") or 1
+            finding[fingerprint_key] = f"{normalized_file}:{rule_id}:{line}"
+    return findings
+
+
 def scan_with_gitleaks(target_path, gitleaks_path):
     target_path = Path(target_path)
     config_root = target_path if target_path.is_dir() else target_path.parent
@@ -88,8 +115,7 @@ def scan_with_gitleaks(target_path, gitleaks_path):
             if report_path.exists() and report_path.stat().st_size > 0:
                 with open(report_path, "r") as f:
                     findings = json.load(f)
-                    for finding in findings:
-                        finding["_scan_mode"] = "dir"
+                    _normalize_findings(findings, config_root, "dir")
                     print(f"[✓] Gitleaks found {len(findings)} findings.")
                     return ToolResult("completed", findings, metadata=metadata)
             else:
@@ -174,8 +200,7 @@ def scan_git_range_with_gitleaks(
             findings = []
             if report_path.exists() and report_path.stat().st_size:
                 findings = json.loads(report_path.read_text(encoding="utf-8"))
-                for finding in findings:
-                    finding["_scan_mode"] = "git-range"
+                _normalize_findings(findings, config_root, "git-range")
             return ToolResult("completed", findings=findings, metadata=metadata)
         return ToolResult(
             "tool-error",

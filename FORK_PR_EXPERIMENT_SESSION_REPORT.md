@@ -280,6 +280,19 @@ canonical base/head result.
   command and PR guide requested by the user;
 - `README.md` — links the two new documents.
 
-No source detector or policy implementation was changed during the fork
-experiment. The experiment tested the existing behavior and exposed a private
-distribution requirement.
+No source detector or policy implementation was changed during the initial
+fork experiment. The continued live run later exposed Python-version and
+cross-worktree identity defects, which were fixed and tested. The authorized
+private repository, read-only deploy-key implementation, complete run history,
+source fixes, and definitive green result are documented in
+`PRIVATE_REPOSITORY_LIVE_PR_FINAL_REPORT.md`.
+
+Final verified run:
+
+| Run | Head | Result | Canonical comparison |
+|---|---|---|---|
+| [30710629864](https://github.com/JedidiAymen/ansible-role-the_bastion/actions/runs/30710629864) | `99dbd3d` | success | 17 introduced, 173 unchanged, 0 fixed, 0 moved, 0 uncertain; 0 head/base diagnostics |
+
+The final workflow installs pinned private source commit `9a9392e` through a
+repository-scoped read-only deploy key. No personal access token was used, and
+no merge to `main` occurred.

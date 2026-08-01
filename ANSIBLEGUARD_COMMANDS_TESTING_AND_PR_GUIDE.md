@@ -422,6 +422,48 @@ pip install 'git+https://github.com/Narjes-b/AnsibleChecklist.git@sarif-validati
 
 Recommended long-term fix: publish a versioned package or reusable action.
 
+### Implemented private-source solution
+
+After explicit approval from the original repository owner, a minimized private
+source repository was created at `JedidiAymen/ansibleguard-private`. The live
+workflow uses a repository-scoped read-only deploy key rather than a personal
+token and pins exact commit `9a9392ec067cf4ad90f43137c7274f8e8e0bca29`.
+
+Generic setup commands for a repository you administer are:
+
+```bash
+ssh-keygen -t ed25519 -N '' \
+  -C 'ansibleguard-pr-readonly' \
+  -f /tmp/ansibleguard-deploy-key
+
+gh api repos/YOUR_ACCOUNT/ansibleguard-private/keys \
+  -X POST \
+  -f title='ansibleguard-pr-readonly' \
+  -f "key=$(< /tmp/ansibleguard-deploy-key.pub)" \
+  -F read_only=true
+
+gh secret set ANSIBLEGUARD_DEPLOY_KEY \
+  --repo YOUR_ACCOUNT/ansible-role-the_bastion \
+  < /tmp/ansibleguard-deploy-key
+```
+
+Verify read access before removing the local files:
+
+```bash
+GIT_SSH_COMMAND='ssh -i /tmp/ansibleguard-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
+  git ls-remote git@github.com:YOUR_ACCOUNT/ansibleguard-private.git \
+  refs/heads/main
+```
+
+Then delete the two local key files. Keep the GitHub deploy key read-only. The
+workflow should write the secret to a mode-`0600` file under `RUNNER_TEMP`, use
+an exit trap to delete it, and install an exact commit rather than a branch.
+
+The full implemented workflow and results are documented in
+`PRIVATE_REPOSITORY_LIVE_PR_FINAL_REPORT.md`.
+
+### Personal-token fallback, not used in this experiment
+
 Temporary private-repository option: have an authorized repository owner
 create a short-lived credential scoped only to `Narjes-b/AnsibleChecklist`
 with Contents read access, then store it interactively—never as a command-line
@@ -436,7 +478,7 @@ The workflow can then install with the masked secret. Do not reuse or upload a
 broad personal `repo` token. Rotate/delete the temporary read token after the
 experiment.
 
-### Exact setup for the live fork experiment
+### Exact personal-token fallback setup
 
 The source repository belongs to the personal account `Narjes-b`, while the
 demonstration fork belongs to `JedidiAymen`. Complete these steps without
@@ -462,7 +504,8 @@ pasting the token into chat:
    `ANSIBLEGUARD_READ_TOKEN`, paste the token as its value, and select **Add
    secret**.
 10. Clear the clipboard. Do not test the token with a command that prints it.
-11. Rerun GitHub Actions run `30705557577` and inspect the summary and artifact.
+11. Rerun the target GitHub Actions workflow and inspect its summary and
+    artifact.
 12. After the experiment succeeds, delete `ANSIBLEGUARD_READ_TOKEN` from the
     fork and revoke/delete `ansibleguard-pr-demo-read` from the `Narjes-b`
     account.

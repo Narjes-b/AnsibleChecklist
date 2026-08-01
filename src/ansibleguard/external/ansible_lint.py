@@ -43,6 +43,45 @@ def lint_issue_line(issue):
     )
 
 
+def _normalize_lint_issues(issues, working_directory):
+    """Remove checkout-location noise from paths, messages, and fingerprints."""
+    root = Path(working_directory).resolve()
+    root_spellings = {str(root), root.as_posix()}
+    for issue in issues:
+        raw_path = Path(lint_issue_path(issue))
+        if raw_path.is_absolute():
+            try:
+                relative_path = raw_path.resolve().relative_to(root).as_posix()
+            except ValueError:
+                relative_path = raw_path.as_posix()
+        else:
+            relative_path = raw_path.as_posix().removeprefix("./")
+
+        if "path" in issue:
+            issue["path"] = relative_path
+        elif isinstance(issue.get("location"), dict):
+            issue["location"]["path"] = relative_path
+
+        for message_key in ("message", "description"):
+            if not isinstance(issue.get(message_key), str):
+                continue
+            for spelling in root_spellings:
+                issue[message_key] = issue[message_key].replace(
+                    spelling, "<repo>"
+                )
+
+        rule_id = (
+            issue.get("check_name")
+            or issue.get("rule_id")
+            or issue.get("ruleId")
+            or "ansible-lint-issue"
+        )
+        message = issue.get("message") or issue.get("description") or ""
+        identity = f"{rule_id}|{relative_path}|{lint_issue_line(issue)}|{message}"
+        issue["fingerprint"] = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    return issues
+
+
 def scan_with_ansible_lint(target_path, output_format="json"):
     """Run ansible-lint and distinguish a clean scan from a tool failure."""
     target_path = Path(target_path).resolve()
@@ -114,8 +153,11 @@ def scan_with_ansible_lint(target_path, output_format="json"):
             metadata=metadata,
         )
     try:
+        findings = json.loads(result.stdout or "[]")
         return ToolResult(
-            "completed", json.loads(result.stdout or "[]"), metadata=metadata
+            "completed",
+            _normalize_lint_issues(findings, working_directory),
+            metadata=metadata,
         )
     except json.JSONDecodeError as exc:
         return ToolResult(

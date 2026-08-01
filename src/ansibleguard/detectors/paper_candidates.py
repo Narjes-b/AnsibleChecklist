@@ -124,7 +124,7 @@ def _load(path):
     try:
         text = path.read_text(encoding="utf-8")
         return yaml.load(text, Loader=AnsibleSafeLoader), text
-    except OSError, yaml.YAMLError:
+    except (OSError, yaml.YAMLError):
         return None, ""
 
 

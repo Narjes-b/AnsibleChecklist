@@ -22,6 +22,15 @@ def _normalized_path(value: str, repo_root=None) -> str:
     return path.as_posix().lstrip("./")
 
 
+def _identity_message(value: str, repo_root=None) -> str:
+    message = str(value or "")
+    if repo_root is not None:
+        root = Path(repo_root).resolve()
+        for spelling in {str(root), root.as_posix()}:
+            message = message.replace(spelling, "<repo>")
+    return re.sub(r"\d+", "#", message.lower())
+
+
 def build_occurrences(findings, repo_root=None):
     """Return canonical occurrences while retaining every contributing result."""
     grouped = {}
@@ -40,6 +49,7 @@ def build_occurrences(findings, repo_root=None):
             key=lambda item: (
                 item.get("provider", "ansibleguard"),
                 item.get("native_rule_id", item.get("rule_id", "")),
+                item.get("message", ""),
                 item.get("finding_id", ""),
             ),
         )
@@ -71,9 +81,7 @@ def build_occurrences(findings, repo_root=None):
                 for item in contributors
             }
         )
-        normalized_message = re.sub(
-            r"\d+", "#", primary.get("message", "").lower()
-        )
+        normalized_message = _identity_message(primary.get("message", ""), repo_root)
         semantic_source = "|".join(
             (
                 concept_id,

@@ -96,3 +96,44 @@ def test_ansible_lint_runs_from_scanned_project_root(tmp_path, monkeypatch):
     assert "--offline" in captured["command"]
     assert result.metadata["cwd"] == str(target.resolve())
     assert result.metadata["dependency_mode"] == "offline-no-auto-install"
+
+
+def test_ansible_lint_identity_is_stable_outside_checkout_root(tmp_path, monkeypatch):
+    import hashlib
+    import json
+    import subprocess
+
+    target = tmp_path / "base-worktree"
+    target.mkdir()
+    source = target / "molecule" / "default" / "converge.yml"
+    message = f"Role not found in {target}/molecule/default/roles"
+    payload = [
+        {
+            "location": {
+                "path": str(source),
+                "positions": {"begin": {"line": 6, "column": 1}},
+            },
+            "check_name": "syntax-check[specific]",
+            "message": message,
+            "fingerprint": "checkout-specific-native-value",
+        }
+    ]
+
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda command, **kwargs: subprocess.CompletedProcess(
+            command, 2, json.dumps(payload), ""
+        ),
+    )
+    issue = scan_with_ansible_lint(target).findings[0]
+    expected_identity = (
+        "syntax-check[specific]|molecule/default/converge.yml|6|"
+        "Role not found in <repo>/molecule/default/roles"
+    )
+
+    assert issue["location"]["path"] == "molecule/default/converge.yml"
+    assert issue["message"] == "Role not found in <repo>/molecule/default/roles"
+    assert issue["fingerprint"] == hashlib.sha256(
+        expected_identity.encode("utf-8")
+    ).hexdigest()
