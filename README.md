@@ -388,6 +388,8 @@ false-positive tuning performed from that run are recorded in
 | [DEVELOPER_PROFILES_OVERLAP_PR_IMPLEMENTATION.md](DEVELOPER_PROFILES_OVERLAP_PR_IMPLEMENTATION.md) | Developer profiles, provider provenance, overlap decisions, PR ratcheting, file-kind checks, and dependency hardening |
 | [GITHUB_MULTI_ECOSYSTEM_AND_PR_SESSION.md](GITHUB_MULTI_ECOSYSTEM_AND_PR_SESSION.md) | Detailed GitHub discovery conditions, implementation log, dependency decisions, real scans, and PR work |
 | [GITHUB_MULTI_ECOSYSTEM_FINAL_RESULTS.md](GITHUB_MULTI_ECOSYSTEM_FINAL_RESULTS.md) | Simple final results for the cross-band native-GitHub pilot |
+| [FORK_PR_EXPERIMENT_SESSION_REPORT.md](FORK_PR_EXPERIMENT_SESSION_REPORT.md) | Exact fork/known-errors PR experiment, local findings, live CI failure, and security decisions |
+| [ANSIBLEGUARD_COMMANDS_TESTING_AND_PR_GUIDE.md](ANSIBLEGUARD_COMMANDS_TESTING_AND_PR_GUIDE.md) | Complete install, profile, scan, output, study, local PR, GitHub Actions, and troubleshooting commands |
 | [CORPUS_VALIDATION.md](CORPUS_VALIDATION.md) | Reproducible corpus baseline and tuning results |
 | [SEVEN_PRIORITY_IMPLEMENTATION.md](SEVEN_PRIORITY_IMPLEMENTATION.md) | Latest hardening implementation record |
 | [SESSION_IMPLEMENTATION_REPORT.md](SESSION_IMPLEMENTATION_REPORT.md) | First-person professional session summary |

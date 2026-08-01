@@ -497,3 +497,16 @@ tests, workflow, and auditable study evidence were committed as:
 Documentation is committed separately so reviewers can distinguish behavior
 from explanation. No broad `git add .`, rebase, force push, or history rewrite
 is used.
+
+## Explicit no-merge decision
+
+After the two commits were pushed, GitHub reported PR #1 as `CONFLICTING`
+because `main` has five commits not present on this branch. A proposed
+`git merge origin/main` approval was interrupted and rejected by the user.
+The command made no repository change: there is no `MERGE_HEAD`, no conflict
+state, and local/remote `sarif-validation-support` both remain at `c951801`.
+
+Per the user's instruction, this session will not merge, rebase, or otherwise
+integrate `main`. PR #1 therefore remains open with its existing base and
+conflicting status until the user chooses a different PR base or integration
+strategy.
