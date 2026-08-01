@@ -79,7 +79,7 @@ def test_single_finding_maps_to_correct_sarif_result():
     location = r["locations"][0]["physicalLocation"]
     assert location["region"]["startLine"] == 7
     assert location["artifactLocation"]["uri"] == "roles/apache/tasks/main.yml"
-    assert len(r["partialFingerprints"]["primaryLocationLineHash"]) == 64
+    assert "partialFingerprints" not in r
 
 
 def test_multiple_findings_produce_multiple_results_in_order():

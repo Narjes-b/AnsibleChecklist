@@ -134,12 +134,15 @@ failures can be enforced independently.
 ## Step 5: SARIF improvements
 
 SARIF paths remain relative to the repository root so GitHub can map findings
-to pull-request lines. Each result now also receives a stable SHA-256
-`partialFingerprints.primaryLocationLineHash`, derived from rule, path, line,
-and message. This helps GitHub match the same alert across repeated scans.
+to pull-request lines. The placeholder tool information URL was replaced.
 
-The placeholder tool information URL was replaced, and SARIF tests now confirm
-that every result contains a 64-character fingerprint.
+The earlier implementation supplied a custom SHA-256 value under
+`partialFingerprints.primaryLocationLineHash`. Live upload validation on
+2026-08-01 proved that this name is reserved for GitHub's calculated line hash:
+GitHub reported inconsistent-fingerprint warnings. AnsibleGuard therefore no
+longer emits that field and lets GitHub calculate it. Stable AnsibleGuard
+occurrence IDs remain in the canonical output and continue to drive base/head
+comparison.
 
 ## Step 6: GitHub Actions and pull requests
 

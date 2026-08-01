@@ -7,7 +7,6 @@ github/codeql-action/upload-sarif in a CI workflow.
 """
 
 import json
-import hashlib
 from pathlib import Path
 
 from .findings import RULE_CATALOG
@@ -74,9 +73,6 @@ def build_sarif(all_findings, repo_root):
     results = []
     for f in all_findings:
         uri = _to_repo_relative(f["file"], repo_root)
-        fingerprint_source = "|".join(
-            [f["rule_id"], uri, str(f["line"]), f["message"]]
-        )
         results.append(
             {
                 "ruleId": f["rule_id"],
@@ -92,11 +88,6 @@ def build_sarif(all_findings, repo_root):
                         }
                     }
                 ],
-                "partialFingerprints": {
-                    "primaryLocationLineHash": hashlib.sha256(
-                        fingerprint_source.encode("utf-8")
-                    ).hexdigest()
-                },
                 "properties": {
                     "provider": f.get("provider", "ansibleguard"),
                     "native_rule_id": f.get("native_rule_id", f["rule_id"]),

@@ -141,9 +141,18 @@ The installed `ansibleguard-pr-annotations --help` command was then verified.
 
 ## 7. Live validation
 
-The code is committed only to the original feature branch and copied to the
-approved private package. The demonstration workflow pins that private commit
-and updates only the existing demo branch. After GitHub completes the run, this
-section records the run URL and annotations returned by GitHub's check API.
+The first live run was
+[30711918733](https://github.com/JedidiAymen/ansible-role-the_bastion/actions/runs/30711918733).
+It passed and GitHub's check API returned exactly **17 AnsibleGuard
+annotations** on `tasks/ansibleguard_pr_demo.yml`, including notice, warning,
+and failure-level entries at lines 1, 5, 8, 9, 15, and 19. The summary, SARIF,
+artifact, and enforcement steps all passed.
+
+That run also revealed ten SARIF upload warnings: AnsibleGuard had supplied a
+custom `primaryLocationLineHash`, but GitHub calculated a different value for
+unchanged head findings. The field was removed so GitHub can calculate its own
+line fingerprint. This does not change AnsibleGuard occurrence IDs or PR
+comparison; it only removes misleading SARIF-upload noise. A second live run is
+recorded here after it completes.
 
 No work in this session merges or pushes to `main`.
