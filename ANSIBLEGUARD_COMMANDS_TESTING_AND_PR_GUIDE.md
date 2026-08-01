@@ -436,6 +436,47 @@ The workflow can then install with the masked secret. Do not reuse or upload a
 broad personal `repo` token. Rotate/delete the temporary read token after the
 experiment.
 
+### Exact setup for the live fork experiment
+
+The source repository belongs to the personal account `Narjes-b`, while the
+demonstration fork belongs to `JedidiAymen`. Complete these steps without
+pasting the token into chat:
+
+1. Sign in to GitHub as `Narjes-b`, the owner of the private source repository.
+2. Open **Settings**, then **Developer settings**.
+3. Open **Personal access tokens**, then **Fine-grained tokens**, and select
+   **Generate new token**.
+4. Name it `ansibleguard-pr-demo-read`, use the shortest practical expiration,
+   and select `Narjes-b` as the resource owner.
+5. Under **Repository access**, select **Only select repositories**, then select
+   only `AnsibleChecklist`.
+6. Under **Repository permissions**, set **Contents** to **Read-only**. Leave
+   every other optional permission at **No access**; Metadata read access is
+   added automatically.
+7. Generate the token and copy the value once. If `Narjes-b` and
+   `JedidiAymen` are controlled by different people, transfer it only through
+   an approved secure secret-sharing channel.
+8. Sign in as `JedidiAymen` and open the fork's **Settings** → **Secrets and
+   variables** → **Actions**.
+9. Select **New repository secret**. Use the exact name
+   `ANSIBLEGUARD_READ_TOKEN`, paste the token as its value, and select **Add
+   secret**.
+10. Clear the clipboard. Do not test the token with a command that prints it.
+11. Rerun GitHub Actions run `30705557577` and inspect the summary and artifact.
+12. After the experiment succeeds, delete `ANSIBLEGUARD_READ_TOKEN` from the
+    fork and revoke/delete `ansibleguard-pr-demo-read` from the `Narjes-b`
+    account.
+
+The direct fork settings page is:
+
+```text
+https://github.com/JedidiAymen/ansible-role-the_bastion/settings/secrets/actions
+```
+
+The workflow receives this repository secret because the demonstration PR is
+an internal PR whose base and head branches both belong to the fork. Do not use
+this design for untrusted third-party pull-request branches.
+
 If the active account is only a collaborator, verify permissions before
 choosing a deploy key:
 
