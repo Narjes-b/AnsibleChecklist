@@ -240,6 +240,31 @@ Option 1 is the best long-term developer experience. Option 3 is suitable for
 finishing this temporary private-repository demonstration after explicit
 credential approval.
 
+### Permission check performed on 2026-08-01
+
+Before creating or uploading any credential, repository permissions were
+queried through GitHub's API for `Narjes-b/AnsibleChecklist`. The authenticated
+account has `push: true` but `admin: false` and `maintain: false`.
+
+This means the account can continue development on the feature branch, but it
+cannot configure a repository deploy key. GitHub reserves deploy-key management
+for repository administrators. No deploy key was created, no existing GitHub
+CLI token was copied, and no Actions secret was changed during this check.
+
+The safe unblock is therefore one of the following:
+
+1. ask an administrator of `Narjes-b/AnsibleChecklist` to provide a
+   repository-scoped read mechanism, preferably a read-only deploy key or a
+   GitHub App installation with Contents read permission; or
+2. have an authorized owner create a short-lived read-only token that can read
+   only the AnsibleGuard source repository, then enter it directly with
+   `gh secret set ANSIBLEGUARD_READ_TOKEN --repo
+   JedidiAymen/ansible-role-the_bastion` and delete it after this experiment.
+
+The token must be entered interactively in a trusted terminal; it must not be
+pasted into chat, committed, passed as a command-line argument, or printed in
+workflow logs. A broad classic `repo` token remains intentionally rejected.
+
 ## Other upstream checks
 
 The fork retains the upstream role's own lint and Molecule workflows. Their

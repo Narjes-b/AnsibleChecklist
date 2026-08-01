@@ -422,9 +422,10 @@ pip install 'git+https://github.com/Narjes-b/AnsibleChecklist.git@sarif-validati
 
 Recommended long-term fix: publish a versioned package or reusable action.
 
-Temporary private-repository option: create a fine-grained token scoped only
-to `Narjes-b/AnsibleChecklist` with Contents read access, then store it
-interactively—never on the command line:
+Temporary private-repository option: have an authorized repository owner
+create a short-lived credential scoped only to `Narjes-b/AnsibleChecklist`
+with Contents read access, then store it interactively—never as a command-line
+value:
 
 ```bash
 gh secret set ANSIBLEGUARD_READ_TOKEN \
@@ -434,6 +435,19 @@ gh secret set ANSIBLEGUARD_READ_TOKEN \
 The workflow can then install with the masked secret. Do not reuse or upload a
 broad personal `repo` token. Rotate/delete the temporary read token after the
 experiment.
+
+If the active account is only a collaborator, verify permissions before
+choosing a deploy key:
+
+```bash
+gh api repos/Narjes-b/AnsibleChecklist \
+  --jq '{visibility, permissions, default_branch}'
+```
+
+`admin: false` means that account cannot add a deploy key even when
+`push: true`. Ask a repository administrator to configure the read-only key or
+GitHub App. Do not weaken the source repository's visibility merely to make a
+test workflow pass.
 
 ## 14. Pull-request acceptance checklist
 
