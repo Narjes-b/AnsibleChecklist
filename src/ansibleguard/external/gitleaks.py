@@ -311,7 +311,7 @@ def scan_with_gitleaks(target_path, gitleaks_path, timeout=None):
                 f"Gitleaks binary not found at '{gitleaks_path}'. "
                 "Run `ansibleguard install-tools` or pass --gitleaks-path."
             )
-            print(f"[✗] {message}")
+            print(f"[error] {message}")
             return ToolResult("tool-error", message=message, metadata=metadata)
 
         if result.returncode in [0, 1]:
@@ -335,7 +335,7 @@ def scan_with_gitleaks(target_path, gitleaks_path, timeout=None):
                         findings, config_root
                     )
                     metadata["suppressed_known_noise"] = len(suppressed)
-                    print(f"[✓] Gitleaks found {len(findings)} findings.")
+                    print(f"[ok] Gitleaks found {len(findings)} findings.")
                     return ToolResult(
                         "completed",
                         findings,
@@ -343,10 +343,10 @@ def scan_with_gitleaks(target_path, gitleaks_path, timeout=None):
                         suppressed_findings=suppressed,
                     )
             else:
-                print("[✓] Gitleaks found no issues.")
+                print("[ok] Gitleaks found no issues.")
                 return ToolResult("completed", metadata=metadata)
         else:
-            print("[✗] Gitleaks failed; redacted diagnostics were retained.")
+            print("[error] Gitleaks failed; redacted diagnostics were retained.")
             message = (result.stderr or result.stdout or "Unknown gitleaks failure").strip()
             return ToolResult("tool-error", message=message, metadata=metadata)
     finally:

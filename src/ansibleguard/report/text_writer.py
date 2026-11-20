@@ -6,7 +6,7 @@ def write_AnsibleLint_results_to_txt(all_results, file_path, yaml_file_path):
         for line in all_results:
             # print(line)
             txtfile.write(f"- {line}\n")
-    print(f"[✔] AnsibleLint analysis saved to {file_path}")
+    print(f"[ok] AnsibleLint analysis saved to {file_path}")
 
 
 import json
@@ -77,7 +77,7 @@ def write_GitLeaks_results_to_txt(findings, file_path):
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(redacted, f, indent=2)
 
-    print(f"[✔] GitLeaks analysis saved to {file_path}")
+    print(f"[ok] GitLeaks analysis saved to {file_path}")
 
 
 def write_unused_vars_to_txt(warnings, file_path):
@@ -92,7 +92,7 @@ def write_unused_vars_to_txt(warnings, file_path):
             txtfile.write("No unnecessary dependencies found.\n")
         txtfile.write("\n")
         txtfile.write("\n")
-        print(f"[✔] Unnecessary dependencies saved to {file_path}")
+        print(f"[ok] Unnecessary dependencies saved to {file_path}")
 
 
 def write_duplicates_to_txt(dupes, file_path):
@@ -117,7 +117,7 @@ def write_duplicates_to_txt(dupes, file_path):
         txtfile.write(f"Total number of duplicate keys detected: {nbKeys}\n")
         txtfile.write("\n")
         txtfile.write("\n")
-        print(f"[✔] Duplicate key report saved to {file_path}")
+        print(f"[ok] Duplicate key report saved to {file_path}")
 
 
 def write_results_to_txt(all_results, file_path):
@@ -176,4 +176,4 @@ def write_results_to_txt(all_results, file_path):
 
             txtfile.write("\n\n")
 
-    print(f"[✔] Plays level IaC smells analysis saved to {file_path}")
+    print(f"[ok] Plays level IaC smells analysis saved to {file_path}")

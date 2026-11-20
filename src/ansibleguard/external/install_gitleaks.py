@@ -115,7 +115,7 @@ def download_and_install_gitleaks():
 
     local_archive.unlink()
     GITLEAKS_PATH.chmod(0o755)
-    print(f"[✓] Gitleaks installed at: {GITLEAKS_PATH}")
+    print(f"[ok] Gitleaks installed at: {GITLEAKS_PATH}")
 
 
 def ensure_gitleaks_installed():
@@ -128,4 +128,4 @@ if __name__ == "__main__":
     ensure_gitleaks_installed()
     # findings = scan_ansible_playbook("example_playbook.yml")
     # for f in findings:
-    #   print(f"🔒 {f['rule']} in {f['file']} at line {f['line']}")
+    #   print(f"{f['rule']} in {f['file']} at line {f['line']}")

@@ -511,7 +511,7 @@ def execute_for_single_file(
         write_results_to_csv(all_results, csv_output_file)
         write_results_to_txt(all_results, txt_output_file)
 
-        print(f"[✔] Results are saved to {csv_output_file}")
+        print(f"[ok] Results are saved to {csv_output_file}")
     except Exception as e:
         error = FileAnalysisError(
             yaml_file_path,
@@ -538,7 +538,7 @@ def format_ansible_lint_results(lint_results):
         )
         path = lint_issue_path(issue) or "unknown-path"
         line = lint_issue_line(issue)
-        formatted.append(f"⚠️ {rule} - {message} at {path}:{line}")
+        formatted.append(f"warning: {rule} - {message} at {path}:{line}")
 
     return formatted
 
@@ -551,7 +551,7 @@ if __name__ == "__main__":
     yaml_files = list(yaml_folder.glob("*.yml")) + list(yaml_folder.glob("*.yaml"))
 
     for yaml_file_path in yaml_files:
-        print(f"🔍 Processing file: {yaml_file_path}")
+        print(f"Processing file: {yaml_file_path}")
         file_stem = yaml_file_path.stem
         output_dir = RESULTS_DIR / file_stem
         output_dir.mkdir(parents=True, exist_ok=True)

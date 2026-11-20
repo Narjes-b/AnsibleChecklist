@@ -591,7 +591,7 @@ def mainn(
                 "task_metrics": tasks_for_this_play,
             }
             main_metrics["plays"].append(play_entry)
-        # 🔁 handle top-level tasks without plays
+        # handle top-level tasks without plays
         if -1 in tasks_by_play_id:
             main_metrics["plays"].append(
                 {

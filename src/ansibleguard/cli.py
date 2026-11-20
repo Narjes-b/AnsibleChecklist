@@ -585,7 +585,7 @@ def analyze_path(
         out_dir = output_dir_for(scan_root, yaml_file, output_root)
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        print(f"🔍 Processing file: {yaml_file}")
+        print(f"Processing file: {yaml_file}")
 
         document_info = (
             repository_context.document_for(yaml_file)
@@ -1349,7 +1349,7 @@ def analyze_path(
         )
 
     print(
-        f"[✔] {len(selected_yaml_files)} file(s) selected; "
+        f"[ok] {len(selected_yaml_files)} file(s) selected; "
         f"{len(yaml_files)} source file(s) processed; "
         f"{structurally_analyzed} structurally analyzed; "
         f"gitleaks={gitleaks_result.status}; ansible-lint={lint_result.status}. "
@@ -1357,11 +1357,11 @@ def analyze_path(
     )
     if reporting_failed:
         print(
-            "[✘] Report serialization failed; analysis-failure.json records "
+            "[error] Report serialization failed; analysis-failure.json records "
             "a non-clean terminal state."
         )
     else:
-        print(f"[✔] {len(all_findings)} total finding(s) across all files.")
+        print(f"[ok] {len(all_findings)} total finding(s) across all files.")
     lint_root_errors = sum(
         item.get("status") == "tool-error"
         for item in lint_result.metadata.get("root_results", [])
@@ -1426,7 +1426,7 @@ def _write_rollups(
         explain_style=explain_style,
     )
     print(
-        f"[✔] Rollups written: {paths['summary']}, {paths['findings']}, "
+        f"[ok] Rollups written: {paths['summary']}, {paths['findings']}, "
         f"{paths['sarif']}, {paths['report']}"
     )
 

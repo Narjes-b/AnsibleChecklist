@@ -4,6 +4,18 @@ All notable AnsibleGuard changes, newest first. Each version section preserves
 the facts recorded for that release; empirical numbers belong to the version
 and corpus they name and are not restated for later versions.
 
+## Unreleased
+
+- Console progress lines use plain prefixes (`[ok]`, `[error]`, `warning:`)
+  instead of symbols, so logs stay readable in CI and plain terminals.
+  Report files are unchanged.
+- The GitHub Actions workflow scans the pull-request head and pushed commits
+  from a detached worktree. Previously the report directory was created inside
+  the scanned checkout, so a head scan could include its own cache files and
+  report spurious introduced secrets.
+- Added `docs/demo/` with the tool demonstration video and reproduction
+  commands, and reorganized the README.
+
 ## 0.0.7.1
 
 Fixes from the 2026-10-15 audit (`docs/study/v007-audit-2026-10-15.md`). They

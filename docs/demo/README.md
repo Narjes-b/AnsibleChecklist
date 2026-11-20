@@ -1,11 +1,10 @@
 # AnsibleGuard demo (ICPC 2027 tool track)
 
-[▶ ansibleguard-demo.mp4](ansibleguard-demo.mp4) — 4:38, 1280×720, no audio
-(on-screen captions).
+[ansibleguard-demo.mp4](ansibleguard-demo.mp4): 4:43, 1280x720, captions, no audio.
 
 ![Scan summary from the demo](scan-summary.jpg)
 
-The video was recorded on 2026-11-19 against the public repository
+The video was recorded against the public repository
 [redhat-cop/aap_configuration_extended](https://github.com/redhat-cop/aap_configuration_extended).
 Every terminal scene is a replay of a real run. Long commands are sped up, and
 the speed and the real elapsed time are shown on screen. The only change to the
@@ -13,7 +12,7 @@ output is that local paths are shown as `~/demo`.
 
 | Part | What it shows |
 |---|---|
-| 01 Repository scan | Full scan of the repository (profile `technical-full`, 71 s): 3,100 canonical occurrences in 670 files, with ansible-lint and GitLeaks merged into one result |
+| 01 Repository scan | Full scan of the repository (profile `technical-full`, 72 s): 3,100 canonical occurrences in 670 files, with ansible-lint and GitLeaks merged into one result |
 | 02 Pull request review | Upstream PR #357 fails the ratchet policy (one introduced `insecure-permissions` finding, exit code 1). Upstream PR #457 passes and fixes a `missing-validate-certs` finding |
 | 03 Local LLM | `--explain --explain-style verified-facts` with a local `qwen2.5-coder:7b` model. The model selects backend-checked claims and cites source lines, which are then shown with `git show` |
 | 04 Evidence | The same two PRs replayed in GitHub Actions: a failed check with an inline annotation for #357 and a passing check for #457 |
