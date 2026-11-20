@@ -384,7 +384,7 @@ those become future-work observations or inputs to a new study iteration.
 
 ## Phase 9: optional human-to-LLM agreement experiment
 
-Claude or another LLM is not needed to choose or score numerical thresholds.
+An LLM is not needed to choose or score numerical thresholds.
 Threshold scoring is deterministic Python over metric values and human gold
 labels.
 
@@ -399,7 +399,7 @@ standard is locked:
 6. report human-to-LLM agreement, kappa, precision, recall, F1, uncertainty,
    and failure categories.
 
-Claude Code is not required for this experiment. A versioned API/model call or
+A versioned API/model call or
 other reproducible inference interface is preferable because the exact prompt,
 model, inputs, and outputs can be archived. The LLM must not adjudicate its own
 labels or be presented as human ground truth.

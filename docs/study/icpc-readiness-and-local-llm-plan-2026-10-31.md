@@ -35,7 +35,7 @@ Sources: [official important dates](https://conf.researchr.org/dates/icpc-2027),
 | RQ2 | Descriptive output co-occurrence tables | Repository dependence, file-kind applicability, shared predicates, size sensitivity and multiple-testing choices need review. Associations are not causal impacts or validated defect associations. |
 | Paper narrative | An old RQ1/RQ2 draft and extensive technical documentation | Rewrite around one contribution and a claim/evidence ledger. Old precision tables and superseded provenance descriptions must not become current results. |
 
-Evidence: [repair log](recovery-progress.md), [recovery diagnosis](recovery-plan-2026-10-23.md), [RQ1 recovery status](../../study/rq1-agreement-pilot/recovery-2026-10-23/RQ1_RESULTS.md), [scoped owner provenance](../../study/exploratory-labels/PROVENANCE.md), [construct audit](../../study/evidence-constructs-2026-10-23/README.md), [allocation comparison](../../study/sampling-allocation-2026-10-23/README.md), [local LLM repair record](local-llm-repair-2026-10-23.md). These are inspected records, not newly generated semantic judgments.
+Evidence: [repair log](recovery-progress.md), [recovery diagnosis](recovery-plan-2026-10-23.md), [RQ1 recovery status](../../study/rq1-agreement-pilot/recovery-2026-10-23/RQ1_RESULTS.md), [construct audit](../../study/evidence-constructs-2026-10-23/README.md), [allocation comparison](../../study/sampling-allocation-2026-10-23/README.md), [local LLM repair record](local-llm-repair-2026-10-23.md). These are inspected records, not newly generated semantic judgments.
 
 ## 3. LLM improvement: evidence first, then controlled model selection
 

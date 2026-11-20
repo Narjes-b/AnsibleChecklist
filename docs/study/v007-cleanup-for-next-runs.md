@@ -16,7 +16,7 @@ Status as of 2026-10-16. Items need the owner's approval where marked (A).
 
 ## 2. Tool fixes before a v0.0.7.1 freeze
 - File-level findings must name the construct (structure rows currently anchor at line 1).
-- Detector false positives listed in `study/validation-v007-human/ai-precheck/claude-reference-2026-10-16/FINDINGS.md` §3:
+- Detector behavior to verify before the freeze:
   non-Ansible YAML exclusion, missing-file-extension, become-scope-too-broad, large-task/large-play/
   complex-playbook units, "hack" matching, handler cross-file resolution, command idempotence guards,
   invalid-task-attribute-type version handling, unguarded-variable with prior set_fact, heredoc scope.

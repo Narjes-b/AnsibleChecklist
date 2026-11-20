@@ -835,7 +835,7 @@ Use `positive`, `negative`, or `uncertain`. A positive means the underlying code
 
 ## Important limitation
 
-The automated stages do not create a human gold standard. Human-to-human agreement requires two genuinely independent people. Agent, heuristic, or Claude labels must be reported as AI-assisted labels and cannot be renamed human labels.
+The automated stages do not create a human gold standard. Human-to-human agreement requires two genuinely independent people. Agent, heuristic, or model labels must be reported as AI-assisted labels and cannot be renamed human labels.
 """, encoding="utf-8")
 
 

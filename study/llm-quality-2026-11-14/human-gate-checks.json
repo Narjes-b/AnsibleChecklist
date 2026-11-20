@@ -1,6 +1,0 @@
-{
-  "output_review_waits_for_independent_source_review": true,
-  "repair_inference_source_gate_pending": true,
-  "frozen_identity_matches": true,
-  "unique_scheduled_records": 96
-}

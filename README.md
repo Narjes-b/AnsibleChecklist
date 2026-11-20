@@ -95,8 +95,7 @@ ansibleguard install-tools
 Python dependency. Importing the package never downloads binaries.
 
 For local explanations, install [Ollama](https://ollama.com) and pull the
-default model: `ollama pull qwen2.5-coder:7b`. See
-[study/exploratory-labels/local-llm/SETUP.md](study/exploratory-labels/local-llm/SETUP.md).
+default model with `ollama pull qwen2.5-coder:7b`.
 
 ## Usage
 

@@ -1,4 +1,0 @@
-{
-  "after_round2_started": "Compact JSON serialization reduced conservative byte accounting without changing parsed schema or prompt content. Final tests and frozen run use compact serialization.",
-  "freeze_order": "Candidate code frozen after second-round changes; smoke2 output collection finished after freezing. No further model-driven source changes."
-}

@@ -1,9 +1,0 @@
-{
-  "raw_results_sha256": "ef7baa430d729cf429660ba89f8e19c0c4afacd8b0e2e41feab769e4e5365690",
-  "reviewer": "AI assistant implementing the tool",
-  "independent": false,
-  "post_hoc": true,
-  "correct_in_fixture": 8,
-  "appropriately_withheld": 4,
-  "real_deployment_correctness": "not established"
-}

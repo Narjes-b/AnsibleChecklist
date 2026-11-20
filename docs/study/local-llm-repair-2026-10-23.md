@@ -39,17 +39,17 @@ Validation: **253 tests passed** across LLM contract/reporting, exact snapshot i
 
 ## Live acceptance: first pass failed before inference
 
-[Preserved first pass](../../study/local-llm-acceptance-2026-10-23/README.md): three synthetic model requests all returned HTTP 400; the invalid-anchor no-call gate passed. The 0.31.1 local Ollama server's journal identifies excessive grammar repetition, caused by generation-schema string bounds of 20,000 characters. No semantic model outcome can be scored from this pass. One separate diagnostic replay also failed and preserved the error body. The next fix must keep strict runtime bounds while making the constrained-generation grammar compatible.
+Preserved first pass: three synthetic model requests all returned HTTP 400; the invalid-anchor no-call gate passed. The 0.31.1 local Ollama server's journal identifies excessive grammar repetition, caused by generation-schema string bounds of 20,000 characters. No semantic model outcome can be scored from this pass. One separate diagnostic replay also failed and preserved the error body. The next fix must keep strict runtime bounds while making the constrained-generation grammar compatible.
 
 The new [acceptance runner](../../scripts/check_local_llm_acceptance.py) records the integrated path, prompts/raw answers, model digest, expectations, hashes and partial progress. It makes one attempt per case, retains all mismatches/failures and never creates human labels. Harness + LLM/report checks: **136 passed**. These fixture checks did not detect the backend grammar incompatibility; the live failed pass remains evidence.
 
 ### Grammar repaired; semantic/quotation failures remain
 
-[Second live pass](../../study/local-llm-acceptance-2026-10-23/grammar-repair/README.md): generation omits only string `maxLength` constraints; full runtime bounds remain. All three requests now produce JSON. **137 focused tests passed**. Two answers fail exact quotation because the model adds a space; the accepted low-confidence insufficiency answer still asserts definite runtime failure. The supported-condition case is misclassified as unsupported because the model confuses an example URL's actionability with the literal source predicate. No model quality gate has passed. Next: backend-supplied exact quotes and a fully neutral condition/actionability schema, with another preserved regression pass.
+Second live pass: generation omits only string `maxLength` constraints; full runtime bounds remain. All three requests now produce JSON. **137 focused tests passed**. Two answers fail exact quotation because the model adds a space; the accepted low-confidence insufficiency answer still asserts definite runtime failure. The supported-condition case is misclassified as unsupported because the model confuses an example URL's actionability with the literal source predicate. No model quality gate has passed. Next: backend-supplied exact quotes and a fully neutral condition/actionability schema, with another preserved regression pass.
 
 ## Current contract: neutral schema v3 and backend quotations
 
-[Third live development pass](../../study/local-llm-acceptance-2026-10-23/neutral-v3/README.md), **263 focused tests passed**:
+Third live development pass, **263 focused tests passed**:
 
 - Response schema **3** / prompt **`local-review-v3`** removes defect-only required fields in favor of neutral `summary` and `reasoning`. Existing output explanation/context fields carry these for compatibility. V2 is preserved as history, not silently accepted by V3.
 - Add separate `actionability`: actionable, not-actionable, context-dependent, not-assessed. Only supported + actionable allows a recommendation/snippet. The model's actionability remains unverified, and does not change detector policy.
@@ -59,7 +59,7 @@ The new [acceptance runner](../../scripts/check_local_llm_acceptance.py) records
 
 ## Next engineering steps
 
-The V3.1 consistency guard requires insufficient-evidence whenever the model declares required **condition-decision** facts missing. It rejects contradictions, without converting them to true/false labels. A hash-verified [structural replay](../../study/local-llm-acceptance-2026-10-23/neutral-v3/consistency-recheck.json) rejects the known runtime-input answer and retains the two literal answers; no model or citation check was replayed. **147 focused tests passed** across harness, LLM/reporting and source snapshot suites. An unmentioned dependency can still evade this guard; rule-specific completeness and independent acceptance remain pending.
+The V3.1 consistency guard requires insufficient-evidence whenever the model declares required **condition-decision** facts missing. It rejects contradictions, without converting them to true/false labels. A hash-verified structural replay rejects the known runtime-input answer and retains the two literal answers; no model or citation check was replayed. **147 focused tests passed** across harness, LLM/reporting and source snapshot suites. An unmentioned dependency can still evade this guard; rule-specific completeness and independent acceptance remain pending.
 
 1. **Snapshot completion:** add source-hash validation for reattaching saved results and freeze ordinary working-tree input if concurrent-edit isolation is required. Head/staged lifetime and safe saved-result insufficiency are repaired above.
 2. **Graph dependencies:** separate reachable, unresolved and unrelated definitions; report truncation and ambiguity rather than implying the first three candidate definitions are complete scope evidence. Preserve case-sensitive identifiers and explicitly handle legacy subject normalization. Operation-local caching is repaired above.

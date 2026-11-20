@@ -1,7 +1,0 @@
-kind,mode,scheduled,available,decision,content,citation,strict
-all,window,48,48,8,0,21,0
-all,scoped,48,47,44,41,43,38
-controlled,window,24,24,8,0,9,0
-controlled,scoped,24,23,23,23,23,23
-real,window,24,24,0,0,12,0
-real,scoped,24,24,21,18,20,15

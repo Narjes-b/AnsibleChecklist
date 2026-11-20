@@ -1,9 +1,0 @@
-{
-  "frozen_validator": "passes the frozen reviewer validator",
-  "name": "claude-reference",
-  "rows": 350,
-  "sha256": {
-    "claude-reference-agreement-pilot.csv": "0b8f46175ab05a64484c767535f6ff5afe7a6497d335b045d811b9e133cdf8b5",
-    "claude-reference-extra.csv": "9aa96e9cba8cb1cbdf4bb35f0169cfcd99e56c5aa04af2d5cb99f8614b574230"
-  }
-}

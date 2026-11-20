@@ -184,24 +184,6 @@ The fixes are in `scripts/study_reporting.py`, `scripts/v007_full_repro.py`,
 and `scripts/study_pipeline.py`. Charts must be regenerated with
 `--postprocess-only` from a restored run.
 
-### 4.3 False-positive mechanisms (precheck)
-
-`study/fp-precheck-v007-2026-10-15/` (AI precheck, calibration only):
-
-| Mechanism | Examples | Status |
-|---|---|---|
-| Handlers imported via `import_tasks`, listen topics, notifies from included files invisible — `missing-handler` is an **error** | 3 | fixed |
-| kubectl `-o` / `--output` treated as a file write → "mutating command" | 1 | fixed |
-| Marker inside an identifier (`containerd-hack`) | 1 | fixed |
-| Galaxy role `ns.name` treated as local role `name` | 1 | fixed |
-| Wrong messages (`threshold=None`, "curl") | 4 | fixed |
-| Module argument specs with `no_log` not recognized (`credentials-leaking-in-log`) | 2 | open |
-| File-scoped reasoning for variables and registered results | 3 | open |
-| Non-Ansible YAML analysed (`Taskfile.yml`) | 1 | open |
-| Data fields mistaken for module arguments (`port: 0` in `set_fact`) | 2 | open |
-| Path versus secret, local role pinning, `/sys` writes, controller env reads | 4 | open |
-| File-level "count=N" findings that do not name the task | most "uncertain" | open (reviewability) |
-
 ## 5. Pull-request mode on real pull requests
 
 Twenty-one real merged pull requests (the most recent qualifying merge of

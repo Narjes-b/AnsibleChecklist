@@ -183,42 +183,6 @@ Status: versioned answer contract and report propagation implemented; live seman
 - **253 tests passed** across LLM, reporting, snapshot/diff and finding suites; a final focused check additionally rejects silent legacy-answer promotion. No inference is included in those test results. A read-only local probe confirms the already-installed Qwen model is available; proceeding to a separate synthetic live acceptance diagnostic.
 - [Contract behavior and limits](local-llm-repair-2026-10-23.md). No historical responses, human labels or final evaluation eligibility were changed.
 
-## 2026-10-23 — Step 7d: live local acceptance exposed a grammar failure
-
-Status: diagnostic complete; backend fix follows automatically.
-
-- Added [check_local_llm_acceptance.py](../../scripts/check_local_llm_acceptance.py), exercising the integrated production path with three synthetic semantic expectations and one invalid-anchor gate. Records prompts, raw output, case/model/source hashes, pending IDs and incremental manifests; no retry or favorable-answer selection.
-- [First pass retained](../../study/local-llm-acceptance-2026-10-23/README.md): **3/3 model requests failed HTTP 400 before producing answers**. The invalid-anchor no-call gate passed. No semantic accuracy can be computed. One additional diagnostic replay captured the same failure body separately.
-- Local Ollama 0.31.1 journal: grammar repetition exceeds supported defaults. The generation schema's 20,000-character bounds are incompatible with this installed backend. Next: separate compatible generation grammar constraints from unchanged authoritative runtime validation, then retain a new live pass.
-- Harness/LLM/assessment-report checks: **136 passed**. The contrast with live failure is documented; passing mocks are not claimed as model acceptance. Model digest stayed unchanged; no hosted service or human labels used.
-
-## 2026-10-23 — Step 7e: repair generation grammar and inspect actual answers
-
-Status: grammar compatibility repaired; live semantic acceptance still fails.
-
-- Generation schema omits only recursively bounded string maxima; authoritative runtime schema/validation retains them. Generation field/type/enum/array constraints, token/byte limits, quote checks and no-fix rules remain. The runner records both schema hashes.
-- [Second live pass retained](../../study/local-llm-acceptance-2026-10-23/grammar-repair/README.md): three JSON answers, no HTTP errors, stable model digest. Two quotation failures (one extra leading space); one accepted insufficiency state with contradictory definite-failure prose; invalid-anchor gate passes. A raw supported-condition judgment is wrong because actionability and predicate existence are conflated.
-- **137 focused tests passed**. The 2/4 engineering expectation matches are not semantic accuracy and do not pass an evaluation gate. All raw responses and prior failures remain reviewable.
-- Next: move source quotation to the backend, replace biased defect-only fields, and separate condition assessment from actionability before another development regression pass.
-
-## 2026-10-23 — Step 7f: neutral condition/actionability contract and backend quotations
-
-Status: source quotation and neutral fields repaired; one live semantic failure remains explicit.
-
-- Schema 3 / `local-review-v3`: neutral summary/reasoning replace biased defect-only fields; condition assessment and actionability are separate. Only supported + actionable can propose a fix. New fields survive report formats; historical answers/labels are unchanged.
-- The model cites file/line only. Backend membership checks reject omitted/blank/conflicting source and attach exact quotes. No model-generated whitespace is trusted as evidence.
-- **263 focused tests passed**. [Third live development pass](../../study/local-llm-acceptance-2026-10-23/neutral-v3/README.md): correct literal-setting outcomes, three schema-valid responses, stable digest; runtime-input answer still wrongly selects unsupported while admitting missing evidence. 3/4 engineering matches are not accuracy, and these reused fixtures are development exposures.
-- Next guard will reject decisive assessments that declare required decision evidence missing. Rule-specific evidence and independent human/model acceptance remain necessary; actionability has not been certified.
-
-## 2026-10-23 — Step 7g: reject contradictory missing-evidence decisions
-
-Status: consistency guard implemented; no new inference or accuracy claim.
-
-- Prompt `local-review-v3.1` clarifies that `missing_evidence` lists required facts for the condition decision; actionability-only unknowns belong in limitations. Runtime validation rejects supported/unsupported answers with required decision evidence missing.
-- [Hash-verified replay](../../study/local-llm-acceptance-2026-10-23/neutral-v3/consistency-recheck.json): the actual V3 runtime-input answer is now rejected, while the two literal-setting answers remain structurally valid. Zero model calls; original raw answers/manifests unchanged; source citations were not rechecked in this structural replay. No automatic semantic relabel occurs.
-- **147 focused tests passed**. This guard detects declared structural contradictions, not all missing scope/evidence. The last live semantic failure is retained; no human or final accuracy gate is passed.
-- Continuing toward construct/rule evidence grounding, where the frozen metadata inventory shows why generic categories/windows are insufficient.
-
 ## 2026-10-23 — Step 5d: locate frozen constructs and audit lexical subjects
 
 Status: structural context diagnostic complete for all selected IDs; rule completeness remains uncertified.

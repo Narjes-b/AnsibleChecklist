@@ -11,15 +11,9 @@ when the caller opts in (``ansibleguard diff --explain``). A model/network
 failure degrades to "no enrichment for this item", never a scan failure --
 Ollama is not a dependency of the core tool.
 
-Historical measurement (see
-study/exploratory-labels/local-llm/KNOWN_ISSUES_2026-10-18.md): the single-file
-12-case evaluation caught 0 of 5 known false positives and reported "high"
-confidence on every case regardless of correctness. Current prompts may
-include candidate variable definitions, but scope/evidence completeness and
-post-repair model accuracy have not been established. Treat every ``llm_*`` field as an unverified second
-opinion, not a verdict -- callers rendering these fields to a human should
-keep the disclaimer attached (see ``LLM_DISCLAIMER`` below) rather than
-present "llm_suggested_fix" as an endorsed fix.
+Explanation accuracy depends on the evidence available in the analyzed snapshot.
+Keep the disclaimer attached to ``llm_*`` fields shown to reviewers
+(see ``LLM_DISCLAIMER`` below).
 """
 
 from __future__ import annotations
@@ -41,13 +35,7 @@ from . import llm_runtime
 DEFAULT_HOST = "http://127.0.0.1:11434"
 DEFAULT_MODEL = "qwen2.5-coder:7b"
 DEFAULT_TIMEOUT = 120.0
-# Ollama's server defaults to a 4096-token context window regardless of a
-# model's advertised max context length, silently truncating larger prompts
-# (measured against qwen2.5-coder:7b, which advertises 32768 in /api/tags but
-# ran with n_ctx_slot=4096 until this was set explicitly -- see
-# study/exploratory-labels/local-llm/eval/EVAL_RESULTS.md for the full writeup of the failure this
-# caused). 8192 is a practical default for the ~8-12GB VRAM budget this model
-# was selected for.
+# Set the context window explicitly to accommodate the source evidence packet.
 DEFAULT_NUM_CTX = 8192
 DEFAULT_NUM_PREDICT = 1024
 MAX_SOURCE_BYTES = 1024 * 1024

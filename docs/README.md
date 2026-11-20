@@ -50,7 +50,6 @@ edited to match later code.
 | [../study/evidence-constructs-2026-10-23/README.md](../study/evidence-constructs-2026-10-23/README.md) | Frozen candidate units, lexical subject audit, alias/duplicate/placeholder gaps and outcome cells by rule/decision/size partitions |
 | [study/local-llm-repair-2026-10-23.md](study/local-llm-repair-2026-10-23.md) | Local-only LLM safeguards, strict source/answer checks, measured limits and remaining repairs |
 | [study/structural-metrics-repair-2026-10-23.md](study/structural-metrics-repair-2026-10-23.md) | Shared declared-task traversal, metric versioning, source-unit semantics and threshold validation limits |
-| [../study/local-llm-acceptance-2026-10-23/README.md](../study/local-llm-acceptance-2026-10-23/README.md) | Live local synthetic acceptance: retained HTTP grammar failures, no-call gate and reproduction |
 | [study/v007-audit-2026-10-15.md](study/v007-audit-2026-10-15.md) | Historical audit of the v0.0.7 run and validation state, the reproduction, and the fixes |
 | [../study/pr-replay-v007-2026-10-15/README.md](../study/pr-replay-v007-2026-10-15/README.md) | Replay of 21 real merged pull requests through PR mode (CSV results) |
 | [../study/validation-design-v007/README.md](../study/validation-design-v007/README.md) | Simulation of the heldout sampling design on the real rule populations |
@@ -58,11 +57,9 @@ edited to match later code.
 | [study/v007-validation-protocol.md](study/v007-validation-protocol.md) | **Validation, sampling and human-labelling protocol** (verification modes, designs, pilot gate, estimation, effort) |
 | [../study/analysis-v007-2026-10-16/](../study/analysis-v007-2026-10-16/) | CSV tables behind the analysis and the 17 corrected charts |
 | [study/v007-validation-research-prompt.md](study/v007-validation-research-prompt.md) | The deep research brief for the validation and its status |
-| [../study/fp-precheck-v007-2026-10-15/README.md](../study/fp-precheck-v007-2026-10-15/README.md) | AI precheck of 101 calibration findings for false-positive mechanisms |
 | [study/v007-validation-plan-v2.md](study/v007-validation-plan-v2.md) | **Validation plan v2**: claims, gates, labelling protocol, decision rules, importance-weighted allocation |
 | [study/v007-pilot2-and-v0071-runbook.md](study/v007-pilot2-and-v0071-runbook.md) | Runbook: what is ready, the disk blocker, order of steps to v0.0.7.1 and pilot 2 |
 | [study/v007-cleanup-for-next-runs.md](study/v007-cleanup-for-next-runs.md) | What to clean before the next runs |
-| [../study/validation-v007-human/ai-precheck/claude-reference-2026-10-16/README.md](../study/validation-v007-human/ai-precheck/claude-reference-2026-10-16/README.md) | AI reference labels for the 350-item pilot (drift baseline, not gold) |
 | [study/v007-reproduce-full-run.md](study/v007-reproduce-full-run.md) | Reproduce the frozen 207-repository run, and its architecture |
 | [study/v007-full-run-investigation.md](study/v007-full-run-investigation.md) | Investigation report for the v0.0.7 full run |
 | [../study/validation-v007-human/README.md](../study/validation-v007-human/README.md) | Human-validation split, pilot, codebooks, and protocols |
@@ -83,24 +80,6 @@ edited to match later code.
 | [../study/rq2-v0071-rerun-2026-10-22/RQ2_RESULTS.md](../study/rq2-v0071-rerun-2026-10-22/RQ2_RESULTS.md) | **RQ2**: rule co-occurrence at file and repository level, size-adjusted, on the 2026-10-22 rerun |
 | [study/RQ1-RQ2-draft.md](study/RQ1-RQ2-draft.md) | Paper draft: RQ1 precision, RQ2 rule co-occurrence |
 | [study/tool-performance-report.md](study/tool-performance-report.md) | Tool performance report (precision, recall) |
-| [study/validation-structure-reconciliation.md](study/validation-structure-reconciliation.md) | How the two validation-tree structures fit together |
-
-## Exploratory label passes
-
-Earlier label passes over the pilot and stratified samples, and the
-comparisons built on them, under
-[../study/exploratory-labels/](../study/exploratory-labels/). Each folder's own
-README or report records who or what produced its labels; see
-[PROVENANCE.md](../study/exploratory-labels/PROVENANCE.md) for the owner's statement on
-the Reviewer A and B passes. They are separate
-from the formal human validation in `study/validation-v007-human/`.
-
-| Folder | What it holds |
-|---|---|
-| `ai-shadow-review/`, `teammate-review/` | Reviewer labels for the 350-item agreement pilot |
-| `annotation-comparison/` | Reviewer-agreement comparisons, phases 1 and 2 |
-| `stratified-sample/`, `stratified-sample-v0071/` | Impact-weighted samples (v0.0.7 and v0.0.7.1) with their labels |
-| `local-llm/` | Optional local-LLM explanations (`--explain`): setup, prompt, evaluation |
 
 ## Research and paper
 

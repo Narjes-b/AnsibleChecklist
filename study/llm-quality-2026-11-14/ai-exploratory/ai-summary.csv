@@ -1,7 +1,0 @@
-kind,mode,scheduled,available,decision_matches_ai_judgment,decision_matches_ai_judgment_percent,content_adequate_ai,content_adequate_ai_percent,decisive_citation_support_ai,decisive_citation_support_ai_percent,strict_content_and_citation_ai,strict_content_and_citation_ai_percent
-all,window,48,38,8,16.67,4,8.33,11,22.92,2,4.17
-all,scoped,48,45,41,85.42,29,60.42,25,52.08,21,43.75
-controlled,window,24,20,8,33.33,4,16.67,5,20.83,2,8.33
-controlled,scoped,24,24,24,100.0,16,66.67,11,45.83,9,37.5
-real,window,24,18,0,0.0,0,0.0,6,25.0,0,0.0
-real,scoped,24,21,17,70.83,13,54.17,14,58.33,12,50.0

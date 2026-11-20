@@ -186,8 +186,8 @@ def load_later_run(paths: list[Path]) -> tuple[set[str], set[tuple[str, str, str
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--labels", type=Path,
-                        default=Path("study/exploratory-labels/annotation-comparison/consolidated-comparison.csv"))
+    parser.add_argument("--labels", type=Path, required=True,
+                        help="consolidated Reviewer A/B label comparison CSV")
     parser.add_argument("--master", type=Path,
                         default=Path("study/validation-v007-human/samples/agreement-pilot/agreement-pilot-master.csv"))
     parser.add_argument("--sample-manifest", type=Path, default=None,

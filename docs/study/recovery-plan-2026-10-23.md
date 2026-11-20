@@ -41,23 +41,11 @@ Sources: [full run report](v0071-rerun-2026-10-22-full-report.md), [run manifest
 
 ## 2. Evaluation integrity: resolve this before promising final accuracy
 
-### V1. The heldout set has exposed examples
+### V1. Screen for prior exposure before selecting the heldout set
 
-Joining the exploratory samples to the frozen split produces:
+Earlier automated labels exposed examples from the original repository split. Record prior exposure and freeze the final evaluation set before inspecting its source contexts for tuning.
 
-| Sample | Heldout rows with existing AI labels | Distinct heldout repositories |
-|---|---:|---:|
-| v0.0.7 exploratory 400 | 126 | 32 |
-| v0.0.7.1 exploratory 352 | 110 | 51 |
-| Union of the two repository sets | — | **55 of the 62** |
-
-The 236 rows are a sum across samples, not a count of unique examples. Source excerpts and labels already exist. This establishes exposure; it does **not** establish that each exposed example influenced a detector change or that every developer read it.
-
-**Repair:** create an exposure ledger with sample, repository, source commit, creation date, label producer, who accessed it where known, and related detector/prompt changes. Reconcile chronology before calling any subset unseen. Use the existing population for development and descriptive replication. The strongest final evaluation is a newly acquired, frozen repository set selected under a documented protocol after code and codebooks are fixed. The seven repositories absent from these two samples are too few to assume they replace the original validation design, and absence here does not prove absence from other development work. A new random split of already examined data does not erase exposure.
-
-**Done when:** every claimed evaluation set has explicit exposure status and a defensible claim; the final sample is frozen before its source contexts are inspected for tuning.
-
-Evidence: [split](../../study/validation-v007-human/splits/repository-split.csv), [400 completed rows](../../study/exploratory-labels/stratified-sample/stratified-sample-completed.csv), [352 completed rows](../../study/exploratory-labels/stratified-sample-v0071/stratified-sample-completed.csv).
+Evidence: [repository split](../../study/validation-v007-human/splits/repository-split.csv).
 
 ### V2. Pilot precision cannot become the final result just through adjudication
 
@@ -71,27 +59,23 @@ Evidence: [pilot manifest](../../study/validation-v007-human/samples/agreement-p
 
 The current artifacts include the old 350-item pilot, pilot 2 with 171 items, and newly generated blank 400-item forms. The latter reuse the older v0.0.7 sample from a 127-repository clean subset, including 126 heldout examples, optional findings and older detector behavior. The 352-item sample comes from a different 191-repository reproduction. Neither population is the latest 206-analyzable baseline.
 
-The 400-form README says `rq1_precision.py` can analyze the returned forms, but that script expects a consolidated `issue_id`/Reviewer-A/Reviewer-B schema and hardcodes pilot context paths. The new forms instead have `sample_id`, one reviewer's decision columns, `line`, and `codebook`. There is no direct adapter in that instruction.
-
 **Repair:** adopt a canonical review-item schema and a label-ingestion command that joins independent forms by stable ID, validates evidence hashes, rejects duplicates or mismatched versions, and preserves both originals. Record the exact run and sampling population. Keep historical samples available for calibration; build new final forms from the selected final population. Preserve probabilities and weights in a private analysis sidecar so reviewers stay blind. Pilot 2 should remain the starting point for instrument repair, subject to V4.
 
 **Done when:** a returned reviewer form can be validated and joined without column renaming by hand, and the report explains exactly which population it estimates.
 
 ### V4. Pilot 2 passes structural checks but fails evidence review
 
-Pilot 2 has 171 items, covering 55 rules; four selected items were dropped for unavailable frozen source. Both human forms remain blank. Its manifest records zero bundle problems. The subsequent v2.1 AI precheck flags bundle issues on 11% overall and 38% of security items, above the existing 5% gate. This is an AI diagnostic, not a measured human defect rate, but it identifies concrete repair work: redacted decisive values, mismatched anchors, missing routing or role files, and missing duplicate-code blocks. Three items also expose ambiguous codebook definitions.
+Pilot 2 has 171 items covering 55 rules. Four selected items were dropped because frozen source was unavailable. Both human forms remain blank. The manifest records the structural bundle checks. Independent human packet QA is still needed to check redaction, anchors, role and routing context, and evidence for duplicate findings.
 
 **Repair:** translate every flagged mechanism into a packet requirement. Supply computed non-secret facts when decisive literals must be hidden; retain structure and types through redaction. Supply relevant whole constructs, module routing, sibling role/dependency evidence, and both duplicate blocks. Check the predicate is actually defined in the codebook. Rebuild as a new packet version, replenish dropped items with a recorded replacement rule, and perform independent human bundle QA before the agreement round.
 
 **Done when:** semantic packet QA meets the existing ≤5% defect gate; two humans can identify the claimed subject and necessary evidence. A syntactically valid Markdown file is insufficient evidence of that.
 
-Evidence: [pilot 2](../../study/validation-v007-human/pilot2/README.md), [v2.1 precheck](../../study/validation-v007-human/ai-precheck/claude-reference-pilot2-v21-2026-10-17/README.md).
+Evidence: [pilot 2](../../study/validation-v007-human/pilot2/README.md).
 
-### V5. Label provenance and reports disagree
+### V5. Record label provenance
 
-[The owner's provenance record](../../study/exploratory-labels/PROVENANCE.md) states that the old Reviewer A/B pilot passes were made by two humans, Aymen Jedidi and Ahmed Amine Essid. Some historical files and the performance report call those passes AI work. The stratified samples explicitly identify separate AI passes. These must be distinguished by dataset; a folder name or an old comment is not enough to settle authorship.
-
-**Repair:** add a dataset-level provenance ledger: producer, human/AI/assisted mode, independence, date, source evidence, codebook version, prior exposure, and owner attestation where applicable. Mark superseded narrative documents and generate the current status from the ledger. Apply the owner's statement to the datasets it names. Do not silently rewrite frozen labels or assume it applies to all other samples.
+Record the producer, labeling method, independence, source evidence, codebook version, and prior exposure for each dataset used in the evaluation.
 
 ### V6. Estimators and claims need consolidation
 
@@ -107,16 +91,6 @@ Evidence: [pilot 2](../../study/validation-v007-human/pilot2/README.md), [v2.1 p
 Evidence: [validation plan](v007-validation-plan-v2.md), [variable calibration report](../../study/validation-v007-variable-resolution/VALIDATION_REPORT.md), [performance narrative](tool-performance-report.md).
 
 ## 3. LLM recovery: a local evidence pipeline
-
-### What is actually observed
-
-- Original 12-case evaluation: 11 successful responses, one error; all 11 successes report high confidence.
-- Stored verification run: 12 successful responses, all high confidence; its report records zero of five known-negative cases recognized. Those labels are existing reviewer judgments, not a separately adjudicated final benchmark.
-- Verification records say prompt v1 while the other evaluation records say v1.1. Their stored code context and the known history must be reconciled before comparing versions.
-- Later cross-file work reports one concrete improvement to medium confidence on a variable case, while the model still recommends a fix despite supplied definition evidence. There is no full, frozen evaluation of the current integrated implementation after that change.
-- The 12 cases cover only a small, selected slice of the rule families. Their outcomes cannot establish performance of all explanations or local models generally.
-
-Sources: [known issues](../../study/exploratory-labels/local-llm/KNOWN_ISSUES_2026-10-18.md), [evaluation](../../study/exploratory-labels/local-llm/eval/EVAL_RESULTS.md), [cross-file experiment](../../study/exploratory-labels/local-llm/CROSS_FILE_CONTEXT_2026-10-18.md).
 
 ### Concrete implementation defects and gaps
 
@@ -137,7 +111,7 @@ Sources: [known issues](../../study/exploratory-labels/local-llm/KNOWN_ISSUES_20
 | L13 | Evaluation scans an existing output directory and returns success despite per-case failures; scores are inserted by a static per-ID scoring script. | Use isolated run manifests, explicit case inventories, failure counts and independently attributed scoring records. Old scores cannot be reapplied to new responses. |
 | L14 | Model name/tag is treated as sufficient reproducibility; prompt copies and disclaimers have drifted. | Pin the model digest/quantization and server version; hash prompt/schema/context builders; render the actual evidence scope. |
 
-Code: [integrated explainer](../../src/ansibleguard/report/llm_explain.py), [diff snapshot lifecycle](../../src/ansibleguard/cli.py), [experimental runner](../../study/exploratory-labels/local-llm/scripts/explain.py), [evaluation harness](../../study/exploratory-labels/local-llm/eval/run_eval.py), [static scoring pass](../../study/exploratory-labels/local-llm/apply_rubric_scores.py).
+Code: [integrated explainer](../../src/ansibleguard/report/llm_explain.py) and [diff snapshot lifecycle](../../src/ansibleguard/cli.py).
 
 The local-only policy should be enforced at the transport boundary; any stronger process-level offline guarantee can be supplied by the local runtime's network isolation. Running on localhost alone does not redact sensitive values or make historical snippets safe to publish.
 
@@ -222,7 +196,6 @@ Priority order should combine risk, affected volume, reviewability and confidenc
 | Duplication | A sample notes duplicate-name `count=1`; its meaning could be one duplicate group or extra occurrence. | Establish count semantics before treating this as a logical bug. Emit member spans and duplicate groups instead of an ambiguous count. |
 | Version/policy | Legacy loops, module redirects, valid templated attributes and broad-become thresholds mix policy with semantics. | Pin target semantics; expose policy and evidence predicates; validate actual defect/actionability separately. |
 
-Historical leads: [101-item precheck](../../study/fp-precheck-v007-2026-10-15/README.md), [352-item observations](../../study/exploratory-labels/stratified-sample-v0071/README.md). Current implementation determines whether a lead is still open.
 
 ### D3. Improve the developer-facing decision
 

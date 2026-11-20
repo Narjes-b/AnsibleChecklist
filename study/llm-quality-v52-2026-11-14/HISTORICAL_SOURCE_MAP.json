@@ -1,7 +1,0 @@
-{
-  "reason": "The working-tree requested-repair command evolved for V6; V5.2 results and checksums remain historical and unchanged.",
-  "original_working_tree_path": "scripts/requested_repair.py",
-  "recorded_v52_sha256": "f5ed6b78358fc3954c56fadff9f35cc3b5b384e1faf403c012d69363541ca470",
-  "byte_identical_preserved_source": "study/llm-quality-v52-2026-11-14/source-snapshots/requested_repair.py",
-  "note": "Verify historical source against the preserved snapshot, not the evolved working-tree command. Frozen analyzer code is in the original implementation.tar.gz."
-}

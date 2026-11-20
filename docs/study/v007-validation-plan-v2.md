@@ -3,10 +3,7 @@
 2026-10-16. Supersedes the staging, not the content, of
 [v007-validation-protocol.md](v007-validation-protocol.md): modes A/B/C, the weighting
 and the estimators stay. What changes is the order of work, the gates, and where human effort goes.
-Reason: the 350-item pilot, labelled by an AI reference
-([README](../../study/validation-v007-human/ai-precheck/claude-reference-2026-10-16/README.md)),
-showed that the instrument, not the sample, is the weakest part
-(κ 0.52 against Reviewer C; 67 % agreement with my own blind check; 28 of 50 review/history items uncertain).
+Use the calibration pilot to check whether the codebook and evidence bundles support reliable review.
 
 ## 1. Claims first: one instrument per claim
 

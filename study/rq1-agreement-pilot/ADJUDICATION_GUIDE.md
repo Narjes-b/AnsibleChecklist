@@ -21,7 +21,7 @@ gave the same semantic label, that label is final. The other items are in
 4. Commit the sheet and rerun:
 
 ```bash
-python scripts/rq1_precision.py --later-label "v0.0.7.1 (rerun 2026-10-22)" \
+python scripts/rq1_precision.py --labels /path/to/consolidated-comparison.csv --later-label "v0.0.7.1 (rerun 2026-10-22)" \
   --rule-profile study/analysis-v0071-rerun-2026-10-22/rule-profile.csv
 ```
 

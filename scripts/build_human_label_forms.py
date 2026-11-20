@@ -32,7 +32,7 @@ DECISIONS = ["semantic_label", "semantic_reason", "actionability_label", "action
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sample", type=Path,
-                        default=Path("study/exploratory-labels/stratified-sample/stratified-sample.csv"))
+                        default=Path("study/sampling-design-2026-10-23/inputs/stratified-sample-v007.csv"))
     parser.add_argument("--codebook-dir", default="study/validation-v007-human/codebooks-v2")
     parser.add_argument("--output-dir", type=Path, default=Path("study/human-labels-400"))
     parser.add_argument("--reviewers", nargs="+", default=["reviewer-a", "reviewer-b"])

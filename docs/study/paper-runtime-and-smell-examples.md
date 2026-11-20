@@ -68,5 +68,3 @@ These are observed end-to-end timings from separate original runs. They are mach
 [The calculation script](../../scripts/summarize_paper_runtime.py) regenerates the statistics from the two CSVs; the [recorded summary](../paper-draft-2026-11-15/runtime-summary.json) preserves the values used in the papers.
 
 ## Detection accuracy is a separate question
-
-[The existing detection-performance report](tool-performance-report.md) labels the historical precision figures as automated exploratory proxies. The current paper draft therefore calls them historical reference-based estimates. Independent human validation is not established by the supplied records. Recall and F1 have not been measured. The illustrative agreement examples are separate synthetic data, not empirical human agreement. Detailed provenance is retained on the final disclosure page of each reading PDF.

@@ -28,7 +28,7 @@ def main() -> int:
     parser.add_argument("--label-dir", type=Path, required=True)
     parser.add_argument("--validation-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--name", default="claude-reference-pilot2")
+    parser.add_argument("--name", default="model-reference-pilot2")
     args = parser.parse_args()
     blank = read_table(args.blank)
     labels: dict[str, dict[str, str]] = {}

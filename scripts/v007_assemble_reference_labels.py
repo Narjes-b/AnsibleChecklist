@@ -80,7 +80,7 @@ def main() -> int:
     parser.add_argument("--validation-dir", type=Path, required=True)
     parser.add_argument("--label-dir", type=Path, required=True, help="directory with the per-family CSV files")
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--name", default="claude-reference")
+    parser.add_argument("--name", default="model-reference")
     parser.add_argument("--check-only", action="store_true")
     args = parser.parse_args()
     validation = args.validation_dir.resolve()

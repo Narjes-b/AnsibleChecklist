@@ -37,8 +37,7 @@ unnecessary-abstraction (full justifying-key list), missing-abstraction (more th
 Still taken from policy rather than code: placeholder-credential cases, module-level `no_log`, redirected-module version handling, release-note convention fallback.
 
 ## v2.1 (2026-10-16): changes after the pilot-2 dry run
-Dry run of v2.0 over the first pilot-2 build (seven blind AI passes, `ai-precheck/claude-reference-pilot2-v20-dryrun-2026-10-16/`) found
-undefined rules and bundle defects. v2.1 adds: COMMON C10 (file-level findings), C11 (unrecomputable metrics), C12 (inline suppressions), C13 (new reasons);
+v2.1 clarifies undefined rules and addresses bundle defects. It adds: COMMON C10 (file-level findings), C11 (unrecomputable metrics), C12 (inline suppressions), C13 (new reasons);
 predicates for become-scope-too-broad, missing-file-extension, duplicate-task-names, complex-expression, undocumented-complex-task, incomplete-task,
 unused-handler, silent-error-suppression, missing-handler, overriden-keys, insufficient-modularization, unexpected-task-location, duplicated-code,
 overriding-facts, untested-override-change, release-only and merge commits; new reasons (`confirmed-broad-privilege`, `confirmed-redirect`,

@@ -29,8 +29,8 @@ Reproduce after extracting the frozen run's internal-source occurrence CSV:
   --occurrences /path/to/extracted-run/aggregate/all-internal-source-occurrences.csv \
   --repository-status study/analysis-v0071-rerun-2026-10-22/run/tables/repository-execution-status.csv \
   --exposure-samples \
-    study/exploratory-labels/stratified-sample/stratified-sample.csv \
-    study/exploratory-labels/stratified-sample-v0071/stratified-sample.csv \
+    study/sampling-design-2026-10-23/inputs/stratified-sample-v007.csv \
+    study/sampling-design-2026-10-23/inputs/stratified-sample-v0071.csv \
   --output-dir /tmp/sampling-frame
 ```
 
