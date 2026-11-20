@@ -49,7 +49,6 @@ introduced, fixed or moved.
 - [Detection coverage](#detection-coverage)
 - [Output](#output)
 - [Development](#development)
-- [Limitations](#limitations)
 - [Research status](#research-status)
 - [Documentation](#documentation)
 - [Contributors](#contributors)
@@ -319,25 +318,6 @@ src/ansibleguard/
 ├── external/           ansible-lint and GitLeaks integration
 └── report/             JSON, CSV, SARIF, Markdown and LLM explanations
 ```
-
-## Limitations
-
-- Git review-history rules (`missing-release-note`, `missing-test-update`,
-  `untested-override-change`) need a real base revision. On a parentless
-  (shallow) snapshot they must not treat the whole repository as the change;
-  see [docs/study/v007-audit-2026-10-15.md](docs/study/v007-audit-2026-10-15.md).
-- A repository symbol index resolves visible defaults/vars, inventory files,
-  play/task vars, facts, registers, loop variables, and static vars includes.
-  Dynamic inventory, external secret stores, runtime includes, CI, and
-  command-line extra variables remain incomplete; `known_variables` is the
-  explicit project escape hatch.
-- Handler and role resolution is strongest for visible local files; dynamically
-  loaded collections or runtime includes can require project-specific review.
-- Fifteen of the paper's 38 checklist criteria are direct matches, eighteen are
-  partially automated, and five need reviewer intent that static analysis
-  cannot observe.
-- ansible-lint loads repository plugins/modules while linting; scan untrusted
-  repositories in an isolated environment (see `Dockerfile.research`).
 
 ## Research status
 
