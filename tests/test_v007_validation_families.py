@@ -43,12 +43,8 @@ def test_mapping_covers_matrix_and_all_seven_families_without_occurrence_inputs(
     # The mapping generator intentionally accepts only the matrix and catalog.
     output_dir = tmp_path / "validation"
     (output_dir / "mappings").mkdir(parents=True)
-    (output_dir / "protocol/source").mkdir(parents=True)
     matrix = ROOT / "study/validation-v007-human/mappings/source-rule-allocation-matrix.csv"
     (output_dir / "mappings/source-rule-allocation-matrix.csv").write_bytes(matrix.read_bytes())
-    for name in ("EXECUTION_PLAN.md", "EXACT_SAMPLING_SPEC.md"):
-        source = ROOT / "study/validation-v007-human/protocol/source" / name
-        (output_dir / "protocol/source" / name).write_bytes(source.read_bytes())
 
     manifest = build_family_mapping(ROOT, output_dir)
     mapping_path = output_dir / "mappings/rule-family-map.csv"
@@ -73,4 +69,3 @@ def test_mapping_covers_matrix_and_all_seven_families_without_occurrence_inputs(
         "style_policy": 11,
         "variable_reference_reasoning": 10,
     }
-    assert saved_manifest["source_documents"]["execution_plan"]["download_copies_byte_identical"]

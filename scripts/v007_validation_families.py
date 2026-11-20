@@ -17,8 +17,6 @@ from typing import Any
 
 
 EXPECTED_MATRIX_SHA256 = "657759e3d5cf76e79ce3dacc9afcd7f2b0986fa5d86a43a8c7787d1ee1596c2f"
-EXPECTED_PLAN_SHA256 = "0ad90df2988431f9d8d476bf806cae41c083537bba47abc8bd19b8191bfeb838"
-EXPECTED_SPEC_SHA256 = "9c4a9004ea5e97652fc240904c9035665ffbcd59967eedce08e1bb6d9c094aa8"
 EXPECTED_CATALOG_SHA256 = "62b43e177be28773b8e926c06345fe00bacdf37e0fa4d069a5d2d77ec485c93e"
 
 
@@ -212,19 +210,11 @@ def build_family_mapping(root: Path, output_dir: Path) -> dict[str, Any]:
     mapping_dir = output_dir / "mappings"
     matrix_path = mapping_dir / "source-rule-allocation-matrix.csv"
     catalog_path = root / "rule-catalog.json"
-    source_dir = output_dir / "protocol/source"
-    plan_path = source_dir / "EXECUTION_PLAN.md"
-    spec_path = source_dir / "EXACT_SAMPLING_SPEC.md"
     if not matrix_path.is_file():
         raise FileNotFoundError(f"copy the supplied allocation matrix to {matrix_path}")
-    for path in (plan_path, spec_path):
-        if not path.is_file():
-            raise FileNotFoundError(f"preserve the supplied source document at {path}")
 
     input_hashes = {
         "allocation_matrix": (matrix_path, EXPECTED_MATRIX_SHA256),
-        "execution_plan": (plan_path, EXPECTED_PLAN_SHA256),
-        "exact_sampling_spec": (spec_path, EXPECTED_SPEC_SHA256),
         "rule_catalog": (catalog_path, EXPECTED_CATALOG_SHA256),
     }
     for label, (path, expected) in input_hashes.items():
@@ -291,17 +281,6 @@ def build_family_mapping(root: Path, output_dir: Path) -> dict[str, Any]:
             "path": "mappings/source-rule-allocation-matrix.csv",
             "sha256": EXPECTED_MATRIX_SHA256,
             "rows": len(matrix_rows),
-        },
-        "source_documents": {
-            "execution_plan": {
-                "path": "protocol/source/EXECUTION_PLAN.md",
-                "sha256": EXPECTED_PLAN_SHA256,
-                "download_copies_byte_identical": True,
-            },
-            "exact_sampling_spec": {
-                "path": "protocol/source/EXACT_SAMPLING_SPEC.md",
-                "sha256": EXPECTED_SPEC_SHA256,
-            },
         },
         "rule_catalog": {
             "path": "../../rule-catalog.json",

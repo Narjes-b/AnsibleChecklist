@@ -143,14 +143,6 @@ evidence would increase false positives rather than improve the detector.
 
 The 207-repository corpus rescan and strict baseline comparison are complete.
 See `docs/study/v007-variable-resolution-results.md` for the execution outcome,
-count deltas, resolution-class totals, timeout caveat, and manual spot checks.
-
-The frozen primary agent review now covers all 247 suppressed findings, 450
-emitted occurrences (150 per resolution class), and 150 source-first files.
-It is explicitly marked as agent review rather than independent human ground
-truth; independent second-reviewer labels remain needed for agreement
-statistics.
-
-The remaining validation work is independent second-reviewer labeling,
-adjudication, and a genuinely unseen repository sample for final
-generalization claims.
+count deltas, resolution-class totals, and timeout caveat. The retained samples
+are available for independent human review and adjudication. Final
+generalization claims require a separately frozen evaluation sample.

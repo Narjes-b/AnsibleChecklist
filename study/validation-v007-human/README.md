@@ -4,14 +4,13 @@ This package contains split-safe validation preparation for run `v007-full-repro
 
 ## Frozen inputs
 
-- The supplied execution plans and exact sampling spec are byte-preserved in `protocol/source/`; their hashes and original names are in `protocol/source/INPUT_PROVENANCE.json`.
 - The exact 65-row allocation matrix is in `mappings/source-rule-allocation-matrix.csv`. `mappings/rule-family-map.csv` assigns 60 static/static-special and five separate review/history rules to seven families.
 - `identities/static-source-candidates.csv.gz` contains 265,434 namespaced static-source identities verified against the frozen commits.
 - `splits/repository-split.csv` freezes 144 calibration and 62 heldout repositories. Read the balance audit and manifest before sampling.
 
 ## Agreement-pilot artifacts
 
-`samples/agreement-pilot/agreement-pilot-master.csv` is the immutable 350-item master. `reviewers/reviewer-a/agreement-pilot.csv` and `reviewers/reviewer-b/agreement-pilot.csv` are identical blank forms. `reviewers/ai-shadow/agreement-pilot.csv` carries the same evidence/IDs and separate blank AI fields; formal AI labels wait until human gold is frozen. Each row links to a frozen context bundle under `samples/agreement-pilot/context/`. Six static families and the review/history family each have 50 cases. Of 335 calibration history candidates, 299 lack an actual first parent; 196 of those are excluded because their diff-dependent rules require it. The 103 parentless message-only cases remain eligible from their exact target commit messages. The resulting context-eligible history pool is 139 before rare-rule protection and deterministic selection.
+`samples/agreement-pilot/agreement-pilot-master.csv` is the immutable 350-item master. `reviewers/reviewer-a/agreement-pilot.csv` and `reviewers/reviewer-b/agreement-pilot.csv` are identical blank forms. Each row links to a frozen context bundle under `samples/agreement-pilot/context/`. Six static families and the review/history family each have 50 cases. Of 335 calibration history candidates, 299 lack an actual first parent; 196 of those are excluded because their diff-dependent rules require it. The 103 parentless message-only cases remain eligible from their exact target commit messages. The resulting context-eligible history pool is 139 before rare-rule protection and deterministic selection.
 
 Pilot generation is deterministic from the pinned identity, split, and family-map hashes:
 
@@ -25,7 +24,7 @@ The writer refuses to overwrite changed artifacts. The validator checks hashes, 
 
 ## Later-stage methods and source readiness
 
-`WEIGHTING_METHOD.md`, `RECALL_PROTOCOL.md`, `THRESHOLD_VALIDATION_PROTOCOL.md`, and `AI_SHADOW_PROTOCOL.md` define the downstream estimands and safeguards without creating downstream human labels. `threshold-human-condition-map.csv` maps 24 threshold metrics to 13 deduplicated human conditions. `THRESHOLD_SOURCE_AUDIT.md` verifies its retained full observation source against the frozen split and exact run commits. This preflight does not create calibration/heldout samples; exact execution order still requires agreement-pilot closeout and codebook freeze first.
+`WEIGHTING_METHOD.md`, `RECALL_PROTOCOL.md`, and `THRESHOLD_VALIDATION_PROTOCOL.md` define the downstream estimands and safeguards without creating downstream human labels. `threshold-human-condition-map.csv` maps 24 threshold metrics to 13 deduplicated human conditions. `THRESHOLD_SOURCE_AUDIT.md` verifies its retained full observation source against the frozen split and exact run commits. This preflight does not create calibration/heldout samples; exact execution order still requires agreement-pilot closeout and codebook freeze first.
 
 `LEGACY_THRESHOLD_ARCHIVE_NOTICE.md` explains why historical full-corpus threshold reviewer labels are preserved but excluded from the current split-safe human gold.
 
@@ -50,6 +49,6 @@ To create separate, blinded handoff ZIPs, run:
   --output-dir ~/Downloads/V007_CHAT_HANDOFF_2026-10-06/reviewer_packets
 ```
 
-The resulting `reviewer-a/` and `reviewer-b/` folders each contain one content-addressed ZIP and a SHA-256 sidecar. A packet includes only its assigned blank CSV, that reviewer's instructions, the shared/family codebooks, rule overrides, and exactly the referenced context bundles. It excludes the other reviewer form, AI-shadow form, pilot master, selection audit, and sampling manifest. Give each ZIP only to its named reviewer; keep the blank repository templates unchanged. The exporter verifies the pilot manifest and frozen codebook/context hashes before writing.
+The resulting `reviewer-a/` and `reviewer-b/` folders each contain one content-addressed ZIP and a SHA-256 sidecar. A packet includes only its assigned blank CSV, that reviewer's instructions, the shared/family codebooks, rule overrides, and exactly the referenced context bundles. It excludes the other reviewer form, pilot master, selection audit, and sampling manifest. Give each ZIP only to its named reviewer; keep the blank repository templates unchanged. The exporter verifies the pilot manifest and frozen codebook/context hashes before writing.
 
-Do not sample primary calibration performance, source-first recall, thresholds, AI-shadow labels, or heldout occurrences until the pilot is closed, agreement is analyzed, any codebook revisions are documented, and final codebooks are frozen. Review/history is always a separate panel from static-source precision.
+Do not sample primary calibration performance, source-first recall, thresholds, or heldout occurrences until the pilot is closed, agreement is analyzed, any codebook revisions are documented, and final codebooks are frozen. Review/history is always a separate panel from static-source precision.

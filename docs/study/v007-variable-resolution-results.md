@@ -1,15 +1,9 @@
 # v0.0.7 Variable Resolution Corpus Results
 
-> **Caveat on precision figures in this document**: the precision numbers
-> below (e.g. "84/84 = 100%") come from a single-AI-agent labeling pass and
-> are calibration evidence only, not independent human gold-standard
-> labels — see the "Labeling caveat" section near the end of this document
-> before citing these figures as validated precision.
-
 ## Outcome
 
 The post-implementation scan confirms that required role argument contracts
-remove false-positive `unguarded-variable` occurrences without changing the
+suppress `unguarded-variable` occurrences without changing the
 frozen corpus, selected files, profile, or external-provider scope.
 
 Across the 206 analyzable repositories, the change suppressed **247**
@@ -105,63 +99,9 @@ The most common explicit uncertainty source is
 `possible_required_role_input` (26,185 occurrences). Optional role arguments
 remain visible rather than being incorrectly treated as guaranteed inputs.
 
-## Manual spot checks
-
-- In Alfresco's `java` role, `java_keystore` is explicitly `required: true` in
-  `meta/argument_specs.yml`. Its former findings in `tasks/keystores.yml` are
-  among the suppressed occurrences.
-- In Dell's `idrac_attributes` role, `hostname` is required while `username`
-  and `password` are declared without `required: true`. The candidate correctly
-  retains the latter findings with the
-  `declared_optional_role_argument` blocker.
-- Candidate-missing examples, such as `__sudo_installed` in Nextcloud's backup
-  role, remain emitted because no visible definition, runtime producer,
-  default, or guard was established.
-
-These checks support the intended conservative boundary: required direct-entry
-role inputs are suppressed, while optional, externally supplied, and genuinely
-unresolved inputs remain explicit.
-
-## Primary agent-labeled review
-
-The frozen primary review is stored under
-`study/validation-v007-variable-resolution/`. It contains 847 primary units:
-
-| Sample | Size | Outcome |
-|---|---:|---|
-| Removed required-argument census | 247 | 247 verified-safe suppressions |
-| `CANDIDATE_MISSING` occurrences | 150 | 84 TP, 66 uncertain, 0 FP |
-| `EXTERNAL_INPUT_UNCERTAIN` occurrences | 150 | 150 correct uncertainty classifications |
-| `RUNTIME_CONTEXT_UNCERTAIN` occurrences | 150 | 132 correct and 18 unclear classifications |
-| Source-first files | 150 | 133 TN, 3 with supported issues, 14 unresolved-context blocks |
-
-Among decided `CANDIDATE_MISSING` labels, observed precision is 84/84 (100%;
-naive Wilson 95% interval 95.6%–100%). Treating all uncertain labels as
-non-TP gives a conservative TP yield of 84/150 (56.0%). Resolution-class
-accuracy is 366/366 among decided labels, with 366/450 (81.3%) decision
-coverage.
-
-Source-first review found 11 supported issue occurrences and matched 10,
-giving 90.9% occurrence-level supported recall (naive Wilson 95% interval
-62.3%–98.4%). These occurrences occur in only two repositories: one matched
-and one missed. Repository-level supported recall is therefore 1/2 and highly
-uncertain.
-
-The missed case is `tarzan_proj_dir` in
-`NationalGenomicsInfrastructure/miarka-provision`'s
-`roles/tarzan/defaults/main.yml`. The same defaults file defines
-`tarzan_root_dir`, making the unresolved name a likely typo and a detector
-false negative.
-
-These labels were produced by a single agent using source context, definition
-indexes, argument contracts, and post-selection detector matching. They are
-calibration evidence, not independent human gold-standard labels. Naive
-occurrence intervals also understate repository clustering.
-
 ## Remaining work
 
-The remaining validation requirement is an independent second reviewer for
-agreement and adjudication, followed by a genuinely unseen repository sample
+The remaining validation requirement is independent human review and adjudication, followed by a genuinely unseen repository sample
 for final generalization claims. The persistent `cosmos-ansible` timeout
 should also be profiled independently; it is not caused by the
 required-argument change and should not be hidden by increasing the corpus

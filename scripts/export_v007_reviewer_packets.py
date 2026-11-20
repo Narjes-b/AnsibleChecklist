@@ -133,8 +133,8 @@ def _validate_blank_template(validation_dir: Path, reviewer: str) -> list[tuple[
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise PacketError(f"cannot read frozen pilot manifest: {error}") from error
-    if manifest.get("human_labels_created") is not False or manifest.get("ai_labels_created") is not False:
-        raise PacketError("pilot manifest does not describe a blank human/AI labeling package")
+    if manifest.get("human_labels_created") is not False:
+        raise PacketError("pilot manifest does not describe a blank human-review package")
     input_hashes = manifest.get("inputs", {}).get("pilot_codebooks_sha256", {})
     if set(input_hashes) != set(PILOT_CODEBOOK_INPUTS):
         raise PacketError("pilot manifest codebook/instruction inventory differs from the frozen schema")

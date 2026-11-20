@@ -16,7 +16,7 @@ This is the calibration-only agreement pilot. It is not a representative precisi
 ## Pilot counts by family, rule, and repository
 
 | Family | Rule | Source candidates | Context-eligible | Missing first parent | Missing required parent | Selected | Eligible not selected |
-|---|---|---:|---:|---:|---:|---:|
+|---|---|---:|---:|---:|---:|---:|---:|
 | Objective correctness | `ansibleguard/broken-role-dependency` | 1 | 1 | 0 | 0 | 0 | 1 |
 | Objective correctness | `ansibleguard/invalid-numeric-value` | 4 | 4 | 0 | 0 | 0 | 4 |
 | Objective correctness | `ansibleguard/invalid-task-attribute-type` | 23 | 23 | 0 | 0 | 4 | 19 |
@@ -98,12 +98,10 @@ Repository-level family/rule counts, including each selected and excluded calibr
 
 Review/history source candidates: 335; context-eligible: 139; actual first parent missing: 299; parent required but missing: 196. Exact commit-message evidence keeps message-only cases eligible without a parent.
 
-AI-shadow template workload: 350 blank rows; no AI labels have been created.
-
 ## Other panels and heldout status
 
 - Representative precision core: not generated; it must wait for pilot agreement and codebook freeze.
 - Rule/concept/security top-ups and rare-rule performance census: not generated.
-- Source-first recall and threshold calibration panels: not generated. The agreement-pilot AI-shadow template is blank; formal AI labels and other-panel AI files are not generated.
+- Source-first recall and threshold calibration panels: not generated.
 - Heldout samples/results: not generated; heldout contexts opened = 0.
 - The selected 350 agreement-pilot items are permanently excluded from performance scoring.

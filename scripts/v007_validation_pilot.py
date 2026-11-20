@@ -131,19 +131,6 @@ MASTER_COLUMNS = [
     *REVIEWER_DECISION_COLUMNS,
 ]
 REVIEWER_COLUMNS = [*REVIEWER_VISIBLE_COLUMNS, *REVIEWER_DECISION_COLUMNS]
-AI_DECISION_COLUMNS = [
-    "ai_semantic_label",
-    "ai_actionability_label",
-    "ai_context_sufficient",
-    "ai_requires_external_context",
-    "ai_external_context_type",
-    "ai_reason_code",
-    "ai_notes",
-    "ai_confidence",
-    "ai_model_identity",
-    "ai_review_protocol_version",
-]
-AI_SHADOW_COLUMNS = [*REVIEWER_VISIBLE_COLUMNS, *AI_DECISION_COLUMNS]
 
 _SENSITIVE_ASSIGNMENT = re.compile(
     r"(?i)([\"']?[\w.-]*(?:password|passwd|passphrase|pass|pwd|token|secret|"
@@ -990,7 +977,6 @@ def build_agreement_pilot(root: Path, validation_dir: Path, dry_run: bool = Fals
 
     master_rows: list[dict[str, str]] = []
     reviewer_rows: list[dict[str, str]] = []
-    ai_shadow_rows: list[dict[str, str]] = []
     context_payloads: dict[str, bytes] = {}
     family_rule_counts: dict[str, dict[str, int]] = {}
     family_repo_counts: dict[str, int] = {}
@@ -1047,7 +1033,6 @@ def build_agreement_pilot(root: Path, validation_dir: Path, dry_run: bool = Fals
             }
             reviewer_row = {**visible, **{column: "" for column in REVIEWER_DECISION_COLUMNS}}
             reviewer_rows.append(reviewer_row)
-            ai_shadow_rows.append({**visible, **{column: "" for column in AI_DECISION_COLUMNS}})
             master_rows.append(
                 {
                     **visible,
@@ -1066,7 +1051,6 @@ def build_agreement_pilot(root: Path, validation_dir: Path, dry_run: bool = Fals
     reviewer_b_bytes = _write_csv_bytes(
         [dict(row) for row in reviewer_rows], REVIEWER_COLUMNS
     )
-    ai_shadow_bytes = _write_csv_bytes(ai_shadow_rows, AI_SHADOW_COLUMNS)
     if reviewer_a_bytes != reviewer_b_bytes:
         raise RuntimeError("independent reviewer forms do not have identical visible rows")
     for context_rel, payload in context_payloads.items():
@@ -1177,15 +1161,11 @@ def build_agreement_pilot(root: Path, validation_dir: Path, dry_run: bool = Fals
             "forms_have_identical_bytes": reviewer_a_bytes == reviewer_b_bytes,
             "decision_columns_blank": True,
             "detector_confidence_or_severity_in_forms": False,
-            "other_reviewer_or_ai_labels_in_forms": False,
+            "other_reviewer_labels_in_forms": False,
             "sampling_weights_or_prevalence_in_forms": False,
-            "ai_shadow_template_is_blank": not any(
-                row.get(column, "") for row in ai_shadow_rows for column in AI_DECISION_COLUMNS
-            ),
             "source_excerpt_secret_redaction": "sensitive-key literals, PEM private keys, and recognizable provider tokens redacted; public default credential strings may remain for rule assessment",
         },
         "human_labels_created": False,
-        "ai_labels_created": False,
         "eligible_for_performance_scoring": False,
         "selection_audit_row_count": len(selection_audit_rows),
     }
@@ -1197,7 +1177,6 @@ def build_agreement_pilot(root: Path, validation_dir: Path, dry_run: bool = Fals
         validation_dir / "samples/agreement-pilot/pilot-selection-audit.csv": selection_audit_bytes,
         validation_dir / "reviewers/reviewer-a/agreement-pilot.csv": reviewer_a_bytes,
         validation_dir / "reviewers/reviewer-b/agreement-pilot.csv": reviewer_b_bytes,
-        validation_dir / "reviewers/ai-shadow/agreement-pilot.csv": ai_shadow_bytes,
         **{validation_dir / path: content for path, content in context_payloads.items()},
     }
     manifest["files"] = {
@@ -1213,7 +1192,6 @@ def build_agreement_pilot(root: Path, validation_dir: Path, dry_run: bool = Fals
         for path, content in sorted(output_files.items(), key=lambda pair: str(pair[0]))
     }
     manifest["reviewer_forms_identical_sha256"] = sha256_bytes(reviewer_a_bytes)
-    manifest["ai_shadow_template_sha256"] = sha256_bytes(ai_shadow_bytes)
     manifest_bytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8")
     # Preflight every target before writing any output. Existing human edits are never overwritten.
     for path, content in output_files.items():
@@ -1249,7 +1227,6 @@ def main() -> None:
         "review_history_missing_required_first_parent_by_rule": manifest["selection"]["review_history_missing_required_first_parent_by_rule"],
         "heldout_protection": manifest["heldout_protection"],
         "human_labels_created": manifest["human_labels_created"],
-        "ai_labels_created": manifest["ai_labels_created"],
     }
     print(json.dumps(summary, indent=2, sort_keys=True))
 

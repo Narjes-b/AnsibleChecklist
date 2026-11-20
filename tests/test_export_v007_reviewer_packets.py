@@ -8,13 +8,11 @@ import pytest
 
 from scripts.export_v007_reviewer_packets import PacketError, export_packets
 from scripts.v007_validation_pilot import (
-    AI_SHADOW_COLUMNS,
     FAMILY_CODEBOOKS,
     MASTER_COLUMNS,
     PILOT_CODEBOOK_INPUTS,
     REVIEWER_COLUMNS,
     REVIEWER_DECISION_COLUMNS,
-    REVIEWER_VISIBLE_COLUMNS,
 )
 
 
@@ -41,7 +39,6 @@ def _make_validation_package(validation_dir):
 
     master_rows = []
     reviewer_rows = []
-    ai_rows = []
     for index, family in enumerate(FAMILY_CODEBOOKS, start=1):
         if index > 2:
             break
@@ -80,7 +77,6 @@ def _make_validation_package(validation_dir):
                 **{column: "" for column in REVIEWER_DECISION_COLUMNS},
             }
         )
-        ai_rows.append({**visible, **{column: "" for column in AI_SHADOW_COLUMNS[len(REVIEWER_VISIBLE_COLUMNS):]}})
 
     _write_csv(
         validation_dir / "samples/agreement-pilot/agreement-pilot-master.csv",
@@ -93,11 +89,6 @@ def _make_validation_package(validation_dir):
             REVIEWER_COLUMNS,
             reviewer_rows,
         )
-    _write_csv(
-        validation_dir / "reviewers/ai-shadow/agreement-pilot.csv",
-        AI_SHADOW_COLUMNS,
-        ai_rows,
-    )
     manifest_files = (
         "reviewers/reviewer-a/agreement-pilot.csv",
         "reviewers/reviewer-b/agreement-pilot.csv",
@@ -107,7 +98,6 @@ def _make_validation_package(validation_dir):
     )
     manifest = {
         "human_labels_created": False,
-        "ai_labels_created": False,
         "reviewer_forms_identical_sha256": hashlib.sha256(
             (validation_dir / "reviewers/reviewer-a/agreement-pilot.csv").read_bytes()
         ).hexdigest(),
@@ -147,7 +137,6 @@ def test_export_packets_are_reproducible_and_each_contains_only_its_assigned_for
             assert f"reviewers/reviewer-{reviewer}/agreement-pilot.csv" in names
             other = "b" if reviewer == "a" else "a"
             assert f"reviewers/reviewer-{other}/agreement-pilot.csv" not in names
-            assert "reviewers/ai-shadow/agreement-pilot.csv" not in names
             assert "samples/agreement-pilot/agreement-pilot-master.csv" not in names
             assert "samples/agreement-pilot/agreement-pilot-manifest.json" not in names
             assert "README_FIRST.md" in names

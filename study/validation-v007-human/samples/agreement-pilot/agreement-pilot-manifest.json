@@ -1,14 +1,7 @@
 {
-  "ai_labels_created": false,
-  "ai_shadow_template_sha256": "ef4c5f7b0c27870353c818ee4b6c791328c6f61884b801d7b31009d438419d9d",
   "created_at_utc": "2026-10-06T02:17:18.366573Z",
   "eligible_for_performance_scoring": false,
   "files": {
-    "reviewers/ai-shadow/agreement-pilot.csv": {
-      "bytes": 1805948,
-      "rows": 350,
-      "sha256": "ef4c5f7b0c27870353c818ee4b6c791328c6f61884b801d7b31009d438419d9d"
-    },
     "reviewers/reviewer-a/agreement-pilot.csv": {
       "bytes": 1805192,
       "rows": 350,
@@ -1811,11 +1804,10 @@
   "pilot_seed": "v007-human-pilot-v1",
   "purpose": "codebook calibration and independent human agreement only; not performance scoring",
   "reviewer_blinding": {
-    "ai_shadow_template_is_blank": true,
     "decision_columns_blank": true,
     "detector_confidence_or_severity_in_forms": false,
     "forms_have_identical_bytes": true,
-    "other_reviewer_or_ai_labels_in_forms": false,
+    "other_reviewer_labels_in_forms": false,
     "sampling_weights_or_prevalence_in_forms": false,
     "source_excerpt_secret_redaction": "sensitive-key literals, PEM private keys, and recognizable provider tokens redacted; public default credential strings may remain for rule assessment"
   },

@@ -11,7 +11,7 @@ The project has a reproducible detector-output baseline, substantial semantic an
 - Current checkout: `a2f9ca6568edba64c392c75ed7c07f57c86eab9c`.
 - Full 2026-10-22 report, run manifest, execution tables, determinism report, and the external raw archive at `~/Documents/AnsibleChecklist-results-2026-10-22/v0071-rerun-2026-10-22-results.tar.gz`.
 - A census of the archive's 264,704 internal static-source CSV rows, the 107,626 ansible-lint CSV rows for overlap diagnosis, and all 206 repository-root diagnostic files. Inspection of all rows means programmatic aggregation, not independent semantic adjudication of every finding.
-- RQ1 pilot agreement, adjudication records, the new blank 400-item forms, the 400- and 352-item exploratory samples, repository split, pilot 2, codebooks and their AI prechecks.
+- RQ1 pilot agreement, adjudication records, the new blank 400-item forms, the 400- and 352-item exploratory samples, repository split, pilot 2, and codebooks.
 - Threshold results, manifests, existing label fields, and the three large-task pilot rounds.
 - RQ2 code and results; PR replay; the variable-resolution calibration review and source-first evidence.
 - Both LLM implementations, their prompts, schemas, context assembly, CLI/diff integration, stored outputs, evaluation scripts and scoring records.
@@ -83,12 +83,12 @@ Record the producer, labeling method, independence, source evidence, codebook ve
 - RQ1's family-weighted interval uses an approximate independent-binomial variance; it is not the repository-cluster interval used elsewhere in the same report.
 - Carry-over matches use occurrence ID or repository/file/line/rule and report zero ID matches. Locations can contain multiple subjects, and a removed old positive needs regression review. Retained old items alone do not measure precision of a new version that also adds findings.
 - Existing “uncertain bounds” omit unreviewable items and pending adjudication. State the covered denominator and report reviewability separately; include sensitivity bounds for all unresolved eligible items when making a population claim.
-- The variable-resolution study already contains single-agent calibration recall (10/11 supported occurrences). Documents saying no recall work exists are stale. It remains insufficient for independent final recall or overall F1.
+- Variable-resolution recall requires independent source-first review and adjudication.
 - RQ numbering conflicts: one plan calls policy conformance RQ2, while current paper outputs use RQ2 for co-occurrence.
 
 **Repair:** write one claim/estimand registry. For each claim record population, rule set, unit, sampling design, weights, missingness, label policy, estimator, interval, exclusion criteria and analysis version. Use design-aware estimates and repository-level resampling; validate interval behavior in the existing simulation framework. Preserve exploratory results with explicit scope. Source-first recall needs independent audits of both flagged and unflagged source, plus adjudicated matches; seeded recall and external-tool agreement are separate instruments.
 
-Evidence: [validation plan](v007-validation-plan-v2.md), [variable calibration report](../../study/validation-v007-variable-resolution/VALIDATION_REPORT.md).
+Evidence: [validation plan](v007-validation-plan-v2.md), [variable-resolution sampling protocol](../../study/validation-v007-variable-resolution/SAMPLING_PROTOCOL.md).
 
 ## 3. LLM recovery: a local evidence pipeline
 

@@ -37,11 +37,10 @@ Stop rule: if any gate fails, stop and fix the instrument; never relabel to resc
 ## 3. Labelling protocol
 
 - Two independent humans on pilots; on the main set, all items double-labelled for mode C and a share for A/B, disagreements adjudicated by a third person who sees both labels.
-- **Consistency check**: 8 % of main items are re-inserted (disguised) so each reviewer's own repeat agreement is measurable. This is the drift measure; the AI reference is only a secondary comparison.
+- **Consistency check**: 8 % of main items are re-inserted (disguised) so each reviewer's own repeat agreement is measurable. This is the drift measure.
 - Randomised item order; time per item recorded; calibration session before each family.
 - Three separated questions: is the claim true (semantic), does it matter (actionability), is it in scope (policy). Never one mixed reason code.
 - Uncertain is reported, never silently dropped. Precision is reported as an interval: uncertain as true / uncertain as false.
-- AI labels are triage and codebook-debugging only (items where two AIs and a human disagree reveal codebook gaps); never in estimates, never shown to reviewers.
 
 ## 4. Decisions the validation must drive (pre-registered)
 
@@ -78,7 +77,7 @@ twin rows from one repository; cap items per repository per rule; unit of analys
 ## 7. Threats to validity to write up
 
 GitHub selection bias; a single tool; Ansible-version dependence (state the ansible-core version used for judgments);
-AI-labelled references; reviewer expertise and fatigue; overlapping rules (non-idempotent vs read-only command);
+reviewer expertise and fatigue; overlapping rules (non-idempotent vs read-only command);
 detector changes after sampling void the sample.
 
 ## 8. Owner confirmations (2026-10-16) and what is still open

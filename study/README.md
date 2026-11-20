@@ -14,7 +14,7 @@ ignored by Git. Never edit frozen evidence to match later code.
 | `environments/v007-full-run-pip-freeze.txt` | Exact Python environment lock of the run |
 | `threshold-benchmark-v007/` | Threshold benchmark manifest and samples (`observations.csv.gz` is a large local input; see the audit) |
 | `validation-v007-human/` | Split, identities, codebooks, agreement pilot, reviewer forms, protocols |
-| `validation-v007-variable-resolution/` | Variable-resolution sample and results |
+| `validation-v007-variable-resolution/` | Unlabeled variable-resolution samples and sampling protocol |
 
 Generated, ignored by Git:
 

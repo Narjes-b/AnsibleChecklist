@@ -207,17 +207,6 @@
     "sha256": "62b43e177be28773b8e926c06345fe00bacdf37e0fa4d069a5d2d77ec485c93e"
   },
   "scope_note": "Rule-definition mapping only; no finding occurrence rows, reviewer samples, human labels, or heldout contexts are read or written.",
-  "source_documents": {
-    "exact_sampling_spec": {
-      "path": "protocol/source/EXACT_SAMPLING_SPEC.md",
-      "sha256": "9c4a9004ea5e97652fc240904c9035665ffbcd59967eedce08e1bb6d9c094aa8"
-    },
-    "execution_plan": {
-      "download_copies_byte_identical": true,
-      "path": "protocol/source/EXECUTION_PLAN.md",
-      "sha256": "0ad90df2988431f9d8d476bf806cae41c083537bba47abc8bd19b8191bfeb838"
-    }
-  },
   "source_matrix": {
     "path": "mappings/source-rule-allocation-matrix.csv",
     "rows": 65,

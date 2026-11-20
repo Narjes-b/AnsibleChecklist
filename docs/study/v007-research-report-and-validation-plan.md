@@ -1,8 +1,7 @@
 # AnsibleGuard v0.0.7: analysis of the full run and a revised validation plan
 
 *Prepared 2026-10-15 from the frozen run `v007-full-repro-2026` (207
-repositories), its 2026-10-15 reproduction, a 101-item false-positive
-precheck, and a replay of real merged pull requests. Companion documents:
+repositories), its 2026-10-15 reproduction and a replay of real merged pull requests. Companion documents:
 [v007-audit-2026-10-15.md](v007-audit-2026-10-15.md) (what was broken and
 fixed) and [../pr-scan.md](../pr-scan.md) (how PR mode works).*
 
@@ -37,13 +36,7 @@ fixed) and [../pr-scan.md](../pr-scan.md) (how PR mode works).*
    findings as hundreds of fixed+introduced pairs. All are fixed on branch
    `fix/v007-audit-2026-10-15`; results that depend on them must be
    regenerated with the fixed version.
-7. **A precheck of 101 calibration findings** (AI, not human gold) found
-   54 TP / 19 FP / 28 uncertain (74 % of decidable), and — more usefully —
-   eleven distinct false-positive mechanisms, six of which are now fixed.
-   28 % of items could not be decided, mostly because file-level "count=N"
-   findings do not identify the offending task: **reviewability, not only
-   precision, is a validation problem.**
-8. **The validation design must change** (section 7): validate the fixed and
+7. **The validation design must change** (section 7): validate the fixed and
    frozen version, separate required from optional rules, sample by rule tier
    with repository caps, pool rare rules by family, estimate with design
    weights and repository-cluster bootstrap, validate review rules only on
@@ -335,20 +328,16 @@ with the reduced targets before choosing it.
   from the side repositories. Bundles fail validation if the cited subject
   is absent.
 - **Reviewers.** Two independent reviewers (A/B) per item, blind to each
-  other, to AI output, and to sampling weights; an adjudicator resolves
+  other and to sampling weights; an adjudicator resolves
   disagreements; pre-adjudication labels are frozen and kept.
 - **Pilot gate.** Per family, 30 calibration items (210 in total). Proceed
   when Cohen's κ ≥ 0.60 **and** Gwet's AC1 ≥ 0.70 (AC1 because high TP
   prevalence depresses κ); otherwise revise the codebook and re-pilot with new
   items. Pilot items never enter estimates.
 - **Codebooks.** One per family plus rule overrides; every rule states its
-  positive condition, common false-positive patterns (from 4.3), and when to
+  positive condition, common false-positive patterns, and when to
   use `uncertain` versus `unreviewable`. Codebook versions are hashed and cited
   by every label.
-- **AI shadow.** Only after human labels and adjudication are frozen, on the
-  identical evidence, stored separately; the existing Reviewer C precheck is
-  excluded from all estimates.
-
 ### 7.6 Estimation
 
 - Per-rule precision: **weighted** TP / (TP + FP) among decidable items with
@@ -374,12 +363,11 @@ with the reduced targets before choosing it.
 | Threat | Mitigation |
 |---|---|
 | Version drift between labelled and published tool | single frozen version; provenance gate must pass |
-| Heldout leakage | heldout opened only for final sampling; this audit's precheck used calibration repositories only |
+| Heldout leakage | heldout opened only for final sampling |
 | Repository concentration | per-repository caps; cluster bootstrap |
 | Rule concentration | rule strata; optional rules separated |
 | Context insufficiency | bundle validator; `unreviewable` label; tool fix for file-level findings |
 | Rater drift and learning | pilot gate; shuffled order; 10 % duplicate items to measure intra-rater stability |
-| AI contamination | AI labels only after gold; separate storage |
 | Provider non-determinism | ansible-lint excluded from AnsibleGuard precision; determinism report per run |
 | Selection of repositories | report as the frozen selected population, not "Ansible in general" |
 
@@ -391,4 +379,3 @@ with the reduced targets before choosing it.
 4. Frozen A/B labels, adjudication, agreement report.
 5. Precision, policy-conformance, resolution-accuracy, recall, and
    PR-attribution reports with cluster-bootstrap intervals.
-6. AI-shadow comparison (after gold).

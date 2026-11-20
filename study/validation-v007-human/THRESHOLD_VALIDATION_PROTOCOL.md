@@ -38,4 +38,4 @@ Each underlying source object is labeled once per human-condition family. When s
 
 ## Required future outputs
 
-After the gate, create split-specific threshold populations and frozen batch artifacts under `samples/thresholds/` with manifests and checksums. Reviewer A and B receive identical evidence/IDs with independent blank decision columns; AI-shadow stays separate until adjudicated human gold is frozen. Every batch must identify its source population, metric memberships, condition/object identity, split, seed, sample size, inclusion probability, weight, and reserve/batch number. No historical reviewer labels are imported.
+After the gate, create split-specific threshold populations and frozen batch artifacts under `samples/thresholds/` with manifests and checksums. Reviewer A and B receive identical evidence/IDs with independent blank decision columns. Every batch must identify its source population, metric memberships, condition/object identity, split, seed, sample size, inclusion probability, weight, and reserve/batch number. No historical reviewer labels are imported.

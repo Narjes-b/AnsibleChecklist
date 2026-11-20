@@ -138,7 +138,7 @@ predicate rules with required findings (27 %).
 
 Two independent reviewers (A, B) with Ansible experience; an adjudicator who
 did not label the item. Reviewers see only the frozen context bundle: no tool
-message beyond the rule definition, no other reviewer's label, no AI output,
+message beyond the rule definition, no other reviewer's label,
 no sampling weight. Presentation order is shuffled; 10 % of items are repeated
 (same reviewer, at least a week apart) to measure intra-rater stability.
 
@@ -161,7 +161,7 @@ cited subject is not visible.
 ### 6.4 Codebooks
 
 One per family plus rule overrides; each states the positive condition, known
-false-positive patterns (from the calibration precheck), and when to choose
+false-positive patterns, and when to choose
 `uncertain` versus `unreviewable`. Codebooks are hashed and cited by every
 label. Version policy for compatibility rules is stated explicitly.
 
@@ -180,12 +180,6 @@ Disagreements go to the adjudicator, who sees both labels and reasons.
 Pre-adjudication labels are frozen and kept; agreement is computed before
 adjudication. A third rater labels a random 10 % of agreed items to detect
 shared error.
-
-### 6.7 AI
-
-AI labels are produced only after human labels and adjudication are frozen, on
-identical evidence, and stored separately. They are never ground truth. The
-existing exploratory precheck is excluded from every estimate.
 
 ## 7. Estimation and reporting
 

@@ -18,8 +18,6 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.v007_validation_pilot import (
-    AI_DECISION_COLUMNS,
-    AI_SHADOW_COLUMNS,
     FAMILY_NAMES,
     FAMILY_ORDER,
     MASTER_COLUMNS,
@@ -83,7 +81,6 @@ def _write_report(validation_dir: Path, report: dict[str, Any]) -> None:
             "## Boundaries",
             "",
             "- Human labels: none created; both reviewer decision areas are blank.",
-            f"- The identical {report['counts'].get('ai_shadow_row_count', 0)}-row AI-shadow template is present, but every AI decision field is blank; formal AI labeling waits for frozen human gold.",
             "- Heldout: no heldout occurrence rows or contexts were opened/emitted.",
             f"- Review/history context-eligible cases: {report['sampling'].get('review_usable_total', 0)}. Missing actual parents are allowed for message-only rules; missing parents for diff-dependent rules are excluded.",
             "- Pilot items are permanently excluded from performance scoring.",
@@ -146,13 +143,11 @@ def _write_report(validation_dir: Path, report: dict[str, Any]) -> None:
             "",
             f"Review/history source candidates: {sampling['review_source_total']}; context-eligible: {sampling['review_usable_total']}; actual first parent missing: {sampling['review_missing_parent_total']}; parent required but missing: {sampling['review_required_parent_missing_total']}. Exact commit-message evidence keeps message-only cases eligible without a parent.",
             "",
-            f"AI-shadow template workload: {report['counts'].get('ai_shadow_row_count', 0)} blank rows; no AI labels have been created.",
-            "",
             "## Other panels and heldout status",
             "",
             "- Representative precision core: not generated; it must wait for pilot agreement and codebook freeze.",
             "- Rule/concept/security top-ups and rare-rule performance census: not generated.",
-            "- Source-first recall and threshold calibration panels: not generated. The agreement-pilot AI-shadow template is blank; formal AI labels and other-panel AI files are not generated.",
+            "- Source-first recall and threshold calibration panels: not generated.",
             "- Heldout samples/results: not generated; heldout contexts opened = 0.",
             f"- The selected {report['counts'].get('row_count', 0)} agreement-pilot items are permanently excluded from performance scoring.",
             "",
@@ -175,17 +170,14 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
     master_path = validation_dir / "samples/agreement-pilot/agreement-pilot-master.csv"
     reviewer_a_path = validation_dir / "reviewers/reviewer-a/agreement-pilot.csv"
     reviewer_b_path = validation_dir / "reviewers/reviewer-b/agreement-pilot.csv"
-    ai_shadow_path = validation_dir / "reviewers/ai-shadow/agreement-pilot.csv"
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         master_bytes = master_path.read_bytes()
         reviewer_a_bytes = reviewer_a_path.read_bytes()
         reviewer_b_bytes = reviewer_b_path.read_bytes()
-        ai_shadow_bytes = ai_shadow_path.read_bytes()
         master_rows = _read_csv(master_path)
         reviewer_a_rows = _read_csv(reviewer_a_path)
         reviewer_b_rows = _read_csv(reviewer_b_path)
-        ai_shadow_rows = _read_csv(ai_shadow_path)
     except (OSError, json.JSONDecodeError, csv.Error) as error:
         record("pilot_files_readable", False, f"required pilot output unavailable: {error}")
         return {
@@ -197,7 +189,7 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
             "counts": counts,
             "failures": failures,
         }
-    record("pilot_files_readable", True, "manifest, master, both reviewer forms, and AI-shadow template are readable")
+    record("pilot_files_readable", True, "manifest, master, and both reviewer forms are readable")
 
     split_path = validation_dir / "splits/repository-split.csv"
     identity_path = validation_dir / "identities/static-source-candidates.csv.gz"
@@ -236,7 +228,6 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
     master_header = list(master_rows[0]) if master_rows else []
     reviewer_a_header = list(reviewer_a_rows[0]) if reviewer_a_rows else []
     reviewer_b_header = list(reviewer_b_rows[0]) if reviewer_b_rows else []
-    ai_shadow_header = list(ai_shadow_rows[0]) if ai_shadow_rows else []
     record("master_schema", master_header == MASTER_COLUMNS, "master columns match the pilot schema")
     record(
         "reviewer_schema_and_blinding",
@@ -244,12 +235,6 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
         and reviewer_b_header == REVIEWER_COLUMNS
         and not (set(master_header) - set(REVIEWER_VISIBLE_COLUMNS) - set(REVIEWER_DECISION_COLUMNS)) & set(reviewer_a_header),
         "reviewer forms contain only visible evidence and blank human decision fields",
-    )
-    record("ai_shadow_schema", ai_shadow_header == AI_SHADOW_COLUMNS, "AI-shadow template has separate AI-only decision fields")
-    record(
-        "ai_shadow_no_human_fields",
-        not (set(REVIEWER_DECISION_COLUMNS) & set(ai_shadow_header)),
-        "AI-shadow template contains no human decision columns",
     )
 
     sample_ids = [row.get("sample_id", "") for row in master_rows]
@@ -264,12 +249,6 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
         and [row.get("sample_id") for row in reviewer_b_rows] == sample_ids,
         "Reviewer A and B have the exact master IDs and row order",
     )
-    record(
-        "ai_shadow_rows_match_master",
-        len(ai_shadow_rows) == len(master_rows)
-        and [row.get("sample_id") for row in ai_shadow_rows] == sample_ids,
-        "blank AI-shadow template has the exact master IDs and row order",
-    )
     immutable_match = True
     for reviewer_rows in (reviewer_a_rows, reviewer_b_rows):
         if len(reviewer_rows) != len(master_rows):
@@ -281,12 +260,6 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
                 break
     record("reviewer_evidence_matches_master", immutable_match, "all visible reviewer fields match the frozen master")
     record("reviewer_forms_identical", reviewer_a_bytes == reviewer_b_bytes, "independent blank forms have identical bytes")
-    ai_visible_match = len(ai_shadow_rows) == len(master_rows) and all(
-        ai_row.get(column) == master_row.get(column)
-        for master_row, ai_row in zip(master_rows, ai_shadow_rows)
-        for column in REVIEWER_VISIBLE_COLUMNS
-    )
-    record("ai_shadow_evidence_matches_master", ai_visible_match, "AI-shadow template has the same visible evidence")
     decisions_blank = all(
         not row.get(column, "")
         for rows in (reviewer_a_rows, reviewer_b_rows)
@@ -294,8 +267,6 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
         for column in REVIEWER_DECISION_COLUMNS
     )
     record("no_human_labels_yet", decisions_blank and manifest.get("human_labels_created") is False, "all human decision fields are blank")
-    ai_blank = all(not row.get(column, "") for row in ai_shadow_rows for column in AI_DECISION_COLUMNS)
-    record("no_ai_labels_yet", ai_blank and manifest.get("ai_labels_created") is False, "all AI-shadow decision fields are blank")
 
     family_counts = Counter(row.get("review_family", "") for row in master_rows)
     expected_family_counts = {
@@ -309,7 +280,6 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
         for family in FAMILY_ORDER
     }
     counts["row_count"] = len(master_rows)
-    counts["ai_shadow_row_count"] = len(ai_shadow_rows)
 
     calibration_only = all(split_by_repo.get(row.get("repository", "")) == "calibration" for row in master_rows)
     record("calibration_only_selection", calibration_only, "every selected repository is in the calibration split")
@@ -330,9 +300,16 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
     record("heldout_protection", heldout_closed, "manifest records zero heldout contexts, emitted rows, and selections")
 
     expected_files = manifest.get("files", {})
-    file_hashes_ok = bool(expected_files)
+    selection_audit_path = validation_dir / "samples/agreement-pilot/pilot-selection-audit.csv"
+    required_files = {
+        path.relative_to(validation_dir).as_posix()
+        for path in (master_path, reviewer_a_path, reviewer_b_path, selection_audit_path)
+    }
+    required_files.update(row["context_bundle_path"] for row in master_rows if row.get("context_bundle_path"))
+    file_hashes_ok = required_files.issubset(expected_files)
     listed_paths: set[Path] = set()
-    for relative, expected in expected_files.items():
+    for relative in sorted(required_files & expected_files.keys()):
+        expected = expected_files[relative]
         path = (validation_dir / relative).resolve()
         if validation_dir.resolve() not in path.parents or not path.is_file():
             file_hashes_ok = False
@@ -341,13 +318,7 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
         raw = path.read_bytes()
         if len(raw) != expected.get("bytes") or _sha256_bytes(raw) != expected.get("sha256"):
             file_hashes_ok = False
-    record("generated_file_hashes", file_hashes_ok, f"{len(expected_files)} output/context files match manifest checksums")
-    record(
-        "ai_shadow_template_hash",
-        manifest.get("ai_shadow_template_sha256") == _sha256_bytes(ai_shadow_bytes),
-        "blank AI-shadow template hash matches the manifest",
-    )
-    selection_audit_path = validation_dir / "samples/agreement-pilot/pilot-selection-audit.csv"
+    record("generated_file_hashes", file_hashes_ok, f"{len(required_files)} output/context files match manifest checksums")
     selection_audit_rows = _read_csv(selection_audit_path) if selection_audit_path.is_file() else []
     record(
         "selection_audit_file",
@@ -530,9 +501,9 @@ def validate(root: Path, validation_dir: Path) -> dict[str, Any]:
     }
 
     expected_rows = (
-        manifest.get("row_count") == len(master_rows) == len(reviewer_a_rows) == len(reviewer_b_rows) == len(ai_shadow_rows)
+        manifest.get("row_count") == len(master_rows) == len(reviewer_a_rows) == len(reviewer_b_rows)
     )
-    record("manifest_row_count", expected_rows, f"manifest and four item CSVs contain {len(master_rows)} rows")
+    record("manifest_row_count", expected_rows, f"manifest and three item CSVs contain {len(master_rows)} rows")
     record("creation_metadata", bool(manifest.get("created_at_utc") and manifest.get("source_commit") and manifest.get("script_commit") and manifest.get("script_sha256")), "manifest records creation time, source/script commit, and script checksum")
 
     report = {

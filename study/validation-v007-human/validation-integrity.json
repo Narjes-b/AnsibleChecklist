@@ -1,25 +1,6 @@
 {
+  "audit_scope": "Historical source audit. The retained pilot files were independently rechecked against the current manifest; source repositories were not re-audited.",
   "checks": {
-    "ai_shadow_evidence_matches_master": {
-      "detail": "AI-shadow template has the same visible evidence",
-      "passed": true
-    },
-    "ai_shadow_no_human_fields": {
-      "detail": "AI-shadow template contains no human decision columns",
-      "passed": true
-    },
-    "ai_shadow_rows_match_master": {
-      "detail": "blank AI-shadow template has the exact master IDs and row order",
-      "passed": true
-    },
-    "ai_shadow_schema": {
-      "detail": "AI-shadow template has separate AI-only decision fields",
-      "passed": true
-    },
-    "ai_shadow_template_hash": {
-      "detail": "blank AI-shadow template hash matches the manifest",
-      "passed": true
-    },
     "blinding_fields_absent": {
       "detail": "reviewer schemas omit severity, confidence, weights, AI, and other-reviewer fields",
       "passed": true
@@ -57,7 +38,7 @@
       "passed": true
     },
     "generated_file_hashes": {
-      "detail": "355 output/context files match manifest checksums",
+      "detail": "354 output/context files match manifest checksums",
       "passed": true
     },
     "heldout_protection": {
@@ -65,15 +46,11 @@
       "passed": true
     },
     "manifest_row_count": {
-      "detail": "manifest and four item CSVs contain 350 rows",
+      "detail": "manifest and three item CSVs contain 350 rows",
       "passed": true
     },
     "master_schema": {
       "detail": "master columns match the pilot schema",
-      "passed": true
-    },
-    "no_ai_labels_yet": {
-      "detail": "all AI-shadow decision fields are blank",
       "passed": true
     },
     "no_human_labels_yet": {
@@ -85,7 +62,7 @@
       "passed": true
     },
     "pilot_files_readable": {
-      "detail": "manifest, master, both reviewer forms, and AI-shadow template are readable",
+      "detail": "manifest, master, and both reviewer forms are readable",
       "passed": true
     },
     "pilot_scoring_exclusion": {
@@ -134,7 +111,6 @@
     }
   },
   "counts": {
-    "ai_shadow_row_count": 350,
     "by_family": {
       "Maintainability/complexity": 50,
       "Objective correctness": 50,
@@ -167,6 +143,7 @@
   },
   "passed": true,
   "pilot_manifest_sha256": "f88cb28bf4f97cb6703ce09263b861c920317b22f94654e5c9d487092845a6c6",
+  "retained_manifest_sha256": "905d411a6ab5710a640394467cf6227c04d160a76f63c93acca469b2f295797d",
   "sampling": {
     "analyzable_repositories": 206,
     "by_family_rule": [

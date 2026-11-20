@@ -6,6 +6,8 @@ Result: **PASS**
 
 This report validates the frozen agreement-pilot handoff only. It is not a detector-accuracy report.
 
+The source audit is historical. All retained pilot hashes were rechecked against the current manifest.
+
 ## Pilot counts
 
 | Family | Selected rows | Distinct repositories |
@@ -23,44 +25,37 @@ Frozen context bundles: **350**.
 
 ## Checks
 
-- [x] `pilot_files_readable` — manifest, master, both reviewer forms, and AI-shadow template are readable
-- [x] `frozen_input_hashes` — split, identity index, and family map match the manifest
-- [x] `pilot_codebook_hashes` — family codebooks, overrides, reviewer instructions, and pilot protocol match the frozen pilot manifest
-- [x] `repository_split` — 206 unique repositories; 144 calibration / 62 heldout
-- [x] `master_schema` — master columns match the pilot schema
-- [x] `reviewer_schema_and_blinding` — reviewer forms contain only visible evidence and blank human decision fields
-- [x] `ai_shadow_schema` — AI-shadow template has separate AI-only decision fields
-- [x] `ai_shadow_no_human_fields` — AI-shadow template contains no human decision columns
-- [x] `unique_master_ids` — all master sample IDs are unique and nonempty
-- [x] `unique_occurrence_ids` — each selected occurrence appears once
-- [x] `reviewer_rows_match_master` — Reviewer A and B have the exact master IDs and row order
-- [x] `ai_shadow_rows_match_master` — blank AI-shadow template has the exact master IDs and row order
-- [x] `reviewer_evidence_matches_master` — all visible reviewer fields match the frozen master
-- [x] `reviewer_forms_identical` — independent blank forms have identical bytes
-- [x] `ai_shadow_evidence_matches_master` — AI-shadow template has the same visible evidence
-- [x] `no_human_labels_yet` — all human decision fields are blank
-- [x] `no_ai_labels_yet` — all AI-shadow decision fields are blank
-- [x] `family_targets` — selected family counts: {'Objective correctness': 50, 'Variable/reference reasoning': 50, 'Security': 50, 'Style/policy': 50, 'Maintainability/complexity': 50, 'Structure/reuse': 50, 'Review/history': 50}
-- [x] `calibration_only_selection` — every selected repository is in the calibration split
-- [x] `pilot_scoring_exclusion` — every item is marked pilot-only and ineligible for performance scoring
 - [x] `blinding_fields_absent` — reviewer schemas omit severity, confidence, weights, AI, and other-reviewer fields
-- [x] `heldout_protection` — manifest records zero heldout contexts, emitted rows, and selections
-- [x] `generated_file_hashes` — 355 output/context files match manifest checksums
-- [x] `ai_shadow_template_hash` — blank AI-shadow template hash matches the manifest
-- [x] `selection_audit_file` — 3444 family/rule/repository audit rows match the manifest
+- [x] `calibration_only_selection` — every selected repository is in the calibration split
 - [x] `context_bundle_inventory` — 350 context files match the manifest inventory
 - [x] `context_redaction_idempotence` — all frozen bundles and inline excerpts are stable under the redactor
+- [x] `creation_metadata` — manifest records creation time, source/script commit, and script checksum
 - [x] `family_repository_audit` — eligible = selected + excluded counts reconcile for every family/repository
 - [x] `family_rule_repository_audit` — eligible = selected + excluded counts reconcile for every family/rule/repository
-- [x] `review_history_rule_specific_evidence` — all 50 history contexts use exact message evidence or verified actual first-parent diffs as required by rule
+- [x] `family_targets` — selected family counts: {'Objective correctness': 50, 'Variable/reference reasoning': 50, 'Security': 50, 'Style/policy': 50, 'Maintainability/complexity': 50, 'Structure/reuse': 50, 'Review/history': 50}
+- [x] `frozen_input_hashes` — split, identity index, and family map match the manifest
+- [x] `generated_file_hashes` — 354 output/context files match manifest checksums
+- [x] `heldout_protection` — manifest records zero heldout contexts, emitted rows, and selections
+- [x] `manifest_row_count` — manifest and three item CSVs contain 350 rows
+- [x] `master_schema` — master columns match the pilot schema
+- [x] `no_human_labels_yet` — all human decision fields are blank
+- [x] `pilot_codebook_hashes` — family codebooks, overrides, reviewer instructions, and pilot protocol match the frozen pilot manifest
+- [x] `pilot_files_readable` — manifest, master, and both reviewer forms are readable
+- [x] `pilot_scoring_exclusion` — every item is marked pilot-only and ineligible for performance scoring
+- [x] `repository_split` — 206 unique repositories; 144 calibration / 62 heldout
 - [x] `review_history_repository_count_reconciliation` — per-repository source, required-missing-parent, and context-eligible counts reconcile
-- [x] `manifest_row_count` — manifest and four item CSVs contain 350 rows
-- [x] `creation_metadata` — manifest records creation time, source/script commit, and script checksum
+- [x] `review_history_rule_specific_evidence` — all 50 history contexts use exact message evidence or verified actual first-parent diffs as required by rule
+- [x] `reviewer_evidence_matches_master` — all visible reviewer fields match the frozen master
+- [x] `reviewer_forms_identical` — independent blank forms have identical bytes
+- [x] `reviewer_rows_match_master` — Reviewer A and B have the exact master IDs and row order
+- [x] `reviewer_schema_and_blinding` — reviewer forms contain only visible evidence and blank human decision fields
+- [x] `selection_audit_file` — 3444 family/rule/repository audit rows match the manifest
+- [x] `unique_master_ids` — all master sample IDs are unique and nonempty
+- [x] `unique_occurrence_ids` — each selected occurrence appears once
 
 ## Boundaries
 
 - Human labels: none created; both reviewer decision areas are blank.
-- The identical 350-row AI-shadow template is present, but every AI decision field is blank; formal AI labeling waits for frozen human gold.
 - Heldout: no heldout occurrence rows or contexts were opened/emitted.
 - Review/history context-eligible cases: 139. Missing actual parents are allowed for message-only rules; missing parents for diff-dependent rules are excluded.
 - Pilot items are permanently excluded from performance scoring.

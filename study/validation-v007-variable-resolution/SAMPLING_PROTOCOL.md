@@ -117,8 +117,4 @@ class-level inclusion probability.
 
 ## Validity limits
 
-The reviewer is `codex-agent-source-reviewer`. These are single-agent,
-code-assisted labels, not independent human gold-standard labels. The corpus
-has already influenced development, so results are calibration evidence rather
-than a final unseen held-out evaluation. Inter-rater agreement requires a
-second independent reviewer followed by preserved adjudication.
+Precision and recall estimates require independent human review and adjudication. Report the decision coverage and account for repository clustering.

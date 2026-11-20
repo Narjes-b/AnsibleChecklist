@@ -20,7 +20,7 @@ The phase ledger below records the last verified input/output hashes. Hashes ide
 | Agreement analysis and pilot closeout | `NOT_STARTED` | Two separate returned CSVs, each checked against the frozen master and pilot manifest | `results/agreement-summary.json`, `.csv`, `adjudication/disagreements.csv`, and `HUMAN_AGREEMENT_REPORT.md`: not generated | Run `scripts.v007_human_agreement`; inspect disagreements using only this pilot round | Both reviewer files; human adjudication/codebook decisions if needed |
 | Final codebook freeze and primary calibration preparation | `NOT_STARTED` | Closed pilot, agreement results, documented pilot-only codebook decisions | Final codebook checksums, calibration precision/top-up/review-history/recall/threshold samples: not generated | Freeze codebooks, then execute exact sampling spec sections 7–23 and audit every panel | Agreement pilot closeout; do not generate primary items early |
 | Calibration scoring and final freeze | `NOT_STARTED` | Independently completed calibration labels and human adjudication | Calibration estimands, uncertainty intervals, calibration decisions, `FINAL_VALIDATION_FREEZE.md`: not generated | Score only after primary calibration reviews return; freeze detector/threshold/mappings/codebooks | Calibration human review and adjudication |
-| Heldout evaluation and final report | `NOT_STARTED` | Final freeze and untouched 62-repository heldout split | Heldout human labels, AI-vs-human comparison, final report/checksums: not generated | Generate heldout samples only after final freeze; both humans review and adjudicate before blinded AI-shadow review | Final freeze, then separate human heldout review/adjudication |
+| Heldout evaluation and final report | `NOT_STARTED` | Final freeze and untouched 62-repository heldout split | Heldout human labels, final report/checksums: not generated | Generate heldout samples only after final freeze; both humans review and adjudicate | Final freeze, then separate human heldout review/adjudication |
 
 ### Sequencing note
 
@@ -36,10 +36,10 @@ The agreement pilot is generated and frozen:
 
 - 350 unique items total: 50 in each of the six static-source families and 50 review/history items.
 - Of 335 calibration review/history candidate findings, 299 lack an actual first parent in the existing shallow snapshots. A parent is required for three diff-dependent rules: 196 findings are excluded because that required parent is missing. The other 103 parentless cases are message-only (`commit-message-format` / `missing-bug-reference`) and remain eligible using the exact target commit message. This gives 139 context-eligible history cases; rare-rule protection applies before the 50-item selection.
-- Reviewer A and B each have 350 rows with identical bytes and blank decision columns. A third identical-evidence AI-shadow template is present with separate blank AI fields; formal AI labeling waits until human gold is frozen.
+- Reviewer A and B each have 350 rows with identical bytes and blank decision columns.
 - There are 350 frozen context bundles. The master marks every row `is_agreement_pilot=true` and `eligible_for_performance_scoring=false`.
 - The pilot manifest records source/script commit and hash, source hashes, family/rule/repository selected and excluded counts, context-availability exclusions, and per-output checksums. `VALIDATION_INTEGRITY_REPORT.md` and `validation-integrity.json` record the pilot package audit.
-- Reviewer-specific content-addressed ZIPs were generated; A and B packets exclude the other reviewer CSV, the AI-shadow form, master, selection audit, and sampling manifest. Their packet hashes are recorded in the phase ledger above.
+- Reviewer-specific content-addressed ZIPs were generated; A and B packets exclude the other reviewer CSV, master, selection audit, and sampling manifest. Their packet hashes are recorded in the phase ledger above.
 - A threshold-source preflight confirms the retained full observation population joins exactly to all frozen run commits and covers every split repository. The condition map and downstream weighting/recall/threshold/AI protocols are prepared, but no primary threshold or other performance sample has been emitted.
 
 The initial context audit found that prefixed credential keys could evade redaction. This was corrected before any form was shared: prefixed keys, JSON keys, multiline sensitive blocks, and private-key content are now redacted; regression tests pass; the frozen context bundles pass the redaction-idempotence check. A protocol audit also corrected an over-restrictive parent requirement: exact first parents are mandatory only for diff-dependent history rules, not commit-message-only rules. No previous pilot files were labeled or distributed.
@@ -56,13 +56,13 @@ The initial context audit found that prefixed credential keys could evade redact
 
 Completed: authoritative-source gate, identity and context audit, 144/62 split, mapping, pilot codebooks, blank pilot forms, contexts, manifest, and pilot-stage integrity report.
 
-Not generated: calibration representative core, rule/concept/security top-ups, static performance panel, source-first recall panels, threshold calibration batches, formal AI-shadow labels, final freeze, or any heldout sample/results. Do not generate primary performance samples until both pilot files return, agreement is analyzed, any pilot-only codebook revisions are made, and final codebooks are frozen.
+Not generated: calibration representative core, rule/concept/security top-ups, static performance panel, source-first recall panels, threshold calibration batches, final freeze, or any heldout sample/results. Do not generate primary performance samples until both pilot files return, agreement is analyzed, any pilot-only codebook revisions are made, and final codebooks are frozen.
 
 ## Human action required
 
 Reviewer A and Reviewer B must independently fill their own copy of `reviewers/reviewer-a/agreement-pilot.csv` or `reviewers/reviewer-b/agreement-pilot.csv`, using `HUMAN_REVIEWER_A_INSTRUCTIONS.md` / `HUMAN_REVIEWER_B_INSTRUCTIONS.md`, the shared codebook instructions, the family codebook, and each row’s context bundle. Edit only the eight decision columns. Preserve every ID, evidence field, and row order; do not add AI answers or view the other reviewer’s decisions. Return completed copies separately and retain the blank templates.
 
-Content-addressed, reviewer-specific ZIP handoffs are available under `/home/aymmzn/Downloads/V007_CHAT_HANDOFF_2026-10-06/reviewer_packets/reviewer-a/` and `.../reviewer-b/`. Send Reviewer A only the ZIP in the A folder and Reviewer B only the ZIP in the B folder. Each packet omits the other reviewer form, the AI-shadow form, the master, and the sampling manifest. Their `.sha256` sidecars allow transfer verification. The repository templates remain the frozen originals.
+Content-addressed, reviewer-specific ZIP handoffs are available under `/home/aymmzn/Downloads/V007_CHAT_HANDOFF_2026-10-06/reviewer_packets/reviewer-a/` and `.../reviewer-b/`. Send Reviewer A only the ZIP in the A folder and Reviewer B only the ZIP in the B folder. Each packet omits the other reviewer form, the master, and the sampling manifest. Their `.sha256` sidecars allow transfer verification. The repository templates remain the frozen originals.
 
 After both separate copies return, keep the blank templates unchanged and run:
 

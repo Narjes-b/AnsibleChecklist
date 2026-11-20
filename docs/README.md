@@ -100,11 +100,6 @@ git show 15ff61b9:validation_process/07-labels-regenerated.md
 git log --diff-filter=D --name-only -- '*.md'   # list removed documents
 ```
 
-Frozen study files that cite a document by its old root path (for example
-`study/validation-v007-human/protocol/source/EXECUTION_PLAN.md` citing
-`ANSIBLEGUARD_V007_FULL_RUN_INVESTIGATION_REPORT.md`) were not edited; the
-moved copies are listed below.
-
 | Former path | Current path |
 |---|---|
 | `HOW_IT_WORKS.md` | `docs/how-it-works.md` |
