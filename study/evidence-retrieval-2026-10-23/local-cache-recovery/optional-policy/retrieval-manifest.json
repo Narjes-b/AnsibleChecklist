@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "purpose": "base source retrieval; rule-specific evidence still incomplete",
+  "run_id": "v0071-rerun-2026-10-22",
+  "instrument": "optional-policy",
+  "eligible_for_performance_scoring": false,
+  "selected_rows": 116,
+  "recorded_rows": 116,
+  "status_counts": {
+    "source-retrieved": 116
+  },
+  "failure_counts": {},
+  "truncated_packets": 0,
+  "subject_verified": 0,
+  "complete_rule_evidence": 0,
+  "labels_generated": 0,
+  "model_calls": 0,
+  "draw_manifest_sha256": "e5c35519579a3a7fe2b346088669697e1d155f854ab1a9fc1358eaadde91b2c0",
+  "previous_report_manifest_sha256": "1116c0b371572c07d0e58938feb3ffc8060f2752ec5e16275f29bcb1a8fd0f7c",
+  "recovered_from_previous": 0,
+  "source_stores": [
+    "/home/aymmzn/Documents/AnsibleChecklist/study/repositories",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/cache/v0071-rerun-2026-10-22/repositories"
+  ],
+  "implementation_sha256": "aa079a5b9b2037c6dc213e06940e59f9301709da35d80531611bc12fa99e6328",
+  "redaction_sha256": {
+    "v007_validation_pilot.py": "a73b8703c29c7d7e70874d95d95636fd3b1abec216ff2bf0295ab451e9ef59ef",
+    "v007_bundle_context_v2.py": "d782d4dd36ba3bc5825185a654bffb5c2e99ee7a844b591acf2b0ffa9d9f4c8f",
+    "v007_bundle_redact_v2.py": "622a61c23d3c9ccdb55f8e5d7b0418e30243ec2abdd36e2e8c01b7080de61437",
+    "v007_bundle_secret_scan.py": "e531754be6366c3f3a42dabdc71cc8a0adaf82dd7dae0462c89d104b43564bf0"
+  },
+  "git_version": "git version 2.56.0",
+  "python_version": "3.14.8",
+  "source_method": "immutable Git objects; replacements and lazy fetching disabled",
+  "limits": {
+    "max_bytes": 1048576,
+    "max_lines": 1500,
+    "window": 80,
+    "git_timeout": 10
+  },
+  "local_packet_directory": "study/evidence-local/retrieval-2026-10-23-local-cache-recovery/optional-policy",
+  "output_sha256": {
+    "retrieval-ledger.csv": "89f35a3d77e9aef5d7f0cf1f00e3bfbcc0b23f77c23611a5b96a9efbcf509f3f"
+  },
+  "limits_to_interpretation": [
+    "Line bounds do not verify semantic subjects",
+    "Redaction can remove decisive evidence",
+    "Windows are explicit truncation",
+    "Rule-specific and cross-file evidence not built",
+    "Residual-secret scan is a heuristic; packets are local artifacts"
+  ]
+}

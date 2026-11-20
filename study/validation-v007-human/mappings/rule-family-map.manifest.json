@@ -1,0 +1,226 @@
+{
+  "exceptions": {
+    "deprecated-modules": {
+      "family_id": "maintainability_complexity",
+      "rationale": "The catalog defines this as a maintenance signal; review the actual deprecation status and migration context, not just the rule name."
+    },
+    "duplicated-code": {
+      "family_id": "structure_reuse",
+      "rationale": "Review whether the flagged task blocks are semantically duplicated and whether reuse is appropriate; textual similarity alone is insufficient."
+    },
+    "galaxy-meta-incomplete": {
+      "family_id": "style_policy",
+      "rationale": "This is an optional publication-metadata policy; judge whether Galaxy publication is in scope before judging actionability."
+    },
+    "insufficient-modularization": {
+      "family_id": "structure_reuse",
+      "rationale": "The decision concerns play/task decomposition and reuse, even though the catalog currently labels it a maintainability signal."
+    },
+    "loop-legacy-syntax": {
+      "family_id": "objective_correctness",
+      "rationale": "This is a compatibility/deprecation predicate; determine whether the syntax is actually legacy for the supported Ansible context."
+    },
+    "missing-abstraction": {
+      "family_id": "structure_reuse",
+      "rationale": "The question is whether task organization should be factored into reusable roles/includes, not whether a numeric size cutoff is exceeded."
+    },
+    "missing-bool-filters": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "The predicate is a variable/value-type interpretation in a when condition; judge expression semantics and available type context."
+    },
+    "molecule-test-absent": {
+      "family_id": "style_policy",
+      "rationale": "This is an optional testing-practice predicate; role testability and repository policy value must be judged separately from file absence."
+    },
+    "non-idempotent-command": {
+      "family_id": "objective_correctness",
+      "rationale": "Judge whether the mutating command can repeat harmful changes without a valid idempotency guard; command presence alone is insufficient."
+    },
+    "overriding-facts": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "Requires comparing set_fact assignments and whether the later value changes the effective variable; context can make apparent overrides intentional."
+    },
+    "read-only-command-change": {
+      "family_id": "objective_correctness",
+      "rationale": "Judge whether the command is read-only and whether Ansible would falsely report a change in this actual task context."
+    },
+    "redirected-module": {
+      "family_id": "objective_correctness",
+      "rationale": "This is a module-identity/compatibility condition; verify the redirect and target FQCN in the frozen source context."
+    },
+    "redundant-default-value": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "Requires comparing an assignment to the role default and the effective variable contract; equality alone may be intentional documentation."
+    },
+    "role-readme-absent": {
+      "family_id": "structure_reuse",
+      "rationale": "The supplied plan explicitly places absent role documentation in the structure/reuse review family; absence alone is not a correctness defect."
+    },
+    "role-variable-precedence-collision": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "Requires Ansible precedence and effective-value reasoning across role defaults and vars."
+    },
+    "shell-environment-export": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "The issue is whether a shell export is being used where Ansible's task environment mapping controls variable propagation."
+    },
+    "unguarded-variable": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "The finding is about whether a variable is defined, guarded, or supplied by a runtime input contract; uncertainty is central to this family."
+    },
+    "unnecessary-abstraction": {
+      "family_id": "structure_reuse",
+      "rationale": "A one-task block is a structure/reuse judgment; its presence does not by itself establish a harmful abstraction."
+    },
+    "unnecessary-set-fact": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "Judge whether the set_fact value is genuinely unused across visible references; do not treat the optional rule taxonomy as proof of a defect."
+    },
+    "unpinned-ansible-dependency": {
+      "family_id": "objective_correctness",
+      "rationale": "Judge whether the dependency is genuinely unconstrained in the declared installation source; reproducibility impact and actionability are separate labels."
+    },
+    "unsafe-file-write": {
+      "family_id": "security",
+      "rationale": "The supplied plan explicitly lists unsafe file writes as a security review case; judge actual write risk and relevant safeguards."
+    },
+    "unscoped-shell-variable": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "Requires checking shell-variable expansion against Ansible environment mapping and execution scope."
+    },
+    "unused-registered-variable": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "The semantic decision is whether a registered result is referenced in the available scope; dynamic/runtime references may require uncertainty."
+    },
+    "variable-use-before-definition": {
+      "family_id": "variable_reference_reasoning",
+      "rationale": "Requires ordering and scope reasoning about the registered result/fact; external or dynamic definitions must be considered."
+    },
+    "vault-inline-overload": {
+      "family_id": "security",
+      "rationale": "The detector concerns inline encrypted-secret handling; assess exposure/operational risk while keeping the organization-specific threshold distinct."
+    }
+  },
+  "format_version": 1,
+  "mapping": {
+    "family_counts": {
+      "maintainability_complexity": 12,
+      "objective_correctness": 11,
+      "review_history": 5,
+      "security": 8,
+      "structure_reuse": 8,
+      "style_policy": 11,
+      "variable_reference_reasoning": 10
+    },
+    "family_rule_ids": {
+      "maintainability_complexity": [
+        "ansibleguard/large-task",
+        "ansibleguard/complex-expression",
+        "ansibleguard/large-playbook",
+        "ansibleguard/complex-playbook",
+        "ansibleguard/large-play",
+        "ansibleguard/undocumented-complex-task",
+        "ansibleguard/shell-instead-of-module",
+        "ansibleguard/high-coupling",
+        "ansibleguard/deprecated-modules",
+        "ansibleguard/excessive-nesting",
+        "ansibleguard/incomplete-task",
+        "ansibleguard/unused-handler"
+      ],
+      "objective_correctness": [
+        "ansibleguard/loop-legacy-syntax",
+        "ansibleguard/silent-error-suppression",
+        "ansibleguard/non-idempotent-command",
+        "ansibleguard/redirected-module",
+        "ansibleguard/read-only-command-change",
+        "ansibleguard/unpinned-ansible-dependency",
+        "ansibleguard/invalid-task-attribute-type",
+        "ansibleguard/missing-handler",
+        "ansibleguard/overriden-keys",
+        "ansibleguard/invalid-numeric-value",
+        "ansibleguard/broken-role-dependency"
+      ],
+      "review_history": [
+        "ansibleguard/missing-release-note",
+        "ansibleguard/commit-message-format",
+        "ansibleguard/missing-test-update",
+        "ansibleguard/untested-override-change",
+        "ansibleguard/missing-bug-reference"
+      ],
+      "security": [
+        "ansibleguard/credentials-leaking-in-log",
+        "ansibleguard/plaintext-sensitive-variable",
+        "ansibleguard/missing-validate-certs",
+        "ansibleguard/become-scope-too-broad",
+        "ansibleguard/insecure-permissions",
+        "ansibleguard/default-credentials",
+        "ansibleguard/unsafe-file-write",
+        "ansibleguard/vault-inline-overload"
+      ],
+      "structure_reuse": [
+        "ansibleguard/role-readme-absent",
+        "ansibleguard/missing-abstraction",
+        "ansibleguard/unnecessary-abstraction",
+        "ansibleguard/duplicated-code",
+        "ansibleguard/insufficient-modularization",
+        "ansibleguard/unstructured-module",
+        "ansibleguard/unexpected-task-location",
+        "ansibleguard/empty-abstraction"
+      ],
+      "style_policy": [
+        "ansibleguard/missing-tags",
+        "ansibleguard/variable-naming-convention",
+        "ansibleguard/unnamed-task",
+        "ansibleguard/long-statement",
+        "ansibleguard/long-task-name",
+        "ansibleguard/molecule-test-absent",
+        "ansibleguard/unnamed-play",
+        "ansibleguard/duplicate-task-names",
+        "ansibleguard/galaxy-meta-incomplete",
+        "ansibleguard/inconsistent-naming-convention",
+        "ansibleguard/missing-file-extension"
+      ],
+      "variable_reference_reasoning": [
+        "ansibleguard/unguarded-variable",
+        "ansibleguard/unnecessary-set-fact",
+        "ansibleguard/unused-registered-variable",
+        "ansibleguard/variable-use-before-definition",
+        "ansibleguard/unscoped-shell-variable",
+        "ansibleguard/role-variable-precedence-collision",
+        "ansibleguard/overriding-facts",
+        "ansibleguard/redundant-default-value",
+        "ansibleguard/missing-bool-filters",
+        "ansibleguard/shell-environment-export"
+      ]
+    },
+    "panel_counts": {
+      "review-history": 5,
+      "static": 58,
+      "static-special": 2
+    },
+    "path": "mappings/rule-family-map.csv",
+    "rows": 65,
+    "sha256": "914215d3c2ca0c9443ddd424ad0b8a8d9d9f317f2abc1fa27bb6ba7f842d4317"
+  },
+  "rule_catalog": {
+    "path": "../../rule-catalog.json",
+    "sha256": "62b43e177be28773b8e926c06345fe00bacdf37e0fa4d069a5d2d77ec485c93e"
+  },
+  "scope_note": "Rule-definition mapping only; no finding occurrence rows, reviewer samples, human labels, or heldout contexts are read or written.",
+  "source_documents": {
+    "exact_sampling_spec": {
+      "path": "protocol/source/EXACT_SAMPLING_SPEC.md",
+      "sha256": "9c4a9004ea5e97652fc240904c9035665ffbcd59967eedce08e1bb6d9c094aa8"
+    },
+    "execution_plan": {
+      "download_copies_byte_identical": true,
+      "path": "protocol/source/EXECUTION_PLAN.md",
+      "sha256": "0ad90df2988431f9d8d476bf806cae41c083537bba47abc8bd19b8191bfeb838"
+    }
+  },
+  "source_matrix": {
+    "path": "mappings/source-rule-allocation-matrix.csv",
+    "rows": 65,
+    "sha256": "657759e3d5cf76e79ce3dacc9afcd7f2b0986fa5d86a43a8c7787d1ee1596c2f"
+  }
+}

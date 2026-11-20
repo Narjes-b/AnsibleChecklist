@@ -1,0 +1,15 @@
+# Codebook v2.1 freeze record
+
+v2.0 was frozen earlier on 2026-10-16 and superseded the same day by v2.1 after the pilot-2 dry run (no human labelled under v2.0). Any further change requires v2.2 and new hashes; pilot 2 uses exactly these files.
+
+```
+18ed362986716c9de2f275a90b6e17c6ef22fcfc93e177a92e893ba6c5f796c0  COMMON_V2.md
+746381f5190a012312bcd636f4d9286cce871eadbb891aa30be8ce2a8c9dc7ef  FAMILY_MAINTAINABILITY_V2.md
+f73d2dd486f4137c1c1aafb03fe6207f778cf3cb1ad7d868c4206a782bd77f0d  FAMILY_OBJECTIVE_CORRECTNESS_V2.md
+0ef7a61da80c6a3864e42bc1438254056c8d1055c446ba3cae0403b46715ff55  FAMILY_REVIEW_HISTORY_V2.md
+adfad85037ffb53c90cb382aaa09548703337c62deb30d8ac1d3cadc2762cb49  FAMILY_SECURITY_V2.md
+23c8a079200143d7310190cadbb1dbc63c88a0829ed3324b0367e8d106964473  FAMILY_STRUCTURE_V2.md
+d3bbb14748940b57dbecbb92f83097f02d46fa3ba5aaa96c92eee80e6e46e1e5  FAMILY_STYLE_POLICY_V2.md
+4431832e4569624191da99edc82b8b52f0ac42d8896727e5c35c2b5eed6351f9  FAMILY_VARIABLES_V2.md
+df4964bcbc794e17b43f0112f859a9e1f525d8ede3012ab1cd889c0e7267eb15  README.md
+```

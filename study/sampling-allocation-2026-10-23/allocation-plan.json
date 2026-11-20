@@ -1,0 +1,98 @@
+{
+  "purpose": "Development allocation comparison chosen after interval failures; no final protocol or workload accepted",
+  "created_utc": "2026-10-23T18:34:30.556373+00:00",
+  "instrument": "required",
+  "eligible_for_performance_scoring": false,
+  "final_method_accepted": false,
+  "configurations": [
+    {
+      "groups_per_stratum": 3,
+      "occurrences_per_group": 2,
+      "census_at": 30,
+      "expected_selected_occurrences": 850.6186981399619,
+      "existing_baseline": true
+    },
+    {
+      "groups_per_stratum": 5,
+      "occurrences_per_group": 2,
+      "census_at": 30,
+      "expected_selected_occurrences": 1274.6978302332698,
+      "existing_baseline": true
+    },
+    {
+      "groups_per_stratum": 3,
+      "occurrences_per_group": 5,
+      "census_at": 30,
+      "expected_selected_occurrences": 1450.279191154593,
+      "existing_baseline": false
+    },
+    {
+      "groups_per_stratum": 5,
+      "occurrences_per_group": 5,
+      "census_at": 30,
+      "expected_selected_occurrences": 2256.8819852576553,
+      "existing_baseline": false
+    },
+    {
+      "groups_per_stratum": 10,
+      "occurrences_per_group": 2,
+      "census_at": 30,
+      "expected_selected_occurrences": 2220.3916922125713,
+      "existing_baseline": false
+    },
+    {
+      "groups_per_stratum": 10,
+      "occurrences_per_group": 5,
+      "census_at": 30,
+      "expected_selected_occurrences": 4095.3631768645164,
+      "existing_baseline": false
+    }
+  ],
+  "replications_per_scenario": 400,
+  "seed": "recovery-design-check-20261023-v1",
+  "scenarios": {
+    "constant-60": [
+      0.6,
+      0.0,
+      0.0
+    ],
+    "size-positive-60": [
+      0.6,
+      1.2,
+      0.8
+    ],
+    "size-negative-60": [
+      0.6,
+      1.2,
+      -0.8
+    ],
+    "heterogeneous-95": [
+      0.95,
+      1.2,
+      0.0
+    ],
+    "near-boundary-995": [
+      0.995,
+      0.8,
+      0.0
+    ],
+    "all-positive": [
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "frame_manifest_sha256": "fc560b03d5f91febfbec7ecb29a5ecfa2d48a2565cc998386a99032f43af939e",
+  "occurrences_sha256": "71be3560cfb8194aa50d63a0ce323737e35ca9aaec0d01004d114b3bd995cecd",
+  "comparison_rationale": [
+    "Separate between-group diversity from within-group quota",
+    "Largest-size rule/decision cells dominate the conservative bound",
+    "Check near-boundary coverage and workload together; preserve unfavorable outcomes"
+  ],
+  "limits": [
+    "Same development truth populations as earlier diagnostics; not independent validation",
+    "Normal intervals remain an unaccepted candidate",
+    "No nonresponse, rater error or human effort data",
+    "Final output frame must follow code freeze"
+  ]
+}

@@ -1,0 +1,7 @@
+family,rules,rules_with_required,required_occurrences,optional_occurrences,heldout_required,large_rules,mid_rules,census_rules
+maintainability_complexity,12,12,33150,0,10021,4,6,2
+objective_correctness,11,11,12099,0,3073,2,4,3
+security,8,7,8668,605,2377,1,5,1
+structure_reuse,8,7,2975,3123,957,0,3,4
+style_policy,11,7,24019,124616,5832,3,2,2
+variable_reference_reasoning,10,9,2586,53593,750,0,3,6

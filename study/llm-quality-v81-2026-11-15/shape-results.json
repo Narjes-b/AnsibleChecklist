@@ -1,0 +1,199 @@
+{
+  "rows": [
+    {
+      "case": "tls-args",
+      "mode": "window",
+      "expected": "supported",
+      "assessment": "supported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "tls-args",
+      "mode": "scoped",
+      "expected": "supported",
+      "assessment": "supported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "tls-local-action",
+      "mode": "window",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "tls-local-action",
+      "mode": "scoped",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "tls-runtime",
+      "mode": "window",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "tls-runtime",
+      "mode": "scoped",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "permission-decimal",
+      "mode": "window",
+      "expected": "supported",
+      "assessment": "supported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "permission-decimal",
+      "mode": "scoped",
+      "expected": "supported",
+      "assessment": "supported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "permission-grouped",
+      "mode": "window",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "permission-grouped",
+      "mode": "scoped",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "permission-runtime",
+      "mode": "window",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "permission-runtime",
+      "mode": "scoped",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "logging-inherited",
+      "mode": "window",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "logging-inherited",
+      "mode": "scoped",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "logging-override",
+      "mode": "window",
+      "expected": "supported",
+      "assessment": "supported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "logging-override",
+      "mode": "scoped",
+      "expected": "supported",
+      "assessment": "supported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "logging-opaque",
+      "mode": "window",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "logging-opaque",
+      "mode": "scoped",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "variable-prior",
+      "mode": "window",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "variable-prior",
+      "mode": "scoped",
+      "expected": "unsupported",
+      "assessment": "unsupported",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "variable-conditional",
+      "mode": "window",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "variable-conditional",
+      "mode": "scoped",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "variable-external",
+      "mode": "window",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    },
+    {
+      "case": "variable-external",
+      "mode": "scoped",
+      "expected": "insufficient-evidence",
+      "assessment": "insufficient-evidence",
+      "status": "ok",
+      "matches": true
+    }
+  ],
+  "matches": 24,
+  "total": 24,
+  "authority": "Developer-authored static fixtures; no independent human evaluation"
+}

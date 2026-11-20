@@ -1,0 +1,8 @@
+bin,repositories
+0 to <25 per KLOC,14
+25 to <50 per KLOC,4
+50 to <100 per KLOC,14
+100 to <150 per KLOC,43
+150 to <200 per KLOC,40
+200 to <300 per KLOC,58
+300+ per KLOC,33

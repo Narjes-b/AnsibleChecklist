@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "run_id": "v0071-rerun-2026-10-22",
+  "population_view": "canonical-provider-assigned internal static-source occurrences",
+  "purpose": "sampling frame inventory; no examples selected",
+  "eligible_for_performance_scoring": false,
+  "exposure_scope": "Only the listed samples were joined; absence does not establish independence.",
+  "input_sha256": {
+    "/tmp/ansibleguard-overlap-repair-2026-10-23/aggregate/all-internal-source-occurrences.csv": "71be3560cfb8194aa50d63a0ce323737e35ca9aaec0d01004d114b3bd995cecd",
+    "study/analysis-v0071-rerun-2026-10-22/run/tables/repository-execution-status.csv": "fa96d0f6c29c834b37f7e88d2ea8ebca9554f718c450b100a1a5d2f3c0756498",
+    "study/validation-v007-human/splits/repository-split.csv": "c6f50da3bd52130cd0a32ab48e322dfa666419d12bccdb1e7a4796d885260f65",
+    "study/analysis-v0071-rerun-2026-10-22/rule-profile.csv": "2ad940521eb26f9f23f5916997e7daabf917d2b5df43de5008a1518dfbebcc4e",
+    "study/exploratory-labels/stratified-sample/stratified-sample.csv": "60a40ec22b1d4d0af5b4bba4f2a187480f19985b6d0339aa642bfa128086c8de",
+    "study/exploratory-labels/stratified-sample-v0071/stratified-sample.csv": "a62b03c10a437d4f7a4f1810c88f21a691953be6f2eeea46f7111aecf8fd9d6b"
+  },
+  "output_sha256": {
+    "repository-frame.csv": "d01d6e08b99384310adca7ae455f5cd62ee917a7febcb2af026d624ab4e1e113",
+    "sampling-cells.csv": "2484b580fa7bbd0e60bb90d57793d46c72ca8e3df028123fc81b243f7c27a9ae",
+    "partition-margins.csv": "20aa44187ec481d351ebc86edc881c750e33b30cbc046f9b2cc80c013cecbe20",
+    "rule-feasibility.csv": "d6f5adba88850ab375925f4213f1304a8ce763580c7274b3a83b3373943e4f67"
+  },
+  "implementation_sha256": "694a14cd3e59649a9cc540fd58eda830d07a4adf71e6c094e19abeac771f6a5e",
+  "occurrences": 264704,
+  "sampling_cells": 121
+}

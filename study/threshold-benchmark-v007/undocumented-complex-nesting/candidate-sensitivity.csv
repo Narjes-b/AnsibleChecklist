@@ -1,0 +1,4 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+undocumented_complex_nesting_depth,undocumented-complex-task,q1;q2_median;q3;tukey_upper_fence;p80,0,132295,25931,0.19600892,194,162,0.83505155
+undocumented_complex_nesting_depth,undocumented-complex-task,p90;p95,1,132295,3812,0.02881439,194,117,0.60309278
+undocumented_complex_nesting_depth,undocumented-complex-task,current,5,132295,1285,0.00971314,194,98,0.50515464

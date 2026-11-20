@@ -1,0 +1,190 @@
+{
+  "scheduled": 8,
+  "human_quality": "pending independent review",
+  "rows": [
+    {
+      "case_id": "development-missing-validate-certs-2",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 17.41233176300011,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5313,
+        "context_limit": 8192,
+        "eval_count": 199,
+        "output_reserve": 1024,
+        "prompt_eval_count": 806
+      }
+    },
+    {
+      "case_id": "development-missing-validate-certs-2",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 9.94391109499702,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5960,
+        "context_limit": 8192,
+        "eval_count": 219,
+        "output_reserve": 1024,
+        "prompt_eval_count": 1128
+      }
+    },
+    {
+      "case_id": "development-missing-validate-certs-1",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 7.111437867002678,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5994,
+        "context_limit": 8192,
+        "eval_count": 153,
+        "output_reserve": 1024,
+        "prompt_eval_count": 1141
+      }
+    },
+    {
+      "case_id": "development-missing-validate-certs-1",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.780162360002578,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5299,
+        "context_limit": 8192,
+        "eval_count": 154,
+        "output_reserve": 1024,
+        "prompt_eval_count": 803
+      }
+    },
+    {
+      "case_id": "development-missing-validate-certs-3",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 6.800306646000536,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5316,
+        "context_limit": 8192,
+        "eval_count": 153,
+        "output_reserve": 1024,
+        "prompt_eval_count": 810
+      }
+    },
+    {
+      "case_id": "development-missing-validate-certs-3",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 6.643006851001701,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 6626,
+        "context_limit": 8192,
+        "eval_count": 136,
+        "output_reserve": 1024,
+        "prompt_eval_count": 1400
+      }
+    },
+    {
+      "case_id": "development-missing-validate-certs-0",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 6.480005972000072,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 6027,
+        "context_limit": 8192,
+        "eval_count": 136,
+        "output_reserve": 1024,
+        "prompt_eval_count": 1140
+      }
+    },
+    {
+      "case_id": "development-missing-validate-certs-0",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 7.087855667996337,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5300,
+        "context_limit": 8192,
+        "eval_count": 160,
+        "output_reserve": 1024,
+        "prompt_eval_count": 803
+      }
+    }
+  ]
+}

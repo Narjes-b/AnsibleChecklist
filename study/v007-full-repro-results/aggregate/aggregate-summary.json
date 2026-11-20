@@ -1,0 +1,22 @@
+{
+  "analyzable_repositories": 127,
+  "ansible_lint_comparable_occurrences": 8055,
+  "ansible_lint_occurrences": 28066,
+  "canonical_occurrences": 93412,
+  "categories": 11,
+  "excluded_incomplete_provider_occurrences": 20011,
+  "failed_repositories": 0,
+  "generated_at_utc": "2026-10-06T13:19:44.344719+00:00",
+  "gitleaks_comparable_occurrences": 975,
+  "gitleaks_occurrences": 975,
+  "internal_occurrences": 64371,
+  "internal_source_occurrences": 64055,
+  "provider_comparable_occurrences": 73401,
+  "raw_findings": 96406,
+  "repositories": 127,
+  "review_occurrences": 316,
+  "rules": 134,
+  "run_id": "v007-full-repro-2026",
+  "schema_version": 1,
+  "uncertain_occurrences": 10934
+}

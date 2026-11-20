@@ -1,0 +1,5 @@
+- name: Tagged task file
+  debug:
+    msg: tagged
+  tags:
+    - calibration

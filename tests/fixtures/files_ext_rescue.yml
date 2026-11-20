@@ -1,0 +1,10 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: risky
+      block:
+        - name: normal
+          debug: {msg: hi}
+      rescue:
+        - name: include without ext
+          include_tasks: recovery

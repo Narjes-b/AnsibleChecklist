@@ -1,0 +1,24 @@
+{
+  "case_id": "real-unguarded-variable-1",
+  "family": "unguarded-variable",
+  "occurrence": {
+    "file": "roles/GKS-to-slurm_master_node/tasks/set_nfs_sharing.yml",
+    "line": 15,
+    "rule_id": "unguarded-variable",
+    "message": "Internal variable 'galaxy_persistent_directory' has no visible definition, runtime producer, default, or defined guard.",
+    "semantic_subject": "variable:galaxy_persistent_directory"
+  },
+  "intent": null,
+  "snippets": [
+    {
+      "file": "roles/GKS-to-slurm_master_node/tasks/set_nfs_sharing.yml",
+      "text": "   10 | - name: bind mount persitent directories in nfs_export/galaxy directory\n   11 |   mount: opts=bind fstype=none state=mounted name={{ item.dest }} src={{ item.src }}\n   12 |   with_items:\n   13 |     - { src: \"/home/galaxy\", dest: \"{{ nfs_export_galaxy_dir }}\" }\n   14 |     - { src: \"{{ galaxy_persistent_directory }}/home/galaxy/tool_dependencies\", dest: \"{{ nfs_export_galaxy_dir }}/tool_dependencies\" }\n   15 |     - { src: \"{{ galaxy_persistent_directory }}/home/galaxy/shed_tools\", dest: \"{{ nfs_export_galaxy_dir }}/shed_tools\" }\n   16 |     - { src: \"{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/tool-data\", dest: \"{{ nfs_export_galaxy_dir }}/galaxy/tool-data\" }\n   17 |     - { src: \"{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/config\", dest: \"{{ nfs_export_galaxy_dir }}/galaxy/config\" }\n   18 |     - { src: \"{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/database\", dest: \"{{ nfs_export_galaxy_dir }}/galaxy/database\" }\n   19 | "
+    }
+  ],
+  "missing": [
+    "complete inventory, extra-vars and dynamic input contract; absence of a visible definition is not undefinedness"
+  ],
+  "files": {
+    "roles/GKS-to-slurm_master_node/tasks/set_nfs_sharing.yml": "- name: Install nfs packages\n  apt: pkg={{ item }} state='present'\n  with_items:\n    - nfs-kernel-server\n    - nfs-common\n\n- name: Create nfs_export directory\n  file: path={{ nfs_export_galaxy_dir }} state=directory mode=0755 recurse=yes\n\n- name: bind mount persitent directories in nfs_export/galaxy directory\n  mount: opts=bind fstype=none state=mounted name={{ item.dest }} src={{ item.src }}\n  with_items:\n    - { src: \"/home/galaxy\", dest: \"{{ nfs_export_galaxy_dir }}\" }\n    - { src: \"{{ galaxy_persistent_directory }}/home/galaxy/tool_dependencies\", dest: \"{{ nfs_export_galaxy_dir }}/tool_dependencies\" }\n    - { src: \"{{ galaxy_persistent_directory }}/home/galaxy/shed_tools\", dest: \"{{ nfs_export_galaxy_dir }}/shed_tools\" }\n    - { src: \"{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/tool-data\", dest: \"{{ nfs_export_galaxy_dir }}/galaxy/tool-data\" }\n    - { src: \"{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/config\", dest: \"{{ nfs_export_galaxy_dir }}/galaxy/config\" }\n    - { src: \"{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/database\", dest: \"{{ nfs_export_galaxy_dir }}/galaxy/database\" }\n\n- name: export galaxy data for nfs sharing with slurm slave nodes\n  template: src=exports dest=/etc/exports\n#  notify:\n#    - restart nfs-kernel-server\n\n- name: restart nfs-kernel-server\n  service: name=nfs-kernel-server state=restarted\n"
+  }
+}

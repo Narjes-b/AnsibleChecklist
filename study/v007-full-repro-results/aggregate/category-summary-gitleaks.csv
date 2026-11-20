@@ -1,0 +1,2 @@
+category,findings,share_percent,eligible_repositories,missing_repositories,repositories_affected,repository_prevalence_percent,median_per_repository,q1_per_repository,q3_per_repository,findings_per_1000_selected_loc
+security,975,100.0,127,0,50,39.37,0,0,2,

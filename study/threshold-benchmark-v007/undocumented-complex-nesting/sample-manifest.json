@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "LABELING_CODEBOOK.md": "08750b7efac5159e453dcdceefc6b06d1b3383e15b11e5438e85f20af5df5f0f",
+    "RESULTS.md": "a6f0540cbca7e0616777636fc9a3b16d95380618b2ae66a560c2437ab886a044",
+    "agreement-pilot-manifest.json": "916e73bdbb6f65debb59b506e473db9f644ddfd7579e11e20e38f4b8b699ede5",
+    "agreement-pilot.csv": "5ea826547b70c92f24129d6bc9194ccf8f040b0af202eb53bbe4693e8adcae1f",
+    "candidate-sensitivity.csv": "360e03345d3290d74a82f3b6383cc69dfd8064e93c6847e6ff998d566356f26e",
+    "review-sample.csv": "e5f451d3c0721d51a2bf9f3f20fa1a671ee9fb0372c2d04b1d398ef5fe2e69db"
+  },
+  "metric_id": "undocumented_complex_nesting_depth",
+  "population_observations": 132295,
+  "review_sample_sha256": "e5f451d3c0721d51a2bf9f3f20fa1a671ee9fb0372c2d04b1d398ef5fe2e69db",
+  "sample_projects": 194,
+  "sample_rows": 483,
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "working_labels_are_mutable": true
+}

@@ -1,0 +1,55 @@
+{
+  "artifacts": [
+    {
+      "bytes": 1662,
+      "path": "README.md",
+      "sha256": "4b90f3b2647e1134c40daf72a64451a35055de9978d9935a39c9b26dea987725"
+    },
+    {
+      "bytes": 49888,
+      "path": "calibration-report.md",
+      "sha256": "004578fe6ceb6c2473f487555fb7853fba0bd00befa1d162ba2e13b80dfa6439"
+    },
+    {
+      "bytes": 1289837,
+      "path": "calibration-sample.csv.gz",
+      "sha256": "e5702d305a849ac990bce5e92b2bbd08bb38af23d348a9be7f8ea83618e3889e"
+    },
+    {
+      "bytes": 1068429,
+      "path": "file-population-manifest.csv.gz",
+      "sha256": "ce0b993e58a18293068f984b079ae0a5f6b203cd96ba13540e78dd3796fc43ae"
+    },
+    {
+      "bytes": 12129,
+      "path": "injection-pr-labels.csv",
+      "sha256": "ed71ee02fbc1f297cdbbf1e06f6c684347d0c8c202ef8e89bc074c7a71f81ce2"
+    },
+    {
+      "bytes": 9709,
+      "path": "injection-pr-report.md",
+      "sha256": "ca2133a49c3a4f557ffc12d3fe1e6cc62d38d45a507801e142e76fa542846157"
+    },
+    {
+      "bytes": 15132,
+      "path": "precision-summary.csv",
+      "sha256": "21ea3ba721b4cb026119429ea5b9e8c5630e999d791129ce89f8f94666ad2279"
+    },
+    {
+      "bytes": 1822,
+      "path": "provenance.json",
+      "sha256": "ae6c558708a870fbb4b0ca17679cdda2230b7b1685e09399f6ffb7ad5711d087"
+    },
+    {
+      "bytes": 266977,
+      "path": "repository-manifest.csv",
+      "sha256": "cc16623be461b6ab53d7fcec9fdace6b60c3ebe2e1a48a8a36909147e737065d"
+    },
+    {
+      "bytes": 4848,
+      "path": "synthetic-sensitivity-report.md",
+      "sha256": "fdf0530630be520c9c737ed6783dbdf3a6db13c97c4712a386d79ff4a74d8d5a"
+    }
+  ],
+  "schema_version": 1
+}

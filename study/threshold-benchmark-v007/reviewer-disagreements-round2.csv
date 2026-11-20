@@ -1,0 +1,1048 @@
+observation_id,metric_id,rule_id,unit,project,commit_sha,repository_size_quartile,path,document_type,line,name,value,current_threshold,comparator,eligible,current_prediction,threshold_multiplier,has_existing_abstraction,base_score,boolean_ops,jinja_filters,nesting_depth,has_preceding_comment,source_ordinal,play_loc,play_task_count,play_avg_task_size,playbook_loc,playbook_play_count,playbook_avg_play_size,playbook_task_count,playbook_avg_task_size,import_count,role_count,task_special_chars,play_special_chars,parent_play_name,sample_stratum,metric_band,stratum_population,inclusion_probability,sampling_weight,review_question,reviewer_1_label,reviewer_1_reason,context_start_line,context_end_line,source_total_lines,context_complete,context_strategy,source_context,reviewer_2_label,reviewer_2_reason,initial_agreement,adjudicated_label,adjudication_reason,ai_label,ai_reason,ai_prompt_version,ai_model_version
+32468f4092fd993847116c26d60fb5b9eb850886f9bb33580c5dda825b1e24e8,large_task_loc,large-task,task,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,Q2,tasks/section_7/cis_7.1.x.yml,tasks,177,7.1.11 | AUDIT | Ensure world writable files and directories are secured | Get list of world-writable files,13,15,>,true,false,1,false,,,,,false,10,,,,,,,,,,,,,,ansible-lockdown/RHEL9-CIS|B4_high|current=false,B4_high,239,0.0041841004,239,Should this executable Ansible task be considered excessively large and in need of decomposition?,negative,"The repeated file-permission tasks are each a single ansible.builtin.file call, and the more complex world-writable/unowned/SUID blocks each use one shell pipeline to compute one list, then one loop to apply one fix to that list, matching rule 8's negative pattern of steps that feed a single derived value or operation.",1,322,322,true,complete-file,"     1: ---
+     2: 
+     3: - name: ""7.1.1 | PATCH | Ensure permissions on /etc/passwd are configured""
+     4:   when: rhel9cis_rule_7_1_1
+     5:   tags:
+     6:     - level1-server
+     7:     - level1-workstation
+     8:     - patch
+     9:     - permissions
+    10:     - rule_7.1.1
+    11:     - NIST800-53R5_AC-3
+    12:     - NIST800-53R5_MP-2
+    13:   ansible.builtin.file:
+    14:     path: /etc/passwd
+    15:     owner: root
+    16:     group: root
+    17:     mode: 'u-x,go-wx'
+    18: 
+    19: - name: ""7.1.2 | PATCH | Ensure permissions on /etc/passwd- are configured""
+    20:   when: rhel9cis_rule_7_1_2
+    21:   tags:
+    22:     - level1-server
+    23:     - level1-workstation
+    24:     - patch
+    25:     - permissions
+    26:     - rule_7.1.2
+    27:     - NIST800-53R5_AC-3
+    28:     - NIST800-53R5_MP-2
+    29:   ansible.builtin.file:
+    30:     path: /etc/passwd-
+    31:     owner: root
+    32:     group: root
+    33:     mode: 'u-x,go-wx'
+    34: 
+    35: - name: ""7.1.3 | PATCH | Ensure permissions on /etc/group are configured""
+    36:   when: rhel9cis_rule_7_1_3
+    37:   tags:
+    38:     - level1-server
+    39:     - level1-workstation
+    40:     - patch
+    41:     - permissions
+    42:     - rule_7.1.3
+    43:     - NIST800-53R5_AC-3
+    44:     - NIST800-53R5_MP-2
+    45:   ansible.builtin.file:
+    46:     path: /etc/group
+    47:     owner: root
+    48:     group: root
+    49:     mode: 'u-x,go-wx'
+    50: 
+    51: - name: ""7.1.4 | PATCH | Ensure permissions on /etc/group- are configured""
+    52:   when: rhel9cis_rule_7_1_4
+    53:   tags:
+    54:     - level1-server
+    55:     - level1-workstation
+    56:     - patch
+    57:     - permissions
+    58:     - rule_7.1.4
+    59:     - NIST800-53R5_AC-3
+    60:     - NIST800-53R5_MP-2
+    61:   ansible.builtin.file:
+    62:     path: /etc/group-
+    63:     owner: root
+    64:     group: root
+    65:     mode: 'u-x,go-wx'
+    66: 
+    67: - name: ""7.1.5 | PATCH | Ensure permissions on /etc/shadow are configured""
+    68:   when: rhel9cis_rule_7_1_5
+    69:   tags:
+    70:     - level1-server
+    71:     - level1-workstation
+    72:     - patch
+    73:     - permissions
+    74:     - rule_7.1.5
+    75:     - NIST800-53R5_AC-3
+    76:     - NIST800-53R5_MP-2
+    77:   ansible.builtin.file:
+    78:     path: /etc/shadow
+    79:     owner: root
+    80:     group: root
+    81:     mode: 'ugo-rwx'
+    82: 
+    83: - name: ""7.1.6 | PATCH | Ensure permissions on /etc/shadow- are configured""
+    84:   when: rhel9cis_rule_7_1_6
+    85:   tags:
+    86:     - level1-server
+    87:     - level1-workstation
+    88:     - patch
+    89:     - permissions
+    90:     - rule_7.1.6
+    91:     - NIST800-53R5_AC-3
+    92:     - NIST800-53R5_MP-2
+    93:   ansible.builtin.file:
+    94:     path: /etc/shadow-
+    95:     owner: root
+    96:     group: root
+    97:     mode: 'ugo-rwx'
+    98: 
+    99: - name: ""7.1.7 | PATCH | Ensure permissions on /etc/gshadow are configured""
+   100:   when: rhel9cis_rule_7_1_7
+   101:   tags:
+   102:     - level1-server
+   103:     - level1-workstation
+   104:     - patch
+   105:     - permissions
+   106:     - rule_7.1.7
+   107:     - NIST800-53R5_AC-3
+   108:     - NIST800-53R5_MP-2
+   109:   ansible.builtin.file:
+   110:     path: /etc/gshadow
+   111:     owner: root
+   112:     group: root
+   113:     mode: 'ugo-rwx'
+   114: 
+   115: - name: ""7.1.8 | PATCH | Ensure permissions on /etc/gshadow- are configured""
+   116:   when: rhel9cis_rule_7_1_8
+   117:   tags:
+   118:     - level1-server
+   119:     - level1-workstation
+   120:     - patch
+   121:     - permissions
+   122:     - rule_7.1.8
+   123:     - NIST800-53R5_AC-3
+   124:     - NIST800-53R5_MP-2
+   125:   ansible.builtin.file:
+   126:     path: /etc/gshadow-
+   127:     owner: root
+   128:     group: root
+   129:     mode: 'ugo-rwx'
+   130: 
+   131: - name: ""7.1.9 | PATCH | Ensure permissions on /etc/shells are configured""
+   132:   when: rhel9cis_rule_7_1_9
+   133:   tags:
+   134:     - level1-server
+   135:     - level1-workstation
+   136:     - patch
+   137:     - permissions
+   138:     - rule_7.1.9
+   139:     - NIST800-53R5_AC-3
+   140:     - NIST800-53R5_MP-2
+   141:   ansible.builtin.file:
+   142:     path: /etc/shells
+   143:     owner: root
+   144:     group: root
+   145:     mode: 'u-x,go-wx'
+   146: 
+   147: - name: ""7.1.10 | PATCH | Ensure permissions on /etc/security/opasswd are configured""
+   148:   when: rhel9cis_rule_7_1_10
+   149:   tags:
+   150:     - level1-server
+   151:     - level1-workstation
+   152:     - patch
+   153:     - permissions
+   154:     - rule_7.1.10
+   155:     - NIST800-53R5_AC-3
+   156:     - NIST800-53R5_MP-2
+   157:   ansible.builtin.file:
+   158:     path: /etc/security/opasswd
+   159:     owner: root
+   160:     group: root
+   161:     mode: 'u-x,go-wx'
+   162:   failed_when: discovered_file_exists.state not in '[ file, absent ]'
+   163:   register: discovered_file_exists
+   164: 
+   165: - name: ""7.1.11 | PATCH | Ensure world writable files and directories are secured""
+   166:   when: rhel9cis_rule_7_1_11
+   167:   tags:
+   168:     - level1-server
+   169:     - level1-workstation
+   170:     - patch
+   171:     - files
+   172:     - permissions
+   173:     - rule_7.1.11
+   174:     - NIST800-53R5_AC-3
+   175:     - NIST800-53R5_MP-2
+   176:   block:
+   177:     - name: ""7.1.11 | AUDIT | Ensure world writable files and directories are secured | Get list of world-writable files""
+   178:       ansible.builtin.shell: |
+   179:         set -o pipefail
+   180:         df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+   181:       args:
+   182:         executable: ""{{ rhel9cis_shell_executable }}""
+   183:       failed_when: false
+   184:       changed_when: false
+   185:       register: discovered_world_writable
+   186: 
+   187:     - name: ""7.1.11 | PATCH | Ensure world writable files and directories are secured | Adjust world-writable files if they exist (Configurable)""
+   188:       when:
+   189:         - discovered_world_writable.stdout_lines is defined
+   190:         - discovered_world_writable.stdout_lines | length > 0
+   191:         - rhel9cis_no_world_write_adjust
+   192:       ansible.builtin.file:
+   193:         path: '{{ item }}'
+   194:         mode: 'o-w'
+   195:         state: touch
+   196:       loop: ""{{ discovered_world_writable.stdout_lines }}""
+   197: 
+   198:     - name: ""7.1.11 | PATCH | Ensure world writable files and directories are secured | Adjust world-writable directories add sticky bit""
+   199:       ansible.builtin.shell: |
+   200:         set -o pipefail
+   201:         df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -o+w ! -perm -1002 2>/dev/null | xargs chmod a+t
+   202:       args:
+   203:         executable: ""{{ rhel9cis_shell_executable }}""
+   204:       failed_when: discovered_set_stickybit.rc not in [ 0, 123 ]
+   205:       changed_when: discovered_set_stickybit.rc == 0
+   206:       register: discovered_set_stickybit
+   207: 
+   208: - name: ""7.1.12 | PATCH | Ensure no files or directories without an owner and a group exist""
+   209:   when: rhel9cis_rule_7_1_12
+   210:   tags:
+   211:     - level1-server
+   212:     - level1-workstation
+   213:     - patch
+   214:     - rule_7.1.12
+   215:     - permissions
+   216:     - NIST800-53R5_AC-3
+   217:     - NIST800-53R5_MP-2
+   218:   vars:
+   219:     warn_control_id: '7.1.12'
+   220:   block:
+   221:     - name: ""7.1.12 | AUDIT | Ensure no files or directories without an owner and a group exist | Get list files or directories""
+   222:       ansible.builtin.command: ""find {{ item.mount }} -xdev {{ rhel9cis_exclude_unowned_search_path }} \\( -nouser -o -nogroup \\) -not -fstype nfs""
+   223:       changed_when: false
+   224:       failed_when: false
+   225:       check_mode: false
+   226:       register: discovered_unowned_files
+   227:       with_items:
+   228:         - ""{{ ansible_facts['mounts'] }}""
+   229:       loop_control:
+   230:         label: ""{{ item.mount }}""
+   231: 
+   232:     - name: ""7.1.12 | AUDIT | Ensure no files or directories without an owner and a group exist | Flatten no_user_items results for easier use""
+   233:       ansible.builtin.set_fact:
+   234:         discovered_unowned_files_flatten: ""{{ discovered_unowned_files.results | selectattr('stdout_lines', 'defined') | map(attribute='stdout_lines') | flatten }}""
+   235: 
+   236:     - name: ""7.1.12 | AUDIT | Ensure no files or directories without an owner and a group exist | Alert on unowned files and directories""
+   237:       when:
+   238:         - not rhel9cis_ownership_adjust
+   239:         - discovered_unowned_files_flatten | length > 0
+   240:       ansible.builtin.debug:
+   241:         msg:
+   242:           - ""Warning!! You have unowned files and are configured to not auto-remediate for this task""
+   243:           - ""Please review the files/directories below and assign an owner""
+   244:           - ""{{ discovered_unowned_files_flatten }}""
+   245: 
+   246:     - name: ""7.1.12 | PATCH | Ensure no files or directories without an owner and a group exist | Set files/directories to configured owner and group""
+   247:       when:
+   248:         - rhel9cis_ownership_adjust
+   249:         - discovered_unowned_files_flatten | length > 0
+   250:       ansible.builtin.file:
+   251:         path: ""{{ item }}""
+   252:         owner: ""{{ rhel9cis_unowned_owner }}""
+   253:         group: ""{{ rhel9cis_ungrouped_group }}""
+   254:       with_items:
+   255:         - ""{{ discovered_unowned_files_flatten }}""
+   256: 
+   257:     - name: ""7.1.12 | AUDIT | Ensure no files or directories without an owner and a group exist | Warn Count""
+   258:       when:
+   259:         - not rhel9cis_ownership_adjust
+   260:         - discovered_unowned_files_flatten | length > 0
+   261:       ansible.builtin.import_tasks:
+   262:         file: warning_facts.yml
+   263: 
+   264: - name: ""7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed""
+   265:   when: rhel9cis_rule_7_1_13
+   266:   tags:
+   267:     - level1-server
+   268:     - level1-workstation
+   269:     - audit
+   270:     - rule_7.1.13
+   271:     - permissions
+   272:     - NIST800-53R5_CM-1
+   273:     - NIST800-53R5_CM-2
+   274:     - NIST800-53R5_CM-6
+   275:     - NIST800-53R5_CM-7
+   276:     - NIST800-53R5_IA-5
+   277:     - NIST800-53R5_AC-3
+   278:     - NIST800-53R5_MP-2
+   279:   vars:
+   280:     warn_control_id: '7.1.13'
+   281:   block:
+   282:     - name: ""7.1.13 | AUDIT | Ensure SUID and SGID files are reviewed | Find SUID and SGID""
+   283:       ansible.builtin.command: find {{ item.mount }} -xdev -type f -perm \( -02000 -o -04000 \) -not -fstype nfs
+   284:       changed_when: false
+   285:       failed_when: false
+   286:       check_mode: false
+   287:       register: discovered_suid_sgid_files
+   288:       with_items:
+   289:         - ""{{ ansible_facts['mounts'] }}""
+   290:       loop_control:
+   291:         label: ""{{ item.mount }}""
+   292: 
+   293:     - name: ""7.1.13 | AUDIT | Audit SUID executables | Flatten suid_executables results for easier use""
+   294:       ansible.builtin.set_fact:
+   295:         discovered_suid_sgid_files_flatten: ""{{ discovered_suid_sgid_files.results | selectattr('stdout_lines', 'defined') | map(attribute='stdout_lines') | flatten }}""
+   296: 
+   297:     - name: ""7.1.13 | AUDIT | Audit SUID executables | Alert SUID executables exist""
+   298:       when:
+   299:         - discovered_suid_sgid_files_flatten | length > 0
+   300:         - not rhel9cis_suid_sgid_adjust
+   301:       ansible.builtin.debug:
+   302:         msg:
+   303:           - ""Warning!! You have SUID executables""
+   304:           - ""The files are listed below, please confirm the integrity of these binaries""
+   305:           - ""{{ discovered_suid_sgid_files_flatten }}""
+   306: 
+   307:     - name: ""7.1.13 | PATCH | Ensure SUID and SGID files are reviewed | Remove SUID bit""
+   308:       when:
+   309:         - rhel9cis_suid_sgid_adjust
+   310:         - discovered_suid_sgid_files_flatten | length > 0
+   311:       ansible.builtin.file:
+   312:         path: ""{{ item }}""
+   313:         mode: 'u-s'
+   314:       with_items:
+   315:         - ""{{ discovered_suid_sgid_files_flatten }}""
+   316: 
+   317:     - name: ""7.1.13 | AUDIT | Audit SUID executables | Warn Count""
+   318:       ansible.builtin.import_tasks:
+   319:         file: warning_facts.yml
+   320:       when:
+   321:         - discovered_suid_sgid_files_flatten | length > 0
+   322:         - not rhel9cis_suid_sgid_adjust",uncertain,"The excerpt ends on '7.1.13 | AUDIT | Warn Count', an import_tasks pointing at warning_facts.yml with no body shown, so per rule 7 this dispatch-only task cannot be evaluated.",,,,,,,
+3da06653cf087cd006ad7c67944e018c22df40fb6104a239d0a65c02b6238956,large_task_loc,large-task,task,bluebanquise/bluebanquise,fcc5b8776f3b1bde7ca4fba65b8cb2e77617f7b0,Q4,collections/infrastructure/roles/beegfs/tasks/beegfs_purge.yml,tasks,242,Remove the log files,4,15,>,true,false,1,false,,,,,false,28,,,,,,,,,,,,,,bluebanquise/bluebanquise|B1_low|current=false,B1_low,155,0.0064516129,155,Should this executable Ansible task be considered excessively large and in need of decomposition?,negative,"Each stop/unmount/delete/uninstall task targets one group of hosts for one purpose, and the 'I/O tuning reset' shell for-loop applies the same sysctl reset to every block device, which is one repeated operation rather than several independent actions.",1,274,274,true,complete-file,"     1: ---
+     2: - name: include_vars ░ Gather OS specific variables
+     3:   # This task gathers variables defined in OS specific files.
+     4:   #
+     5:   # Search vars in:
+     6:   #  - <distribution>_<major>.yml    # eg. CentOS_8.yml
+     7:   #  - <os_family>_<major>.yml       # eg. RedHat_8.yml
+     8:   #  - <distribution>.yml            # eg. CentOS.yml
+     9:   #  - <os_family>.yml               # eg. RedHat.yml
+    10:   #
+    11:   # If no OS specific file is found, the role will default to vars/main.yml
+    12:   #
+    13:   ansible.builtin.include_vars: ""{{ item }}""
+    14:   with_first_found:
+    15:     - files:
+    16:         - ""vars/{{ ansible_facts.distribution | replace(' ','_') }}_{{ ansible_facts.distribution_major_version }}.yml""
+    17:         - ""vars/{{ ansible_facts.os_family }}_{{ ansible_facts.distribution_major_version }}.yml""
+    18:         - ""vars/{{ ansible_facts.distribution | replace(' ','_') }}.yml""
+    19:         - ""vars/{{ ansible_facts.os_family }}.yml""
+    20:       skip: true
+    21:   tags:
+    22:     - always
+    23: 
+    24: - name: include_tasks ░ Use OS dedicated firewall task
+    25:   ansible.builtin.include_tasks: ""{{ outer_item }}""
+    26:   with_first_found:
+    27:     - files:
+    28:         - ""{{ ansible_facts.distribution | replace(' ','_') }}_{{ ansible_facts.distribution_version }}/firewall.yml""
+    29:         - ""{{ ansible_facts.distribution | replace(' ','_') }}_{{ ansible_facts.distribution_major_version }}/firewall.yml""
+    30:         - ""{{ ansible_facts.os_family | replace(' ','_') }}_{{ ansible_facts.distribution_version }}/firewall.yml""
+    31:         - ""{{ ansible_facts.os_family | replace(' ','_') }}_{{ ansible_facts.distribution_major_version }}/firewall.yml""
+    32:         - ""{{ ansible_facts.distribution | replace(' ','_') }}/firewall.yml""
+    33:         - ""{{ ansible_facts.os_family | replace(' ','_') }}/firewall.yml""
+    34:       skip: true
+    35:   loop_control:
+    36:     loop_var: outer_item
+    37:   tags:
+    38:     - internal
+    39:     - firewall
+    40: 
+    41: - name: Stop BeeGFS services on client hosts
+    42:   ansible.builtin.service:
+    43:     name: ""{{ item }}""
+    44:     state: stopped
+    45:   loop:
+    46:     - beegfs-helperd.service
+    47:     - beegfs-client.service
+    48:   when: inventory_hostname in groups[""client""]
+    49: 
+    50: - name: Deleting all storage files
+    51:   ansible.builtin.shell: |
+    52:           rm -rf {{ item }}/*
+    53:           find {{ item }} -type f -iname "".*"" -ls -exec rm -r {} \;
+    54:   loop: ""{{ beegfs_vars.store_directory.split(',') | flatten(levels=1) }}""
+    55:   when: inventory_hostname in groups[""store""]
+    56: 
+    57: - name: Unmount BeeGFS volume
+    58:   ansible.posix.mount:
+    59:     path: ""{{ beegfs_vars.store_directory }}""
+    60:     state: unmounted
+    61: 
+    62: - name: Stop BeeGFS services on storage servers
+    63:   ansible.builtin.service:
+    64:     name: ""{{ item }}""
+    65:     state: stopped
+    66:   loop:
+    67:     - beegfs-storage.service
+    68:     - beegfs-storage1.mount
+    69:     - beegfs-storage2.mount
+    70:   when: inventory_hostname in groups[""store""]
+    71: 
+    72: - name: Stop BeeGFS services on metadata server
+    73:   ansible.builtin.service:
+    74:     name: ""{{ item }}""
+    75:     state: stopped
+    76:   loop:
+    77:     - beegfs-meta.service
+    78:     - beegfs-helperd.service
+    79:     - beegfs-client.service
+    80:   when: inventory_hostname in groups[""metadata""]
+    81: 
+    82: - name: Stop BeeGFS services on managemment server
+    83:   ansible.builtin.service:
+    84:     name: ""{{ item }}""
+    85:     state: stopped
+    86:   loop:
+    87:     - beegfs-mgmtd.service
+    88:     - beegfs-helperd.service
+    89:     - beegfs-client.service
+    90:   when: inventory_hostname in groups[""mgmtd""]
+    91: 
+    92: - name: ""BeeGFS Storage/Metadata Node tuning reset""
+    93:   when: inventory_hostname in groups[""metadata""] or inventory_hostname in groups[""store""]
+    94:   tags:
+    95:     - script
+    96:   block:
+    97:     - name: ""Kernel tuning reset""
+    98:       ansible.posix.sysctl:
+    99:         name: ""{{ item['key'] }}""
+   100:         value: ""{{ item['value'] }}""
+   101:         state: absent
+   102:       loop: ""{{ lookup('dict', beegfs_vm_tuning) }}""
+   103:     - name: ""Memory tuning reset""
+   104:       command: ""{{ item }}""
+   105:       changed_when: false
+   106:       loop:
+   107:         - ""echo 10 > /proc/sys/vm/dirty_background_ratio""
+   108:         - ""echo 30 > /proc/sys/vm/dirty_ratio""
+   109:         - ""echo 100 > /proc/sys/vm/vfs_cache_pressure""
+   110:         - ""echo 67584 > /proc/sys/vm/min_free_kbytes""
+   111:         - ""echo 0 > /proc/sys/vm/zone_reclaim_mode""
+   112:         - ""echo 10 > /proc/sys/vm/watermark_scale_factor""
+   113:         - ""echo madvise > /sys/kernel/mm/transparent_hugepage/defrag""
+   114:         - ""echo always > /sys/kernel/mm/transparent_hugepage/enabled""
+   115:     - name: ""I/O tuning reset""
+   116:       ansible.builtin.shell: |
+   117:               for dev in {{ beegfs_devices | map('regex_replace', '/.*/', '') | join(' ') }}
+   118:                do
+   119:                 if [ -d /sys/block/${dev} ] ; then
+   120:                  echo deadline > /sys/block/${dev}/queue/scheduler
+   121:                  echo 256 > /sys/block/${dev}/queue/nr_requests
+   122:                  echo 4096 > /sys/block/${dev}/queue/read_ahead_kb
+   123:                  echo 1280 > /sys/block/${dev}/queue/max_sectors_kb
+   124:                  echo 0 > /sys/block/${dev}/queue/nomerges
+   125:                  echo 1 > /sys/block/${dev}/queue/rq_affinity
+   126:                 fi
+   127:                done #\'
+   128:       changed_when: false
+   129:     - name: Stop beegfs-tuning service
+   130:       ansible.builtin.service:
+   131:         name: beegfs-tuning.service
+   132:         state: stopped
+   133:         enabled: false
+   134:     - name: Remove file (delete file)
+   135:       ansible.builtin.file:
+   136:         path: ""{{ item }}""
+   137:         state: absent
+   138:       loop:
+   139:         - /opt/beegfs/beegfs-tuning.sh
+   140:         - /etc/systemd/system/beegfs-tuning.service
+   141: 
+   142: - name: Uninstall BeeGFS management server package
+   143:   ansible.builtin.package:
+   144:     name: ""{{ item }}""
+   145:     state: absent
+   146:   loop: ""{{ beegfs_mgmtd_packages_to_install }}""
+   147:   when: inventory_hostname in groups[""mgmtd""]
+   148:   tags:
+   149:     - package
+   150: 
+   151: - name: Uninstall BeeGFS metadata server package
+   152:   ansible.builtin.package:
+   153:     name: ""{{ item }}""
+   154:     state: absent
+   155:   loop: ""{{ beegfs_meta_packages_to_install }}""
+   156:   when: inventory_hostname in groups[""metadata""]
+   157:   tags:
+   158:     - package
+   159: 
+   160: - name: Uninstall BeeGFS storage server package
+   161:   ansible.builtin.package:
+   162:     name: ""{{ item }}""
+   163:     state: absent
+   164:   loop: ""{{ beegfs_store_packages_to_install }}""
+   165:   when: inventory_hostname in groups[""store""]
+   166:   tags:
+   167:     - package
+   168: 
+   169: - name: Uninstall BeeGFS client hosts package
+   170:   ansible.builtin.package:
+   171:     name: ""{{ item }}""
+   172:     state: absent
+   173:   loop: ""{{ beegfs_client_packages_to_install }}""
+   174:   when: inventory_hostname in groups[""client""]
+   175:   tags:
+   176:     - package
+   177: 
+   178: - name: Uninstall BeeGFS libbeegfs-ib RDMA library
+   179:   ansible.builtin.package:
+   180:     name: libbeegfs-ib
+   181:     state: absent
+   182:   when:
+   183:     - inventory_hostname in groups[""client""] or inventory_hostname in groups[""store""] or inventory_hostname in groups[""metadata""]
+   184:     - beegfs_vars.rdma is defined
+   185:     - beegfs_vars.rdma | bool
+   186:   tags:
+   187:     - package
+   188: 
+   189: - name: Delete BeeGFS Management data store directory
+   190:   ansible.builtin.file:
+   191:     path: ""{{ beegfs_vars.mgmtd_path_prefix }}""
+   192:     state: absent
+   193:     mode: 0755
+   194:   when: inventory_hostname in groups[""mgmtd""]
+   195: 
+   196: - name: Deleting all metadata files
+   197:   ansible.builtin.shell: rm -rf {{ beegfs_vars.meta_directory }}/*
+   198:   when: inventory_hostname in groups[""metadata""]
+   199: 
+   200: - name: Unmount  BeeGFS Metadata data store directory
+   201:   ansible.posix.mount:
+   202:     path: ""{{ beegfs_vars.meta_directory }}""
+   203:     state: unmounted
+   204: 
+   205: - name: Delete BeeGFS Metadata data store directory
+   206:   ansible.builtin.file:
+   207:     path: ""{{ beegfs_vars.meta_directory }}""
+   208:     state: absent
+   209:     mode: 0755
+   210:   when: inventory_hostname in groups[""metadata""]
+   211: 
+   212: - name: Delete BeeGFS Metadata data store directory
+   213:   ansible.builtin.file:
+   214:     path: ""{{ beegfs_vars.store_directory }}""
+   215:     state: absent
+   216:     mode: 0755
+   217:   when: inventory_hostname in groups[""store""] or inventory_hostname in groups[""metadata""] or inventory_hostname in groups[""client""]
+   218: 
+   219: - name: Find /beegfs/ files
+   220:   ansible.builtin.find:
+   221:     paths: ""{{ beegfs_vars.global_directory }}""
+   222:     file_type: file
+   223:   register: beegfs_files_to_delete
+   224: 
+   225: - name: Remove /beegfs/ files
+   226:   ansible.builtin.file:
+   227:     path: ""{{ item.path }}""
+   228:     state: absent
+   229:   loop: ""{{ beegfs_files_to_delete.files | flatten(levels=1) }}""
+   230: 
+   231: - name: Remove /etc/beegfs/ directory
+   232:   ansible.builtin.file:
+   233:     path: /etc/beegfs/
+   234:     state: absent
+   235: 
+   236: - name: Find the log files
+   237:   ansible.builtin.find:
+   238:     paths: /var/log/beegfs/
+   239:     patterns: beegfs*
+   240:   register: beegfs_files_to_delete
+   241: 
+   242: - name: Remove the log files
+   243:   ansible.builtin.file:
+   244:     path: ""{{ beegfs_vars.log_path_prefix }}""
+   245:     state: absent
+   246: 
+   247: - name: Get running processes
+   248:   ansible.builtin.shell: |
+   249:           set -o pipefail /usr/bin/ps -eo pid,command | sed 's/^[ \t]*//' | grep -i bee | grep -v grep | awk '{print $1}'
+   250:   register: beegfs_running_processes
+   251:   changed_when: false
+   252: 
+   253: - name: Display running processes
+   254:   ansible.builtin.debug:
+   255:     msg: ""{{ item }}""
+   256:   loop: ""{{ beegfs_running_processes.stdout_lines }}""
+   257: 
+   258: # - name: Kill running processes
+   259: #   ansible.builtin.shell: |
+   260: #           /usr/bin/kill -9 {{ item }}
+   261: #   loop: ""{{ beegfs_running_processes.stdout_lines }}""
+   262: 
+   263: # - name: wait process
+   264: #   wait_for:
+   265: #     path: ""/proc/{{ item }}/status""
+   266: #     state: absent
+   267: #   loop: ""{{ beegfs_running_processes.stdout_lines }}""
+   268: #   ignore_errors: yes
+   269: #   register: killed_processes
+   270: 
+   271: # - name: Force kill stuck processes
+   272: #   ansible.builtin.shell: |
+   273: #           /usr/bin/kill -9 {{ item }}
+   274: #   loop: ""{{ killed_processes.results | select('failed') | map(attribute='item') | list }}""",positive,"The 'Memory tuning reset' command task loops over eight unrelated kernel tunables (dirty_background_ratio, dirty_ratio, vfs_cache_pressure, min_free_kbytes, zone_reclaim_mode, watermark_scale_factor, transparent_hugepage/defrag, transparent_hugepage/enabled) via raw echo-to-/proc commands, even though the sibling 'Kernel tuning reset' task in the same block already shows these belong to the native ansible.posix.sysctl module looped per item -- exactly the rule 8 pattern of collapsing several independently-modulable settings into one non-idempotent command block.",,,,,,,
+146eb56ec878f915ad813c2f38357d1d21af34fa18a861129e44777acf576c6f,large_task_loc,large-task,task,grycap/im,5e54aa6e02108a615abf2670abaa4aa1c56add02,Q1,contextualization/basic.yml,playbook,31,Bootstrap with python Debian/Ubuntu,7,15,>,true,false,1,false,,,,,false,4,,,,,,,,,,,,,,grycap/im|B3_upper_middle|current=false,B3_upper_middle,11,0.0909090909,11,Should this executable Ansible task be considered excessively large and in need of decomposition?,positive,"The 'Bootstrap with python Debian/Ubuntu' raw task chains 'apt update && apt install -y python3.5; apt install -y python3' -- an apt cache update plus two distinct package installs, each of which naturally maps to its own apt/package module invocation, collapsed into one raw command.",1,121,121,true,complete-file,"     1: ---
+     2: - gather_facts: False
+     3:   tasks: 
+     4:   ############## To avoid some issues with cloud-init and unattended upgrades ###############
+     5:     - name: Avoid unattended upgrades
+     6:       raw: |
+     7:         sudo touch /var/lib/apt/periodic/upgrade-stamp; \
+     8:         sudo touch /var/lib/apt/periodic/update-stamp; \
+     9:         sudo touch /var/lib/apt/periodic/download-upgradeable-stamp;
+    10:       ignore_errors: yes
+    11:       changed_when: false
+    12: 
+    13:     - name: Wait for the VM to boot
+    14:       raw: systemctl is-system-running --wait
+    15:       ignore_errors: yes
+    16:       changed_when: false
+    17: 
+    18:     # Some OSs does not have python by default
+    19:     - name: Check Python2 is installed
+    20:       raw: python2 -c 'import sys; print(sys.version_info[1])'
+    21:       ignore_errors: yes
+    22:       register: python2_version
+    23:       changed_when: false
+    24: 
+    25:     - name: Check Python3 is installed
+    26:       raw: python3 -c 'import sys; print(sys.version_info[1])'
+    27:       ignore_errors: yes
+    28:       register: python3_version
+    29:       changed_when: false
+    30: 
+    31:     - name: Bootstrap with python Debian/Ubuntu
+    32:       raw: sudo apt update && sudo apt install -y python3.5; sudo apt install -y python3
+    33:       ignore_errors: yes
+    34:       register: python_install
+    35:       changed_when: python_install.stdout_lines|length > 1
+    36:       when: (python2_version is failed and python3_version is failed) or python3_version.stdout|int < 5
+    37: 
+    38:     - name: Link correct python version in Ubuntu 14
+    39:       raw: ls /usr/bin/python3.5 && sudo rm -f /usr/bin/python3 && sudo ln -s /usr/bin/python3.5 /usr/bin/python3
+    40:       when: python3_version is success and python3_version.stdout|int < 5
+    41:       ignore_errors: yes
+    42: 
+    43:     - name: Bootstrap with python RedHat/CentOS
+    44:       raw: sudo yum install -y python3
+    45:       ignore_errors: yes
+    46:       register: python_install
+    47:       changed_when: python_install.stdout_lines|length > 1
+    48:       when: python2_version is failed and python3_version is failed
+    49: 
+    50:     - name: RedHat/CentOS install python3-dnf
+    51:       command: sudo yum install -y python3 python3-dnf
+    52:       ignore_errors: yes
+    53: 
+    54:     - name: Bootstrap with python SUSE
+    55:       raw: sudo zypper -n install python3 python3-xml
+    56:       ignore_errors: yes
+    57:       register: python_install
+    58:       changed_when: python_install.stdout_lines|length > 1
+    59:       when: python2_version is failed and python3_version is failed
+    60: 
+    61:     - name: Link python 3 or 2 in case is needed
+    62:       raw: ls /usr/bin/python || { ls /usr/bin/python3 && ln -s /usr/bin/python3 /usr/bin/python; } || { ls /usr/bin/python2 && ln -s /usr/bin/python2 /usr/bin/python; }
+    63:       become: yes
+    64:       ignore_errors: yes
+    65: 
+    66:     # In case of redhat systems libselinux-python3 is needed
+    67:     - name: Install libselinux-python3 on RH systems
+    68:       raw: ls /usr/bin/python3 && yum -y install libselinux-python3
+    69:       become: yes
+    70:       ignore_errors: yes
+    71: 
+    72:     # In case of redhat systems libselinux-python is needed
+    73:     - name: Install libselinux-python on RH systems
+    74:       raw: ls /usr/bin/python2 && yum -y install libselinux-python
+    75: 
+    76:       become: yes
+    77:       ignore_errors: yes
+    78: 
+    79:     # Set the correct hostname
+    80:     - name: Set the hostname of the node
+    81:       hostname: name={{ IM_NODE_FQDN }}
+    82:       become: yes
+    83:       ignore_errors: yes
+    84: 
+    85:     # In case of redhat systems disable SELinux
+    86:     - name: Disable SELinux in REL systems
+    87:       selinux: state=disabled
+    88:       become: yes
+    89:       ignore_errors: yes
+    90: 
+    91:     # Add the authorized_key to the nodes to enable accessing without password
+    92:     # pk_file var must be added by the ctxt agent
+    93:     - name: Add the authorized_key to the nodes
+    94:       authorized_key: user={{ansible_user}} key=""{{ lookup('file', pk_file) }}""
+    95: 
+    96:     # Added to solve GCE issues removing the key
+    97:     - name: Add the authorized_key to the nodes again
+    98:       lineinfile: dest=""/home/{{ansible_user}}/.ssh/authorized_keys"" line=""{{ lookup('file', pk_file) }}2""
+    99:       ignore_errors: yes
+   100: 
+   101:     - name: Gather Facts
+   102:       setup:
+   103: 
+   104:     - name: Ubuntu apt update
+   105:       apt: update_cache=yes cache_valid_time=3600
+   106:       when: ansible_distribution == ""Ubuntu""
+   107:       ignore_errors: yes
+   108:       register: apt_update
+   109:       become: yes
+   110:       become_method: sudo
+   111:       async: 120
+   112:       poll: 1
+   113:   
+   114:     - name: Ubuntu force apt update (avoid apt lock)
+   115:       command: apt update
+   116:       when: ansible_distribution == ""Ubuntu"" and apt_update is failed
+   117:       ignore_errors: yes
+   118:       become: yes
+   119:       become_method: sudo
+   120:       async: 120
+   121:       poll: 1",negative,"Even the multi-command raw tasks (e.g. touching three stamp files, apt update && install) each serve one coherent purpose (disable unattended upgrades / ensure python3 present); none interleaves clearly unrelated concerns like user/network/permissions in one block.",,,,,,,
+30ff85b8fa7bc69b11cc40755a22f4204ccd8c096a2d1c29e3eb401b7c06e04e,large_task_loc,large-task,task,StackStorm/ansible-st2,b321d87078a28e218bc66e072b5b27c3b545c26a,Q2,roles/StackStorm.st2smoketests/tasks/main.yml,tasks,4,Unknown,3,15,>,true,false,1,false,,,,,false,0,,,,,,,,,,,,,,StackStorm/ansible-st2|B1_low|current=false,B1_low,19,0.0526315789,19,Should this executable Ansible task be considered excessively large and in need of decomposition?,negative,Each command/uri/import_tasks smoke-test task performs one check with one purpose.,1,75,75,true,complete-file,"     1: ---
+     2: # Small suite of smoke tests to execute to ensure that the playbook has deployed as expected
+     3: 
+     4: - meta: flush_handlers
+     5:   tags:
+     6:     - smoke-tests
+     7: 
+     8: - name: Make sure packs are reloaded
+     9:   become: yes
+    10:   command: st2ctl reload --register-all
+    11:   changed_when: no
+    12:   tags:
+    13:     - smoke-tests
+    14: 
+    15: - name: st2 installed
+    16:   command: st2 --version
+    17:   changed_when: no
+    18:   tags:
+    19:     - smoke-tests
+    20: 
+    21: - name: get authentication token
+    22:   command: st2 auth ""{{ st2_auth_username }}"" -p ""{{ st2_auth_password }}"" -t
+    23:   register: st2_token
+    24:   changed_when: no
+    25:   tags:
+    26:     - smoke-tests
+    27: 
+    28: - name: st2 run core.local -- date -R
+    29:   command: st2 run core.local -- date -R
+    30:   environment:
+    31:     ST2_AUTH_TOKEN: ""{{ st2_token.stdout }}""
+    32:   changed_when: no
+    33:   tags:
+    34:     - smoke-tests
+    35: 
+    36: - name: Check web-ui is up
+    37:   uri:
+    38:     url: https://localhost/
+    39:     validate_certs: no
+    40:   changed_when: no
+    41:   tags:
+    42:     - smoke-tests
+    43: 
+    44: - name: Install st2 pack from exchange
+    45:   become: yes
+    46:   environment:
+    47:     ST2_AUTH_TOKEN: ""{{ st2_token.stdout }}""
+    48:   command: ""st2 pack install st2""
+    49:   changed_when: no
+    50:   tags:
+    51:     - smoke-tests
+    52: 
+    53: - name: Verify if st2 pack was installed
+    54:   environment:
+    55:     ST2_AUTH_TOKEN: ""{{ st2_token.stdout }}""
+    56:   command: st2 pack get st2
+    57:   changed_when: no
+    58:   check_mode: no
+    59:   tags:
+    60:     - smoke-tests
+    61: 
+    62: - name: Verify st2chatops
+    63:   import_tasks: st2chatops.yml
+    64:   # st2chatops is installed
+    65:   when: st2chatops_version is defined
+    66:   tags:
+    67:     - smoke-tests
+    68:     - st2chatops
+    69: 
+    70: - name: Run RBAC tests to verify the setup
+    71:   import_tasks: st2rbac_verification.yml
+    72:   when: st2_rbac_enable|bool
+    73:   tags:
+    74:     - smoke-tests
+    75:     - rbac-tests",uncertain,"The final task, 'Run RBAC tests to verify the setup', is an import_tasks pointing at st2rbac_verification.yml with no body included in the excerpt, matching rule 7's dispatch-without-leaf-body case.",,,,,,,
+1a0b9d9df620cce3f638a01ca02f0145594b0cf34982405a744191b96d625f29,large_task_loc,large-task,task,ansible-lockdown/RHEL8-STIG,baa075468dfa59050141c99d99dcacd2e977248c,Q1,tasks/Cat_2/RHEL-08-040xxx.yml,tasks,1658,MEDIUM | RHEL-08-040282 | PATCH | RHEL 8 must restrict usage of ptrace to descendant processes. | Replace conflicting instances,10,15,>,true,false,1,false,,,,,false,134,,,,,,,,,,,,,,ansible-lockdown/RHEL8-STIG|B3_upper_middle|current=false,B3_upper_middle,287,0.0034843206,287,Should this executable Ansible task be considered excessively large and in need of decomposition?,negative,"The visible complete controls each follow one audit-shell-then-fix-loop-then-set pattern (e.g. the 040283 kptr_restrict block: one grep, one lineinfile loop, one sysctl set), each step feeding a single remediation outcome, consistent with rule 8's negative pattern even though the excerpt's very first and last lines are truncated.",1653,1738,2049,false,local-window,"  1653:       changed_when: false
+  1654:       check_mode: false
+  1655:       failed_when: false
+  1656:       register: discovered_ptrace_settings
+  1657: 
+  1658:     - name: ""MEDIUM | RHEL-08-040282 | PATCH | RHEL 8 must restrict usage of ptrace to descendant processes. | Replace conflicting instances""
+  1659:       when:
+  1660:         - discovered_ptrace_settings.stdout | length > 0
+  1661:         - item != '/etc/sysctl.d/99-ptrace-restrict.conf'
+  1662:       ansible.builtin.lineinfile:
+  1663:         path: ""{{ item }}""
+  1664:         regexp: kernel.yama.ptrace_scope.*
+  1665:         state: absent
+  1666:       loop: ""{{ discovered_ptrace_settings.stdout_lines }}""
+  1667: 
+  1668:     - name: ""MEDIUM | RHEL-08-040282 | PATCH | RHEL 8 must restrict usage of ptrace to descendant processes. | Use template to create file""
+  1669:       ansible.posix.sysctl:
+  1670:         name: kernel.yama.ptrace_scope
+  1671:         value: 1
+  1672:         state: present
+  1673:         reload: ""{{ rhel8stig_sysctl_reload }}""
+  1674:         sysctl_set: true
+  1675:         sysctl_file: /etc/sysctl.d/99-ptrace-restrict.conf
+  1676: 
+  1677: - name: ""MEDIUM | RHEL-08-040283 | PATCH | RHEL 8 must restrict exposed kernel pointer addresses access.""
+  1678:   when: rhel8stig_040283
+  1679:   tags:
+  1680:     - RHEL-08-040283
+  1681:     - CAT2
+  1682:     - CCI-000366
+  1683:     - NIST800-53R4_CM-6
+  1684:     - SRG-OS-000480-GPOS-00227
+  1685:     - SV-230547r1184283_rule
+  1686:     - V-230547
+  1687:     - sysctl
+  1688:   block:
+  1689:     - name: ""MEDIUM | RHEL-08-040283 | AUDIT | RHEL 8 must restrict exposed kernel pointer addresses access. | Find conflicting instances""
+  1690:       ansible.builtin.shell: grep -rs ""kernel.kptr_restrict = [^1]"" /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf | cut -d':' -f1
+  1691:       changed_when: false
+  1692:       check_mode: false
+  1693:       failed_when: false
+  1694:       register: discovered_kptr_settings
+  1695: 
+  1696:     - name: ""MEDIUM | RHEL-08-040283 | PATCH | RHEL 8 must restrict exposed kernel pointer addresses access. | Replace conflicting instances""
+  1697:       when:
+  1698:         - discovered_kptr_settings.stdout | length > 0
+  1699:         - item != rhel8stig_sysctl_file
+  1700:       ansible.builtin.lineinfile:
+  1701:         path: ""{{ item }}""
+  1702:         regexp: kernel.kptr_restrict = [^1]
+  1703:         state: absent
+  1704:       loop: ""{{ discovered_kptr_settings.stdout_lines }}""
+  1705: 
+  1706:     - name: ""MEDIUM | RHEL-08-040283 | PATCH | RHEL 8 must restrict exposed kernel pointer addresses access. | Use template to create file""
+  1707:       ansible.posix.sysctl:
+  1708:         name: kernel.kptr_restrict
+  1709:         value: 1
+  1710:         state: present
+  1711:         reload: ""{{ rhel8stig_sysctl_reload }}""
+  1712:         sysctl_set: true
+  1713:         sysctl_file: ""{{ rhel8stig_sysctl_file }}""
+  1714: 
+  1715: - name: ""MEDIUM | RHEL-08-040284 | PATCH | RHEL 8 must disable the use of user namespaces.""
+  1716:   when: rhel8stig_040284
+  1717:   tags:
+  1718:     - RHEL-08-040284
+  1719:     - CAT2
+  1720:     - CCI-000366
+  1721:     - NIST800-53R4_CM-6
+  1722:     - SRG-OS-000480-GPOS-00227
+  1723:     - SV-230548r1017310_rule
+  1724:     - V-230548
+  1725:     - sysctl
+  1726:   block:
+  1727:     - name: ""MEDIUM | RHEL-08-040284 | AUDIT | RHEL 8 must disable the use of user namespaces. | Find conflicting instances""
+  1728:       ansible.builtin.shell: grep -rs ""user.max_user_namespaces = [^0]"" /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf | cut -d':' -f1
+  1729:       changed_when: false
+  1730:       check_mode: false
+  1731:       failed_when: false
+  1732:       register: discovered_max_user_namespace_settings
+  1733: 
+  1734:     - name: ""MEDIUM | RHEL-08-040284 | PATCH | RHEL 8 must disable the use of user namespaces. | Replace conflicting instances""
+  1735:       when:
+  1736:         - discovered_max_user_namespace_settings.stdout | length > 0
+  1737:         - item != rhel8stig_sysctl_file
+  1738:       ansible.builtin.lineinfile:",uncertain,"The windowed excerpt is cut off mid-task: it ends at 'ansible.builtin.lineinfile:' for the RHEL-08-040284 replace step with no further keys (path/regexp/state/loop) shown, so the flagged task's own definition never becomes visible (rule 7).",,,,,,,
+01f4efa5f9d77fe84e919e36f31f920b2a68083989285c14858d38970a3534da,large_task_loc,large-task,task,ansible/galaxy-operator,a05c8663b7e5cf4c2350fb1faa074a378b86f0fc,Q3,roles/restore/tasks/postgres.yml,tasks,7,Unknown,20,15,>,true,true,1,false,,,,,false,3,,,,,,,,,,,,,,ansible/galaxy-operator|B5_current_positive_tail|current=true,B5_current_positive_tail,45,0.0222222222,45,Should this executable Ansible task be considered excessively large and in need of decomposition?,negative,"The many set_fact tasks each build one derived command string (pg_isready, pg_restore, pg_drop_create) through chained composition, and the large k8s_exec restore script -- while intricate with a keepalive/trap -- serves one coherent end effect (safely perform the DB restore), matching rule 8's negative pattern.",1,169,169,true,complete-file,"     1: ---
+     2: - name: Default label selector to custom resource generated postgres
+     3:   set_fact:
+     4:     postgres_label_selector: ""app.kubernetes.io/instance=postgres-{{ deployment_name }}""
+     5:   when: postgres_label_selector is not defined
+     6: 
+     7: - block:
+     8:     - name: Get the postgres pod information
+     9:       kubernetes.core.k8s_info:
+    10:         kind: Pod
+    11:         api_version: v1
+    12:         namespace: '{{ ansible_operator_meta.namespace }}'
+    13:         label_selectors:
+    14:           - ""{{ postgres_label_selector }}""
+    15:           - ""app.kubernetes.io/version={{ supported_pg_version }}""
+    16:       register: postgres_pod
+    17:       until:
+    18:         - ""postgres_pod['resources'] | length""
+    19:         - ""postgres_pod['resources'][0]['status']['phase'] == 'Running'""
+    20:       delay: 5
+    21:       retries: 60
+    22: 
+    23:     - name: Set the resource pod name as a variable.
+    24:       set_fact:
+    25:         postgres_pod_name: ""{{ postgres_pod['resources'][0]['metadata']['name'] }}""
+    26:   when: postgres_type == 'managed'
+    27: 
+    28: - block:
+    29:     - name: Set the resource pod name as a variable.
+    30:       set_fact:
+    31:         storage_claim: ""{{ deployment_name }}-file-storage""
+    32: 
+    33:     - name: Wait for PVC to be created if file-storage is used
+    34:       kubernetes.core.k8s_info:
+    35:         api_version: v1
+    36:         kind: PersistentVolumeClaim
+    37:         namespace: ""{{ ansible_operator_meta.namespace }}""
+    38:         name: ""{{ storage_claim }}""
+    39:       register: pvc_status
+    40:       until: pvc_status.resources | length > 0
+    41:       retries: 60
+    42:       delay: 10
+    43:       ignore_errors: true
+    44: 
+    45:     - name: Fail with custom message if PVC not found
+    46:       fail:
+    47:         msg: ""PVC '{{ storage_claim }}' not found in namespace '{{ ansible_operator_meta.namespace }}' after 10 minutes.""
+    48:       when: pvc_status.resources | length == 0
+    49:   when: storage_type | lower == 'file'
+    50: 
+    51: - name: Scale down deployments for migration
+    52:   include_tasks: scale_down_deployments.yml
+    53: 
+    54: - name: Set _cluster_name with preceeding dot if it exists
+    55:   set_fact:
+    56:     _cluster_name: ""{{ cluster_name | default('') | ternary('.' + cluster_name, '') }}""
+    57:   no_log: ""{{ no_log }}""
+    58: 
+    59: - name: Set full resolvable host name for postgresql server
+    60:   set_fact:
+    61:     resolvable_db_host: '{{ (postgres_type == ""managed"") | ternary(postgres_host + ""."" + ansible_operator_meta.namespace + "".svc"" + _cluster_name, postgres_host) }}'  # yamllint disable-line rule:line-length
+    62:   no_log: ""{{ no_log }}""
+    63: 
+    64: - name: Set pg_isready command
+    65:   ansible.builtin.set_fact:
+    66:     pg_isready: >-
+    67:       pg_isready 
+    68:       -h {{ resolvable_db_host }} 
+    69:       -p {{ postgres_port }}
+    70:   no_log: ""{{ no_log }}""
+    71: 
+    72: - name: Set pg_restore command
+    73:   set_fact:
+    74:     pg_restore: >-
+    75:       pg_restore {{ force_drop_db | bool | ternary('', '--clean --if-exists') }} --no-owner --no-acl
+    76:       -h {{ resolvable_db_host }}
+    77:       -U {{ postgres_user }}
+    78:       -d {{ postgres_database }}
+    79:       -p {{ postgres_port }}
+    80:   no_log: ""{{ no_log }}""
+    81: 
+    82: - name: Grant CREATEDB privilege to database user for force_drop_db
+    83:   kubernetes.core.k8s_exec:
+    84:     namespace: ""{{ ansible_operator_meta.namespace }}""
+    85:     pod: ""{{ postgres_pod_name }}""
+    86:     container: postgres
+    87:     command: >-
+    88:       psql -c ""ALTER USER {{ postgres_user }} CREATEDB;""
+    89:   when:
+    90:     - force_drop_db | bool
+    91:     - postgres_type == 'managed'
+    92: 
+    93: - name: Force drop and create database if force_drop_db is true
+    94:   block:
+    95:     - name: Set drop db command
+    96:       set_fact:
+    97:         pg_drop_db: >-
+    98:           echo 'DROP DATABASE {{ postgres_database }} WITH (FORCE);' | PGPASSWORD='{{ postgres_pass }}' psql
+    99:           -U {{ postgres_user }}
+   100:           -h {{ resolvable_db_host }}
+   101:           -d postgres
+   102:           -p {{ postgres_port }} ;
+   103:       no_log: ""{{ no_log }}""
+   104: 
+   105:     - name: Set create db command
+   106:       set_fact:
+   107:         pg_create_db: >-
+   108:           echo 'CREATE DATABASE {{ postgres_database }} WITH OWNER = {{ postgres_user }};' | PGPASSWORD='{{ postgres_pass }}' psql
+   109:           -U {{ postgres_user }}
+   110:           -h {{ resolvable_db_host }}
+   111:           -d postgres
+   112:           -p {{ postgres_port }} ;
+   113:       no_log: ""{{ no_log }}""
+   114: 
+   115:     - name: Set complete pg restore command
+   116:       set_fact:
+   117:         pg_drop_create: >-
+   118:           {{ pg_drop_db }}
+   119:           {{ pg_create_db }}
+   120:   when: force_drop_db
+   121: 
+   122: - name: Restore Postgres database
+   123:   kubernetes.core.k8s_exec:
+   124:     namespace: ""{{ backup_pvc_namespace }}""
+   125:     pod: ""{{ ansible_operator_meta.name }}-db-management""
+   126:     command: |
+   127:       bash -c ""
+   128:       function end_keepalive {
+   129:         rc=$?
+   130:         rm -f \""$1\""
+   131:         kill $(cat /proc/$2/task/$2/children 2>/dev/null) 2>/dev/null || true
+   132:         wait $2 || true
+   133:         exit $rc
+   134:       }
+   135:       keepalive_file=\""$(mktemp)\""
+   136:       until {{ pg_isready }} &> /dev/null
+   137:       do
+   138:           echo \""Waiting until Postgres is accepting connections...\""
+   139:           sleep 2
+   140:       done
+   141:       while [[ -f \""$keepalive_file\"" ]]; do
+   142:         echo 'Migrating data from old database...'
+   143:         sleep 60
+   144:       done &
+   145:       keepalive_pid=$!
+   146:       trap 'end_keepalive \""$keepalive_file\"" \""$keepalive_pid\""' EXIT SIGINT SIGTERM
+   147:       echo keepalive_pid: $keepalive_pid
+   148:       set -e -o pipefail
+   149:       {{ pg_drop_create }}
+   150:       set +H  # Disable history expansion
+   151:       cat {{ backup_dir }}/pulp.db | PGPASSWORD='{{ postgres_pass }}' {{ pg_restore }}
+   152:       set -H  # Re-enable history expansion
+   153:       PG_RC=$?
+   154:       set +e +o pipefail
+   155:       exit $PG_RC
+   156:       ""
+   157:   register: data_migration
+   158:   no_log: ""{{ no_log }}""
+   159: 
+   160: - name: Revoke CREATEDB privilege from database user
+   161:   kubernetes.core.k8s_exec:
+   162:     namespace: ""{{ ansible_operator_meta.namespace }}""
+   163:     pod: ""{{ postgres_pod_name }}""
+   164:     container: postgres
+   165:     command: >-
+   166:       psql -c ""ALTER USER {{ postgres_user }} NOCREATEDB;""
+   167:   when:
+   168:     - force_drop_db | bool
+   169:     - postgres_type == 'managed'",positive,"'Restore Postgres database' embeds a large bash script that interleaves readiness polling, database drop/create, piping a backup file into pg_restore, and background keepalive process management with trap-based cleanup -- several independent concerns (each of which has a more idiomatic Ansible counterpart, e.g. the 'until' pattern already used elsewhere in this file) collapsed into one k8s_exec task.",,,,,,,

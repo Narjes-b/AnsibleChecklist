@@ -1,0 +1,20 @@
+{
+  "metric_id": "excessive_nesting_depth",
+  "pilot_band_counts": {
+    "B1_low": 25,
+    "B4_high": 25,
+    "B5_current_positive_tail": 25
+  },
+  "pilot_prediction_counts": {
+    "false": 50,
+    "true": 25
+  },
+  "pilot_projects": 49,
+  "pilot_rows": 75,
+  "pilot_sha256": "dfba60e5ae8b9ef5640873cf789fa8ff616ca2f10a82f11dc4d78a3bd961753e",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 405,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

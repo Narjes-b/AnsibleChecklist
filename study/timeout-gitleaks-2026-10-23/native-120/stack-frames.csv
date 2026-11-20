@@ -1,0 +1,20 @@
+file,line,function,observations
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,67,worker,14
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,100,main,14
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,170,<module>,14
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,105,_source_context,10
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,126,_filter_known_noise,10
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,57,timed_filter,10
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,318,scan_with_gitleaks,10
+/usr/lib/python3.14/pathlib/__init__.py,788,read_text,8
+/usr/lib/python3.14/selectors.py,398,select,3
+/usr/lib/python3.14/subprocess.py,2153,_communicate,3
+/usr/lib/python3.14/subprocess.py,1221,communicate,3
+/usr/lib/python3.14/subprocess.py,557,run,3
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,49,timed_run,3
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,277,scan_with_gitleaks,3
+<frozen codecs>,325,decode,3
+<frozen posixpath>,391,realpath,1
+/usr/lib/python3.14/pathlib/__init__.py,487,relative_to,1
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,213,_normalize_findings,1
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,317,scan_with_gitleaks,1

@@ -1,0 +1,11 @@
+category,occurrences,share_pct,required,optional,rules,rules_with_required,repositories,prevalence_pct,median_per_affected_repo,p90_per_affected_repo,top_rule,top_rule_share_pct,rule_hhi,gini_across_repos,top10_repo_share_pct,median_per_kloc,p25_per_kloc,p75_per_kloc,spearman_loc_vs_count,error,warning,note,uncertain_pct,calibration_occurrences,heldout_occurrences,heldout_required
+style,148858,56.1,24626,124232,11,8,195,94.7,528.0,1865.2,missing-tags,65.8,0.467,0.568,22.6,114.09,73.1,160.72,0.88,0,0,148858,1.4,106474,42384,6050
+correctness,54382,20.5,2895,51487,13,13,190,92.2,88.5,901.8999999999997,unguarded-variable,96.5,0.932,0.728,34.9,19.64,5.97,46.29,0.76,66,2839,51477,96.5,38337,16045,702
+maintainability,33780,12.7,33780,0,15,15,193,93.7,81.0,433.60000000000014,large-task,36.1,0.254,0.65,29.4,20.0,11.21,29.84,0.92,0,32547,1233,0.0,23591,10189,10189
+security,9266,3.5,8661,605,7,6,178,86.4,17.5,135.60000000000002,credentials-leaking-in-log,74.0,0.562,0.72,38.5,3.59,1.46,7.19,0.78,7552,1712,2,6.5,6720,2546,2376
+compatibility,7257,2.7,7257,0,2,2,147,71.4,14.0,139.00000000000003,loop-legacy-syntax,87.9,0.787,0.785,42.1,1.26,0.0,8.18,0.45,0,6376,881,0.0,5403,1854,1854
+documentation,5084,1.9,1285,3799,3,1,150,72.8,19.0,90.19999999999999,role-readme-absent,61.4,0.459,0.71,32.6,1.71,0.0,6.05,0.66,0,0,5084,0.0,3577,1507,492
+reliability,2858,1.1,2858,0,3,3,143,69.4,6.0,57.999999999999986,silent-error-suppression,70.5,0.583,0.779,41.9,0.67,0.0,2.28,0.64,0,2023,835,0.0,2131,727,727
+testing,1814,0.7,0,1814,1,0,97,47.1,5.0,62.20000000000002,molecule-test-absent,100.0,1.0,0.844,48.9,0.0,0.0,1.13,0.43,0,0,1814,0.0,1281,533,0
+structure,1686,0.6,1686,0,4,4,164,79.6,5.0,25.700000000000017,missing-abstraction,97.7,0.956,0.662,30.1,0.92,0.27,1.82,0.77,0,1686,0,0.0,1229,457,457
+dependencies,449,0.2,449,0,1,1,32,15.5,2.0,42.800000000000004,unpinned-ansible-dependency,100.0,1.0,0.956,90.9,0.0,0.0,0.0,0.24,0,449,0,0.0,286,163,163

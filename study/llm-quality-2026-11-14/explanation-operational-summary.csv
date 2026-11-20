@@ -1,0 +1,7 @@
+kind,mode,scheduled,available_outputs,failures_or_missing,predicate_verified_packets,missing_required_evidence_packets,raw_code_proposals,delivered_code_suggestions,timed_records,latency_p50_seconds,latency_p95_seconds,prompt_token_records,prompt_tokens_total,generation_token_records,generation_tokens_total
+all,window,48,38,10,0,0,0,0,47,7.086643530999993,11.511970058899895,47,41826,47,8814
+all,scoped,48,45,3,23,19,0,0,48,7.33889388999998,11.503243637700296,45,57593,45,8498
+controlled,window,24,20,4,0,0,0,0,23,6.161872041999999,7.6643387826999625,23,18826,23,3941
+controlled,scoped,24,24,0,14,10,0,0,24,7.239488413999965,10.51019013210154,24,28970,24,4401
+real,window,24,18,6,0,0,0,0,24,7.666518868500006,12.661546415999775,24,23000,24,4873
+real,scoped,24,21,3,9,9,0,0,24,7.800208587999997,11.631488601300173,21,28623,21,4097

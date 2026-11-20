@@ -1,0 +1,10 @@
+file,line,function,observations
+/usr/lib/python3.14/selectors.py,398,select,3
+/usr/lib/python3.14/subprocess.py,2153,_communicate,3
+/usr/lib/python3.14/subprocess.py,1221,communicate,3
+/usr/lib/python3.14/subprocess.py,557,run,3
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,49,timed_run,3
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,277,scan_with_gitleaks,3
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,67,worker,3
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,100,main,3
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,170,<module>,3

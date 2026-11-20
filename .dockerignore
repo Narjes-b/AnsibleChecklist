@@ -1,0 +1,17 @@
+.git
+.venv
+.pytest_cache
+__pycache__
+*.pyc
+
+study/**
+!study/releases/
+!study/releases/v004/
+!study/releases/v004/**
+
+TestData
+test-output
+results
+report
+validation
+*.jpeg

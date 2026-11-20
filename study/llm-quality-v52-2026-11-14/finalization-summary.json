@@ -1,0 +1,41 @@
+{
+  "scoped_before_after": [
+    {
+      "metric": "Accepted outputs",
+      "before_count": 45,
+      "after_count": 47,
+      "denominator": 48,
+      "before_percent": 93.75,
+      "after_percent": 97.92,
+      "percentage_point_change": 4.17
+    },
+    {
+      "metric": "Decision agrees with unchanged AI reference",
+      "before_count": 41,
+      "after_count": 44,
+      "denominator": 48,
+      "before_percent": 85.42,
+      "after_percent": 91.67,
+      "percentage_point_change": 6.25
+    },
+    {
+      "metric": "Adequate complete explanation",
+      "before_count": 29,
+      "after_count": 41,
+      "denominator": 48,
+      "before_percent": 60.42,
+      "after_percent": 85.42,
+      "percentage_point_change": 25.0
+    },
+    {
+      "metric": "Adequate explanation plus supporting citations",
+      "before_count": 21,
+      "after_count": 38,
+      "denominator": 48,
+      "before_percent": 43.75,
+      "after_percent": 79.17,
+      "percentage_point_change": 35.42
+    }
+  ],
+  "candidate_unchanged": true
+}

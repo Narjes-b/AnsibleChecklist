@@ -1,0 +1,51 @@
+{
+  "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-005",
+  "source_location": {
+    "repository": "AtlasOfLivingAustralia/ala-install",
+    "path": "ansible/profiles.yml",
+    "line_start": "1",
+    "line_end": "1",
+    "rule_id": "ansibleguard/high-coupling",
+    "review_family": "Maintainability/complexity"
+  },
+  "context_supplied_to_model": {
+    "source_context": "    1 | - hosts: all\n    2 |   roles:\n    3 |     - common\n    4 |     - { role: java, when: is_primary | bool }\n    5 |     - {role: mongodb-org, dbPath: \"{{ profiles_dbPath }}\"}\n    6 |     - { role: webserver, when: is_primary | bool }\n    7 |     - { role: nameindex, when: is_primary | bool }\n    8 |     - { role: ansible-elasticsearch, es_templates: false, es_instance_name: 'profiles-elasticsearch', es_data_dirs: ['/data/elasticsearch'], tags: ['elasticsearch'], when: install_elasticsearch | bool }\n    9 | #    cannot put is_primary condition on this role as it is used to create various mongo roles\n   10 |     - profile-service\n   11 |     - { role: profile-hub, when: is_primary | bool }",
+    "detector_message": "Does the frozen source unit genuinely exhibit the described maintainability/complexity condition independently of the detector cutoff?"
+  },
+  "original_detector_annotation": {
+    "my_label_semantic": "uncertain",
+    "my_label_actionability": "uncertain",
+    "my_explanation": "Play only lists roles with simple when-guards and one inline param passed from inventory vars; without the roles' internal variable contracts we cannot confirm genuine tight coupling versus ordinary composition.",
+    "teammate_label_semantic": "uncertain",
+    "teammate_explanation": "The play lists many roles and a comment notes one role cannot use the primary-host condition because it creates Mongo roles. This suggests coordination, but the role interfaces and dependency/reference graph needed to judge harmful coupling are not supplied.",
+    "note": "preserved exactly as found in the input file; never overwritten by this script"
+  },
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "inference_options": {
+      "temperature": 0.1,
+      "num_ctx": 8192
+    }
+  },
+  "prompt_version": "ansible-explain-v1.1",
+  "execution": {
+    "status": "ok",
+    "error": null,
+    "warnings": [],
+    "duration_seconds": 4.878,
+    "generated_at_utc": "2026-10-17T23:02:48.970124+00:00"
+  },
+  "raw_response": "{\n  \"what_is_wrong\": \"The playbook is highly coupled due to the use of conditional roles based on variables like `is_primary` and `install_elasticsearch`.\",\n  \"why_it_is_wrong\": \"High coupling makes the playbook harder to maintain and understand, as changes in one part of the playbook can affect multiple roles.\",\n  \"why_in_this_context\": \"The playbook includes multiple conditional roles that depend on specific variables. This creates a web of dependencies that are difficult to manage.\",\n  \"potential_consequences\": \"This can lead to issues such as unexpected behavior when variables change, increased complexity in testing, and difficulties in debugging.\",\n  \"recommended_fix\": \"Refactor the playbook to reduce coupling by separating roles into more independent components. Use role parameters and variables to control behavior rather than conditional includes.\",\n  \"fixed_code_snippet\": null,\n  \"why_fix_works\": \"By reducing coupling, the playbook becomes easier to maintain and understand. Changes in one part of the playbook will have less impact on other parts, making it easier to debug and test.\",\n  \"trade_offs_and_assumptions\": \"Refactoring may require more time and effort upfront, but it will lead to a more maintainable and scalable playbook in the long run.\",\n  \"confidence\": \"high\",\n  \"limitations\": null\n}",
+  "explanation": {
+    "what_is_wrong": "The playbook is highly coupled due to the use of conditional roles based on variables like `is_primary` and `install_elasticsearch`.",
+    "why_it_is_wrong": "High coupling makes the playbook harder to maintain and understand, as changes in one part of the playbook can affect multiple roles.",
+    "why_in_this_context": "The playbook includes multiple conditional roles that depend on specific variables. This creates a web of dependencies that are difficult to manage.",
+    "potential_consequences": "This can lead to issues such as unexpected behavior when variables change, increased complexity in testing, and difficulties in debugging.",
+    "recommended_fix": "Refactor the playbook to reduce coupling by separating roles into more independent components. Use role parameters and variables to control behavior rather than conditional includes.",
+    "fixed_code_snippet": null,
+    "why_fix_works": "By reducing coupling, the playbook becomes easier to maintain and understand. Changes in one part of the playbook will have less impact on other parts, making it easier to debug and test.",
+    "trade_offs_and_assumptions": "Refactoring may require more time and effort upfront, but it will lead to a more maintainable and scalable playbook in the long run.",
+    "confidence": "high",
+    "limitations": null
+  }
+}

@@ -1,0 +1,250 @@
+name: AnsibleGuard PR scan
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+concurrency:
+  group: ansibleguard-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ansibleguard_pr_policy:
+    name: AnsibleGuard / introduced findings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          # Scan the exact contributor commit, not GitHub's synthetic merge ref.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install AnsibleGuard
+        run: pip install -e .
+      - name: Install semantic analysis data
+        run: |
+          pip install --retries 10 --timeout 60 \
+            'en_core_web_lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl#sha256=293e9547a655b25499198ab15a525b05b9407a75f10255e405e8c3854329ab63'
+          python -c "import nltk; nltk.download('wordnet', quiet=True)"
+      - name: Install gitleaks
+        run: ansibleguard install-tools
+
+      - name: Scan pull-request head
+        if: github.event_name == 'pull_request'
+        env:
+          ANSIBLEGUARD_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          ANSIBLEGUARD_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_TREE: ${{ runner.temp }}/ansibleguard-head-tree
+        # Scan a detached copy so the report directory is never part of the scanned tree.
+        run: |
+          git worktree add --detach "$HEAD_TREE" "$ANSIBLEGUARD_HEAD_SHA"
+          ansibleguard "$HEAD_TREE" -o ansibleguard-head --profile pr --fail-on never
+
+      - name: Scan pull-request base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_TREE: ${{ runner.temp }}/ansibleguard-base
+          ANSIBLEGUARD_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          ANSIBLEGUARD_HEAD_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git worktree add --detach "$BASE_TREE" "$BASE_SHA"
+          ansibleguard "$BASE_TREE" -o ansibleguard-base --profile pr --fail-on never
+
+      - name: Compare base and head
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          ANSIBLEGUARD_SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}/blob/${{ github.event.pull_request.head.sha }}
+        run: >-
+          ansibleguard diff .
+          --base "${{ github.event.pull_request.base.sha }}"
+          --head "${{ github.event.pull_request.head.sha }}"
+          --base-results ansibleguard-base
+          --head-results ansibleguard-head
+          --policy ratchet
+          -o ansibleguard-head
+
+      - name: Scan pushed branch
+        if: github.event_name == 'push'
+        env:
+          HEAD_TREE: ${{ runner.temp }}/ansibleguard-head-tree
+        run: |
+          git worktree add --detach "$HEAD_TREE" "$GITHUB_SHA"
+          ansibleguard "$HEAD_TREE" -o ansibleguard-head --profile technical-full --fail-on never
+
+      - name: Publish introduced PR annotations
+        if: >-
+          always() &&
+          github.event_name == 'pull_request' &&
+          hashFiles('ansibleguard-head/diff/comparison.json') != ''
+        run: >-
+          ansibleguard-pr-annotations ansibleguard-head/diff/comparison.json
+          --limit 50
+
+      - name: Publish scan summary
+        if: always() && hashFiles('ansibleguard-head/summary.csv') != ''
+        run: |
+          if test -f ansibleguard-head/summary/run-summary.md; then
+            cat ansibleguard-head/summary/run-summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if test -f ansibleguard-head/diff/summary.md; then
+            cat ansibleguard-head/diff/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '## AnsibleGuard full scan' >> "$GITHUB_STEP_SUMMARY"
+            echo '' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Full scan results are attached as an artifact.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload actionable PR SARIF
+        id: upload_pr_sarif
+        continue-on-error: true
+        if: >-
+          always() &&
+          github.event_name == 'pull_request' &&
+          hashFiles('ansibleguard-head/diff/introduced-actionable.sarif') != '' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          (github.event.repository.private == false ||
+           vars.ANSIBLEGUARD_UPLOAD_SARIF == 'true')
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ansibleguard-head/diff/introduced-actionable.sarif
+          category: ansibleguard-pr-actionable
+
+      - name: Upload full push SARIF
+        id: upload_push_sarif
+        continue-on-error: true
+        if: >-
+          always() &&
+          github.event_name == 'push' &&
+          hashFiles('ansibleguard-head/canonical/findings.sarif') != '' &&
+          (github.event.repository.private == false ||
+           vars.ANSIBLEGUARD_UPLOAD_SARIF == 'true')
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ansibleguard-head/canonical/findings.sarif
+          category: ansibleguard-full
+
+      - name: Publish GitHub integration status
+        if: always() && hashFiles('ansibleguard-head/summary.csv') != ''
+        env:
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
+          SARIF_OPT_IN: ${{ vars.ANSIBLEGUARD_UPLOAD_SARIF }}
+          PR_SARIF_OUTCOME: ${{ steps.upload_pr_sarif.outcome }}
+          PUSH_SARIF_OUTCOME: ${{ steps.upload_push_sarif.outcome }}
+          SAME_REPOSITORY_PR: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+
+          head = pathlib.Path("ansibleguard-head")
+          diagnostics = []
+          for path in (head / "diagnostics.json", pathlib.Path("ansibleguard-base/diagnostics.json")):
+              if path.exists():
+                  diagnostics.extend(json.loads(path.read_text()))
+          execution_errors = sum(
+              item.get("status") in {"tool-error", "analysis-error"}
+              for item in diagnostics
+          )
+          analysis = "passed" if execution_errors == 0 else f"failed ({execution_errors} execution error(s))"
+
+          decision = head / "diff/comparison.json"
+          if decision.exists():
+              policy = json.loads(decision.read_text())["policy"]
+              policy_status = policy.get("conclusion", "unknown")
+          else:
+              policy_status = "observe (push scan)"
+
+          event = os.environ.get("GITHUB_EVENT_NAME", "")
+          private = os.environ.get("REPOSITORY_PRIVATE", "").lower() == "true"
+          opted_in = os.environ.get("SARIF_OPT_IN", "").lower() == "true"
+          same_repository = os.environ.get("SAME_REPOSITORY_PR", "").lower() == "true"
+          outcome = os.environ.get(
+              "PR_SARIF_OUTCOME" if event == "pull_request" else "PUSH_SARIF_OUTCOME",
+              "",
+          )
+          if private and not opted_in:
+              sarif = "artifact only (private repository has not opted into GitHub Code Security)"
+          elif event == "pull_request" and not same_repository:
+              sarif = "artifact only (privileged upload is disabled for fork pull requests)"
+          elif outcome == "success":
+              sarif = "uploaded to GitHub Code Scanning"
+          elif outcome == "failure":
+              sarif = "upload failed; generated SARIF remains in the artifact"
+          else:
+              sarif = "not applicable; generated SARIF remains in the artifact"
+
+          summary = pathlib.Path(os.environ["GITHUB_STEP_SUMMARY"])
+          with summary.open("a", encoding="utf-8") as stream:
+              stream.write("\n## GitHub integration status\n\n")
+              stream.write("| Component | Status |\n|---|---|\n")
+              stream.write(f"| Analysis health | {analysis} |\n")
+              stream.write(f"| PR policy | {policy_status} |\n")
+              stream.write(f"| SARIF publication | {sarif} |\n")
+          PY
+
+      - name: Upload detailed reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ansibleguard-results
+          path: |
+            ansibleguard-head/
+            ansibleguard-base/
+          if-no-files-found: error
+
+      - name: Enforce policy
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+
+          head = pathlib.Path("ansibleguard-head")
+          diagnostic_files = [head / "diagnostics.json"]
+          base_diagnostics = pathlib.Path("ansibleguard-base/diagnostics.json")
+          if base_diagnostics.exists():
+              diagnostic_files.append(base_diagnostics)
+          diagnostics = [
+              item
+              for diagnostic_file in diagnostic_files
+              for item in json.loads(diagnostic_file.read_text())
+          ]
+          execution_errors = [
+              item for item in diagnostics
+              if item["status"] in {"tool-error", "analysis-error"}
+          ]
+          if execution_errors:
+              print(f"Blocking: {len(execution_errors)} scan execution error(s)")
+              sys.exit(1)
+
+          decision = pathlib.Path("ansibleguard-head/diff/comparison.json")
+          if (
+              os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
+              and not decision.exists()
+          ):
+              print("Blocking: pull-request comparison did not produce a decision")
+              sys.exit(1)
+          if decision.exists():
+              policy = json.loads(decision.read_text())["policy"]
+              if policy["conclusion"] == "failure":
+                  print(
+                      "Blocking introduced occurrences:",
+                      ", ".join(policy["blocking_occurrence_ids"]),
+                  )
+                  sys.exit(1)
+          else:
+              print("Push scan completed in observe mode; reports are artifacts.")
+          PY

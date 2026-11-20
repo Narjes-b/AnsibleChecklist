@@ -1,0 +1,83 @@
+file,line,merge_sha,message,repository,rule_id
+artbio_tool_list.yml,1,fae93a6355e6547761960ec9784ccffa3cc12a25,The review range changes configuration without adding a release-note file.,ARTbio/GalaxyKickStart,missing-release-note
+artbio_tool_list.yml,1,fae93a6355e6547761960ec9784ccffa3cc12a25,Configuration files changed in the review range without a test or Molecule change.,ARTbio/GalaxyKickStart,missing-test-update
+main.yml,1,305d401a49cd7d3cf30948b5c3492373879d5b6b,The review range changes configuration without adding a release-note file.,CMSgov/bluebutton-web-deployment,missing-release-note
+.,1,305d401a49cd7d3cf30948b5c3492373879d5b6b,Commit message format: subject is 70 characters (maximum 50).,CMSgov/bluebutton-web-deployment,commit-message-format
+main.yml,1,305d401a49cd7d3cf30948b5c3492373879d5b6b,Configuration files changed in the review range without a test or Molecule change.,CMSgov/bluebutton-web-deployment,missing-test-update
+provision_libvirt_node.yml,1,6696ce38c1eff480e5bc0fed31355d22df37d8e2,The review range changes configuration without adding a release-note file.,CentOS-PaaS-SIG/linchpin,missing-release-note
+.,1,6696ce38c1eff480e5bc0fed31355d22df37d8e2,"Commit message format: subject is 82 characters (maximum 50); body lines exceed 72 characters: [3, 4].",CentOS-PaaS-SIG/linchpin,commit-message-format
+provision_libvirt_node.yml,1,6696ce38c1eff480e5bc0fed31355d22df37d8e2,Configuration files changed in the review range without a test or Molecule change.,CentOS-PaaS-SIG/linchpin,missing-test-update
+main.yml,1,cce4b85a9c7795592fc9a82410901d3b15c8da8d,The review range changes configuration without adding a release-note file.,ConnectBox/connectbox-pi,missing-release-note
+.,1,cce4b85a9c7795592fc9a82410901d3b15c8da8d,Commit message format: subject is 60 characters (maximum 50).,ConnectBox/connectbox-pi,commit-message-format
+main.yml,1,cce4b85a9c7795592fc9a82410901d3b15c8da8d,Configuration files changed in the review range without a test or Molecule change.,ConnectBox/connectbox-pi,missing-test-update
+main.yml,1,6e9fdebea0d9a7e66563ea3595d9eff160986d25,The review range changes configuration without adding a release-note file.,IBM/ibm-spectrum-scale-install-infra,missing-release-note
+.,1,6e9fdebea0d9a7e66563ea3595d9eff160986d25,Commit message format: subject is 60 characters (maximum 50); subject is not followed by a blank line.,IBM/ibm-spectrum-scale-install-infra,commit-message-format
+main.yml,1,6e9fdebea0d9a7e66563ea3595d9eff160986d25,Configuration files changed in the review range without a test or Molecule change.,IBM/ibm-spectrum-scale-install-infra,missing-test-update
+main.yml,1,6e9fdebea0d9a7e66563ea3595d9eff160986d25,Defaults/vars changed in the review range without a corresponding override test.,IBM/ibm-spectrum-scale-install-infra,untested-override-change
+idr-omero-readonly.yml,1,77f7a7e438a41ca775e85b629c0f84cc636ffad7,The review range changes configuration without adding a release-note file.,IDR/deployment,missing-release-note
+idr-omero-readonly.yml,1,77f7a7e438a41ca775e85b629c0f84cc636ffad7,Configuration files changed in the review range without a test or Molecule change.,IDR/deployment,missing-test-update
+main.yml,1,cce736719165c8014b64df6118cfba8c84635261,The review range changes configuration without adding a release-note file.,UtrechtUniversity/yoda,missing-release-note
+.,1,cce736719165c8014b64df6118cfba8c84635261,"Commit message format: body lines exceed 72 characters: [4, 5].",UtrechtUniversity/yoda,commit-message-format
+main.yml,1,cce736719165c8014b64df6118cfba8c84635261,Configuration files changed in the review range without a test or Molecule change.,UtrechtUniversity/yoda,missing-test-update
+fix-cat1.yml,1,a3d78cfc5c2cae8f8b344fbcd6664a35817dbad0,The review range changes configuration without adding a release-note file.,ansible-lockdown/RHEL7-STIG,missing-release-note
+.,1,a3d78cfc5c2cae8f8b344fbcd6664a35817dbad0,"Bug/fix commit message has no Closes-Bug, Related-Bug, or bug-number reference.",ansible-lockdown/RHEL7-STIG,missing-bug-reference
+fix-cat1.yml,1,a3d78cfc5c2cae8f8b344fbcd6664a35817dbad0,Configuration files changed in the review range without a test or Molecule change.,ansible-lockdown/RHEL7-STIG,missing-test-update
+deploy_gocd.yml,1,023f2e61594cff79ad83cc1c79960177040a9ff1,The review range changes configuration without adding a release-note file.,cfpb/aurora,missing-release-note
+.,1,023f2e61594cff79ad83cc1c79960177040a9ff1,Commit message format: subject is 58 characters (maximum 50).,cfpb/aurora,commit-message-format
+.,1,023f2e61594cff79ad83cc1c79960177040a9ff1,Commit message format: subject is 81 characters (maximum 50).,cfpb/aurora,commit-message-format
+deploy_gocd.yml,1,023f2e61594cff79ad83cc1c79960177040a9ff1,Configuration files changed in the review range without a test or Molecule change.,cfpb/aurora,missing-test-update
+main.yaml,1,023f2e61594cff79ad83cc1c79960177040a9ff1,Defaults/vars changed in the review range without a corresponding override test.,cfpb/aurora,untested-override-change
+requirements.yml,1,98986321b94a2449e732ca8ed2c5163bc1b4581d,The review range changes configuration without adding a release-note file.,dfroberg/cluster,missing-release-note
+requirements.yml,1,98986321b94a2449e732ca8ed2c5163bc1b4581d,Configuration files changed in the review range without a test or Molecule change.,dfroberg/cluster,missing-test-update
+main.yml,1,74ad88f68a611f5e62654a222d8433925fbabebb,The review range changes configuration without adding a release-note file.,ebbba-org/ansible-role-bigbluebutton,missing-release-note
+.,1,74ad88f68a611f5e62654a222d8433925fbabebb,Commit message format: subject is 51 characters (maximum 50).,ebbba-org/ansible-role-bigbluebutton,commit-message-format
+main.yml,1,74ad88f68a611f5e62654a222d8433925fbabebb,Configuration files changed in the review range without a test or Molecule change.,ebbba-org/ansible-role-bigbluebutton,missing-test-update
+main.yml,1,74ad88f68a611f5e62654a222d8433925fbabebb,Defaults/vars changed in the review range without a corresponding override test.,ebbba-org/ansible-role-bigbluebutton,untested-override-change
+main.yml,1,578296b3b26105e52eaa6bdc39e1ef2cecb18720,The review range changes configuration without adding a release-note file.,mageops/ansible-infrastructure,missing-release-note
+main.yml,1,578296b3b26105e52eaa6bdc39e1ef2cecb18720,Configuration files changed in the review range without a test or Molecule change.,mageops/ansible-infrastructure,missing-test-update
+main.yml,1,578296b3b26105e52eaa6bdc39e1ef2cecb18720,Defaults/vars changed in the review range without a corresponding override test.,mageops/ansible-infrastructure,untested-override-change
+.,1,f2bc5c4c60665fdc1ccaf2d55da0cf3f440c5905,Commit message format: subject is 54 characters (maximum 50).,manala/ansible-roles,commit-message-format
+ome-demoserver.yml,1,1e935ebbd3344066db3a175fbe4e89c55ffc930b,The review range changes configuration without adding a release-note file.,ome/prod-playbooks,missing-release-note
+.,1,1e935ebbd3344066db3a175fbe4e89c55ffc930b,Commit message format: subject is 55 characters (maximum 50).,ome/prod-playbooks,commit-message-format
+ome-demoserver.yml,1,1e935ebbd3344066db3a175fbe4e89c55ffc930b,Configuration files changed in the review range without a test or Molecule change.,ome/prod-playbooks,missing-test-update
+playbook.yml,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,The review range changes configuration without adding a release-note file.,opendevshop/devshop,missing-release-note
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,"Bug/fix commit message has no Closes-Bug, Related-Bug, or bug-number reference.",opendevshop/devshop,missing-bug-reference
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 111 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 67 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 69 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 106 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 65 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 98 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 52 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 77 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 59 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 57 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 60 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 54 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 58 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 53 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 75 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 97 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 174 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 81 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 114 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 195 characters (maximum 50).,opendevshop/devshop,commit-message-format
+.,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Commit message format: subject is 176 characters (maximum 50).,opendevshop/devshop,commit-message-format
+playbook.yml,1,3adce4f22fa4d2c81307fb34146297bc6fe3effe,Configuration files changed in the review range without a test or Molecule change.,opendevshop/devshop,missing-test-update
+main.yml,1,4bda0339a951176e868430dafae9346986cd7f1b,The review range changes configuration without adding a release-note file.,packit/deployment,missing-release-note
+main.yml,1,4bda0339a951176e868430dafae9346986cd7f1b,Configuration files changed in the review range without a test or Molecule change.,packit/deployment,missing-test-update
+ansible-role-master-requirements.yml,1,262391e63c6bda33f1f2dc336edb43cdfd9ab5fd,The review range changes configuration without adding a release-note file.,rcbops/rpc-openstack,missing-release-note
+ansible-role-master-requirements.yml,1,262391e63c6bda33f1f2dc336edb43cdfd9ab5fd,Configuration files changed in the review range without a test or Molecule change.,rcbops/rpc-openstack,missing-test-update
+.,1,f7325c7bbcbcdd9bc2ca78984a53fba767055607,Commit message format: subject is 53 characters (maximum 50); body lines exceed 72 characters: [3].,snyssen/infra-snyssen.be,commit-message-format
+compute-init.yml,1,88e90df04ca360c690ef5f1b3f10f4032fc91104,The review range changes configuration without adding a release-note file.,stackhpc/ansible-slurm-appliance,missing-release-note
+.,1,88e90df04ca360c690ef5f1b3f10f4032fc91104,"Bug/fix commit message has no Closes-Bug, Related-Bug, or bug-number reference.",stackhpc/ansible-slurm-appliance,missing-bug-reference
+.,1,88e90df04ca360c690ef5f1b3f10f4032fc91104,Commit message format: body lines exceed 72 characters: [8].,stackhpc/ansible-slurm-appliance,commit-message-format
+compute-init.yml,1,88e90df04ca360c690ef5f1b3f10f4032fc91104,Configuration files changed in the review range without a test or Molecule change.,stackhpc/ansible-slurm-appliance,missing-test-update
+generic.yml,1,c65e4ea9febe2bf5eeca04715c93a441d82f7875,The review range changes configuration without adding a release-note file.,usegalaxy-eu/vgcn,missing-release-note
+.,1,c65e4ea9febe2bf5eeca04715c93a441d82f7875,Commit message format: subject is 58 characters (maximum 50).,usegalaxy-eu/vgcn,commit-message-format
+.,1,c65e4ea9febe2bf5eeca04715c93a441d82f7875,"Commit message format: body lines exceed 72 characters: [3, 5].",usegalaxy-eu/vgcn,commit-message-format
+generic.yml,1,c65e4ea9febe2bf5eeca04715c93a441d82f7875,Configuration files changed in the review range without a test or Molecule change.,usegalaxy-eu/vgcn,missing-test-update
+vagrant.yml,1,e81b1cb5a261a290a78eafae67f853efc8f5f7a3,The review range changes configuration without adding a release-note file.,vrk-kpa/api-catalog,missing-release-note
+.,1,e81b1cb5a261a290a78eafae67f853efc8f5f7a3,"Bug/fix commit message has no Closes-Bug, Related-Bug, or bug-number reference.",vrk-kpa/api-catalog,missing-bug-reference
+vagrant.yml,1,e81b1cb5a261a290a78eafae67f853efc8f5f7a3,Configuration files changed in the review range without a test or Molecule change.,vrk-kpa/api-catalog,missing-test-update
+vagrant.yml,1,e81b1cb5a261a290a78eafae67f853efc8f5f7a3,Defaults/vars changed in the review range without a corresponding override test.,vrk-kpa/api-catalog,untested-override-change

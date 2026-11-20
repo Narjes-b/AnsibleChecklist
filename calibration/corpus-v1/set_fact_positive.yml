@@ -1,0 +1,6 @@
+- name: Unused fact
+  hosts: all
+  tasks:
+    - name: Define unused value
+      set_fact:
+        calibration_unused_value: true

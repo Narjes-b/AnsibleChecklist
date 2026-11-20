@@ -1,0 +1,6 @@
+concept_id,findings,share_percent,eligible_repositories,missing_repositories,repositories_affected,repository_prevalence_percent,median_per_repository,q1_per_repository,q3_per_repository,findings_per_1000_selected_loc
+missing-release-note,126,39.87,127,0,126,99.21,1,1,1,
+commit-message-format,83,26.27,127,0,83,65.35,1,0,1,
+missing-test-update,47,14.87,127,0,47,37.01,0,0,1,
+untested-override-change,41,12.97,127,0,41,32.28,0,0,1,
+missing-bug-reference,19,6.01,127,0,19,14.96,0,0,0,

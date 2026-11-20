@@ -1,0 +1,44 @@
+{
+  "purpose": "conservative finite-design interval/width benchmark; not measured tool accuracy",
+  "run_id": "v0071-rerun-2026-10-22",
+  "instrument": "required",
+  "design": {
+    "groups_per_stratum": 10,
+    "occurrences_per_group": 2,
+    "census_at": 30
+  },
+  "alpha": 0.05,
+  "known_population": 59891,
+  "variance_bound": 22168681.35125752,
+  "between_bound_methods": {
+    "exact-vertex-dp": 152,
+    "single-group": 15
+  },
+  "source_uncertainty_manifest_sha256": "35d3aa8cb8aa33a38d43a603b571379bd1fe45251c70bf29a17781f3fadd6fa9",
+  "source_draws_sha256": "bb4784e174be744fa607ee0225f69cde552cdd4c979ea4954d8fcc9b36175d2d",
+  "implementation_sha256": "13db581c4144a01b8d8fc1e0d655562535bd665b30bdfd1111494a0e12cee5b4",
+  "dependency_sha256": {
+    "sample_partitioned_occurrences.py": "206e945c9d1c3532f16425a9d446265bf05ae5618dc98842a2fa5f144ffd42fb",
+    "audit_sampling_partitions.py": "694a14cd3e59649a9cc540fd58eda830d07a4adf71e6c094e19abeac771f6a5e"
+  },
+  "numpy_version": "2.4.6",
+  "eligible_for_performance_scoring": false,
+  "final_method_accepted": false,
+  "output_sha256": {
+    "stratum-bounds.csv": "33c92fdb7a61f4ab7984a648f07abc025cf442c4c3e0e49c2a40c27673f8010b",
+    "bound-summary.csv": "af58ffe12885832923bab68b0fd1f90d8c854bc4354964353e74a3f84cc63587",
+    "bound-draws.csv": "e88d16cec8cc12ecd1c37c7478e71fa33ff92bb8988e7ef2f2e66c7b9f8f2771"
+  },
+  "assumptions": [
+    "Known finite frame and complete fixed binary outcomes",
+    "Independent strata, two-stage SRSWOR",
+    "HT total divided by known N; no H\u00e1jek guarantee",
+    "No retrieval nonresponse or reviewer error",
+    "Guarantee is conditional on the design, not generalization to unseen repositories"
+  ],
+  "limits": [
+    "Conservative between/within maxima are not jointly optimized",
+    "Wide/full-unit sets can be uninformative",
+    "No final population/workload/interval gate passed"
+  ]
+}

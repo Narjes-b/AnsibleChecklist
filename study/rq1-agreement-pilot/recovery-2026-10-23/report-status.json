@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "evidence_scope": "calibration-only",
+  "sample_declared_eligible": false,
+  "eligible_for_performance_scoring": false,
+  "population_precision_status": "not-estimated",
+  "reason": "Pilot or sample metadata excludes performance scoring.",
+  "adjudication_complete": false,
+  "pending_adjudication": 119,
+  "sample_manifest": "study/validation-v007-human/samples/agreement-pilot/agreement-pilot-manifest.json",
+  "input_sha256": {
+    "labels": "e86601f16659c49d169ad75f8e6a109d188095f597817f49f39a6ff2cda1487b",
+    "master": "0a96f7cef4471bc51e5b627b88349f90c98a09a350a0a92915f50f24fd87efb8",
+    "sample_manifest": "f88cb28bf4f97cb6703ce09263b861c920317b22f94654e5c9d487092845a6c6"
+  },
+  "precision_table_suffix": "-calibration-provisional"
+}

@@ -1,0 +1,433 @@
+sample_id,rule_id,concept_id,review_family,tier,rule_total_occurrences,rule_cumulative_share_percent,repository,commit_sha,path,line,severity,message,occurrence_id,source_context,ai_semantic_label,ai_actionability_label,ai_context_sufficient,ai_requires_external_context,ai_external_context_type,ai_reason_code,ai_notes,ai_confidence,ai_model_identity,ai_review_protocol_version
+V007STRAT-ROLE-README-ABSENT-001,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,stackhpc/stackhpc-release-train,3d2f5ac77d3aee42d3c2f206811a7eb8244c55f8,ansible/roles/pulp-rpm-publication-cleanup/tasks/main.yml,1,note,"Role 'pulp-rpm-publication-cleanup' has no README.md. Add documentation covering inputs, outputs, and example usage.",7a2c0adca6411611a5444d4f038c44aea0f913095dd14fed61a5c5f6757182c5,">>     1 | ---
+       2 | - name: Query repositories
+       3 |   pulp.squeezer.rpm_repository:
+       4 |     pulp_url: ""{{ pulp_url }}""
+       5 |     username: ""{{ pulp_username }}""
+       6 |     password: ""{{ pulp_password }}""
+       7 |   register: pulp_repos_list
+       8 | 
+       9 | - name: Query publications
+      10 |   pulp.squeezer.rpm_publication:
+      11 |     pulp_url: ""{{ pulp_url }}""
+      12 |     username: ""{{ pulp_username }}""
+      13 |     password: ""{{ pulp_password }}""
+      14 |   register: pulp_pubs_list
+      15 | ",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of ansible/roles/pulp-rpm-publication-cleanup/tasks/main.yml; no directory listing or other proof that role 'pulp-rpm-publication-cleanup' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-002,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,usegalaxy-eu/vgcn,c65e4ea9febe2bf5eeca04715c93a441d82f7875,ansible/roles/cloudinit-pxe/tasks/main.yml,1,note,"Role 'cloudinit-pxe' has no README.md. Add documentation covering inputs, outputs, and example usage.",8618b4d063530e5367f53a783533cffe3578ac512c5538044206b5d227930665,">>     1 | ---
+       2 | - name: Copy user setup script
+       3 |   ansible.builtin.copy:
+       4 |     src: boot-cron.sh
+       5 |     dest: /usr/local/sbin/boot-cron.sh
+       6 |     owner: root
+       7 |     group: root
+       8 |     mode: '0755'
+       9 | 
+      10 | - name: Ensure cron job exists for script at reboot
+      11 |   ansible.builtin.cron:
+      12 |     name: ""Run centos user setup at boot""
+      13 |     user: root
+      14 |     special_time: reboot
+      15 |     job: ""sleep 20 && /usr/local/sbin/boot-cron.sh > /var/log/init""",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of ansible/roles/cloudinit-pxe/tasks/main.yml; no directory listing or other proof that role 'cloudinit-pxe' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-003,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,braucktoon/home-services-ansible-automation,47b8b32d5d23ac4f319eb42ada558173ddae47c1,roles/backup-common/tasks/main.yml,1,note,"Role 'backup-common' has no README.md. Add documentation covering inputs, outputs, and example usage.",68e62747e601d5ff0d9cb29dc5b8ceacfd062bc1f7d623ffca162dfba1817cf3,">>     1 | ---
+       2 | - name: Create backup log directory
+       3 |   ansible.builtin.file:
+       4 |     path: /var/log/backups
+       5 |     state: directory
+       6 |     owner: ""{{ ansible_user }}""
+       7 |     group: ""{{ ansible_user }}""
+       8 |     mode: ""0755""
+       9 |     recurse: true
+      10 |   become: true
+      11 | 
+      12 | - name: Deploy shared backup library
+      13 |   ansible.builtin.template:
+      14 |     src: backup-lib.sh.j2
+      15 |     dest: /usr/local/lib/backup-lib.sh",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of roles/backup-common/tasks/main.yml; no directory listing or other proof that role 'backup-common' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-004,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,compscidr/iac,350e7b8162778ad7beab8e2da8be53ea24a1127a,ansible/roles/academic_gui/tasks/main.yml,1,note,"Role 'academic_gui' has no README.md. Add documentation covering inputs, outputs, and example usage.",b54a529ecf28055ee7f3ec8d9396bf58913aadc7cfd5bb9221b624428d900ef8,">>     1 | ---
+       2 | - name: Install latex tools
+       3 |   tags: latex
+       4 |   become: true
+       5 |   ansible.builtin.apt:
+       6 |     pkg:
+       7 |       - texmaker
+       8 |       - fonts-font-awesome
+       9 |       - texlive-fonts-recommended
+      10 |       - texlive-fonts-extra",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of ansible/roles/academic_gui/tasks/main.yml; no directory listing or other proof that role 'academic_gui' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-005,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,clincha-org/clincha,5f3bc1dfb500509433a917ddf29489a1c610b316,Ansible/roles/adguard/tasks/main.yml,1,note,"Role 'adguard' has no README.md. Add documentation covering inputs, outputs, and example usage.",e68c9c262b13998554bd6856b29fc832885cc36cd6063ec8e620f5a9f877b6da,">>     1 | ---
+       2 | - name: Install AdGuard Home
+       3 |   ansible.builtin.import_tasks: install.yml
+       4 | 
+       5 | - name: Configure AdGuard Home
+       6 |   ansible.builtin.import_tasks: configure.yml
+       7 | 
+       8 | - name: Rotate AdGuard Home admin password (opt-in via tag)
+       9 |   ansible.builtin.import_tasks: rotate-password.yml",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of Ansible/roles/adguard/tasks/main.yml; no directory listing or other proof that role 'adguard' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-006,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,theopenlab/openlab-zuul-jobs,0d133dc0879296c0aacd0b70344515c94137a8ec,roles/cleanup-cinder-csi-volumes/tasks/main.yml,1,note,"Role 'cleanup-cinder-csi-volumes' has no README.md. Add documentation covering inputs, outputs, and example usage.",bdf32633cfe0962696ff34173cead70eaeb31167453065b7fc1318d41e3a91a7,">>     1 | - name: isntall openstacksdk
+       2 |   apt:
+       3 |     name: python3-openstacksdk
+       4 |     state: present
+       5 |     update_cache: yes
+       6 | 
+       7 | - name: copy cleanup_volumes.py
+       8 |   copy:
+       9 |     src: cleanup_volumes.py
+      10 |     dest: /tmp/cleanup_volumes.py
+      11 |     mode: ""0755""
+      12 | 
+      13 | - name: call cleanup_volumes.py
+      14 |   environment: ""{{ global_env }}""
+      15 |   command: python3 /tmp/cleanup_volumes.py",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of roles/cleanup-cinder-csi-volumes/tasks/main.yml; no directory listing or other proof that role 'cleanup-cinder-csi-volumes' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-007,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,openshift/openshift-ansible,440ea65eb643090218c8b92556bd5afec83735bd,roles/openshift_node/tasks/main.yml,1,note,"Role 'openshift_node' has no README.md. Add documentation covering inputs, outputs, and example usage.",55858df9483516b16dc7e100c776a92fd7d786cd24db5d026a1e15089a88cf90,">>     1 | ---
+       2 | - include_tasks: install.yml
+       3 | - include_tasks: config.yml",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of roles/openshift_node/tasks/main.yml; no directory listing or other proof that role 'openshift_node' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-008,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,ansible/galaxy-operator,a05c8663b7e5cf4c2350fb1faa074a378b86f0fc,roles/galaxy-config/tasks/main.yml,1,note,"Role 'galaxy-config' has no README.md. Add documentation covering inputs, outputs, and example usage.",73ccdac2701603b40cf540cbdfea698d988b15c3ebc7e666bd039d578ccf4b21,">>     1 | ---
+       2 | 
+       3 | - name: Configure Galaxy Server Secret
+       4 |   include_tasks: combine_galaxy_settings.yml
+       5 | 
+       6 | - name: Include redis role
+       7 |   include_role:
+       8 |     name: redis
+       9 |   when: pulp_combined_settings.cache_enabled
+      10 | 
+      11 | - include_tasks:
+      12 |     file: sso-configuration.yml
+      13 |   when:
+      14 |     - sso_secret is defined
+      15 |     - sso_secret | length",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of roles/galaxy-config/tasks/main.yml; no directory listing or other proof that role 'galaxy-config' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-009,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,JenswBE/setup,18c39275cc08ae3f7bea8b7ee0624876b8fa72fe,desktop/roles/jenswbe.rpm_ostree_auto_update/tasks/main.yml,1,note,"Role 'jenswbe.rpm_ostree_auto_update' has no README.md. Add documentation covering inputs, outputs, and example usage.",14d47698044d9c2918f71d5da06fa2fead7d3f2192fb73d903ce809c2a08a03f,">>     1 | # Based on https://docs.fedoraproject.org/en-US/iot/applying-updates-UG/
+       2 | - name: Setup automatic rpm-ostree update config
+       3 |   become: true
+       4 |   register: rpm_ostree_update_config
+       5 |   ansible.builtin.template:
+       6 |     src: ""rpm-ostreed.conf""
+       7 |     dest: ""/etc/rpm-ostreed.conf""
+       8 |     owner: root
+       9 |     group: root
+      10 |     mode: ""0644""
+      11 |   notify:
+      12 |     - Restart rpm-ostreed
+      13 | 
+      14 | - name: Enable automatic rpm-ostree update timers
+      15 |   become: true",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of desktop/roles/jenswbe.rpm_ostree_auto_update/tasks/main.yml; no directory listing or other proof that role 'jenswbe.rpm_ostree_auto_update' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-010,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,jon77p/infrastructure,0d592772c61f490541ce7ab77dffa29114f5bd03,ansible/playbooks/roles/cloudflare/tasks/main.yml,1,note,"Role 'cloudflare' has no README.md. Add documentation covering inputs, outputs, and example usage.",7fdbfb77df9315af6af49300811a87c744ae2eaf5717d38f5c7938889de8addc,">>     1 | ---
+       2 | - name: Debug records
+       3 |   ansible.builtin.debug:
+       4 |     var: cloudflare_dns_records
+       5 | 
+       6 | - name: Create initial tunnel records
+       7 |   when: ""'oci' not in group_names and servicename is not defined""
+       8 |   ansible.builtin.include_tasks: setup.yml
+       9 | 
+      10 | - name: Create additional records to point to tunnel
+      11 |   community.general.cloudflare_dns:
+      12 |     account_email: ""{{ cf_email }}""
+      13 |     api_token: ""{{ cf_api_token }}""
+      14 |     zone: ""{{ cloudflare_dns_record.zone }}""
+      15 |     record: ""{{ cloudflare_dns_record.record }}""",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of ansible/playbooks/roles/cloudflare/tasks/main.yml; no directory listing or other proof that role 'cloudflare' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-ROLE-README-ABSENT-011,ansibleguard/role-readme-absent,role-readme-absent,Structure/reuse,C-moderate,709,89.66,packit/deployment,0c6bf4b0fead603fc6872739b20a73c6858dcb83,roles/deploy/tasks/main.yml,1,note,"Role 'deploy' has no README.md. Add documentation covering inputs, outputs, and example usage.",dbf29fe8495b8b6b31d34525c1a985229f7d8f570117099cbed92a237132369e,">>     1 | ---
+       2 | - name: Include project-dir.yml
+       3 |   ansible.builtin.include_tasks: project-dir.yml
+       4 |   tags:
+       5 |     - always
+       6 | 
+       7 | - name: Include variables
+       8 |   ansible.builtin.include_vars: ""{{ project_dir }}/vars/{{ service }}/{{ deployment }}.yml""
+       9 |   tags:
+      10 |     - always
+      11 | 
+      12 | - name: Include check-up-to-date.yml
+      13 |   ansible.builtin.include_tasks: check-up-to-date.yml
+      14 |   tags:
+      15 |     - always",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The provided evidence is only the body of roles/deploy/tasks/main.yml; no directory listing or other proof that role 'deploy' lacks a README.md anywhere in its role root is included, so the file-absence claim itself cannot be confirmed from this bundle. Per the family codebook, even if absence were confirmed this would be a documentation observation rather than a correctness failure, so actionability cannot exceed advisory.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-001,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,Ableton/ansible-role-jenkins-jcasc,a62ef61b70877018fb6763b17f7d29a771fbc597,tasks/sanity-check.yml,1,warning,14 leaf tasks are kept in one file without roles or task includes (threshold 10).,14a8fa1f405ba2e995e24a478cfef9d9f3a0254ab4242b1386d2cd5d483108ab,">>     1 | ---
+       2 | - name: Ensure that required role variables are defined
+       3 |   ansible.builtin.fail:
+       4 |     msg: ""Undefined required role variable (s)""
+       5 |   when: required_variable == """"
+       6 |   loop_control:
+       7 |     loop_var: required_variable
+       8 |   loop:
+       9 |     - ""{{ jenkins_group }}""
+      10 |     - ""{{ jenkins_home }}""
+      11 |     - ""{{ jenkins_jcasc_version }}""
+      12 |     - ""{{ jenkins_pimt_version }}""
+      13 |     - ""{{ jenkins_plugins_file }}""
+      14 |     - ""{{ jenkins_port }}""
+      15 |     - ""{{ jenkins_prefix }}""",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 14 leaf tasks against a threshold of 10, but the frozen excerpt is capped at the first 15 lines and shows only a single variable-guard task (fail with a 7-item loop); the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-002,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,playbooks/pki.yml,1,warning,21 leaf tasks are kept in one file without roles or task includes (threshold 15).,a2ad77a1e9254853f9472e40314dc104b48c8cc2eda4a60476fade3bc3a614de,">>     1 | ---
+       2 | - name: Prepare CA signing infrastructuren
+       3 |   hosts: localhost
+       4 |   connection: local
+       5 |   gather_facts: false
+       6 |   vars:
+       7 |     actual_pki_dir: ""{{ pki_dir | default('../configuration_files/pki') }}""
+       8 |     actual_ca_cn: ""{{ ca_cn | default('Hyland - Alfresco signing CA') }}""
+       9 |   tasks:
+      10 |     - name: Check PKCS12 and CA signing key are given a password
+      11 |       ansible.builtin.assert:
+      12 |         that:
+      13 |           - p12_passphrase
+      14 |           - secret_ca_passphrase
+      15 |         fail_msg: |",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 21 leaf tasks against a threshold of 15, but the frozen excerpt is capped at the first 15 lines and shows only the play header and one assert task; the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-003,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,rcbops/rpc-openstack,f8fdb2ee2a7c66b3490c55513312e4fa3ff241b4,playbooks/configure-release.yml,1,warning,24 leaf tasks are kept in one file without roles or task includes (threshold 15).,769421438f004855ae733a3bd25cce24780d362f4bc6bfd04459348238f1f2c6,">>     1 | ---
+       2 | # Copyright 2017, Rackspace US, Inc.
+       3 | #
+       4 | # Licensed under the Apache License, Version 2.0 (the ""License"");
+       5 | # you may not use this file except in compliance with the License.
+       6 | # You may obtain a copy of the License at
+       7 | #
+       8 | #     http://www.apache.org/licenses/LICENSE-2.0
+       9 | #
+      10 | # Unless required by applicable law or agreed to in writing, software
+      11 | # distributed under the License is distributed on an ""AS IS"" BASIS,
+      12 | # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      13 | # See the License for the specific language governing permissions and
+      14 | # limitations under the License.
+      15 | ",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 24 leaf tasks against a threshold of 15, but the frozen excerpt is capped at the first 15 lines and shows only only an Apache license header comment block, no task content at all; the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-004,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,rtdevx/homelab,a23266aa968127747db1aa91d544ab60ce402f55,ansible/site/roles/base/tasks/configure_linux_terminal.yml,1,warning,11 leaf tasks are kept in one file without roles or task includes (threshold 10).,15d1959c5f3eec5452f43a58d6ce0c3a2d05978b609358907b9ff4a0ce160c87,">>     1 | ---
+       2 | # info: Download Nerd Fonts
+       3 | - name: Configure Terminal for Linux hosts
+       4 | 
+       5 | # @high Should /tmp be changed to something else so the file is not lost after reboot and is only accessible by root?
+       6 | # @low Can the checksum of the downloaded file be verified to ensure integrity?
+       7 | 
+       8 |   block:
+       9 |     - name: Download Nerd Fonts
+      10 |       get_url:
+      11 |         url: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.tar.xz
+      12 |         dest: /tmp/nerd-fonts.tar.xz
+      13 |         mode: '0701'
+      14 | 
+      15 |     - name: Unarchive Nerd Fonts",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 11 leaf tasks against a threshold of 10, but the frozen excerpt is capped at the first 15 lines and shows only a block header and two of its member tasks (download/unarchive); the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-005,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,ansible/instruqt,e23435acd50f1f645c88958c8dee4fe2929014b6,images/ansible/common/30_mesh_node.yml,1,warning,17 leaf tasks are kept in one file without roles or task includes (threshold 15).,4dac91d26b851e71a5f7e957280670cc0b463ad83accd187cbd39140959f34f5,">>     1 | ## Common instance tasks
+       2 | - name: Check if AAP bundle file exists
+       3 |   ansible.builtin.stat:
+       4 |     path: ""/tmp/aap.tar.gz""
+       5 |   register: __aap_bundle_file
+       6 | 
+       7 | - name: Download AAP setup bundle
+       8 |   when: not __aap_bundle_file.stat.exists
+       9 |   block:
+      10 |     - name: Generating an access token
+      11 |       ansible.builtin.uri:
+      12 |         url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+      13 |         method: POST
+      14 |         body_format: form-urlencoded
+      15 |         return_content: true",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 17 leaf tasks against a threshold of 15, but the frozen excerpt is capped at the first 15 lines and shows only a stat task and the start of a conditional block with one uri task; the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-006,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,ergho/homelab-ops,973ea65aca62d259f296153f5f989cc2013f2294,ansible/roles/container_runtime/tasks/main.yaml,1,warning,11 leaf tasks are kept in one file without roles or task includes (threshold 10).,6081ecf1938b22149c2637a5f5589e44cc61e1c6178f5366c431c7db07d0df2c,">>     1 | ---
+       2 | - name: ""create config and data dirs""
+       3 |   file:
+       4 |     mode: 384
+       5 |     path: ""{{ item }}""
+       6 |     state: directory
+       7 |   with_items:
+       8 |     - /etc/containerd
+       9 |     - /tmp/containerd
+      10 | 
+      11 | - name: ""download and install runc""
+      12 |   get_url:
+      13 |     dest: /usr/local/bin/runc
+      14 |     mode: 448
+      15 |     url: ""{{ containerd_packages.runc_download_url }}""",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 11 leaf tasks against a threshold of 10, but the frozen excerpt is capped at the first 15 lines and shows only two tasks (create directories, download runc); the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-007,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,ansible/awx,54d6e576fb543c76f672603ca7f26913d58cf458,awx/playbooks/project_update.yml,1,warning,23 leaf tasks are kept in one file without roles or task includes (threshold 15).,12ccee36212a9810fedc8ba9280561ab3e10824ff58d0725cbac4c4e7fdf8181,">>     1 | ---
+       2 | # The following variables will be set by the runner of this playbook:
+       3 | # projects_root: Global location for caching project checkouts and roles and collections
+       4 | #     should not have trailing slash on end
+       5 | # local_path: Path within projects_root to use for this project
+       6 | # project_path: A simple join of projects_root/local_path folders
+       7 | # scm_url: https://server/repo
+       8 | # insights_url: Insights service URL (from configuration)
+       9 | # scm_branch: branch/tag/revision (HEAD if unset)
+      10 | # scm_clean: true/false
+      11 | # scm_username: username (only for svn/insights)
+      12 | # scm_password: password (only for svn/insights)
+      13 | # scm_accept_hostkey: true/false (only for git, set automatically)
+      14 | # scm_refspec: a refspec to fetch in addition to obtaining version
+      15 | # scm_track_submodules: true/false",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 23 leaf tasks against a threshold of 15, but the frozen excerpt is capped at the first 15 lines and shows only only a comment block documenting expected input variables, no task content at all; the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-ABSTRACTION-008,ansibleguard/missing-abstraction,missing-abstraction,Structure/reuse,C-moderate,410,94.76,trilioData/triliovault-cfg-scripts,30ca8d696541328662432c9e271c95bd3606771c,ansible/roles/ansible-datamover-api/tasks/install_rhel.yml,1,warning,14 leaf tasks are kept in one file without roles or task includes (threshold 10).,7065977a47dd44a137c12bd03bdb483376e805db72207f766682df23a6bf92f9,">>     1 | ---
+       2 | 
+       3 | - name: create yum repo file if ansible_distribution is Centos/RHEL
+       4 |   template:
+       5 |      src: trilio.repo
+       6 |      dest: ""{{trilio_yum_repo_file_path}}""
+       7 | 
+       8 | - name: Install packages on datamover api container | centos-release-openstack-{{OPENSTACK_DIST}}
+       9 |   yum:
+      10 |     update_cache: yes
+      11 |     name:
+      12 |       - ""centos-release-openstack-{{OPENSTACK_DIST | lower}}""
+      13 |     state: latest
+      14 | 
+      15 | - name: install packages on datamover api container | {{ PYTHON_VERSION }} devel and nova packages",uncertain,uncertain,no,yes,full task file content,insufficient-source-context,"The detector claims 14 leaf tasks against a threshold of 10, but the frozen excerpt is capped at the first 15 lines and shows only three tasks (yum repo template, two package installs); the remainder of the file (and hence the true leaf-task count, repetition, and cohesion needed to judge whether extraction would create a useful unit) is not in evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-DUPLICATED-CODE-001,ansibleguard/duplicated-code,duplicated-code,Structure/reuse,D-long-tail,155,97.69,chkpwd/iac,9b789a76960f81aa13ecdb2c29fbcb799b5e4fcf,ansible/roles/win_gaming_setup/tasks/main.yml,1,warning,Duplicate task blocks detected (count=1),c13a4435bb5c4c416631836408534cf6d3bce71f54c14e767081fbef298a0134,">>     1 | ---
+       2 | - name: Run PowerShell script that finds the biggest drive
+       3 |   ansible.windows.win_powershell:
+       4 |     script: |
+       5 |       $largestDrive = Get-Disk | Where-Object { $_.OperationalStatus -eq 'Online' } | Sort-Object Size -Descending | Select-Object -First 1
+       6 |       if ($largestDrive.PartitionStyle -eq 'RAW') {
+       7 |           Initialize-Disk -Number $largestDrive.Number
+       8 |           New-Partition -DiskNumber $largestDrive.Number -AssignDriveLetter -UseMaximumSize | Format-Volume -FileSystem NTFS -NewFileSystemLabel ""Games"" -Confirm:$false
+       9 |       } else {
+      10 |           $Ansible.Changed = $false
+      11 |       }
+      12 | - name: Bootstrap Process
+      13 |   ansible.builtin.include_tasks: bootstrap.yml
+      14 | - name: Set locale and timezone
+      15 |   ansible.windows.win_timezone:",uncertain,uncertain,no,yes,sibling/duplicate file content (Git parent/diff or matching block elsewhere in repo),insufficient-source-context,"Only the flagged occurrence in ansible/roles/win_gaming_setup/tasks/main.yml is shown; the bundle does not include the matching duplicate block the detector claims exists elsewhere, so semantic equivalence (vs. intentional divergence) cannot be assessed, per the explicit sibling-file caveat for this rule.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-DUPLICATED-CODE-002,ansibleguard/duplicated-code,duplicated-code,Structure/reuse,D-long-tail,155,97.69,ansible/galaxy-operator,a05c8663b7e5cf4c2350fb1faa074a378b86f0fc,roles/galaxy-config/tasks/combine_galaxy_settings.yml,1,warning,Duplicate task blocks detected (count=1),910221550f0d1584b0d9388b8b0270f990b570bd171c89d0bb2241738e45e93b,">>     1 | ---
+       2 | 
+       3 | - name: Getting raw pulp_settings
+       4 |   set_fact:
+       5 |     raw_pulp_settings: ""{{ raw_spec['pulp_settings'] | default({}) }}""
+       6 |   no_log: ""{{ no_log }}""
+       7 |   when: pulp_settings is defined
+       8 | 
+       9 | - name: Combining pulp_settings
+      10 |   set_fact:
+      11 |     pulp_combined_settings: ""{{ default_settings|combine(raw_pulp_settings, recursive=True) if pulp_settings is defined and pulp_settings is not none else default_settings }}""
+      12 |   no_log: ""{{ no_log }}""
+      13 | 
+      14 | # Workaround being unable to do the following, for the subsequent task:
+      15 | # when: (pulp_settings is not defined) or",uncertain,uncertain,no,yes,sibling/duplicate file content (Git parent/diff or matching block elsewhere in repo),insufficient-source-context,"Only the flagged occurrence in roles/galaxy-config/tasks/combine_galaxy_settings.yml is shown; the bundle does not include the matching duplicate block the detector claims exists elsewhere, so semantic equivalence (vs. intentional divergence) cannot be assessed, per the explicit sibling-file caveat for this rule.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-DUPLICATED-CODE-003,ansibleguard/duplicated-code,duplicated-code,Structure/reuse,D-long-tail,155,97.69,ansible/ansible-zuul-jobs,acb7ddbcd03b090e8db140d379e656559a37cf63,roles/ansible-test/tasks/init_collection.yaml,1,warning,Duplicate task blocks detected (count=1),2041222a2232e301f1b598a5138aa03a305f5eda72ace7dab3044fbc765fe663,">>     1 | ---
+       2 | - name: check if MANIFEST.json exists
+       3 |   stat:
+       4 |     path: ""{{ ansible_test_location }}/MANIFEST.json""
+       5 |   register: _manifest_json
+       6 | 
+       7 | # We've got two options here, either:
+       8 | # - ansible_test_location points on a git clone of a collection, in this
+       9 | #   case there is galaxy.yml file
+      10 | # - or ansible_test_location points on the directory of collection installed
+      11 | #   with ansible-galaxy (likely a tarball), in this case MANIFEST.json is
+      12 | #   our best bet.
+      13 | - when: _manifest_json.stat.exists
+      14 |   block:
+      15 |     - name: Copy the MANIFEST.json on the controller",uncertain,uncertain,no,yes,sibling/duplicate file content (Git parent/diff or matching block elsewhere in repo),insufficient-source-context,"Only the flagged occurrence in roles/ansible-test/tasks/init_collection.yaml is shown; the bundle does not include the matching duplicate block the detector claims exists elsewhere, so semantic equivalence (vs. intentional divergence) cannot be assessed, per the explicit sibling-file caveat for this rule.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-DUPLICATED-CODE-004,ansibleguard/duplicated-code,duplicated-code,Structure/reuse,D-long-tail,155,97.69,gdcc/dataverse-ansible,ae29ce65dd4cddd5187c2bc00aefd319b6bb4484,tasks/prometheus.yml,1,warning,Duplicate task blocks detected (count=1),85d395c0f23bf60de3c3c1d79f8673ca0ef18115ced3c0080c4f5ba9ba69b064,">>     1 | ---
+       2 | 
+       3 | - name: install prometheus
+       4 |   debug:
+       5 |     msg: '##### PROMETHEUS #####'
+       6 | 
+       7 | - ansible.builtin.import_tasks: dataverse-fqdn.yml
+       8 | 
+       9 | - name: systemd no likey escaped colons
+      10 |   set_fact:
+      11 |     siteUrl: ""{{ siteUrl | regex_replace('\\\\:', ':') }}""
+      12 |   tags: grafana
+      13 | 
+      14 | - debug:
+      15 |     msg: ""siteUrl is {{ siteUrl }}""",uncertain,uncertain,no,yes,sibling/duplicate file content (Git parent/diff or matching block elsewhere in repo),insufficient-source-context,"Only the flagged occurrence in tasks/prometheus.yml is shown; the bundle does not include the matching duplicate block the detector claims exists elsewhere, so semantic equivalence (vs. intentional divergence) cannot be assessed, per the explicit sibling-file caveat for this rule.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-DUPLICATED-CODE-005,ansibleguard/duplicated-code,duplicated-code,Structure/reuse,D-long-tail,155,97.69,anokfireball/homelab-as-code,d8fe576217e433a746fff052b772c949ee6f1e50,ansible/cluster/roles/k8s_cluster/tasks/tasks/network.yaml,1,warning,Duplicate task blocks detected (count=1),0a6b4957bfd14c36a40a04737edce6cdefd50e1b480c692a6ab1bb5b14c75323,">>     1 | ---
+       2 | - name: enable IPv4 and IPv6 packet forwarding
+       3 |   sysctl:
+       4 |     name: ""{{ item.name }}""
+       5 |     value: ""{{ item.value }}""
+       6 |     sysctl_set: true
+       7 |   with_items:
+       8 |     - name: net.ipv4.ip_forward
+       9 |       value: ""1""
+      10 |     - name: net.ipv6.conf.all.forwarding
+      11 |       value: ""1""
+      12 |     - name: net.ipv6.conf.all.accept_ra
+      13 |       value: ""2""
+      14 | 
+      15 | - name: get node suffix from IPv4 address",uncertain,uncertain,no,yes,sibling/duplicate file content (Git parent/diff or matching block elsewhere in repo),insufficient-source-context,"Only the flagged occurrence in ansible/cluster/roles/k8s_cluster/tasks/tasks/network.yaml is shown; the bundle does not include the matching duplicate block the detector claims exists elsewhere, so semantic equivalence (vs. intentional divergence) cannot be assessed, per the explicit sibling-file caveat for this rule.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNNECESSARY-ABSTRACTION-001,ansibleguard/unnecessary-abstraction,unnecessary-abstraction,Structure/reuse,D-long-tail,65,99.4,vladgh/ansible-collection-vladgh-system,30ae05e5841fd001f70b3b80be8ea029f454e1f7,roles/packages/tasks/main.yml,1,note,block: wraps exactly one task (count=1),e04627b0f403b009aecc3fa82092d032cbd964ed279d7182595d487a7f577a95,">>     1 | ---
+       2 | - name: Disable APT repositories
+       3 |   when:
+       4 |     - ansible_facts['os_family'] == 'Debian'
+       5 |     - packages_apt_disable_repositories is defined
+       6 |     - packages_apt_disable_repositories | length > 0
+       7 |   block:
+       8 |     - name: Disable APT repositories
+       9 |       ansible.builtin.deb822_repository:
+      10 |         name: ""{{ item.name }}""
+      11 |         state: absent
+      12 |       loop: ""{{ packages_apt_disable_repositories }}""
+      13 |       notify: Update APT cache
+      14 | 
+      15 | - name: Add extra APT repositories",positive,advisory,yes,no,none,structure-condition-present,"The visible 'Disable APT repositories' task carries a when: guard plus a block: with exactly one member sub-task (the deb822_repository task, lines 7-13); no second member task is present in the block. The same when: conditions could be attached directly to the single task without the block, so the block adds no visible interface/extension value; this is a proportionate but non-critical simplification.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNNECESSARY-ABSTRACTION-002,ansibleguard/unnecessary-abstraction,unnecessary-abstraction,Structure/reuse,D-long-tail,65,99.4,ol3d/home-ops,09006fd5ee923e0735b8808865d82fe1b66a2d0c,lab/provision/ansible/kubernetes/playbooks/configure-base-nodes.yml,1,note,block: wraps exactly one task (count=1),37430c690e6ec8f741daac674f776e8a0431ad50c05cf2c479614eea3eb36254,">>     1 | ---
+       2 | - name: Configure Kubernetes Base Nodes
+       3 |   hosts:
+       4 |     - k3s-master
+       5 |     - k3s-agent
+       6 |   gather_facts: true
+       7 |   any_errors_fatal: true
+       8 | 
+       9 |   pre_tasks:
+      10 |     - name: Pausing for 2 seconds...
+      11 |       ansible.builtin.pause:
+      12 |         seconds: 2
+      13 | 
+      14 |   roles:
+      15 |     - role: geerlingguy.ntp",uncertain,uncertain,no,yes,full file content (location of the flagged block),insufficient-source-context,"The 15-line excerpt shows only the play header, a pre_tasks pause step, and the start of a roles: list for hosts k3s-master/k3s-agent; no 'block:' keyword appears anywhere in the visible window, so the single-task block the detector claims cannot be located or inspected in this evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNNECESSARY-ABSTRACTION-003,ansibleguard/unnecessary-abstraction,unnecessary-abstraction,Structure/reuse,D-long-tail,65,99.4,openshift/openshift-ansible,440ea65eb643090218c8b92556bd5afec83735bd,roles/openshift_node/tasks/apply_machine_config.yml,1,note,block: wraps exactly one task (count=1),b9b2313994a2244921943d661294789e11399da352560c8bc5143409940c2663,">>     1 | ---
+       2 | - name: Create temp directory
+       3 |   tempfile:
+       4 |     state: directory
+       5 |   register: temp_dir
+       6 | 
+       7 | - name: Get worker machine current config name
+       8 |   command: >
+       9 |     oc get node {{ ansible_nodename | lower }}
+      10 |     --kubeconfig={{ openshift_node_kubeconfig_path }}
+      11 |     --output=jsonpath='{.metadata.annotations.machineconfiguration\.openshift\.io/desiredConfig}'
+      12 |   delegate_to: localhost
+      13 |   register: oc_get
+      14 |   until:
+      15 |   - oc_get.stdout != ''",uncertain,uncertain,no,yes,full file content (location of the flagged block),insufficient-source-context,"The excerpt shows a 'Create temp directory' task and the start of a 'Get worker machine current config name' command task; no 'block:' keyword is present in the visible 15 lines, so the single-task block the detector claims cannot be located in this evidence.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-INSUFFICIENT-MODULARIZATION-001,ansibleguard/insufficient-modularization,insufficient-modularization,Structure/reuse,D-long-tail,22,99.8,NLNOG/ring-ansible,b8a7aede6730b3fa3fc3065e187ace979ceedd01,playbook.yml,1,warning,Large playbook with many plays (count=1),899d225b32bbc1ee9f8af6f4d100b9662ed2a7dcd04e58178cec09a6fd97f2bc,">>     1 | - hosts: ringnode
+       2 |   tasks:
+       3 |     - include_vars: ""vault/ringnode.yml""
+       4 |   tags:
+       5 |     - always
+       6 | 
+       7 | - hosts: infranode
+       8 |   tasks:
+       9 |     - include_vars: ""{{ item }}""
+      10 |       with_first_found:
+      11 |         - ""vault/{{ inventory_hostname}}.yml""
+      12 |         - ""vault/infranode.yml""
+      13 |   tags:
+      14 |     - always
+      15 | ",uncertain,uncertain,no,yes,full playbook content (total play count),insufficient-source-context,"The visible window shows two inline plays (ringnode, infranode) each doing raw include_vars with no roles/includes for logic, which is directionally consistent with 'insufficient modularization', but the file is truncated at 15 lines so the full play count supporting the 'many plays' claim cannot be verified.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-INSUFFICIENT-MODULARIZATION-002,ansibleguard/insufficient-modularization,insufficient-modularization,Structure/reuse,D-long-tail,22,99.8,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,playbooks/acs.yml,1,warning,Large playbook with many plays (count=1),f3a6100c12b90346f7305c8460a76917fa86b838be5a7305423f8155674def78,">>     1 | ---
+       2 | - name: Include vars based on acs major version
+       3 |   ansible.builtin.import_playbook: include-vars.yml
+       4 | 
+       5 | - name: Populate deployment configuration facts
+       6 |   ansible.builtin.import_playbook: facts.yml
+       7 | 
+       8 | - name: Check if current OS version is in the supported matrix
+       9 |   hosts: all:!external
+      10 |   gather_facts: true
+      11 |   tasks:
+      12 |     - name: Compare host OS with supported matrix
+      13 |       vars:
+      14 |         os_versions: ""{{ supported_os[ansible_distribution].versions | default([]) }}""
+      15 |       ansible.builtin.fail:",uncertain,uncertain,no,yes,full playbook content (total play count),insufficient-source-context,The visible window shows two import_playbook statements (already a form of modularization) followed by the start of one inline play; the full play count needed to judge whether the playbook is genuinely under-modularized is not visible beyond these 15 lines.,medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNEXPECTED-TASK-LOCATION-001,ansibleguard/unexpected-task-location,unexpected-task-location,Structure/reuse,D-long-tail,5,99.97,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,tasks/remount_tmp.yml,3,warning,A task using the handler-only 'listen' attribute belongs under handlers/.,45bdd070a6ef1014fbcee0588281ea94f6cb76aa75d9227c3e3bf71fa7816018,"       1 | ---
+       2 | 
+>>     3 | - name: ""Add filesystem options for /tmp""
+       4 |   when: not rhel9cis_tmp_svc
+       5 |   vars:
+       6 |     mount_point: '/tmp'
+       7 |   ansible.posix.mount:
+       8 |     path: ""{{ mount_point }}""
+       9 |     src: ""{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}""
+      10 |     state: present
+      11 |     fstype: ""{{ prelim_mount_point_fs_and_options[mount_point]['fs_type'] }}""
+      12 |     opts: ""{{ prelim_mount_point_fs_and_options[mount_point]['options'] | unique | join(',') }}""
+      13 |   listen: ""Remount /tmp""
+      14 | 
+      15 | - name: ""Remounting /tmp""
+      16 |   when: not rhel9cis_tmp_svc
+      17 |   vars:",positive,actionable,yes,no,none,structure-condition-present,"The task 'Add filesystem options for /tmp' is defined in tasks/remount_tmp.yml and carries a listen: ""Remount /tmp"" attribute, which is a handler-only keyword; placed in a tasks file it will not register as a listener for a notify, so the task should be relocated to handlers/ as the message states.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNSTRUCTURED-MODULE-001,ansibleguard/unstructured-module,unstructured-module,Structure/reuse,D-long-tail,4,99.99,snyssen/infra-snyssen.be,5f8652b4132407221a55c65660ac204d57cee3c5,roles/firewall/defaults/main.yml,1,warning,Role 'firewall' has no tasks/main.yml or tasks/main.yaml entry point.,9a070b6e6090c3e2295db3b60537bdc921487fe07e1175e49e6ae1421bbe471e,">>     1 | firewall_port: ""80""
+       2 | firewall_proto: tcp # 'tcp', 'udp', or 'service' if port should refer to a service instead of a numeric port
+       3 | firewall_rule: allow",uncertain,uncertain,no,yes,repository tree/directory listing,insufficient-source-context,"The only evidence shown is roles/firewall/defaults/main.yml (three variable defaults); this is consistent with, but does not itself prove, the claim that tasks/main.yml or tasks/main.yaml is absent from the role, since no directory listing confirming the entry point's absence is included.",medium,claude-sonnet-5,stratified-v2-400

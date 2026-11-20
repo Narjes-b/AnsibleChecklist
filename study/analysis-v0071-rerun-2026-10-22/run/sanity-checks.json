@@ -1,0 +1,106 @@
+{
+  "checked_at_utc": "2026-10-22T14:24:35.939376+00:00",
+  "checks": [
+    {
+      "detail": "found 207",
+      "name": "frozen_repository_count",
+      "passed": true
+    },
+    {
+      "detail": "each status row has an expected SHA",
+      "name": "manifest_sha_present",
+      "passed": true
+    },
+    {
+      "detail": "373923 occurrences",
+      "name": "canonical_occurrence_identity_unique",
+      "passed": true
+    },
+    {
+      "detail": "providers are constrained to modeled identities",
+      "name": "valid_provider",
+      "passed": true
+    },
+    {
+      "detail": "raw=389924, canonical=373923",
+      "name": "raw_not_less_than_canonical",
+      "passed": true
+    },
+    {
+      "detail": "missing=[]",
+      "name": "chart_source_data_present",
+      "passed": true
+    },
+    {
+      "detail": "verified 17 of 17 chart SVGs",
+      "name": "chart_svgs_present",
+      "passed": true
+    },
+    {
+      "detail": "207 repository status rows",
+      "name": "repository_status_identity_unique",
+      "passed": true
+    },
+    {
+      "detail": "overall={'complete': 171, 'partial': 35, 'failed': 1} scan={'completed': 206, 'timeout': 1} [observed; no frozen expectation for run v0071-rerun-2026-10-22]",
+      "name": "execution_state_counts",
+      "passed": true
+    },
+    {
+      "detail": "found 206 completed AnsibleGuard results [observed; no frozen expectation for run v0071-rerun-2026-10-22]",
+      "name": "analyzable_core_population",
+      "passed": true
+    },
+    {
+      "detail": "the timed-out repository retains missing counts",
+      "name": "missing_core_result_not_zeroed",
+      "passed": true
+    },
+    {
+      "detail": "exclusive categories={'core and optional providers complete': 171, 'core complete; optional provider incomplete': 35, 'core result missing': 1}",
+      "name": "provider_completeness_is_exclusive",
+      "passed": true
+    },
+    {
+      "detail": "264704 AnsibleGuard production-source occurrences",
+      "name": "internal_source_population",
+      "passed": true
+    },
+    {
+      "detail": "sha256=71be3560cfb8194aa50d63a0ce323737e35ca9aaec0d01004d114b3bd995cecd [observed; no frozen expectation for run v0071-rerun-2026-10-22]",
+      "name": "internal_source_sha256",
+      "passed": true
+    },
+    {
+      "detail": "59 observed AnsibleGuard rules [observed; no frozen expectation for run v0071-rerun-2026-10-22]",
+      "name": "internal_source_rule_count",
+      "passed": true
+    },
+    {
+      "detail": "every source occurrence has a relative file path and positive line",
+      "name": "validation_context_fields_present",
+      "passed": true
+    },
+    {
+      "detail": "namespaced IDs are unique; raw occurrence_id collisions=1002",
+      "name": "validation_stable_identity_unique",
+      "passed": true
+    },
+    {
+      "detail": "density includes only analyzable repositories",
+      "name": "internal_density_excludes_missing_repository",
+      "passed": true
+    },
+    {
+      "detail": "unmodeled overlap estimate is blank",
+      "name": "external_overlap_not_encoded_as_zero",
+      "passed": true
+    },
+    {
+      "detail": "certainty and actionability are reported separately",
+      "name": "misleading_uncertain_actionable_chart_removed",
+      "passed": true
+    }
+  ],
+  "status": "passed"
+}

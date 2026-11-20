@@ -1,0 +1,5 @@
+---
+# The reproducible base research environment installs no third-party Ansible
+# collections. Add exact collection versions here and regenerate provenance
+# before running a study that requires their ansible-doc metadata.
+collections: []

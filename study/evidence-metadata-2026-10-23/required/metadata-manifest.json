@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "purpose": "frozen metadata provenance; detector claims unverified",
+  "eligible_for_performance_scoring": false,
+  "selected_rows": 861,
+  "recorded_rows": 861,
+  "archive_sha256": "b89d10f7c37f7093a66162323b68f6e34ae5c76599360d759607003347fc8c66",
+  "archive_checksum_verified": true,
+  "draw_manifest_sha256": "1804b28350d6806f824b016493cfdde5fa470be24ee4ec06f8113ddeb1e8f656",
+  "retrieval_manifest_sha256": "7ce7f970abb0011bc715c512f0e3d9d39a233e87c4ee7bd8983b934f2c5f4d8f",
+  "status_counts": {
+    "metadata-joined": 861
+  },
+  "subject_kind_counts": {
+    "location": 553,
+    "task": 170,
+    "attribute": 25,
+    "variable": 113
+  },
+  "metadata_redacted": 861,
+  "subject_verified": 0,
+  "complete_rule_evidence": 0,
+  "labels_generated": 0,
+  "model_calls": 0,
+  "implementation_sha256": "d05442a1f27a682e7cd954aa9df785f412b7aa4de4a99a02229d848ebe57e871",
+  "dependency_sha256": {
+    "retrieve_sample_evidence.py": "aa079a5b9b2037c6dc213e06940e59f9301709da35d80531611bc12fa99e6328",
+    "v007_bundle_context_v2.py": "d782d4dd36ba3bc5825185a654bffb5c2e99ee7a844b591acf2b0ffa9d9f4c8f",
+    "v007_bundle_redact_v2.py": "622a61c23d3c9ccdb55f8e5d7b0418e30243ec2abdd36e2e8c01b7080de61437",
+    "v007_bundle_secret_scan.py": "e531754be6366c3f3a42dabdc71cc8a0adaf82dd7dae0462c89d104b43564bf0",
+    "v007_validation_pilot.py": "a73b8703c29c7d7e70874d95d95636fd3b1abec216ff2bf0295ab451e9ef59ef"
+  },
+  "output_sha256": {
+    "metadata-ledger.csv": "dd4ccfbd5199ddb00f38a6011f49433af783598b0ac58e9e0c04377ce6729f9c"
+  },
+  "local_packet_directory": "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/metadata-2026-10-23/required",
+  "limits": [
+    "A joined detector claim is not a verified semantic subject or true defect",
+    "Redaction can remove context; failures remain in the selected ledger",
+    "Required designs overlap; counts across draws are not additive"
+  ]
+}

@@ -1,0 +1,40 @@
+FROM python:3.12.11-slim
+
+ARG ANSIBLEGUARD_BUILD_GIT_SHA=unknown
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    HOME=/opt/ansibleguard-home
+
+WORKDIR /opt/ansibleguard
+
+# technical-full, Git-backed remote acquisition, PR comparison, submodules,
+# and explicit LFS materialization all require these runtime tools.  Keeping
+# them in the research image makes the image that passes readiness the same
+# environment that produces the study results.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates git git-lfs \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt ./
+
+# Keep the large, locked Python/model layer reusable when only source code or
+# tests change during the pre-freeze audit.
+RUN mkdir -p "$HOME" \
+    && python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m nltk.downloader -d /usr/local/share/nltk_data wordnet
+
+COPY . .
+
+# Bind the immutable tool commit only after the large locked dependency layer,
+# so a source-only freeze correction does not force a 400 MB model reinstall.
+ENV ANSIBLEGUARD_BUILD_GIT_SHA=${ANSIBLEGUARD_BUILD_GIT_SHA}
+
+RUN python -m pip install --no-cache-dir --no-deps -e . \
+    && python -m ansibleguard.external.install_gitleaks \
+    && cd study/releases/v004 \
+    && sha256sum --check checksums.sha256 \
+    && chmod -R a+rwX "$HOME"
+
+ENV NLTK_DATA=/usr/local/share/nltk_data
+ENTRYPOINT ["ansibleguard"]

@@ -1,0 +1,14 @@
+criterion,value,repositories_retained,repositories_possibly_retained_pending_evidence,criterion_evaluated,criterion_passed,candidate_population,retained_percent,primary_value
+last_commit_years,4,0,169,173,173,173,0.0,false
+last_commit_years,6,0,169,173,173,173,0.0,true
+last_commit_years,8,0,169,173,173,173,0.0,false
+minimum_commits,500,0,170,8,5,173,0.0,false
+minimum_commits,1000,0,169,8,4,173,0.0,true
+minimum_commits,1500,0,168,8,3,173,0.0,false
+minimum_commits,2000,0,168,8,3,173,0.0,false
+minimum_total_prs_exclusive,25,0,169,4,4,173,0.0,false
+minimum_total_prs_exclusive,50,0,169,4,4,173,0.0,true
+minimum_total_prs_exclusive,100,0,169,4,3,173,0.0,false
+minimum_merged_ansible_prs,25,0,169,0,0,173,0.0,false
+minimum_merged_ansible_prs,50,0,169,0,0,173,0.0,true
+minimum_merged_ansible_prs,100,0,169,0,0,173,0.0,false

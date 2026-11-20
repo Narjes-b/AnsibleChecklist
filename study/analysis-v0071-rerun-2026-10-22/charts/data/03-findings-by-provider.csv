@@ -1,0 +1,4 @@
+provider,findings
+ansibleguard,264863
+ansible-lint,107626
+gitleaks,1434

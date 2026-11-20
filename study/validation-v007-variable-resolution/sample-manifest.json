@@ -1,0 +1,17 @@
+{
+  "emitted_positive_per_resolution_class": 150,
+  "emitted_positive_total": 450,
+  "hashes_sha256": {
+    "emitted_positive_sample": "e5610a84fe199bf006a54d71d7684f2f4db06c98ba49d686f4c20eca082c92a2",
+    "occurrence_population": "bb8a23a95058c007465562148db9a6454702c61d59174de69dfc43b1d9c71efb",
+    "repository_population": "a43a8aeb60ffc22331fab2378d3579a70ad1021c312266385f034247f81c9ba0",
+    "source_first_sample": "106c4a240245cd22f34e65bc58f3aadce0d26c381e7c871da484425da4ed3d1d"
+  },
+  "repository_caps": {
+    "emitted_positive": "3; 5 for CANDIDATE_MISSING",
+    "source_first": 2
+  },
+  "sampling_seed": "v007-variable-resolution-primary-20260917",
+  "schema_version": 1,
+  "source_first_total": 150
+}

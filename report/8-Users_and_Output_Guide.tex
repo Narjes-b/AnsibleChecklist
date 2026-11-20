@@ -1,0 +1,247 @@
+\chapter{Users and Output Guide}
+\label{chap:users_outputs}
+
+\section{Who Uses AnsibleGuard?}
+AnsibleGuard is not designed for one generic ``user.'' Different actors need
+different evidence, latency, and detail. The same canonical model supports all
+of them without forcing each actor to interpret raw provider output.
+
+\begin{longtable}{p{3.1cm}p{3.5cm}p{3.2cm}p{4.5cm}}
+\toprule User type & Primary question & Recommended mode/profile & Principal outputs \\
+\midrule\endhead
+Ansible author & What should I correct before committing? & Local path or
+changed-file feedback; \code{developer-fast} or \code{quality} & Text/Markdown
+for explanation; per-file findings and exact source lines. \\
+Role or collection maintainer & Is the complete role structurally and
+semantically sound? & Full repository; \code{technical-full}, \code{quality},
+or \code{security} & Canonical occurrences, category/rule summary, role-layout,
+Molecule, documentation and dependency findings. \\
+Pull-request reviewer & What did this PR introduce or fix? & Base/head PR mode;
+\code{pr} plus \code{review-range} & Introduced, fixed, unchanged and
+moved/uncertain sets,
+review metadata, Markdown summary and SARIF annotations. \\
+CI/CD engineer & Should this pipeline pass, warn, or fail? & Frozen commit with
+a project profile/policy & SARIF, JSON contract, analysis health, severity and
+diagnostic fields; stable exit behavior. \\
+Security engineer & Are credentials, unsafe permissions or insecure transport
+present? & \code{security} with GitLeaks and selected ansible-lint rules &
+Redacted secret evidence, provider fingerprints, security concepts and
+EXPOSED/uncertainty context. \\
+Quality lead / architect & Which mechanisms dominate maintenance work? & Full
+or \code{quality} profile across repositories & Category/concept distributions,
+density denominators, structural and cross-file evidence. \\
+Researcher & Can the study be reproduced and compared without population
+drift? & Manifest-required snapshot profiles & Frozen SHA, manifest hash,
+source/analysis population IDs, raw and canonical JSON/CSV, diagnostics and
+schema copy. \\
+Tool developer & Why did a rule or provider behave this way? & Focused tests,
+single repository, raw + canonical outputs & Raw provider records, parsed-file
+cache, metrics, diagnostics, native IDs, fingerprints and canonical evidence. \\
+Supervisor / auditor & Which claims are supported by which artifacts? & Frozen
+study aggregation and report & All-repositories CSV, methods, charts,
+provider-health evidence, version comparison and stated validity limits. \\
+\bottomrule
+\end{longtable}
+
+\section{User-to-Decision Flow}
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+ u/.style={draw=ansblue,rounded corners,fill=anslightblue,text width=27mm,
+ minimum height=10mm,align=center,font=\small\bfseries},
+ o/.style={draw=ansgreen,rounded corners,fill=anslightgreen,text width=30mm,
+ minimum height=10mm,align=center,font=\small},
+ a/.style={-{Latex[length=2mm]},thick},node distance=8mm and 12mm]
+\node[u] (author) {Author / maintainer};
+\node[u,below=of author] (reviewer) {Reviewer / CI};
+\node[u,below=of reviewer] (researcher) {Researcher / auditor};
+\node[o,right=of author] (fast) {Text, Markdown, per-file evidence};
+\node[o,right=of reviewer] (diff) {SARIF and introduced/fixed comparison};
+\node[o,right=of researcher] (data) {Validated JSON/CSV, raw evidence, metadata};
+\node[o,right=20mm of diff] (decision) {Fix, approve, gate, investigate, or reproduce};
+\draw[a] (author)--(fast); \draw[a] (reviewer)--(diff);
+\draw[a] (researcher)--(data); \draw[a] (fast)--(decision);
+\draw[a] (diff)--(decision); \draw[a] (data)--(decision);
+\end{tikzpicture}}
+\caption{Different users consume different projections of one evidence model.}
+\end{figure}
+
+\section{Actual Output Tree}
+The following tree reflects the v0.0.6 technical-full snapshots. Compatibility
+files remain available at the root while the structured directories separate
+raw, canonical, metadata, diagnostics and schema responsibilities.
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+<output>/
+|-- contract.json
+|-- diagnostics.json
+|-- file_selection.json
+|-- findings.json              # normalized compatibility projection
+|-- findings.raw.json          # raw compatibility projection
+|-- findings.csv
+|-- findings.sarif
+|-- findings.txt
+|-- occurrences.json
+|-- gitleaks-suppressed.json
+|-- raw/
+|   |-- findings.json
+|   |-- findings.csv
+|   `-- findings.txt
+|-- canonical/
+|   |-- occurrences.json
+|   |-- occurrences.csv
+|   |-- occurrences.txt
+|   `-- findings.sarif
+|-- metadata/
+|   |-- run.json
+|   |-- file-selection.json
+|   `-- review-metrics.json
+|-- files/<repository-relative-path>/
+|   |-- metrics.json
+|   |-- findings.json
+|   |-- occurrences.json
+|   |-- diagnostics.json
+|   `-- report.json
+|-- schemas/output-v3.json
+|-- legacy/layout.json
+`-- .cache/parsed/<content-hash>.json
+\end{lstlisting}
+
+The cache is an execution optimisation, not a study result. The legacy layout
+exists for compatibility, not as the canonical contract. Consumers should use
+the versioned envelope, canonical directory, metadata and copied schema.
+
+\section{From Raw Finding to Canonical Occurrence}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+ b/.style={draw=ansblue,rounded corners,fill=anslightblue,text width=28mm,
+ minimum height=10mm,align=center,font=\small},
+ a/.style={-{Latex[length=2mm]},thick,ansblue},node distance=7mm]
+\node[b] (native) {Native provider record};
+\node[b,right=of native] (finding) {Normalised finding};
+\node[b,right=of finding] (identity) {Concept and identity keys};
+\node[b,right=of identity] (occ) {Canonical occurrence};
+\node[b,below=of occ] (evidence) {Merged provider evidence};
+\node[b,left=of evidence] (status) {Semantic status and policy severity};
+\node[b,left=of status] (export) {Validated projections};
+\draw[a] (native)--(finding); \draw[a] (finding)--(identity);
+\draw[a] (identity)--(occ); \draw[a] (occ)--(evidence);
+\draw[a] (evidence)--(status); \draw[a] (status)--(export);
+\end{tikzpicture}
+\caption{Transformation from provider-native evidence to consumer outputs.}
+\end{figure}
+
+Raw evidence is deliberately retained. If ansible-lint and an internal rule
+observe the same concept at the same sufficiently specific source location,
+canonicalisation can form one occurrence with two evidence entries. The
+provider raw total therefore answers ``how much did tools emit?'' whereas the
+canonical total answers ``how many normalised evidence units remain?'' Neither
+answer is a manual defect count.
+
+\section{Concrete Versioned JSON Shapes}
+The examples below are schematic and omit optional fields; names and nesting
+match the v3 contract.
+
+\begin{lstlisting}[language={},basicstyle=\ttfamily\footnotesize]
+{
+  "schema_version": "3",
+  "kind": "occurrences",
+  "contract": { "profile": "technical-full" },
+  "analysis_health": { "status": "partial", "complete": false },
+  "items": [ ... ],
+  "counts": { ... },
+  "artifacts": { ... },
+  "policy": { ... }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language={},basicstyle=\ttfamily\footnotesize]
+{
+  "occurrence_id": "<stable canonical id>",
+  "concept_id": "unguarded_variable",
+  "file": "roles/web/tasks/main.yml",
+  "line": 42,
+  "severity": "warning",
+  "scan_mode": "snapshot",
+  "semantic_subject": "service_port",
+  "semantic_key": "<file-aware semantic identity>",
+  "detectors": ["ansibleguard"],
+  "source_population": "<manifest identity>",
+  "analysis_population": "<profile/provider identity>"
+}
+\end{lstlisting}
+
+The status/evidence extension records why a variable remains uncertain or
+unresolved. Sensitive evidence is redacted before serialisation. Provider
+evidence preserves native rule ID, finding ID, fingerprint and message so that
+normalisation never destroys auditability.
+
+\section{CSV Outputs}
+\subsection{Per-occurrence CSV}
+The canonical occurrence CSV is convenient for sampling and pivot tables. One
+row represents one canonical occurrence. Identity/location columns identify
+the unit; concept/category/severity/status columns describe it; detector and
+provider fields retain origin; source/analysis population fields protect
+comparisons; semantic subject and fingerprints explain matching.
+
+\subsection{All-repositories summary CSV}
+The study summary has one row per repository plus the final \code{__ALL__} row.
+It contains repository/SHA/snapshot status, manifest and selected denominators,
+processed and structurally analysed files, diagnostics, provider health, raw
+findings, canonical totals, semantic states, symbol counts, artifacts,
+categories, severities, concepts and exact rules. Wide prefixes are systematic:
+
+\begin{longtable}{p{5.2cm}p{9cm}}
+\toprule Prefix/example & Meaning \\ \midrule\endhead
+\code{manifest_*} & Population before the selected production-Ansible filter:
+file class, artifact/document and parse-state counts. \\
+\code{selected_*} & In-scope file, LOC, artifact, document and parse counts. \\
+\code{scan_*} & What was parsed or structurally analysed during execution. \\
+\code{provider_*} & Raw contribution from each provider. \\
+\code{finding_category_*} & Canonical counts grouped by category. \\
+\code{finding_concept_*} & Canonical counts grouped by normalised concept. \\
+\code{finding_rule_*} & Counts grouped by exact detector rule. \\
+\code{confirmed_finding_concept_*} & Concept projection restricted to the
+CONFIRMED state; it is not a human TP column. \\
+\code{finding_semantic_status_*} & CONFIRMED, UNCERTAIN, EXPOSED,
+\code{UNRESOLVED} and \code{ORDERED_CONFLICT} counts. \\
+\code{diagnostic_stage_*}, \code{diagnostic_status_*} & Parser/provider stage
+and health/failure aggregation. \\
+\code{symbol_kind_*} & Definition provenance such as defaults, vars,
+inventory, register, loop variable, role parameter or \code{set_fact}. \\
+\code{severity_*} & Error, warning and note totals. \\
+\bottomrule
+\end{longtable}
+
+\section{SARIF, Text, and Markdown}
+SARIF is intended for GitHub Code Scanning and IDE-compatible consumers. It
+uses repository-relative artifact URIs, exact regions, normalised rule IDs and
+stable partial fingerprints. In PR mode it should communicate introduced
+evidence without presenting unchanged repository debt as new work.
+
+Text is optimized for terminal inspection and includes location, severity,
+rule/concept and message. Markdown is optimized for PR descriptions, reports
+and human review. JSON remains the authoritative machine interchange, while
+CSV is the most practical research aggregation format. A user should not parse
+text output when JSON or CSV is available.
+
+\section{How Consumers Must Interpret Zero}
+A zero has meaning only when the relevant population and provider are complete.
+Examples:
+\begin{itemize}
+  \item zero GitLeaks findings with GitLeaks \code{completed} means no configured
+  pattern matched the scanned scope;
+  \item zero GitLeaks findings with GitLeaks \code{unavailable} means nothing
+  about secrets;
+  \item zero findings in a changed-file partial run means no selected file-local
+  rule fired, not that the repository is clean;
+  \item zero occurrences after canonicalisation does not erase raw diagnostics;
+  \item an absent category column and a present category with value zero should
+  not be conflated by downstream scripts.
+\end{itemize}
+
+This no-clean-on-failure rule is why provider health, diagnostics, profile,
+scan mode, manifest identity and schema version are part of the output rather
+than optional log messages.

@@ -1,0 +1,6 @@
+- name: Missing repository variable
+  hosts: all
+  tasks:
+    - name: Read missing value
+      debug:
+        msg: "{{ calibration_missing_value }}"

@@ -1,0 +1,21 @@
+ansibleguard_rule_id,external_provider,external_rule_or_family,relationship,recommended_matching_key,notes,status
+ansibleguard/overriden-keys,ansible-lint,yaml[key-duplicates],substantial,same repository+commit+file+mapping object; overlapping key span,Same duplicate mapping-key defect; parser behavior can differ,ready_for_manual_review
+ansibleguard/deprecated-modules,ansible-lint,deprecated-module,substantial,same task/module object,Catalog/version differences can change sets,ready_for_manual_review
+ansibleguard/shell-instead-of-module,ansible-lint,command-instead-of-module,substantial_partial,same task + command family,Curated command recognition differs,ready_for_manual_review
+ansibleguard/shell-instead-of-module,ansible-lint,command-instead-of-shell,partial,same task,Related but not identical predicate,ready_for_manual_review
+ansibleguard/non-idempotent-command,ansible-lint,no-changed-when,substantial_partial,same task,AG first classifies mutating commands,ready_for_manual_review
+ansibleguard/shell-environment-export,ansible-lint,inline-env-var,substantial,same task + environment assignment,Likely direct source-level overlap in matching contexts,ready_for_manual_review
+ansibleguard/long-statement,ansible-lint,yaml[line-length],conditional_substantial,same physical source line,Only comparable when thresholds/config semantics match,requires_config_check
+ansibleguard/unnamed-task,ansible-lint,name[missing],substantial,same task object,Do not rely only on reported line number,ready_for_manual_review
+ansibleguard/unnamed-play,ansible-lint,name[missing],substantial,same play object,Different object level from unnamed-task,ready_for_manual_review
+ansibleguard/variable-naming-convention,ansible-lint,var-naming[*],family_partial,same variable definition/use + subpredicate,Must split ansible-lint var-naming subrules,requires_subrule_mapping
+ansibleguard/insecure-permissions,ansible-lint,risky-file-permissions,partial,same task/resource/mode,Defaults and sensitivity context differ,ready_for_manual_review
+ansibleguard/silent-error-suppression,ansible-lint,ignore-errors,partial,same task,AG also reasons about failed_when/register handling,ready_for_manual_review
+ansibleguard/large-task,ansible-lint,complexity[tasks],partial_adjacent,same task/taskfile structural unit,Thresholds and structural semantics differ,requires_threshold_check
+ansibleguard/invalid-task-attribute-type,ansible-lint,schema[tasks]|args[module],partial,same task + attribute/module argument,External validation is broader,requires_subrule_mapping
+ansibleguard/invalid-numeric-value,ansible-lint,schema/args family,partial,same task + numeric field,Only some numeric constraints correspond,requires_subrule_mapping
+ansibleguard/missing-tags,ansible-lint,,none,,Do NOT map to meta-no-tags; different semantics,explicit_no_mapping
+ansibleguard/unguarded-variable,ansible-lint,,none,,No direct equivalent; preserve internal semantic concepts,explicit_no_mapping
+ansibleguard/plaintext-sensitive-variable,gitleaks,provider secret rules,partial,same repository+file+literal/span,AG uses sensitive-variable context; GitLeaks uses secret signatures,requires_gitleaks_rule_mapping
+ansibleguard/default-credentials,gitleaks,provider secret rules,partial,same repository+file+literal/span,Known-default policy differs from secret-pattern detection,requires_gitleaks_rule_mapping
+ansibleguard/credentials-leaking-in-log,gitleaks,provider secret rules,adjacent,same task/file only when applicable,Logging exposure vs source-secret detection are different questions,explicit_adjacent

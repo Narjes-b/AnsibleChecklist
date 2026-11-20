@@ -1,0 +1,50 @@
+{
+  "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-001",
+  "source_location": {
+    "repository": "AtlasOfLivingAustralia/ala-install",
+    "path": "ansible/roles/biocache-properties/tasks/main.yml",
+    "line_start": "1",
+    "line_end": "1",
+    "rule_id": "ansibleguard/missing-bool-filters",
+    "review_family": "Variable/reference reasoning"
+  },
+  "context_supplied_to_model": {
+    "source_context": "",
+    "detector_message": "Given the available frozen repository evidence, what is the strongest supported conclusion about the reported variable, reference, scope, precedence, or runtime-input condition?"
+  },
+  "original_detector_annotation": {
+    "my_label_semantic": "positive",
+    "my_label_actionability": "actionable",
+    "my_explanation": "Line 27/35 compare sds_enabled to the quoted string \"true\" instead of casting with | bool; if the role ever receives sds_enabled as a native YAML/extra-vars boolean the comparison silently evaluates False.",
+    "teammate_label_semantic": "uncertain",
+    "teammate_explanation": "The exact repo shows visible inventory assignments as lowercase false and templates defaulting to the string false, but no enabled assignment or declared input-type contract. A boolean-typed true value would not match this string comparison; the repository evidence does not establish whether runtime inputs are intentionally textual.",
+    "note": "preserved exactly as found in the input file; never overwritten by this script"
+  },
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "inference_options": {
+      "temperature": 0.1
+    }
+  },
+  "prompt_version": "ansible-explain-v1",
+  "execution": {
+    "status": "ok",
+    "error": null,
+    "warnings": [],
+    "duration_seconds": 14.492,
+    "generated_at_utc": "2026-10-17T23:48:24.946132+00:00"
+  },
+  "raw_response": "{\n  \"what_is_wrong\": \"The variable `sds_enabled` is being compared directly with the string `\",\"why_it_is_wrong\": \"This comparison will always be false because `sds_enabled` is expected to be a boolean value (true or false), not a string.\",\n  \"why_in_this_context\": \"In Ansible, comparisons between variables and strings are generally not recommended for boolean values. The correct way to check if a variable is true is to use the `bool()` filter or simply compare it directly with `true` or `false`.\",\n  \"potential_consequences\": \"The task will never run because the condition `sds_enabled == 'true'` will always evaluate to false, even if `sds_enabled` is actually set to `true`. This means that any tasks dependent on this condition will not be executed, which could lead to missing configuration or data.\",\n  \"recommended_fix\": \"Use the `bool()` filter to convert `sds_enabled` to a boolean before comparing it with `true`. Alternatively, compare directly with `true` if you are certain that `sds_enabled` is already a boolean.\",\n  \"fixed_code_snippet\": \"- name: Download SDS layers\\n  get_url: url={{ sds_layers_url | default('https://archives.ala.org.au/archives/layers/sds-layers.tgz') }} dest=\\\"{{data_dir}}/biocache/layers/sds-layers.tgz\\\" force=yes\\n  when: bool(sds_enabled) == true\\n  tags:\\n    - properties\\n    - biocache-properties\\n    - biocache-layers\",\n  \"why_fix_works\": \"Using the `bool()` filter ensures that `sds_enabled` is treated as a boolean value, allowing for accurate comparisons with `true`. Alternatively, comparing directly with `true` assumes that `sds_enabled` is already a boolean and will work if that assumption holds true.\",\n  \"trade_offs_and_assumptions\": \"Using the `bool()` filter adds an extra layer of safety but may be slightly less efficient. Comparing directly with `true` assumes that `sds_enabled` is always a boolean, which could lead to unexpected behavior if it's not.\",\n  \"confidence\": \"high\",\n  \"limitations\": null\n}",
+  "explanation": {
+    "what_is_wrong": "The variable `sds_enabled` is being compared directly with the string `",
+    "why_it_is_wrong": "This comparison will always be false because `sds_enabled` is expected to be a boolean value (true or false), not a string.",
+    "why_in_this_context": "In Ansible, comparisons between variables and strings are generally not recommended for boolean values. The correct way to check if a variable is true is to use the `bool()` filter or simply compare it directly with `true` or `false`.",
+    "potential_consequences": "The task will never run because the condition `sds_enabled == 'true'` will always evaluate to false, even if `sds_enabled` is actually set to `true`. This means that any tasks dependent on this condition will not be executed, which could lead to missing configuration or data.",
+    "recommended_fix": "Use the `bool()` filter to convert `sds_enabled` to a boolean before comparing it with `true`. Alternatively, compare directly with `true` if you are certain that `sds_enabled` is already a boolean.",
+    "fixed_code_snippet": "- name: Download SDS layers\n  get_url: url={{ sds_layers_url | default('https://archives.ala.org.au/archives/layers/sds-layers.tgz') }} dest=\"{{data_dir}}/biocache/layers/sds-layers.tgz\" force=yes\n  when: bool(sds_enabled) == true\n  tags:\n    - properties\n    - biocache-properties\n    - biocache-layers",
+    "why_fix_works": "Using the `bool()` filter ensures that `sds_enabled` is treated as a boolean value, allowing for accurate comparisons with `true`. Alternatively, comparing directly with `true` assumes that `sds_enabled` is already a boolean and will work if that assumption holds true.",
+    "trade_offs_and_assumptions": "Using the `bool()` filter adds an extra layer of safety but may be slightly less efficient. Comparing directly with `true` assumes that `sds_enabled` is always a boolean, which could lead to unexpected behavior if it's not.",
+    "confidence": "high",
+    "limitations": null
+  }
+}

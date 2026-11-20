@@ -1,0 +1,34 @@
+{
+  "purpose": "Complete source-only CLI diagnostic on verified frozen blob mirror; not historical full profile rerun",
+  "returncode": 2,
+  "seconds": 0.06452873900707345,
+  "timeout_seconds": 150,
+  "command": [
+    "/home/aymmzn/Documents/AnsibleChecklist/.venv/bin/ansibleguard",
+    "scan",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-gitleaks-repaired-2026-10-23/source",
+    "--profile",
+    "snapshot-source",
+    "--file-manifest",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-context-2026-10-23/worker/classification.csv",
+    "--fail-on",
+    "analysis-error",
+    "-o",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-source-cli-2026-10-23/scan"
+  ],
+  "source_inventory_sha256": "aec9786f7f3843683ee3fb5d7743e9008b030c61f54f9cafe74c57e9177893bc",
+  "module_docs_disabled": true,
+  "providers_requested": false,
+  "model_calls": 0,
+  "eligible_for_performance_scoring": false,
+  "git_head": "7c10b2eef444efdea1ef7315126107bf900fb95c",
+  "source_sha": "a49d30281d2d3c763ef0d50a7aaddc751a460863",
+  "project": "encapsulate-xyz/cosmos-ansible",
+  "log_sha256": {
+    "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr.log": "d3f0f7e2c6cfa4826c88006dcacb92130899005ddb07c0516c617b90ac21384c"
+  },
+  "process_status": "completed",
+  "status": "launcher-error",
+  "reason": "Installed CLI expects target directly; erroneous scan token caused argument rejection before analysis"
+}

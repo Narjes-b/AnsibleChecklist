@@ -1,0 +1,51 @@
+{
+  "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-001",
+  "source_location": {
+    "repository": "redhat-cop/infra.aap_configuration",
+    "path": "roles/hub_publish/tasks/evaluate_tarball_item.yml",
+    "line_start": "6",
+    "line_end": "6",
+    "rule_id": "ansibleguard/complex-expression",
+    "review_family": "Maintainability/complexity"
+  },
+  "context_supplied_to_model": {
+    "source_context": "    1 | ---\n    2 | - name: evaluate_tarball_item | Set tarball metadata from filename\n    3 |   ansible.builtin.set_fact:\n    4 |     __hub_publish_namespace: \"{{ (__hub_collection_tarball | basename).split('-')[0] }}\"\n    5 |     __hub_publish_name: \"{{ (__hub_collection_tarball | basename).split('-')[1] }}\"\n    6 |     __hub_publish_version: \"{{ (__hub_collection_tarball | basename).split('-')[2:] | join('-') | splitext | first | splitext | first }}\"\n    7 |     __hub_publish_overwrite: \"{{ hub_overwrite_existing | bool }}\"\n    8 |     __hub_publish_should_skip: false\n    9 | \n   10 | - name: evaluate_tarball_item | Existence check for pre-built collection tarball\n   11 |   ansible.builtin.include_tasks: check_collection_version.yml\n   12 |   when: hub_skip_existing_collections | bool\n   13 | \n   14 | - name: evaluate_tarball_item | Register pending pre-built collection tarball\n   15 |   ansible.builtin.set_fact:\n   16 |     __hub_publish_pending_tarballs: \"{{ __hub_publish_pending_tarballs + [__hub_collection_tarball] }}\"\n   17 |     __hub_publish_overwrite_lookup: \"{{ __hub_publish_overwrite_lookup | combine({(__hub_publish_namespace + '.' + __hub_publish_name + ':' + __hub_publish_version): __hub_publish_overwrite}) }}\"\n   18 |   when: not (__hub_publish_should_skip | default(false) | bool)\n   19 | \n   20 | ...",
+    "detector_message": "Does the frozen source unit genuinely exhibit the described maintainability/complexity condition independently of the detector cutoff?"
+  },
+  "original_detector_annotation": {
+    "my_label_semantic": "",
+    "my_label_actionability": "",
+    "my_explanation": "",
+    "teammate_label_semantic": "",
+    "teammate_explanation": "",
+    "note": "preserved exactly as found in the input file; never overwritten by this script"
+  },
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "inference_options": {
+      "temperature": 0.1,
+      "num_ctx": 8192
+    }
+  },
+  "prompt_version": "ansible-explain-v1.1",
+  "execution": {
+    "status": "ok",
+    "error": null,
+    "warnings": [],
+    "duration_seconds": 6.617,
+    "generated_at_utc": "2026-10-17T23:09:02.908995+00:00"
+  },
+  "raw_response": "{\n  \"what_is_wrong\": \"The expression in line 6 is overly complex and difficult to understand.\",\n  \"why_it_is_wrong\": \"The expression uses multiple nested functions and filters, making it hard to follow the logic at a glance.\",\n  \"why_in_this_context\": \"The expression is used to extract metadata from a filename, which is a relatively simple task. The complexity here is unnecessary and could be simplified.\",\n  \"potential_consequences\": \"The complexity might lead to bugs if the expression is not correctly maintained or if the logic changes. It could also make the code harder to maintain and understand for other developers.\",\n  \"recommended_fix\": \"Simplify the expression by breaking it down into smaller, more understandable parts.\",\n  \"fixed_code_snippet\": \"    __hub_publish_version: \\\"{{ (__hub_collection_tarball | basename).split('-')[2:] | join('-') | splitext | first | splitext | first }}\\\"\",\n  \"why_fix_works\": \"By breaking down the expression, it becomes easier to understand and maintain. Each part of the expression is clearly defined, making it easier to spot any issues if they arise.\",\n  \"trade_offs_and_assumptions\": \"Simplifying the expression might make it slightly less efficient, but the trade-off is better readability and maintainability. The assumption is that the performance impact will be negligible compared to the benefits of easier maintenance.\",\n  \"confidence\": \"high\",\n  \"limitations\": null\n}",
+  "explanation": {
+    "what_is_wrong": "The expression in line 6 is overly complex and difficult to understand.",
+    "why_it_is_wrong": "The expression uses multiple nested functions and filters, making it hard to follow the logic at a glance.",
+    "why_in_this_context": "The expression is used to extract metadata from a filename, which is a relatively simple task. The complexity here is unnecessary and could be simplified.",
+    "potential_consequences": "The complexity might lead to bugs if the expression is not correctly maintained or if the logic changes. It could also make the code harder to maintain and understand for other developers.",
+    "recommended_fix": "Simplify the expression by breaking it down into smaller, more understandable parts.",
+    "fixed_code_snippet": "    __hub_publish_version: \"{{ (__hub_collection_tarball | basename).split('-')[2:] | join('-') | splitext | first | splitext | first }}\"",
+    "why_fix_works": "By breaking down the expression, it becomes easier to understand and maintain. Each part of the expression is clearly defined, making it easier to spot any issues if they arise.",
+    "trade_offs_and_assumptions": "Simplifying the expression might make it slightly less efficient, but the trade-off is better readability and maintainability. The assumption is that the performance impact will be negligible compared to the benefits of easier maintenance.",
+    "confidence": "high",
+    "limitations": null
+  }
+}

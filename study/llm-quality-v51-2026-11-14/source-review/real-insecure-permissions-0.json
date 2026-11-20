@@ -1,0 +1,21 @@
+{
+  "case_id": "real-insecure-permissions-0",
+  "family": "insecure-permissions",
+  "occurrence": {
+    "file": "tasks/configure-jobs.yml",
+    "line": 2,
+    "rule_id": "insecure-permissions",
+    "message": "World-writable directory has no sticky bit, allowing users to remove or replace each other's entries."
+  },
+  "intent": null,
+  "snippets": [
+    {
+      "file": "tasks/configure-jobs.yml",
+      "text": "    2 | - name: Job directories are present\n    3 |   become: true\n    4 |   ansible.builtin.file:\n    5 |     path: \"{{ jenkins_home }}/jobs/{{ job_name }}\"\n    6 |     owner: \"{{ jenkins_user }}\"\n    7 |     group: \"{{ jenkins_group }}\"\n    8 |     mode: \"0777\"\n    9 |     state: directory\n   10 |   loop: \"{{ jenkins_jobs }}\"\n   11 |   loop_control:\n   12 |     loop_var: job_name\n   13 | "
+    }
+  ],
+  "missing": [],
+  "files": {
+    "tasks/configure-jobs.yml": "---\n- name: Job directories are present\n  become: true\n  ansible.builtin.file:\n    path: \"{{ jenkins_home }}/jobs/{{ job_name }}\"\n    owner: \"{{ jenkins_user }}\"\n    group: \"{{ jenkins_group }}\"\n    mode: \"0777\"\n    state: directory\n  loop: \"{{ jenkins_jobs }}\"\n  loop_control:\n    loop_var: job_name\n\n- name: Jobs are present\n  become: true\n  ansible.builtin.copy:\n    src: \"{{ jenkins_jobs_dir }}/{{ job_name }}/config.xml\"\n    dest: \"{{ jenkins_home }}/jobs/{{ job_name }}/config.xml\"\n    owner: \"{{ jenkins_user }}\"\n    group: \"{{ jenkins_group }}\"\n    mode: \"0777\"\n  loop: \"{{ jenkins_jobs }}\"\n  loop_control:\n    loop_var: job_name\n"
+  }
+}

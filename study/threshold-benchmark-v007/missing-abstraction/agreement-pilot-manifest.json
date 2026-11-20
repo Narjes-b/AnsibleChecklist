@@ -1,0 +1,22 @@
+{
+  "metric_id": "missing_abstraction_leaf_tasks",
+  "pilot_band_counts": {
+    "B1_low": 10,
+    "B2_lower_middle": 10,
+    "B3_upper_middle": 20,
+    "B4_high": 16,
+    "B5_current_positive_tail": 19
+  },
+  "pilot_prediction_counts": {
+    "false": 50,
+    "true": 25
+  },
+  "pilot_projects": 66,
+  "pilot_rows": 75,
+  "pilot_sha256": "9de6d1a506936e0c5f7d028b0debce8c90424ca289241008cf7651700470f667",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 1077,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

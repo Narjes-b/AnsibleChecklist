@@ -1,0 +1,29 @@
+{
+  "analysis_tool_commit": "ad1d60023d237b6e1cfa53466e81407e3f329229",
+  "architecture": "x86_64",
+  "cpu_count": 20,
+  "environment_variables": {
+    "LANG": "en_GB.UTF_8"
+  },
+  "locale": "LC_CTYPE=en_GB.UTF_8;LC_NUMERIC=C;LC_TIME=C;LC_COLLATE=C;LC_MONETARY=C;LC_MESSAGES=C;LC_PAPER=C;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=C;LC_IDENTIFICATION=C",
+  "package_builder_commit": "ad1d60023d237b6e1cfa53466e81407e3f329229",
+  "platform": "Linux-7.2.9-arch1-1-x86_64-with-glibc2.44",
+  "python_executable": "/home/aymmzn/Documents/AnsibleChecklist/.venv/bin/python",
+  "python_version": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+  "random_seeds": {
+    "study": "none; deterministic ordering only"
+  },
+  "recorded_at_utc": "2026-10-22T14:24:06.134314+00:00",
+  "timezone": "CET",
+  "tool_branch": "chore/consolidate-and-cleanup-2026-10-22",
+  "tool_commit": "ad1d60023d237b6e1cfa53466e81407e3f329229",
+  "tool_versions": {
+    "ansible": "unavailable: CalledProcessError: Command '['/home/aymmzn/Documents/AnsibleChecklist/.venv/bin/python', '-m', 'ansible', '--version']' returned non-zero exit status 2.",
+    "ansible-lint": "ansible-lint \u001b[1;36m26.4.0\u001b[0m using\u001b[2m ansible-core:\u001b[1;36m2.21.0\u001b[0m ansible-compat:\u001b[1;36m26.3.0\u001b[0m ruamel-yaml:\u001b[1;36m0.19.1\u001b[0m ruamel-yaml-clib:\u001b[1;36mNone\u001b[0m\u001b[0m\n\u001b[33mA new release of ansible-lint is available: \u001b[33m26.4.0\u001b[0m \u2192 \u001b[32m\u001b[34m\u001b]8;;https://github.com/ansible/ansible-lint/releases/tag/v26.10.1\u001b\\26.10.1\u001b]8;;\u001b\\\u001b[0m[/]\u001b[0m Upgrade by running: \u001b[34mpip install --upgrade ansible-lint\u001b[0m\u001b[0m",
+    "docker": "Docker version 29.2.1, build a5c7197",
+    "gitleaks": "version is set by build process",
+    "python": "Python 3.14.8"
+  },
+  "workers": 4,
+  "working_tree_dirty": false
+}

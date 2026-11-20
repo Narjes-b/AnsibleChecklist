@@ -1,0 +1,51 @@
+{
+  "status": "engineering checks complete; live model and human gates pending",
+  "tests": {
+    "full_suite": {
+      "passed": 1597,
+      "skipped": 2,
+      "command": "ANSIBLEGUARD_DISABLE_ANSIBLE_DOC=1 .venv/bin/pytest -q",
+      "duration_seconds": 122.09
+    },
+    "latest_focused": {
+      "passed": 223
+    }
+  },
+  "generated_documentation": "passed",
+  "compileall": "passed",
+  "git_diff_check": "passed",
+  "wheel": {
+    "path": "study/runs/icpc2027-build-20261110/ansibleguard-0.0.7.1-py3-none-any.whl",
+    "sha256": "53a9a1570b174b002914d73333a88db111b63c1f2e6880317112efce9f3694a3",
+    "build": "offline, no-index, no-deps, no-build-isolation",
+    "isolated_import_smoke": "passed; uses existing runtime dependency environment"
+  },
+  "demo": {
+    "providers_complete": true,
+    "execution_diagnostics": 0,
+    "introduced": 3,
+    "llm_requested": false
+  },
+  "evaluation": {
+    "development_cases": 24,
+    "evaluation_cases": 48,
+    "real_examples_per_family": 6,
+    "source_review": "pending",
+    "output_review": "pending"
+  },
+  "model": {
+    "installed": false,
+    "download": "stopped at owner request; explicit request required before resuming",
+    "live_v4_acceptance": "not run"
+  },
+  "paper_ready": false,
+  "pr_replay": {
+    "comparisons": 21,
+    "exit_0": 21,
+    "complete_providers": 14,
+    "ansible_lint_excluded": 7,
+    "automated_attribution_supported": 50,
+    "attribution_needs_review": 1,
+    "release_frozen": false
+  }
+}

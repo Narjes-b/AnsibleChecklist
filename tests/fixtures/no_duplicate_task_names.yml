@@ -1,0 +1,9 @@
+- name: Play with unique task names
+  hosts: all
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+    - name: Install curl
+      apt:
+        name: curl

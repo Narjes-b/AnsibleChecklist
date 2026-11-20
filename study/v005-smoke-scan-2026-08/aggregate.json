@@ -1,0 +1,229 @@
+{
+  "repos_attempted": 25,
+  "repos_completed": 25,
+  "repos_failed": 0,
+  "raw_findings": 52572,
+  "canonical_occurrences": 48296,
+  "canonical_by_severity": {
+    "note": 22544,
+    "warning": 22997,
+    "error": 2755
+  },
+  "canonical_by_concept": {
+    "commit-message-format": 14,
+    "complex-expression": 3329,
+    "complex-playbook": 511,
+    "large-playbook": 601,
+    "large-task": 2283,
+    "long-yaml-line": 2096,
+    "loop-legacy-syntax": 1573,
+    "missing-release-note": 24,
+    "missing-tags": 15598,
+    "redirected-module": 18,
+    "unguarded-variable": 12586,
+    "unnamed-task": 502,
+    "unused-registered-variable": 157,
+    "unnecessary-set-fact": 475,
+    "credential-log-exposure": 2583,
+    "default-credentials": 15,
+    "hardcoded-secret": 209,
+    "long-task-name": 1636,
+    "missing-abstraction": 207,
+    "undocumented-complex-task": 419,
+    "unhandled-failure-suppression": 260,
+    "variable-use-before-definition": 17,
+    "empty-abstraction": 85,
+    "missing-bug-reference": 2,
+    "non-idempotent-command": 252,
+    "duplicate-task-names": 361,
+    "duplicated-code": 203,
+    "insecure-permissions": 50,
+    "role-variable-precedence-collision": 3,
+    "shell-module-migration": 104,
+    "unpinned-ansible-dependency": 215,
+    "unexpected-task-location": 1,
+    "inconsistent-naming-convention": 29,
+    "molecule-test-absent": 252,
+    "read-only-command-change": 75,
+    "unscoped-shell-variable": 7,
+    "become-scope-too-broad": 176,
+    "high-coupling": 92,
+    "invalid-task-attribute-type": 3,
+    "large-play": 324,
+    "role-readme-absent": 655,
+    "missing-file-extension": 3,
+    "unnecessary-abstraction": 196,
+    "missing-test-update": 3,
+    "missing-validate-certs": 25,
+    "untested-override-change": 3,
+    "unused-handler": 1,
+    "unnamed-play": 31,
+    "overriding-facts": 11,
+    "redundant-default-value": 1,
+    "invalid-numeric-value": 4,
+    "missing-bool-filters": 2,
+    "insufficient-modularization": 13,
+    "module-deprecation": 1
+  },
+  "by_repo": {
+    "geerlingguy_ansible-role-docker": {
+      "raw_findings": 75,
+      "canonical_occurrences": 67,
+      "files": 17,
+      "status": "partial"
+    },
+    "geerlingguy_ansible-role-nginx": {
+      "raw_findings": 54,
+      "canonical_occurrences": 40,
+      "files": 22,
+      "status": "partial"
+    },
+    "geerlingguy_ansible-role-mysql": {
+      "raw_findings": 142,
+      "canonical_occurrences": 126,
+      "files": 27,
+      "status": "partial"
+    },
+    "geerlingguy_ansible-role-postgresql": {
+      "raw_findings": 136,
+      "canonical_occurrences": 120,
+      "files": 42,
+      "status": "partial"
+    },
+    "geerlingguy_ansible-role-jenkins": {
+      "raw_findings": 72,
+      "canonical_occurrences": 66,
+      "files": 14,
+      "status": "partial"
+    },
+    "geerlingguy_ansible-role-firewall": {
+      "raw_findings": 18,
+      "canonical_occurrences": 18,
+      "files": 7,
+      "status": "partial"
+    },
+    "geerlingguy_ansible-role-security": {
+      "raw_findings": 48,
+      "canonical_occurrences": 42,
+      "files": 12,
+      "status": "partial"
+    },
+    "geerlingguy_ansible-role-kubernetes": {
+      "raw_findings": 66,
+      "canonical_occurrences": 56,
+      "files": 14,
+      "status": "partial"
+    },
+    "ansible-lockdown_RHEL8-CIS": {
+      "raw_findings": 1130,
+      "canonical_occurrences": 1097,
+      "files": 82,
+      "status": "partial"
+    },
+    "ansible-lockdown_RHEL9-CIS": {
+      "raw_findings": 1146,
+      "canonical_occurrences": 1132,
+      "files": 84,
+      "status": "partial"
+    },
+    "ansible-lockdown_UBUNTU22-CIS": {
+      "raw_findings": 1067,
+      "canonical_occurrences": 1045,
+      "files": 78,
+      "status": "partial"
+    },
+    "dev-sec_ansible-collection-hardening": {
+      "raw_findings": 361,
+      "canonical_occurrences": 360,
+      "files": 88,
+      "status": "partial"
+    },
+    "konstruktoid_ansible-role-hardening": {
+      "raw_findings": 630,
+      "canonical_occurrences": 625,
+      "files": 57,
+      "status": "partial"
+    },
+    "debops_debops": {
+      "raw_findings": 8063,
+      "canonical_occurrences": 8009,
+      "files": 1204,
+      "status": "partial"
+    },
+    "freeipa_ansible-freeipa": {
+      "raw_findings": 9380,
+      "canonical_occurrences": 7804,
+      "files": 621,
+      "status": "partial"
+    },
+    "wazuh_wazuh-ansible": {
+      "raw_findings": 320,
+      "canonical_occurrences": 313,
+      "files": 25,
+      "status": "partial"
+    },
+    "roots_trellis": {
+      "raw_findings": 581,
+      "canonical_occurrences": 542,
+      "files": 105,
+      "status": "partial"
+    },
+    "davestephens_ansible-nas": {
+      "raw_findings": 1250,
+      "canonical_occurrences": 1241,
+      "files": 247,
+      "status": "partial"
+    },
+    "khuedoan_homelab": {
+      "raw_findings": 86,
+      "canonical_occurrences": 86,
+      "files": 117,
+      "status": "partial"
+    },
+    "saltyorg_Saltbox": {
+      "raw_findings": 5530,
+      "canonical_occurrences": 5278,
+      "files": 436,
+      "status": "partial"
+    },
+    "spantaleev_matrix-docker-ansible-deploy": {
+      "raw_findings": 11777,
+      "canonical_occurrences": 11122,
+      "files": 462,
+      "status": "partial"
+    },
+    "mitogen-hq_mitogen": {
+      "raw_findings": 1891,
+      "canonical_occurrences": 763,
+      "files": 263,
+      "status": "partial"
+    },
+    "ceph_ceph-ansible": {
+      "raw_findings": 3969,
+      "canonical_occurrences": 3742,
+      "files": 301,
+      "status": "partial"
+    },
+    "trailofbits_algo": {
+      "raw_findings": 1282,
+      "canonical_occurrences": 1142,
+      "files": 134,
+      "status": "partial"
+    },
+    "kubernetes-sigs_kubespray": {
+      "raw_findings": 3498,
+      "canonical_occurrences": 3460,
+      "files": 549,
+      "status": "partial"
+    }
+  },
+  "provider_status": {
+    "gitleaks": {
+      "completed": 25
+    },
+    "ansible_lint": {
+      "partial": 25
+    }
+  },
+  "failures": []
+}

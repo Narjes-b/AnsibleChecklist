@@ -1,0 +1,845 @@
+{
+  "checks": {
+    "ai_shadow_evidence_matches_master": {
+      "detail": "AI-shadow template has the same visible evidence",
+      "passed": true
+    },
+    "ai_shadow_no_human_fields": {
+      "detail": "AI-shadow template contains no human decision columns",
+      "passed": true
+    },
+    "ai_shadow_rows_match_master": {
+      "detail": "blank AI-shadow template has the exact master IDs and row order",
+      "passed": true
+    },
+    "ai_shadow_schema": {
+      "detail": "AI-shadow template has separate AI-only decision fields",
+      "passed": true
+    },
+    "ai_shadow_template_hash": {
+      "detail": "blank AI-shadow template hash matches the manifest",
+      "passed": true
+    },
+    "blinding_fields_absent": {
+      "detail": "reviewer schemas omit severity, confidence, weights, AI, and other-reviewer fields",
+      "passed": true
+    },
+    "calibration_only_selection": {
+      "detail": "every selected repository is in the calibration split",
+      "passed": true
+    },
+    "context_bundle_inventory": {
+      "detail": "350 context files match the manifest inventory",
+      "passed": true
+    },
+    "context_redaction_idempotence": {
+      "detail": "all frozen bundles and inline excerpts are stable under the redactor",
+      "passed": true
+    },
+    "creation_metadata": {
+      "detail": "manifest records creation time, source/script commit, and script checksum",
+      "passed": true
+    },
+    "family_repository_audit": {
+      "detail": "eligible = selected + excluded counts reconcile for every family/repository",
+      "passed": true
+    },
+    "family_rule_repository_audit": {
+      "detail": "eligible = selected + excluded counts reconcile for every family/rule/repository",
+      "passed": true
+    },
+    "family_targets": {
+      "detail": "selected family counts: {'Objective correctness': 50, 'Variable/reference reasoning': 50, 'Security': 50, 'Style/policy': 50, 'Maintainability/complexity': 50, 'Structure/reuse': 50, 'Review/history': 50}",
+      "passed": true
+    },
+    "frozen_input_hashes": {
+      "detail": "split, identity index, and family map match the manifest",
+      "passed": true
+    },
+    "generated_file_hashes": {
+      "detail": "355 output/context files match manifest checksums",
+      "passed": true
+    },
+    "heldout_protection": {
+      "detail": "manifest records zero heldout contexts, emitted rows, and selections",
+      "passed": true
+    },
+    "manifest_row_count": {
+      "detail": "manifest and four item CSVs contain 350 rows",
+      "passed": true
+    },
+    "master_schema": {
+      "detail": "master columns match the pilot schema",
+      "passed": true
+    },
+    "no_ai_labels_yet": {
+      "detail": "all AI-shadow decision fields are blank",
+      "passed": true
+    },
+    "no_human_labels_yet": {
+      "detail": "all human decision fields are blank",
+      "passed": true
+    },
+    "pilot_codebook_hashes": {
+      "detail": "family codebooks, overrides, reviewer instructions, and pilot protocol match the frozen pilot manifest",
+      "passed": true
+    },
+    "pilot_files_readable": {
+      "detail": "manifest, master, both reviewer forms, and AI-shadow template are readable",
+      "passed": true
+    },
+    "pilot_scoring_exclusion": {
+      "detail": "every item is marked pilot-only and ineligible for performance scoring",
+      "passed": true
+    },
+    "repository_split": {
+      "detail": "206 unique repositories; 144 calibration / 62 heldout",
+      "passed": true
+    },
+    "review_history_repository_count_reconciliation": {
+      "detail": "per-repository source, required-missing-parent, and context-eligible counts reconcile",
+      "passed": true
+    },
+    "review_history_rule_specific_evidence": {
+      "detail": "all 50 history contexts use exact message evidence or verified actual first-parent diffs as required by rule",
+      "passed": true
+    },
+    "reviewer_evidence_matches_master": {
+      "detail": "all visible reviewer fields match the frozen master",
+      "passed": true
+    },
+    "reviewer_forms_identical": {
+      "detail": "independent blank forms have identical bytes",
+      "passed": true
+    },
+    "reviewer_rows_match_master": {
+      "detail": "Reviewer A and B have the exact master IDs and row order",
+      "passed": true
+    },
+    "reviewer_schema_and_blinding": {
+      "detail": "reviewer forms contain only visible evidence and blank human decision fields",
+      "passed": true
+    },
+    "selection_audit_file": {
+      "detail": "3444 family/rule/repository audit rows match the manifest",
+      "passed": true
+    },
+    "unique_master_ids": {
+      "detail": "all master sample IDs are unique and nonempty",
+      "passed": true
+    },
+    "unique_occurrence_ids": {
+      "detail": "each selected occurrence appears once",
+      "passed": true
+    }
+  },
+  "counts": {
+    "ai_shadow_row_count": 350,
+    "by_family": {
+      "Maintainability/complexity": 50,
+      "Objective correctness": 50,
+      "Review/history": 50,
+      "Security": 50,
+      "Structure/reuse": 50,
+      "Style/policy": 50,
+      "Variable/reference reasoning": 50
+    },
+    "context_count": 350,
+    "repositories_by_family": {
+      "maintainability_complexity": 50,
+      "objective_correctness": 50,
+      "review_history": 50,
+      "security": 50,
+      "structure_reuse": 50,
+      "style_policy": 50,
+      "variable_reference_reasoning": 50
+    },
+    "row_count": 350
+  },
+  "created_at_utc": "2026-10-06T02:28:37.293307Z",
+  "failures": [],
+  "heldout_opened": false,
+  "human_labels_present": false,
+  "inputs": {
+    "identity_index_sha256": "2b70672c1f89039386f6cfb4bb73460059f05014a6b7248e4865f951150c7d6b",
+    "repository_split_sha256": "c6f50da3bd52130cd0a32ab48e322dfa666419d12bccdb1e7a4796d885260f65",
+    "rule_family_map_sha256": "914215d3c2ca0c9443ddd424ad0b8a8d9d9f317f2abc1fa27bb6ba7f842d4317"
+  },
+  "passed": true,
+  "pilot_manifest_sha256": "f88cb28bf4f97cb6703ce09263b861c920317b22f94654e5c9d487092845a6c6",
+  "sampling": {
+    "analyzable_repositories": 206,
+    "by_family_rule": [
+      {
+        "context_eligible": 1,
+        "eligible_not_selected": 1,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/broken-role-dependency",
+        "selected": 0,
+        "source_candidates": 1
+      },
+      {
+        "context_eligible": 4,
+        "eligible_not_selected": 4,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/invalid-numeric-value",
+        "selected": 0,
+        "source_candidates": 4
+      },
+      {
+        "context_eligible": 23,
+        "eligible_not_selected": 19,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/invalid-task-attribute-type",
+        "selected": 4,
+        "source_candidates": 23
+      },
+      {
+        "context_eligible": 4729,
+        "eligible_not_selected": 4721,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/loop-legacy-syntax",
+        "selected": 8,
+        "source_candidates": 4729
+      },
+      {
+        "context_eligible": 7,
+        "eligible_not_selected": 5,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/missing-handler",
+        "selected": 2,
+        "source_candidates": 7
+      },
+      {
+        "context_eligible": 1173,
+        "eligible_not_selected": 1165,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/non-idempotent-command",
+        "selected": 8,
+        "source_candidates": 1173
+      },
+      {
+        "context_eligible": 4,
+        "eligible_not_selected": 4,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/overriden-keys",
+        "selected": 0,
+        "source_candidates": 4
+      },
+      {
+        "context_eligible": 679,
+        "eligible_not_selected": 672,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/read-only-command-change",
+        "selected": 7,
+        "source_candidates": 679
+      },
+      {
+        "context_eligible": 674,
+        "eligible_not_selected": 667,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/redirected-module",
+        "selected": 7,
+        "source_candidates": 674
+      },
+      {
+        "context_eligible": 1446,
+        "eligible_not_selected": 1439,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/silent-error-suppression",
+        "selected": 7,
+        "source_candidates": 1446
+      },
+      {
+        "context_eligible": 286,
+        "eligible_not_selected": 279,
+        "family": "Objective correctness",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unpinned-ansible-dependency",
+        "selected": 7,
+        "source_candidates": 286
+      },
+      {
+        "context_eligible": 6,
+        "eligible_not_selected": 1,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/missing-bool-filters",
+        "selected": 5,
+        "source_candidates": 6
+      },
+      {
+        "context_eligible": 9,
+        "eligible_not_selected": 4,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/overriding-facts",
+        "selected": 5,
+        "source_candidates": 9
+      },
+      {
+        "context_eligible": 12,
+        "eligible_not_selected": 9,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/redundant-default-value",
+        "selected": 3,
+        "source_candidates": 12
+      },
+      {
+        "context_eligible": 26,
+        "eligible_not_selected": 21,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/role-variable-precedence-collision",
+        "selected": 5,
+        "source_candidates": 26
+      },
+      {
+        "context_eligible": 4,
+        "eligible_not_selected": 4,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/shell-environment-export",
+        "selected": 0,
+        "source_candidates": 4
+      },
+      {
+        "context_eligible": 36864,
+        "eligible_not_selected": 36857,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unguarded-variable",
+        "selected": 7,
+        "source_candidates": 36864
+      },
+      {
+        "context_eligible": 1423,
+        "eligible_not_selected": 1416,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unnecessary-set-fact",
+        "selected": 7,
+        "source_candidates": 1423
+      },
+      {
+        "context_eligible": 69,
+        "eligible_not_selected": 63,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unscoped-shell-variable",
+        "selected": 6,
+        "source_candidates": 69
+      },
+      {
+        "context_eligible": 843,
+        "eligible_not_selected": 837,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unused-registered-variable",
+        "selected": 6,
+        "source_candidates": 843
+      },
+      {
+        "context_eligible": 147,
+        "eligible_not_selected": 141,
+        "family": "Variable/reference reasoning",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/variable-use-before-definition",
+        "selected": 6,
+        "source_candidates": 147
+      },
+      {
+        "context_eligible": 334,
+        "eligible_not_selected": 326,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/become-scope-too-broad",
+        "selected": 8,
+        "source_candidates": 334
+      },
+      {
+        "context_eligible": 4887,
+        "eligible_not_selected": 4879,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/credentials-leaking-in-log",
+        "selected": 8,
+        "source_candidates": 4887
+      },
+      {
+        "context_eligible": 208,
+        "eligible_not_selected": 200,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/default-credentials",
+        "selected": 8,
+        "source_candidates": 208
+      },
+      {
+        "context_eligible": 337,
+        "eligible_not_selected": 329,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/insecure-permissions",
+        "selected": 8,
+        "source_candidates": 337
+      },
+      {
+        "context_eligible": 482,
+        "eligible_not_selected": 474,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/missing-validate-certs",
+        "selected": 8,
+        "source_candidates": 482
+      },
+      {
+        "context_eligible": 470,
+        "eligible_not_selected": 463,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/plaintext-sensitive-variable",
+        "selected": 7,
+        "source_candidates": 470
+      },
+      {
+        "context_eligible": 6,
+        "eligible_not_selected": 3,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unsafe-file-write",
+        "selected": 3,
+        "source_candidates": 6
+      },
+      {
+        "context_eligible": 2,
+        "eligible_not_selected": 2,
+        "family": "Security",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/vault-inline-overload",
+        "selected": 0,
+        "source_candidates": 2
+      },
+      {
+        "context_eligible": 856,
+        "eligible_not_selected": 851,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/duplicate-task-names",
+        "selected": 5,
+        "source_candidates": 856
+      },
+      {
+        "context_eligible": 564,
+        "eligible_not_selected": 559,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/galaxy-meta-incomplete",
+        "selected": 5,
+        "source_candidates": 564
+      },
+      {
+        "context_eligible": 43,
+        "eligible_not_selected": 38,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/inconsistent-naming-convention",
+        "selected": 5,
+        "source_candidates": 43
+      },
+      {
+        "context_eligible": 4628,
+        "eligible_not_selected": 4623,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/long-statement",
+        "selected": 5,
+        "source_candidates": 4628
+      },
+      {
+        "context_eligible": 4103,
+        "eligible_not_selected": 4098,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/long-task-name",
+        "selected": 5,
+        "source_candidates": 4103
+      },
+      {
+        "context_eligible": 8,
+        "eligible_not_selected": 6,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/missing-file-extension",
+        "selected": 2,
+        "source_candidates": 8
+      },
+      {
+        "context_eligible": 67830,
+        "eligible_not_selected": 67825,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/missing-tags",
+        "selected": 5,
+        "source_candidates": 67830
+      },
+      {
+        "context_eligible": 1281,
+        "eligible_not_selected": 1276,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/molecule-test-absent",
+        "selected": 5,
+        "source_candidates": 1281
+      },
+      {
+        "context_eligible": 1221,
+        "eligible_not_selected": 1216,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unnamed-play",
+        "selected": 5,
+        "source_candidates": 1221
+      },
+      {
+        "context_eligible": 7328,
+        "eligible_not_selected": 7324,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unnamed-task",
+        "selected": 4,
+        "source_candidates": 7328
+      },
+      {
+        "context_eligible": 18645,
+        "eligible_not_selected": 18641,
+        "family": "Style/policy",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/variable-naming-convention",
+        "selected": 4,
+        "source_candidates": 18645
+      },
+      {
+        "context_eligible": 7442,
+        "eligible_not_selected": 7437,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/complex-expression",
+        "selected": 5,
+        "source_candidates": 7442
+      },
+      {
+        "context_eligible": 1836,
+        "eligible_not_selected": 1831,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/complex-playbook",
+        "selected": 5,
+        "source_candidates": 1836
+      },
+      {
+        "context_eligible": 291,
+        "eligible_not_selected": 286,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/deprecated-modules",
+        "selected": 5,
+        "source_candidates": 291
+      },
+      {
+        "context_eligible": 8,
+        "eligible_not_selected": 6,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/excessive-nesting",
+        "selected": 2,
+        "source_candidates": 8
+      },
+      {
+        "context_eligible": 371,
+        "eligible_not_selected": 366,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/high-coupling",
+        "selected": 5,
+        "source_candidates": 371
+      },
+      {
+        "context_eligible": 27,
+        "eligible_not_selected": 23,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/incomplete-task",
+        "selected": 4,
+        "source_candidates": 27
+      },
+      {
+        "context_eligible": 1150,
+        "eligible_not_selected": 1146,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/large-play",
+        "selected": 4,
+        "source_candidates": 1150
+      },
+      {
+        "context_eligible": 2304,
+        "eligible_not_selected": 2300,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/large-playbook",
+        "selected": 4,
+        "source_candidates": 2304
+      },
+      {
+        "context_eligible": 8322,
+        "eligible_not_selected": 8318,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/large-task",
+        "selected": 4,
+        "source_candidates": 8322
+      },
+      {
+        "context_eligible": 560,
+        "eligible_not_selected": 556,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/shell-instead-of-module",
+        "selected": 4,
+        "source_candidates": 560
+      },
+      {
+        "context_eligible": 793,
+        "eligible_not_selected": 789,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/undocumented-complex-task",
+        "selected": 4,
+        "source_candidates": 793
+      },
+      {
+        "context_eligible": 25,
+        "eligible_not_selected": 21,
+        "family": "Maintainability/complexity",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unused-handler",
+        "selected": 4,
+        "source_candidates": 25
+      },
+      {
+        "context_eligible": 340,
+        "eligible_not_selected": 331,
+        "family": "Structure/reuse",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/duplicated-code",
+        "selected": 9,
+        "source_candidates": 340
+      },
+      {
+        "context_eligible": 60,
+        "eligible_not_selected": 51,
+        "family": "Structure/reuse",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/insufficient-modularization",
+        "selected": 9,
+        "source_candidates": 60
+      },
+      {
+        "context_eligible": 1198,
+        "eligible_not_selected": 1189,
+        "family": "Structure/reuse",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/missing-abstraction",
+        "selected": 9,
+        "source_candidates": 1198
+      },
+      {
+        "context_eligible": 2220,
+        "eligible_not_selected": 2212,
+        "family": "Structure/reuse",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/role-readme-absent",
+        "selected": 8,
+        "source_candidates": 2220
+      },
+      {
+        "context_eligible": 1,
+        "eligible_not_selected": 1,
+        "family": "Structure/reuse",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unexpected-task-location",
+        "selected": 0,
+        "source_candidates": 1
+      },
+      {
+        "context_eligible": 389,
+        "eligible_not_selected": 381,
+        "family": "Structure/reuse",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unnecessary-abstraction",
+        "selected": 8,
+        "source_candidates": 389
+      },
+      {
+        "context_eligible": 30,
+        "eligible_not_selected": 23,
+        "family": "Structure/reuse",
+        "missing_parent": 0,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/unstructured-module",
+        "selected": 7,
+        "source_candidates": 30
+      },
+      {
+        "context_eligible": 98,
+        "eligible_not_selected": 73,
+        "family": "Review/history",
+        "missing_parent": 88,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/commit-message-format",
+        "selected": 25,
+        "source_candidates": 98
+      },
+      {
+        "context_eligible": 19,
+        "eligible_not_selected": 2,
+        "family": "Review/history",
+        "missing_parent": 15,
+        "missing_required_parent": 0,
+        "rule_id": "ansibleguard/missing-bug-reference",
+        "selected": 17,
+        "source_candidates": 19
+      },
+      {
+        "context_eligible": 9,
+        "eligible_not_selected": 5,
+        "family": "Review/history",
+        "missing_parent": 124,
+        "missing_required_parent": 124,
+        "rule_id": "ansibleguard/missing-release-note",
+        "selected": 4,
+        "source_candidates": 133
+      },
+      {
+        "context_eligible": 9,
+        "eligible_not_selected": 5,
+        "family": "Review/history",
+        "missing_parent": 38,
+        "missing_required_parent": 38,
+        "rule_id": "ansibleguard/missing-test-update",
+        "selected": 4,
+        "source_candidates": 47
+      },
+      {
+        "context_eligible": 4,
+        "eligible_not_selected": 4,
+        "family": "Review/history",
+        "missing_parent": 34,
+        "missing_required_parent": 34,
+        "rule_id": "ansibleguard/untested-override-change",
+        "selected": 0,
+        "source_candidates": 38
+      }
+    ],
+    "calibration_repositories": 144,
+    "calibration_static_source_candidates": 189029,
+    "eligible_by_family": {
+      "maintainability_complexity": 23129,
+      "objective_correctness": 9026,
+      "review_history": 139,
+      "security": 6726,
+      "structure_reuse": 4238,
+      "style_policy": 106507,
+      "variable_reference_reasoning": 39403
+    },
+    "full_static_source_candidates": 265434,
+    "heldout_repositories": 62,
+    "heldout_static_source_candidates": 76405,
+    "review_missing_parent_total": 299,
+    "review_required_parent_missing_total": 196,
+    "review_source_total": 335,
+    "review_usable_total": 139,
+    "selected_by_family": {
+      "maintainability_complexity": 50,
+      "objective_correctness": 50,
+      "review_history": 50,
+      "security": 50,
+      "structure_reuse": 50,
+      "style_policy": 50,
+      "variable_reference_reasoning": 50
+    }
+  },
+  "schema_version": 1,
+  "source_run": "v007-full-repro-2026",
+  "stage": "agreement-pilot"
+}

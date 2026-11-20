@@ -1,0 +1,78 @@
+{
+  "purpose": "Engineering contracts only, not model classification accuracy",
+  "repeated_cases": "The first three attempts reuse the same 24 development cases, not 72 independent cases",
+  "attempts": [
+    {
+      "attempt": "v41",
+      "mode": "window",
+      "selected": 24,
+      "matches": 11,
+      "errors": 2,
+      "required_abstentions": 0,
+      "backend_predicates": 0
+    },
+    {
+      "attempt": "v41",
+      "mode": "scoped",
+      "selected": 24,
+      "matches": 20,
+      "errors": 0,
+      "required_abstentions": 10,
+      "backend_predicates": 0
+    },
+    {
+      "attempt": "v42",
+      "mode": "window",
+      "selected": 24,
+      "matches": 11,
+      "errors": 1,
+      "required_abstentions": 0,
+      "backend_predicates": 0
+    },
+    {
+      "attempt": "v42",
+      "mode": "scoped",
+      "selected": 24,
+      "matches": 20,
+      "errors": 0,
+      "required_abstentions": 10,
+      "backend_predicates": 0
+    },
+    {
+      "attempt": "v43",
+      "mode": "window",
+      "selected": 24,
+      "matches": 10,
+      "errors": 4,
+      "required_abstentions": 0,
+      "backend_predicates": 0
+    },
+    {
+      "attempt": "v43",
+      "mode": "scoped",
+      "selected": 24,
+      "matches": 24,
+      "errors": 0,
+      "required_abstentions": 10,
+      "backend_predicates": 14
+    },
+    {
+      "attempt": "v43-challenges",
+      "mode": "window",
+      "selected": 8,
+      "matches": 3,
+      "errors": 1,
+      "required_abstentions": 0,
+      "backend_predicates": 0
+    },
+    {
+      "attempt": "v43-challenges",
+      "mode": "scoped",
+      "selected": 8,
+      "matches": 8,
+      "errors": 0,
+      "required_abstentions": 1,
+      "backend_predicates": 7
+    }
+  ]
+}

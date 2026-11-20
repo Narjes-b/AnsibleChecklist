@@ -1,0 +1,3263 @@
+observation_id,metric_id,rule_id,unit,project,commit_sha,repository_size_quartile,path,document_type,line,name,value,current_threshold,comparator,eligible,current_prediction,threshold_multiplier,has_existing_abstraction,base_score,boolean_ops,jinja_filters,nesting_depth,has_preceding_comment,source_ordinal,play_loc,play_task_count,play_avg_task_size,playbook_loc,playbook_play_count,playbook_avg_play_size,playbook_task_count,playbook_avg_task_size,import_count,role_count,task_special_chars,play_special_chars,parent_play_name,sample_stratum,metric_band,stratum_population,inclusion_probability,sampling_weight,review_question,context_start_line,context_end_line,source_total_lines,context_complete,context_strategy,source_context,reviewer_1_label,reviewer_1_reason,reviewer_2_label,reviewer_2_reason,initial_agreement,adjudicated_label,adjudication_reason,ai_label,ai_reason,ai_prompt_version,ai_model_version
+500071c1da91ef28d2c515dc251e254d1625d3f7da58335c845be23c63e76d1b,complex_expression_length_chars,complex-expression,expression,eyulf/homelab,5cef75d48f9df9a47c8b9fe37f3c20ce7a4d2b91,Q3,ansible/roles/pxe_boot/tasks/start.yml,tasks,5,{{ role_path }},15,100,>,true,false,1,false,0,,,,false,1,,,,,,,,,,,,,,eyulf/homelab|B1_low|current=false,B1_low,65,0.0153846154,65,Is this Jinja or conditional expression too complex and in need of simplification?,1,84,84,true,local-window,"     1: ---
+     2: - name: PXE | download installer image
+     3:   ansible.builtin.get_url:
+     4:     url: '{{ installer_img_url }}'
+     5:     dest: '{{ role_path }}/files/data/source/{{ installer_img_url | basename }}'
+     6:     checksum: '{{ installer_img_checksum }}'
+     7:     mode: 0644
+     8:   register: installer_img
+     9:   tags:
+    10:     - pxe_boot
+    11:     - start
+    12:   when: ansible_facts['distribution'] == 'Fedora'
+    13: 
+    14: - name: PXE | extract installer image
+    15:   ansible.builtin.unarchive:
+    16:     src: '{{ installer_img.dest }}'
+    17:     dest: '{{ role_path }}/files/data/os'
+    18:   tags:
+    19:     - pxe_boot
+    20:     - start
+    21:   when: ansible_facts['distribution'] == 'Fedora'
+    22: 
+    23: - name: PXE | generate grub config
+    24:   ansible.builtin.template:
+    25:     src: data/pxe-config/grub.cfg.j2
+    26:     dest: '{{ role_path }}/files/data/pxe-config/grub.cfg'
+    27:     mode: 0644
+    28:   tags:
+    29:     - pxe_boot
+    30:     - start
+    31:   when: ansible_facts['distribution'] == 'Fedora'
+    32: 
+    33: - name: PXE | generate preseed file for each kvm machine
+    34:   ansible.builtin.template:
+    35:     src: data/preseed/preseed-kvm.cfg.j2
+    36:     dest: ""{{ role_path }}/files/data/preseed/{{ hostvars[item]['mac'] }}.cfg""
+    37:     mode: 0644
+    38:   loop: ""{{ groups['metal_kvm'] }}""
+    39:   tags:
+    40:     - pxe_boot
+    41:     - start
+    42:   when: ansible_facts['distribution'] == 'Fedora'
+    43: 
+    44: - name: PXE | start the pxe container
+    45:   community.docker.docker_compose:
+    46:     project_src: '{{ role_path }}/files'
+    47:     project_name: pxe
+    48:     state: present
+    49:     restarted: true
+    50:     build: true
+    51:   tags:
+    52:     - pxe_boot
+    53:     - start
+    54:   when: ansible_facts['distribution'] == 'Fedora'
+    55: 
+    56: - name: PXE | allow tftp inbound
+    57:   ansible.posix.firewalld:
+    58:     zone: public
+    59:     service: tftp
+    60:     permanent: false
+    61:     state: enabled
+    62:   become: true
+    63:   vars:
+    64:     ansible_python_interpreter: /usr/bin/python3.10 # https://github.com/ansible-collections/ansible.posix/issues/283
+    65:   tags:
+    66:     - pxe_boot
+    67:     - start
+    68:   when: ansible_facts['distribution'] == 'Fedora'
+    69: 
+    70: - name: PXE | add dhcp options
+    71:   community.routeros.api_find_and_modify:
+    72:     hostname: '{{ gateway }}'
+    73:     username: '{{ routeros_api_username }}'
+    74:     password: '{{ routeros_api_password }}'
+    75:     tls: true
+    76:     path: ip dhcp-server network
+    77:     find:
+    78:       address: '{{ firewall_servers_subnet }}'
+    79:     values:
+    80:       next-server: ""{{ ansible_facts['default_ipv4']['address'] }}""
+    81:       boot-file-name: grubx64.efi
+    82:     require_matches_min: 1
+    83:     require_matches_max: 1
+    84:   when: ansible_facts['distribution'] == 'Fedora'",,,,,,,,,,,
+0acdea12200f22ee6d9b8c7eb81daeae320c05865cca2053c36a85492b88d6ba,complex_expression_length_chars,complex-expression,expression,vladgh/ansible-collection-vladgh-system,30ae05e5841fd001f70b3b80be8ea029f454e1f7,Q2,roles/docker_compose_stack/tasks/main.yml,tasks,8,{{ docker_compose_stack }},26,100,>,true,false,1,false,0,,,,false,3,,,,,,,,,,,,,,vladgh/ansible-collection-vladgh-system|B2_lower_middle|current=false,B2_lower_middle,51,0.0196078431,51,Is this Jinja or conditional expression too complex and in need of simplification?,3,88,196,false,local-window,"     3:   ansible.builtin.file:
+     4:     path: ""{{ docker_compose_stack_path }}/{{ item.name }}""
+     5:     state: directory
+     6:     mode: '0755'
+     7:   when: item.name is defined and item.name | length > 0
+     8:   loop: ""{{ docker_compose_stack }}""
+     9:   loop_control:
+    10:     label: ""{{ item.name }}""
+    11: 
+    12: - name: Configure DotEnv
+    13:   ansible.builtin.copy:
+    14:     content: |
+    15:       # DO NOT USE QUOTES TO ENCLOSE THE VALUES
+    16:       # https://docs.docker.com/compose/env-file/#syntax-rules
+    17:       {% for env_item in all_vars | dict2items %}
+    18:       {{ env_item.key }}={{ env_item.value }}
+    19:       {% endfor %}
+    20:     dest: ""{{ docker_compose_stack_path }}/{{ item.name }}/.env""
+    21:     owner: root
+    22:     group: root
+    23:     mode: '0644'
+    24:   vars:
+    25:     all_vars: ""{{ item.env | default({}) }}""
+    26:   when: >
+    27:     ( item.name is defined and item.name | length > 0 ) and
+    28:     ( item.env is defined and item.env | length > 0 )
+    29:   loop: ""{{ docker_compose_stack }}""
+    30:   loop_control:
+    31:     label: ""{{ item.name }}""
+    32:   register: docker_compose_stack_env_result
+    33:   notify: Restart SystemD Service for Modified Stack
+    34: 
+    35: - name: Copy files
+    36:   ansible.builtin.copy:
+    37:     src: ""{{ playbook_dir }}/files/appstack/{{ inventory_hostname }}/{{ item.name }}.yml""
+    38:     dest: ""{{ docker_compose_stack_path }}/{{ item.name }}/compose.yml""
+    39:     decrypt: true
+    40:     owner: root
+    41:     group: root
+    42:     mode: '0644'
+    43:   when: item.name is defined and item.name | length > 0
+    44:   loop: ""{{ docker_compose_stack }}""
+    45:   loop_control:
+    46:     label: ""{{ item.name }}""
+    47:   register: docker_compose_stack_file_result
+    48:   notify: Restart SystemD Service for Modified Stack
+    49: 
+    50: - name: Create docker networks
+    51:   ansible.builtin.command: /usr/bin/docker network create {{ item.name }}
+    52:   register: docker_compose_stack_network_create
+    53:   changed_when: ""'Error' not in docker_compose_stack_network_create.stderr""
+    54:   failed_when: ""'already exists' not in docker_compose_stack_network_create.stderr and docker_compose_stack_network_create.rc != 0""
+    55:   when: item.name is defined and item.name | length > 0
+    56:   loop: ""{{ docker_compose_stack_networks }}""
+    57:   loop_control:
+    58:     label: ""{{ item.name }}""
+    59: 
+    60: - name: Create systemd service file for stack
+    61:   ansible.builtin.copy:
+    62:     content: |
+    63:       [Unit]
+    64:       Description=Docker Compose Application Service - %I
+    65:       Documentation=https://docs.docker.com/compose/
+    66:       Requires=docker.service network-online.target
+    67:       After=network-online.target docker.service
+    68:       PartOf=docker-compose.target
+    69:       StartLimitIntervalSec=0
+    70:       [Service]
+    71:       Type=oneshot
+    72:       RemainAfterExit=yes
+    73:       WorkingDirectory={{ docker_compose_stack_path }}/%I
+    74:       ExecStartPre=/bin/sh -c 'until curl -s --connect-timeout 5 https://registry-1.docker.io/v2/ >/dev/null; do sleep 5; done'
+    75:       ExecStartPre=/usr/bin/docker compose config --quiet
+    76:       ExecStartPre=/usr/bin/docker compose pull --quiet
+    77:       ExecStart=/usr/bin/docker compose up --detach --remove-orphans
+    78:       ExecStop=/usr/bin/docker compose down
+    79:       Restart=on-failure
+    80:       RestartSec=10
+    81:       TimeoutStartSec=10min
+    82:       [Install]
+    83:       WantedBy=multi-user.target
+    84:     dest: ""/etc/systemd/system/docker-compose@.service""
+    85:     owner: root
+    86:     group: root
+    87:     mode: '0644'
+    88:   when: docker_compose_stack is defined and docker_compose_stack | length > 0",,,,,,,,,,,
+8a6dc503e360c38c8707c2732265fbcfdeb28f1a9ce66415ca10122d84623d02,complex_expression_length_chars,complex-expression,expression,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,Q3,vagrant/provisioning/arkcase-ce.yml,playbook,57,upgrade_solr is defined and upgrade_solr,40,100,>,true,false,1,false,2,,,,false,4,,,,,,,,,,,,,,ArkCase/arkcase-ce|B3_upper_middle|current=false,B3_upper_middle,329,0.0030395137,329,Is this Jinja or conditional expression too complex and in need of simplification?,52,80,80,false,local-window,"    52:       tags: [core, zookeeper]
+    53:     - role: solr
+    54:       tags: [core, solr]
+    55:     - role: upgrade-solr
+    56:       tags: [upgrade-solr]
+    57:       when: upgrade_solr is defined and upgrade_solr
+    58:     - role: pentaho-setup
+    59:       tags: [core, pentaho, pentaho-setup]
+    60:     - role: pentaho-ce
+    61:       tags: [core, pentaho, pentaho-ce]
+    62:     - role: pentaho-configuration
+    63:       tags: [core, pentaho, pentaho-configuration]
+    64:     - role: snowbound
+    65:       tags: [core, snowbound]
+    66:     - role: snowbound-app
+    67:       tags: [core, snowbound, snowbound-app]
+    68:     - role: confluent-platform-install
+    69:       tags: [confluent]
+    70:     - role: minio
+    71:       tags: [microservices, minio]
+    72:     - role: arkcase-prerequisites
+    73:       tags: [core, arkcase]
+    74:     - role: arkcase-app
+    75:       tags: [core, arkcase]
+    76:     - role: tesseract
+    77:       tags: [core, arkcase, tesseract]
+    78:     - role: firewall
+    79:       when: enable_firewall is undefined or enable_firewall
+    80:       tags: [core]",,,,,,,,,,,
+3d86e1b0e90d0e2ed56f7ae65afb72caf5d96e5aff53351892552cd5cf9356b5,complex_expression_length_chars,complex-expression,expression,snowdrop/k8s-infra,0a9fe0fb57bd9759833bb9974d5022d945b2647c,Q4,snowdrop-bot/ansible/build.yml,playbook,20,skip_dw is not defined or not (skip_dw|bool),44,100,>,true,true,1,false,6,,,,false,4,,,,,,,,,,,,,,snowdrop/k8s-infra|B3_upper_middle|current=true,B3_upper_middle,1,1.0000000000,1,Is this Jinja or conditional expression too complex and in need of simplification?,15,39,39,false,local-window,"    15:     - name: ""Create temp deployment folder""
+    16:       file: 
+    17:         path: ""{{ build_folder }}""
+    18:         state: directory
+    19:         recurse: true
+    20:       when: ""skip_dw is not defined or not (skip_dw|bool)""
+    21: 
+    22:     - name: ""Download the bot release""
+    23:       get_url: 
+    24:         url: ""https://github.com/snowdrop-bot/snowdrop-bot/archive/{{ bot_version }}.tar.gz""
+    25:         dest: ""{{ build_folder }}""
+    26:       when: ""skip_dw is not defined or not (skip_dw|bool)""
+    27:       register: bot_dw_res
+    28: 
+    29:     - name: ""Extract the archive""
+    30:       unarchive: 
+    31:         src: ""{{ build_folder }}/snowdrop-bot-{{ bot_version }}.tar.gz""
+    32:         dest: ""{{ build_folder }}""
+    33:       when: ""(skip_dw is not defined or not (skip_dw|bool)) and (bot_dw_res.changed)""
+    34: 
+    35:     - name: ""Build the project""
+    36:       shell: ""./mvnw clean package""
+    37:       args:
+    38:         chdir: ""{{ build_folder }}/snowdrop-bot-{{ bot_version }}""
+    39: ...",,,,,,,,,,,
+32a704d9d4ba2e928fed59aaa6d65a8beddfc88a2610ba5b048767b204c6cab4,complex_expression_length_chars,complex-expression,expression,Ableton/ansible-role-jenkins-jcasc,a62ef61b70877018fb6763b17f7d29a771fbc597,Q1,tasks/sanity-check.yml,tasks,66,"(jenkins_jobs | length > 0) and jenkins_jobs_dir == """"",54,100,>,true,false,1,false,5,,,,false,16,,,,,,,,,,,,,,Ableton/ansible-role-jenkins-jcasc|B4_high|current=false,B4_high,9,0.1111111111,9,Is this Jinja or conditional expression too complex and in need of simplification?,61,94,94,false,local-window,"    61:     quiet: true
+    62: 
+    63: - name: Ensure that jobs directory is defined if necessary
+    64:   ansible.builtin.fail:
+    65:     msg: ""jenkins_jobs is not empty, but jenkins_jobs_dir is undefined""
+    66:   when: (jenkins_jobs | length > 0) and jenkins_jobs_dir == """"
+    67: 
+    68: - name: Ensure prefix starts with slash
+    69:   ansible.builtin.fail:
+    70:     msg: ""jenkins_prefix needs to start with slash (/)""
+    71:   when: not jenkins_prefix.startswith(""/"")
+    72: 
+    73: - name: Read plugins.yaml file
+    74:   ansible.builtin.set_fact:
+    75:     jenkins_plugins_file_data: >-
+    76:       {{ lookup('ansible.builtin.file', jenkins_plugins_file) | from_yaml }}
+    77: 
+    78: - name: Check if configuration-as-code plugin is defined in plugins.yaml data
+    79:   ansible.builtin.set_fact:
+    80:     jenkins_jcasc_plugin_found: true
+    81:   when: item.artifactId == ""configuration-as-code""
+    82:   loop: ""{{ jenkins_plugins_file_data.plugins }}""
+    83: 
+    84: - name: Fail if configuration-as-code plugin was not found in plugins.yaml
+    85:   ansible.builtin.fail:
+    86:     msg: ""The configuration-as-code (JCasC) plugin was not found in plugins.yaml""
+    87:   when: jenkins_jcasc_plugin_found is not defined
+    88: 
+    89: - name: Fail if user requested both delayed service start and Jenkins user configurations
+    90:   ansible.builtin.fail:
+    91:     msg: ""jenkins_start_service is false but jenkins_users was specified""
+    92:   when:
+    93:     - not jenkins_start_service
+    94:     - jenkins_users | length > 0",,,,,,,,,,,
+1865f35e86e70f5541bf692249c82124990adb668080cf82299ad95b228e9f07,complex_expression_length_chars,complex-expression,expression,confluentinc/cp-ansible,11aa6b84f2ac19da7dc259c23fe854e01a1c5be3,Q3,roles/kafka_broker/tasks/main.yml,tasks,136,(getent_passwd|default({}))[kafka_broker_user] is not defined,61,100,>,true,true,1,false,6,,,,false,22,,,,,,,,,,,,,,confluentinc/cp-ansible|B4_high|current=true,B4_high,65,0.0153846154,65,Is this Jinja or conditional expression too complex and in need of simplification?,131,216,684,false,local-window,"   131:     name: ""{{kafka_broker_user}}""
+   132:     comment: Confluent Kafka
+   133:     system: true
+   134:     shell: ""{{user_login_shell}}""
+   135:     group: ""{{kafka_broker_group}}""
+   136:   when: (getent_passwd|default({}))[kafka_broker_user] is not defined
+   137:   tags:
+   138:     - privileged
+   139: 
+   140: # Archive File deployments need to create SystemD service units
+   141: # Copy the tarball's systemd service to the system
+   142: - name: Copy Kafka Broker Service from archive file to system
+   143:   copy:
+   144:     src: ""{{binary_base_path}}/lib/systemd/system/{{kafka_broker.systemd_file|basename}}""
+   145:     remote_src: true
+   146:     dest: ""{{kafka_broker.systemd_file}}""
+   147:     mode: '644'
+   148:     force: true
+   149:   when: installation_method == ""archive""
+   150:   tags:
+   151:     - systemd
+   152:     - privileged
+   153: 
+   154: - include_role:
+   155:     name: ssl
+   156:   vars:
+   157:     truststore_storepass: ""{{kafka_broker_truststore_storepass}}""
+   158:     truststore_path: ""{{kafka_broker_pkcs12_truststore_path}}""
+   159:     keystore_path: ""{{kafka_broker_pkcs12_keystore_path}}""
+   160:     keystore_storepass: ""{{kafka_broker_keystore_storepass}}""
+   161:     keystore_keypass: ""{{kafka_broker_keystore_keypass}}""
+   162:     service_name: kafka_broker
+   163:     user: ""{{kafka_broker_user}}""
+   164:     group: ""{{kafka_broker_group}}""
+   165:     hostnames: ""{{ ([inventory_hostname, ansible_fqdn, ansible_host, ansible_ssh_host|default(omit), hostname|default(omit)] + kafka_broker_listeners | confluent.platform.get_hostnames(inventory_hostname)) | unique }}""
+   166:     ca_cert_path: ""{{kafka_broker_ca_cert_path}}""
+   167:     cert_path: ""{{kafka_broker_cert_path}}""
+   168:     key_path: ""{{kafka_broker_key_path}}""
+   169:     export_certs: ""{{kafka_broker_export_certs}}""
+   170:     create_bouncy_castle_keystore: ""{{fips_enabled}}""
+   171:     bcfks_truststore_path: ""{{kafka_broker_bcfks_truststore_path}}""
+   172:     bcfks_keystore_path: ""{{kafka_broker_bcfks_keystore_path}}""
+   173:   when: >
+   174:     kafka_controller_ssl_enabled|bool or
+   175:     kafka_broker_listeners | confluent.platform.ssl_required(ssl_enabled) or
+   176:     kafka_broker_rest_ssl_enabled|bool or
+   177:     mds_broker_listener.ssl_enabled|bool or
+   178:     mds_tls_enabled|bool or
+   179:     ( kafka_broker_schema_validation_enabled and 'schema_registry' in groups and schema_registry_ssl_enabled ) or
+   180:     ( 'usm_agent' in groups and usm_agent_ssl_enabled|bool )
+   181:   tags: ssl
+   182: 
+   183: - include_tasks: rbac.yml
+   184:   when: rbac_enabled|bool
+   185: 
+   186: - name: Import IDP certificate to Truststore for OAuth
+   187:   include_role:
+   188:     name: common
+   189:     tasks_from: idp_certs.yml
+   190:   vars:
+   191:     idp_cert_path: ""{{ oauth_idp_cert_path }}""
+   192:     idp_cert_dest: /tmp/oauth_idp_cert.pem
+   193:     alias: ""oauth_cert""
+   194:     truststore_storepass: ""{{kafka_broker_truststore_storepass}}""
+   195:     truststore_path: ""{{kafka_broker_pkcs12_truststore_path}}""
+   196:     bcfks_truststore_path: ""{{kafka_broker_bcfks_truststore_path}}""
+   197:     create_bouncy_castle_keystore: ""{{fips_enabled}}""
+   198:     restart_handler_name: ""restart kafka"" # adding cert to Truststore requires a restart of the service to get loaded
+   199:     # cant directly call notify handler from include_role task.
+   200:   when:
+   201:     - oauth_enabled|bool or schema_registry_oauth_enabled|bool or kafka_rest_oauth_enabled|bool or kafka_connect_oauth_enabled|bool or kafka_connect_replicator_oauth_enabled|bool
+   202:     - oauth_idp_cert_path != """"
+   203: 
+   204: - name: Import IDP certificate to MDS Truststore for C3 SSO
+   205:   include_role:
+   206:     name: common
+   207:     tasks_from: idp_certs.yml
+   208:   vars:
+   209:     idp_cert_path: ""{{ sso_idp_cert_path }}""
+   210:     idp_cert_dest: /tmp/sso_idp_cert.pem
+   211:     alias: ""sso_cert""
+   212:     truststore_storepass: ""{{kafka_broker_truststore_storepass}}""
+   213:     truststore_path: ""{{kafka_broker_pkcs12_truststore_path}}""
+   214:     bcfks_truststore_path: ""{{kafka_broker_bcfks_truststore_path}}""
+   215:     create_bouncy_castle_keystore: ""{{fips_enabled}}""
+   216:     restart_handler_name: ""restart kafka"" # adding cert to Truststore requires a restart of the service to get loaded",,,,,,,,,,,
+3fc16c729060bd9e0525cb7d7b3de866e16470517a17555c79fc6688d44f24ce,complex_expression_length_chars,complex-expression,expression,clusterinthecloud/ansible,a378fceff7cd03dbd36da1fc4bd5a4ed09270c60,Q2,roles/webui/tasks/main.yml,tasks,119,"{{ lookup('ansible.builtin.password', webui_password_store_directory + '/webuisecretkeyfile', chars=['ascii_letters', 'digits'], length=50) }}",142,100,>,true,false,1,false,2,,,,false,1,,,,,,,,,,,,,,clusterinthecloud/ansible|B5_current_positive_tail|current=false,B5_current_positive_tail,7,0.1428571429,7,Is this Jinja or conditional expression too complex and in need of simplification?,114,199,228,false,local-window,"   114: 
+   115: - name: Set secret key
+   116:   ansible.builtin.lineinfile:
+   117:     path: ""{{ webui_dir }}/webui/settings.py""
+   118:     regexp: '^SECRET_KEY'
+   119:     line: SECRET_KEY = r""{{ lookup('ansible.builtin.password', webui_password_store_directory + '/webuisecretkeyfile', chars=['ascii_letters', 'digits'], length=50) }}""
+   120:   tags:
+   121:     - molecule-idempotence-notest  # The file has been reset by the checkout
+   122: 
+   123: - name: Install webui dependencies
+   124:   ansible.builtin.pip:
+   125:     requirements: ""{{ webui_dir }}/requirements.txt""
+   126:     virtualenv: ""{{ webui_venv.virtualenv }}""
+   127: 
+   128: - name: Collect static files
+   129:   ansible.builtin.command:
+   130:     cmd: ""{{ webui_venv.virtualenv }}/bin/python manage.py collectstatic --no-input""
+   131:     chdir: ""{{ webui_dir }}""
+   132:   register: collectstatic_result
+   133:   changed_when: '""0 static files copied to"" not in collectstatic_result.stdout'
+   134: 
+   135: # TODO move this (and other copies of it) to a central role
+   136: - name: Create citc config dir
+   137:   ansible.builtin.file:
+   138:     path: /etc/citc
+   139:     state: directory
+   140:     mode: ""0755""
+   141: 
+   142: - name: Create webui mysql config
+   143:   ansible.builtin.template:
+   144:     src: my.cnf.j2
+   145:     dest: /etc/citc/webui.my.cnf
+   146:     owner: webui
+   147:     group: webui
+   148:     mode: ""660""
+   149: 
+   150: - name: Create webui database
+   151:   community.mysql.mysql_db:
+   152:     name: webui
+   153:     state: present
+   154: 
+   155: - name: Create webui MySQL user
+   156:   community.mysql.mysql_user:
+   157:     name: webui
+   158:     password: ""{{ webui_database_password }}""
+   159:     priv: 'webui.*:ALL'
+   160:     state: present
+   161: 
+   162: - name: Run migrations
+   163:   ansible.builtin.command:
+   164:     cmd: ""{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input""
+   165:     chdir: ""{{ webui_dir }}""
+   166:   register: migrate_result
+   167:   changed_when: '""No migrations to apply"" not in migrate_result.stdout'
+   168: 
+   169: - name: Create django admin
+   170:   ansible.builtin.command:
+   171:     cmd: ""{{ webui_venv.virtualenv }}/bin/python manage.py createsuperuser --username citc --email citc@localhost""
+   172:     chdir: ""{{ webui_dir }}""
+   173:   environment:
+   174:     DJANGO_SUPERUSER_PASSWORD: ""{{ webui_superuser_password }}""
+   175:   no_log: true
+   176:   register: createsuperuser_result
+   177:   changed_when: '""Creating user"" in createsuperuser_result.stdout'
+   178: 
+   179: - name: Add webui password to secrets
+   180:   ansible.builtin.lineinfile:
+   181:     path: /usr/sbin/get_secrets
+   182:     line: echo webui ""{{ webui_superuser_password }}""
+   183: 
+   184: - name: Create webui config file
+   185:   ansible.builtin.template:
+   186:     src: webui.yaml.j2
+   187:     dest: /etc/citc/webui.yaml
+   188:     owner: webui
+   189:     group: webui
+   190:     mode: ""660""
+   191: 
+   192: # TODO make checkout readable only by correct user
+   193: 
+   194: - name: Install gunicorn service file
+   195:   ansible.builtin.copy:
+   196:     src: gunicorn.service
+   197:     dest: /etc/systemd/system/gunicorn.service
+   198:     mode: u=rw,g=r,o=
+   199: ",,,,,,,,,,,
+b437e27eee68b199189e3917baaf5e6a358a10d7d0359ff38b27a5225de188fc,complex_expression_length_chars,complex-expression,expression,ADFC-Hamburg/adfc-ansible,8a4bdb99c328b7c5dc1a6b4fb6933d482d2152ec,Q4,roles/docker_compose_project/tasks/main.yml,tasks,10,"{{ hostvars[inventory_hostname].keys() | map('regex_search', '^docker_compose_project_(.*)') | select('string') | list }}",121,100,>,true,true,1,false,8,,,,false,0,,,,,,,,,,,,,,ADFC-Hamburg/adfc-ansible|B5_current_positive_tail|current=true,B5_current_positive_tail,3,0.3333333333,3,Is this Jinja or conditional expression too complex and in need of simplification?,5,16,16,false,local-window,"     5:   delegate_to: loadbalancer01.hamburg.adfc.de
+     6:   no_log: true
+     7: 
+     8: - name: Loop over hostvars starting with docker_compose_project
+     9:   ansible.builtin.include_tasks: compose_project.yml
+    10:   loop: ""{{ hostvars[inventory_hostname].keys() | map('regex_search', '^docker_compose_project_(.*)') | select('string') | list }}""
+    11:   loop_control:
+    12:     loop_var: compose_project_hostkey
+    13:   vars:
+    14:     compose_project: ""{{ hostvars[inventory_hostname][compose_project_hostkey] }}""
+    15:     compose_project_name: ""{{ compose_project_hostkey | replace('docker_compose_project_', '') }}""
+    16:     docker_dir: ""/srv/docker-{{ compose_project_name }}""",,,,,,,,,,,
+61a210dde469db2fb0c944f687c00f5db0d8a080f0f8b54280a391c4a912a95e,complex_expression_length_chars,complex-expression,expression,compscidr/iac,350e7b8162778ad7beab8e2da8be53ea24a1127a,Q3,ansible/roles/ollama/tasks/main.yml,tasks,192,{{ ollama_port }},17,100,>,true,false,1,false,0,,,,false,8,,,,,,,,,,,,,,compscidr/iac|B1_low|current=false,B1_low,92,0.0108695652,92,Is this Jinja or conditional expression too complex and in need of simplification?,187,272,289,false,local-window,"   187:     - deploy
+   188: 
+   189: # Wait for Ollama to be ready
+   190: - name: Wait for Ollama API to be ready
+   191:   ansible.builtin.uri:
+   192:     url: ""http://localhost:{{ ollama_port }}/api/tags""
+   193:     method: GET
+   194:     status_code: 200
+   195:   register: ollama_health
+   196:   until: ollama_health.status == 200
+   197:   retries: 30
+   198:   delay: 5
+   199:   tags:
+   200:     - ollama
+   201:     - deploy
+   202: 
+   203: # Pull configured models
+   204: - name: Pull Ollama models
+   205:   become: true
+   206:   ansible.builtin.command:
+   207:     cmd: ""docker exec {{ ollama_container_name }} ollama pull {{ item }}""
+   208:   loop: ""{{ ollama_models }}""
+   209:   register: ollama_model_pull
+   210:   changed_when: ""'pulling' in ollama_model_pull.stdout""
+   211:   tags:
+   212:     - ollama
+   213:     - models
+   214: 
+   215: # Create custom Modelfile variants (e.g. extended-context tags)
+   216: - name: Ensure Modelfile staging directory exists
+   217:   become: true
+   218:   ansible.builtin.file:
+   219:     path: ""{{ ollama_data_path }}/modelfiles""
+   220:     state: directory
+   221:     mode: ""0755""
+   222:   when: ollama_modelfiles | length > 0
+   223:   tags:
+   224:     - ollama
+   225:     - modelfiles
+   226: 
+   227: - name: List installed Ollama tags
+   228:   become: true
+   229:   ansible.builtin.command:
+   230:     cmd: ""docker exec {{ ollama_container_name }} ollama list""
+   231:   register: ollama_installed_tags
+   232:   changed_when: false
+   233:   when: ollama_modelfiles | length > 0
+   234:   tags:
+   235:     - ollama
+   236:     - modelfiles
+   237: 
+   238: - name: Render Modelfile templates
+   239:   become: true
+   240:   ansible.builtin.template:
+   241:     src: modelfile.j2
+   242:     dest: ""{{ ollama_data_path }}/modelfiles/{{ item.name | regex_replace('[^A-Za-z0-9]', '_') }}.Modelfile""
+   243:     mode: ""0644""
+   244:   loop: ""{{ ollama_modelfiles }}""
+   245:   loop_control:
+   246:     label: ""{{ item.name }}""
+   247:   when: ollama_modelfiles | length > 0
+   248:   tags:
+   249:     - ollama
+   250:     - modelfiles
+   251: 
+   252: - name: Create Modelfile variants when absent
+   253:   become: true
+   254:   ansible.builtin.shell: >
+   255:     docker exec -i {{ ollama_container_name | quote }}
+   256:     ollama create {{ item.name | quote }} -f /dev/stdin
+   257:     < {{ (ollama_data_path ~ '/modelfiles/'
+   258:           ~ (item.name | regex_replace('[^A-Za-z0-9]', '_'))
+   259:           ~ '.Modelfile') | quote }}
+   260:   loop: ""{{ ollama_modelfiles }}""
+   261:   loop_control:
+   262:     label: ""{{ item.name }}""
+   263:   when:
+   264:     - ollama_modelfiles | length > 0
+   265:     - item.name not in ollama_installed_tags.stdout
+   266:   changed_when: true # Only runs when variant missing (per `when:`); success == change
+   267:   tags:
+   268:     - ollama
+   269:     - modelfiles
+   270: 
+   271: # Display connection info
+   272: - name: Display Ollama connection info",,,,,,,,,,,
+3a1545f19be1b6b5527b1678a17b6c4cd2a3644ae81068a71771cee1bc5c23f0,complex_expression_length_chars,complex-expression,expression,zephyros-dev/media-server,f80b182bd1ff8489b67e9342f391ae682ddda0fc,Q2,roles/managed_node/tasks/system/snapraid.yaml,tasks,63,{{ snapraid_runner_path }},26,100,>,true,false,1,false,0,,,,false,9,,,,,,,,,,,,,,zephyros-dev/media-server|B2_lower_middle|current=false,B2_lower_middle,78,0.0128205128,78,Is this Jinja or conditional expression too complex and in need of simplification?,58,121,121,false,local-window,"    58:       vars:
+    59:         snapraid_runner_path: /opt/snapraid-btrfs-runner
+    60:       block:
+    61:         - name: Setup snapraid-btrfs-runner folder
+    62:           ansible.builtin.file:
+    63:             path: ""{{ snapraid_runner_path }}/""
+    64:             state: directory
+    65:             mode: ""0755""
+    66:         - name: Install snapraid-btrfs-runner script
+    67:           ansible.builtin.copy:
+    68:             src: submodules/snapraid-btrfs-runner/snapraid-btrfs-runner.py
+    69:             dest: ""{{ snapraid_runner_path }}/snapraid-btrfs-runner.py""
+    70:             mode: ""0700""
+    71:         - name: Check if default config differs
+    72:           ansible.builtin.copy:
+    73:             src: submodules/snapraid-btrfs-runner/snapraid-btrfs-runner.conf.example
+    74:             dest: ""{{ snapraid_runner_path }}/snapraid-btrfs-runner.conf.example""
+    75:             mode: ""0600""
+    76:           register: snapraid_runner_config
+    77:         - name: Replace default config if changed # noqa: no-handler
+    78:           ansible.builtin.copy:
+    79:             remote_src: true
+    80:             mode: ""0600""
+    81:             src: ""{{ snapraid_runner_path }}/snapraid-btrfs-runner.conf.example""
+    82:             dest: ""{{ snapraid_runner_path }}/snapraid-btrfs-runner.conf""
+    83:           when: snapraid_runner_config.changed
+    84:         - name: Configure snapraid runner config
+    85:           community.general.ini_file:
+    86:             path: ""{{ snapraid_runner_path }}/snapraid-btrfs-runner.conf""
+    87:             section: ""{{ item.section }}""
+    88:             option: ""{{ item.option }}""
+    89:             value: ""{{ item.value }}""
+    90:             allow_no_value: ""{{ item.allow_no_value | default(false) }}""
+    91:             mode: ""0600""
+    92:           loop:
+    93:             - section: snapraid-btrfs
+    94:               option: executable
+    95:               value: /usr/local/bin/snapraid-btrfs
+    96:             - section: snapper
+    97:               option: executable
+    98:               value: /usr/bin/snapper
+    99:             - section: snapraid
+   100:               option: executable
+   101:               value: /usr/bin/snapraid
+   102:             - section: snapraid
+   103:               option: config
+   104:               value: /etc/snapraid.conf
+   105:             - section: logging
+   106:               option: file
+   107:               value: """"
+   108:         - name: Template snapraid runner systemd
+   109:           ansible.builtin.template:
+   110:             src: snapraid/snapraid-runner.{{ item }}.j2
+   111:             dest: /etc/systemd/system/snapraid-runner.{{ item }}
+   112:             mode: ""0600""
+   113:           loop:
+   114:             - service
+   115:             - timer
+   116:         - name: Enable snapraid runner systemd timer
+   117:           ansible.builtin.systemd:
+   118:             daemon_reload: true
+   119:             enabled: true
+   120:             state: started
+   121:             name: snapraid-runner.timer",,,,,,,,,,,
+5c9f3830d3f90cdbc5a69d028d2a746f54c0e804656d57299872395d76284237,complex_expression_length_chars,complex-expression,expression,wazuh/wazuh-ansible,a80acf87449f47f5a1db7d8e0841448785b2a7a8,Q1,roles/wazuh-manager/tasks/main.yml,tasks,51,"ansible_facts.architecture == ""aarch64""",39,100,>,true,false,1,false,1,,,,false,10,,,,,,,,,,,,,,wazuh/wazuh-ansible|B3_upper_middle|current=false,B3_upper_middle,73,0.0136986301,73,Is this Jinja or conditional expression too complex and in need of simplification?,46,131,298,false,local-window,"    46:           ansible.builtin.get_url:
+    47:             url: ""{{ wazuh_manager_aarch64_rpm }}""
+    48:             dest: ""{{ wazuh_manager_package_download_path }}/{{ wazuh_manager_package_name }}_{{ ansible_facts.architecture }}.rpm""
+    49:             mode: '0644'
+    50:           when:
+    51:             - ansible_facts.architecture == ""aarch64""
+    52: 
+    53:         - name: RedHat/CentOS/Fedora | Install wazuh-manager package
+    54:           ansible.builtin.dnf:
+    55:             name: ""{{ wazuh_manager_package_download_path }}/{{ wazuh_manager_package_name }}_{{ ansible_facts.architecture }}.rpm""
+    56:             state: present
+    57:             disable_gpg_check: true
+    58: 
+    59:     - name: Debian-based systems | Download wazuh-manager package
+    60:       when: ansible_facts.os_family == 'Debian'
+    61:       block:
+    62:         - name: Debian-based (AMD64) | Download wazuh-manager package
+    63:           ansible.builtin.get_url:
+    64:             url: ""{{ wazuh_manager_amd64_deb }}""
+    65:             dest: ""{{ wazuh_manager_package_download_path }}/{{ wazuh_manager_package_name }}_{{ ansible_facts.architecture }}.deb""
+    66:             mode: '0644'
+    67:           when:
+    68:             - ansible_facts.architecture == ""x86_64""
+    69: 
+    70:         - name: Debian-based (ARM64) | Download wazuh-manager package
+    71:           ansible.builtin.get_url:
+    72:             url: ""{{ wazuh_manager_arm64_deb }}""
+    73:             dest: ""{{ wazuh_manager_package_download_path }}/{{ wazuh_manager_package_name }}_{{ ansible_facts.architecture }}.deb""
+    74:             mode: '0644'
+    75:           when:
+    76:             - ansible_facts.architecture == ""aarch64""
+    77: 
+    78:         - name: Debian-based | Install wazuh-manager package
+    79:           ansible.builtin.apt:
+    80:             deb: ""{{ wazuh_manager_package_download_path }}/{{ wazuh_manager_package_name }}_{{ ansible_facts.architecture }}.deb""
+    81:             state: present
+    82: 
+    83:     - name: Linux | Reload systemd configuration
+    84:       ansible.builtin.systemd:
+    85:         daemon_reload: true
+    86:       become: true
+    87: 
+    88:     - name: Detect the manager's indexer client certificate/key paths from wazuh-manager.conf
+    89:       block:
+    90:         - name: Read wazuh-manager.conf
+    91:           ansible.builtin.slurp:
+    92:             path: /var/wazuh-manager/etc/wazuh-manager.conf
+    93:           register: wazuh_manager_conf_raw
+    94:           changed_when: false
+    95: 
+    96:         - name: Extract the indexer SSL certificate/key paths
+    97:           ansible.builtin.set_fact:
+    98:             expected_cert_path: ""{{ (indexer_certificates | first | default('') | trim) }}""
+    99:             expected_key_path: ""{{ (indexer_keys | first | default('') | trim) }}""
+   100:           vars:
+   101:             conf_text: ""{{ wazuh_manager_conf_raw.content | b64decode | regex_replace('(?s)<!--.*?-->', '') }}""
+   102:             indexer_ssl_block: ""{{ conf_text | regex_findall('(?s)<indexer[^>]*>.*?<ssl>(.*?)</ssl>.*?</indexer>') | first | default('') }}""
+   103:             indexer_certificates: ""{{ indexer_ssl_block | regex_findall('(?s)<certificate>\\s*([^<]+\\.pem)\\s*</certificate>') }}""
+   104:             indexer_keys: ""{{ indexer_ssl_block | regex_findall('(?s)<key>\\s*([^<]+\\.pem)\\s*</key>') }}""
+   105: 
+   106:         - name: Validate expected certificate and key filenames
+   107:           ansible.builtin.assert:
+   108:             that:
+   109:               - ( expected_cert_path | length > 0 ) and ( expected_key_path | length > 0 )
+   110:               - ( expected_cert_path is match('^/?.+\\.pem$') )
+   111:               - ( expected_key_path is match('^/?.+\\.pem$') )
+   112:             fail_msg: >-
+   113:               Could not find the indexer SSL certificate/key paths inside the <indexer><ssl>
+   114:               block of /var/wazuh-manager/etc/wazuh-manager.conf.
+   115:           changed_when: false
+   116: 
+   117:         - name: Set cert and key full paths
+   118:           ansible.builtin.set_fact:
+   119:             full_cert_path: ""{{ wazuh_manager_install_path }}{{ expected_cert_path }}""
+   120:             full_key_path: ""{{ wazuh_manager_install_path }}{{ expected_key_path }}""
+   121: 
+   122:         - name: Create expected cert/key directory (if does not exist)
+   123:           ansible.builtin.file:
+   124:             path: ""{{ full_cert_path | dirname }}""
+   125:             state: directory
+   126:             owner: root
+   127:             group: wazuh-manager
+   128:             mode: ""1770""
+   129: 
+   130:     - name: Copy root-ca certificate from local to the Wazuh Manager instance
+   131:       ansible.builtin.copy:",,,,,,,,,,,
+0fcbd27b5b05dd3b89c65f175df3c40c6c9ed77e60ace47c3b8cfb39628a4a0b,complex_expression_length_chars,complex-expression,expression,kubernetes-sigs/kubespray,9ee6f9b27981b251d77302fd6cf631f330e0ec39,Q4,roles/kubespray_defaults/vars/main/main.yml,vars,6,{{ ((kube_version | split('.'))[1] | int) + 1 }},48,100,>,true,true,1,false,6,,,,false,1,,,,,,,,,,,,,,kubernetes-sigs/kubespray|B3_upper_middle|current=true,B3_upper_middle,2,0.5000000000,2,Is this Jinja or conditional expression too complex and in need of simplification?,1,46,46,true,local-window,"     1: ---
+     2: # Internal version manipulation tooling
+     3: 
+     4: # Get kubernetes major version (i.e. 1.17.4 => 1.17)
+     5: kube_major_version: ""{{ (kube_version | split('.'))[:-1] | join('.') }}""
+     6: kube_next: ""{{ ((kube_version | split('.'))[1] | int) + 1 }}""
+     7: kube_major_next_version: ""1.{{ kube_next }}""
+     8: 
+     9: pod_infra_supported_versions:
+    10:   '1.36': '3.10.2'
+    11:   '1.35': '3.10.1'
+    12:   '1.34': '3.10.1'
+    13: 
+    14: etcd_supported_versions:
+    15:   '1.36': ""{{ (etcd_binary_checksums['amd64'].keys() | select('version', '3.7', '<'))[0] }}""
+    16:   '1.35': ""{{ (etcd_binary_checksums['amd64'].keys() | select('version', '3.7', '<'))[0] }}""
+    17:   '1.34': ""{{ (etcd_binary_checksums['amd64'].keys() | select('version', '3.6', '<'))[0] }}""
+    18: 
+    19: # Kubespray constants
+    20: 
+    21: kube_proxy_deployed: ""{{ 'addon/kube-proxy' not in kubeadm_init_phases_skip }}""
+    22: 
+    23: # The lowest version allowed to upgrade from (same as calico_version in the previous branch)
+    24: calico_min_version_required: ""3.27.0""
+    25: 
+    26: containerd_min_version_required: ""1.3.7""
+    27: 
+    28: # mixed kube_service_addresses/kube_service_addresses_ipv6 for a variety of network stacks(dualstack, ipv6only, ipv4only)
+    29: kube_service_subnets: >-
+    30:   {%- if ipv4_stack and ipv6_stack -%}
+    31:   {{ kube_service_addresses }},{{ kube_service_addresses_ipv6 }}
+    32:   {%- elif ipv4_stack -%}
+    33:   {{ kube_service_addresses }}
+    34:   {%- else -%}
+    35:   {{ kube_service_addresses_ipv6 }}
+    36:   {%- endif -%}
+    37: 
+    38: # mixed kube_pods_subnet/kube_pods_subnet_ipv6 for a variety of network stacks(dualstack, ipv6only, ipv4only)
+    39: kube_pods_subnets: >-
+    40:   {%- if ipv4_stack and ipv6_stack -%}
+    41:   {{ kube_pods_subnet }},{{ kube_pods_subnet_ipv6 }}
+    42:   {%- elif ipv4_stack -%}
+    43:   {{ kube_pods_subnet }}
+    44:   {%- else -%}
+    45:   {{ kube_pods_subnet_ipv6 }}
+    46:   {%- endif -%}",,,,,,,,,,,
+752952874781b99d7c960b008fb43fa25cc77f67866883bf228356508c5bf4af,complex_expression_length_chars,complex-expression,expression,azimuth-cloud/ansible-collection-azimuth-ops,396972118edcecb213e69497f9f2c70e7abd0611,Q3,roles/azimuth_schedule_operator/defaults/main.yml,vars,9,{{ azimuth_release_namespace | default('azimuth') }},52,100,>,true,false,1,false,2,,,,false,0,,,,,,,,,,,,,,azimuth-cloud/ansible-collection-azimuth-ops|B4_high|current=false,B4_high,530,0.0018867925,530,Is this Jinja or conditional expression too complex and in need of simplification?,4,47,47,false,local-window,"     4: azimuth_schedule_operator_chart_name: azimuth-schedule-operator
+     5: azimuth_schedule_operator_chart_version: 0.10.0
+     6: 
+     7: # Release information for the operator release
+     8: # Use the same namespace as Azimuth by default
+     9: azimuth_schedule_operator_release_namespace: ""{{ azimuth_release_namespace | default('azimuth') }}""
+    10: azimuth_schedule_operator_release_name: azimuth-schedule-operator
+    11: 
+    12: # Indicates whether Blazar support should be enabled in the schedule operator
+    13: azimuth_schedule_operator_blazar_enabled: false
+    14: # The interval at which Blazar leases are checked
+    15: # If not specified, the operator default is used
+    16: azimuth_schedule_operator_check_interval:
+    17: # The amount of time before the end of a lease that a platform is deleted
+    18: # This is to allow for a clean shutdown of platforms when Blazar is in use
+    19: azimuth_schedule_operator_default_grace_period: >-
+    20:   {{ 600 if azimuth_schedule_operator_blazar_enabled else 0 }}
+    21: 
+    22: # The values for the release
+    23: azimuth_schedule_operator_release_defaults:
+    24:   config: >-
+    25:     {{-
+    26:       {
+    27:         ""blazarEnabled"": (""yes"" if azimuth_schedule_operator_blazar_enabled else ""no""),
+    28:         ""defaultGracePeriod"": azimuth_schedule_operator_default_grace_period,
+    29:       } |
+    30:         combine(
+    31:           { ""checkInterval"": azimuth_schedule_operator_check_interval }
+    32:           if azimuth_schedule_operator_check_interval
+    33:           else {}
+    34:         )
+    35:     }}
+    36:   # Enable the metrics with the service monitor by default
+    37:   metrics:
+    38:     enabled: true
+    39: azimuth_schedule_operator_release_overrides: {}
+    40: azimuth_schedule_operator_release_values: >-
+    41:   {{-
+    42:     azimuth_schedule_operator_release_defaults |
+    43:       combine(azimuth_schedule_operator_release_overrides, recursive = True)
+    44:   }}
+    45: 
+    46: # The timeout to wait for schedule operator to become ready
+    47: azimuth_schedule_operator_wait_timeout: 10m",,,,,,,,,,,
+c42952c81046257262ea13c557992bdbfdf4a37cde2cc0319d178d91f4823711,complex_expression_length_chars,complex-expression,expression,cfpb/aurora,03e01e4bd080040159dd089175179ef3c6baa3e3,Q4,deploy/deploy_mesos_master.yml,playbook,11,mesos_upgrade and 'mesos_master' in groups and inventory_hostname != groups['mesos_master'][0],94,100,>,true,true,1,false,6,,,,false,0,,,,,,,,,,,,,,cfpb/aurora|B4_high|current=true,B4_high,6,0.1666666667,6,Is this Jinja or conditional expression too complex and in need of simplification?,6,39,39,false,local-window,"     6:   tasks:
+     7:     - name: Shutdown all but one of the Mesos Master instances
+     8:       service:
+     9:         name: mesos-master
+    10:         state: stopped
+    11:       when: mesos_upgrade and 'mesos_master' in groups and inventory_hostname != groups['mesos_master'][0]
+    12: 
+    13:     - name: Shutdown all but one of the Marathon instances
+    14:       service:
+    15:         name: marathon
+    16:         state: stopped
+    17:       when: marathon_upgrade and 'mesos_master' in groups and inventory_hostname != groups['mesos_master'][0]
+    18: 
+    19: - hosts: mesos_master
+    20:   become: yes
+    21:   become_method: sudo
+    22:   serial: 1
+    23:   max_fail_percentage: 30
+    24:   roles:
+    25:     - {role: iptables, when: ""iptables_config""}
+    26:     - epel  # This is for rhel6 pip
+    27:     - common
+    28:     - mesos_master
+    29:   tasks:
+    30:       # used to install kazoo
+    31:     - name: Install pip
+    32:       yum:
+    33:          name: python-pip
+    34:          state: present
+    35: 
+    36:     - name: Install Kazoo (required by Znode ansible module)
+    37:       pip:
+    38:         name: kazoo
+    39:         umask: ""0022""",,,,,,,,,,,
+4749833b95fcffb96d5fdfecdf44dfa9a78382e6f27aa75edf2773629fec589f,complex_expression_length_chars,complex-expression,expression,chkpwd/iac,9b789a76960f81aa13ecdb2c29fbcb799b5e4fcf,Q2,kubernetes/.taskfiles/postgres/taskfile.yml,playbook,24,"{{ .CLI_ARGS | default ""--verbose --format=c --no-comments --clean --if-exists --no-owner --extension plpgsql"" }}",113,100,>,true,false,1,false,1,,,,false,3,,,,,,,,,,,,,,chkpwd/iac|B5_current_positive_tail|current=false,B5_current_positive_tail,6,0.1666666667,6,Is this Jinja or conditional expression too complex and in need of simplification?,19,59,59,false,local-window,"    19:         - DB_NAME
+    20:         - DB_CLUSTER
+    21:         - NS
+    22:     vars:
+    23:       OUTPUT_DIR: '{{ .OUTPUT_DIR | default ""."" }}'
+    24:       CLI_ARGS: '{{ .CLI_ARGS | default ""--verbose --format=c --no-comments --clean --if-exists --no-owner --extension plpgsql"" }}'
+    25:     cmds:
+    26:       - kubectl exec -it --container database --namespace {{.NS}} {{.DB_POD}} -- /bin/bash -c 'pg_dump --dbname {{.DB_NAME}} {{.CLI_ARGS}} --file /pgdata/{{.DB_NAME}}.psql'
+    27:       - kubectl cp --container database ""{{.NS}}/{{.DB_POD}}:/pgdata/{{.DB_NAME}}.psql"" ""{{.OUTPUT_DIR}}/{{.DB_NAME}}.psql""
+    28:       - kubectl exec -it --container database --namespace {{.NS}} {{.DB_POD}} -- /bin/bash -c 'rm -f /pgdata/{{.DB_NAME}}.psql'
+    29:   crunchy-restore:
+    30:     desc: Restore a pg_dump into a CrunchyData Postgres cluster. [DB_NAME=required] [DB_USER=required] [FILE=required] [DB_CLUSTER=required] [NS=required]
+    31:     preconditions:
+    32:       - which kubectl
+    33:       - kubectl get pods --namespace {{.NS}} -l postgres-operator.crunchydata.com/cluster={{.DB_CLUSTER}}
+    34:       - test -f ""{{.FILE}}""
+    35:     requires:
+    36:       vars:
+    37:         - DB_NAME
+    38:         - DB_USER
+    39:         - FILE
+    40:         - DB_CLUSTER
+    41:         - NS
+    42:     vars:
+    43:       CLI_ARGS: '{{ .CLI_ARGS | default (printf ""--verbose --format=c --clean --if-exists --no-owner --role %s"" .DB_USER) }}'
+    44:     cmds:
+    45:       - kubectl cp --container database ""{{.FILE}}"" ""{{.NS}}/{{.DB_POD}}:/pgdata/restore-{{.DB_NAME}}.psql""
+    46:       - kubectl exec -it --container database --namespace {{.NS}} {{.DB_POD}} -- /bin/bash -c 'echo ""ALTER DATABASE \""{{.DB_NAME}}\"" OWNER TO \""{{.DB_USER}}\"";"" | psql'
+    47:       - kubectl exec -it --container database --namespace {{.NS}} {{.DB_POD}} -- /bin/bash -c 'pg_restore --dbname {{.DB_NAME}} {{.CLI_ARGS}} /pgdata/restore-{{.DB_NAME}}.psql'
+    48:       - defer: kubectl exec -it --container database --namespace {{.NS}} {{.DB_POD}} -- /bin/bash -c 'rm -f /pgdata/restore-{{.DB_NAME}}.psql'
+    49:   crunchy-exec:
+    50:     desc: Exec into a pod in a CrunchyData Postgres cluster. [DB_CLUSTER=required] [NS=required]
+    51:     preconditions:
+    52:       - which kubectl
+    53:       - kubectl get pods --namespace {{.NS}} -l postgres-operator.crunchydata.com/cluster={{.DB_CLUSTER}}
+    54:     requires:
+    55:       vars:
+    56:         - DB_CLUSTER
+    57:         - NS
+    58:     cmds:
+    59:       - kubectl exec -it --container database --namespace {{.NS}} {{.DB_POD}} -- /bin/bash",,,,,,,,,,,
+cd7df6386871444816d97d301ec1e0f1f852e81d9cd434d535b457dc01038344,complex_expression_length_chars,complex-expression,expression,signalfx/splunk-otel-collector,49f2149219bba11f99a39da13afbe04468eee040,Q1,deployments/ansible_collections/signalfx/splunk_otel_collector/roles/collector/tasks/linux_auto_instrumentation.yml,tasks,25,{{ apt_instrumentation_package is changed or yum_instrumentation_package is changed or zypper_instrumentation_package is changed }},131,100,>,true,true,1,false,5,,,,false,4,,,,,,,,,,,,,,signalfx/splunk-otel-collector|B5_current_positive_tail|current=true,B5_current_positive_tail,6,0.1666666667,6,Is this Jinja or conditional expression too complex and in need of simplification?,20,105,154,false,local-window,"    20:   ansible.builtin.set_fact:
+    21:     auto_instrumentation_version: ""{{ ansible_facts.packages['splunk-otel-auto-instrumentation'][0].version }}""
+    22: 
+    23: - name: Set auto instrumentation facts
+    24:   ansible.builtin.set_fact:
+    25:     package_changed: ""{{ apt_instrumentation_package is changed \
+    26:       or yum_instrumentation_package is changed \
+    27:       or zypper_instrumentation_package is changed }}""
+    28:     npm_found: ""{{ (splunk_otel_auto_instrumentation_npm_path | default('npm')) != 'npm' }}""
+    29:     with_new_instrumentation: ""{{ auto_instrumentation_version is version('0.87.0', '>=') }}""
+    30:     with_systemd: ""{{ splunk_otel_auto_instrumentation_systemd }}""
+    31:     with_java: ""{{ 'java' in (splunk_otel_auto_instrumentation_sdks | default([])) }}""
+    32:     with_nodejs: ""{{ 'nodejs' in (splunk_otel_auto_instrumentation_sdks | default([])) \
+    33:       and auto_instrumentation_version is version('0.87.0', '>=') }}""
+    34:     with_dotnet: ""{{ 'dotnet' in (splunk_otel_auto_instrumentation_sdks | default([])) \
+    35:       and auto_instrumentation_version is version('0.99.0', '>=') \
+    36:       and ansible_architecture in ('x86_64', 'amd64', 'aarch64') }}""
+    37: 
+    38: - name: Check for npm
+    39:   ansible.builtin.command: npm --version
+    40:   register: npm_check
+    41:   changed_when: false
+    42:   ignore_errors: true
+    43:   when: with_nodejs and not npm_found
+    44: 
+    45: - name: Set npm_found fact
+    46:   ansible.builtin.set_fact:
+    47:     npm_found: yes
+    48:   when: with_nodejs and not npm_found and npm_check is defined and npm_check.rc == 0
+    49: 
+    50: - name: Create /usr/lib/splunk-instrumentation/splunk-otel-js/node_modules
+    51:   ansible.builtin.file:
+    52:     path: /usr/lib/splunk-instrumentation/splunk-otel-js/node_modules
+    53:     state: directory
+    54:     mode: '0755'
+    55:   when: with_nodejs and npm_found and package_changed
+    56: 
+    57: - name: Install splunk-otel-js
+    58:   community.general.npm:
+    59:     name: /usr/lib/splunk-instrumentation/splunk-otel-js.tgz
+    60:     path: /usr/lib/splunk-instrumentation/splunk-otel-js
+    61:     executable: ""{{ splunk_otel_auto_instrumentation_npm_path | default('npm') }}""
+    62:   when: with_nodejs and npm_found and package_changed
+    63: 
+    64: - name: Delete the Splunk OpenTelemetry Auto Instrumentation systemd config
+    65:   ansible.builtin.file:
+    66:     path: /usr/lib/systemd/system.conf.d/00-splunk-otel-auto-instrumentation.conf
+    67:     state: absent
+    68:   when: not with_systemd
+    69:   notify: ""Reload systemd daemon""
+    70: 
+    71: - name: Delete the old Splunk OpenTelemetry Auto Instrumentation config
+    72:   ansible.builtin.file:
+    73:     path: /usr/lib/splunk-instrumentation/instrumentation.conf
+    74:     state: absent
+    75:   when: with_systemd or with_new_instrumentation
+    76: 
+    77: - name: Delete the Splunk OpenTelemetry Auto Instrumentation for Java config file
+    78:   ansible.builtin.file:
+    79:     path: /etc/splunk/zeroconfig/java.conf
+    80:     state: absent
+    81:   when: with_systemd or not with_new_instrumentation or not with_java
+    82: 
+    83: - name: Delete the Splunk OpenTelemetry Auto Instrumentation for Node.js config file
+    84:   ansible.builtin.file:
+    85:     path: /etc/splunk/zeroconfig/node.conf
+    86:     state: absent
+    87:   when: with_systemd or not with_new_instrumentation or not with_nodejs or not npm_found
+    88: 
+    89: - name: Delete the Splunk OpenTelemetry Auto Instrumentation for .NET config file
+    90:   ansible.builtin.file:
+    91:     path: /etc/splunk/zeroconfig/dotnet.conf
+    92:     state: absent
+    93:   when: with_systemd or not with_new_instrumentation or not with_dotnet
+    94: 
+    95: - name: Set up the Splunk OpenTelemetry Auto Instrumentation config file
+    96:   ansible.builtin.template:
+    97:     src: splunk-otel-auto-instrumentation.conf.j2
+    98:     dest: /usr/lib/splunk-instrumentation/instrumentation.conf
+    99:     owner: root
+   100:     group: root
+   101:     mode: '644'
+   102:   when: with_java and not with_new_instrumentation and not with_systemd
+   103: 
+   104: - name: Set up the Splunk OpenTelemetry Auto Instrumentation for Java config file
+   105:   ansible.builtin.template:",,,,,,,,,,,
+b167b267a4a3295692faac2c0b87e7c7a2cb4e24e75d73e333cc8afaed9a5979,complex_expression_length_chars,complex-expression,expression,plopoyop/ansible-collection-kubernetes_observability,9b1eebb1ec42fae20e1688459495285a91bd4dcb,Q2,roles/loki/tasks/cleanup.yml,tasks,5,{{ loki_namespace }},20,100,>,true,false,1,false,0,,,,false,1,,,,,,,,,,,,,,plopoyop/ansible-collection-kubernetes_observability|B1_low|current=false,B1_low,28,0.0357142857,28,Is this Jinja or conditional expression too complex and in need of simplification?,1,23,23,true,local-window,"     1: ---
+     2: - name: ""Remove Loki instance""
+     3:   kubernetes.core.helm:
+     4:     name: ""{{ loki_release_name }}""
+     5:     namespace: ""{{ loki_namespace }}""
+     6:     chart_ref: ""{{ loki_helm_chart_ref }}""
+     7:     state: ""absent""
+     8:     wait: true
+     9:   tags:
+    10:     - ""helm_chart""
+    11: 
+    12: - name: ""Pause for job to complete.""
+    13:   ansible.builtin.pause:
+    14:     seconds: 30
+    15: 
+    16: - name: ""Remove Loki namespace""
+    17:   kubernetes.core.k8s:
+    18:     name: ""{{ loki_namespace }}""
+    19:     api_version: ""v1""
+    20:     kind: ""Namespace""
+    21:     state: ""absent""
+    22:   tags:
+    23:     - ""namespace""",,,,,,,,,,,
+75ea8815ac98216fd2befb2b0a10d031792275ad04d7142a0d92a4ff56f81693,complex_expression_length_chars,complex-expression,expression,vndmtrx/k8s-in-a-box,1031c616283a0badf1f94e3716cd8c7d91e0f972,Q3,ansible/infra-artefatos/tasks/download-artefatos.yml,tasks,17,{{ arquivos_locais.results }},29,100,>,true,false,1,false,0,,,,false,7,,,,,,,,,,,,,,vndmtrx/k8s-in-a-box|B2_lower_middle|current=false,B2_lower_middle,109,0.0091743119,109,Is this Jinja or conditional expression too complex and in need of simplification?,12,20,20,false,local-window,"    12:   ansible.builtin.get_url:
+    13:     url: ""{{ item.item.value.url }}""
+    14:     dest: ""{{ pasta_temporarios }}/{{ item.item.value.arquivo }}""
+    15:     mode: ""0644""
+    16:     checksum: ""{{ item.item.value.checksum | default(omit) }}""
+    17:   loop: ""{{ arquivos_locais.results }}""
+    18:   loop_control:
+    19:     label: ""{{ item.item.key }}""
+    20:   when: not item.stat.exists",,,,,,,,,,,
+fc4b0733447814b4c0b62a5d376dfff2feefad0d7fb5ccba3f1d71275d48610e,complex_expression_length_chars,complex-expression,expression,spantaleev/matrix-docker-ansible-deploy,8309e7932dd995f83fb022d646fe4b1c4f2a9d98,Q4,roles/custom/matrix-bridge-rustpush/tasks/main.yml,tasks,14,matrix_bridge_rustpush_enabled | bool,37,100,>,true,false,1,false,1,,,,false,0,,,,,,,,,,,,,,spantaleev/matrix-docker-ansible-deploy|B3_upper_middle|current=false,B3_upper_middle,1368,0.0007309942,1368,Is this Jinja or conditional expression too complex and in need of simplification?,9,25,25,false,local-window,"     9:     - setup-all
+    10:     - setup-rustpush-bridge
+    11:     - install-all
+    12:     - install-rustpush-bridge
+    13:   block:
+    14:     - when: matrix_bridge_rustpush_enabled | bool
+    15:       ansible.builtin.include_tasks: ""{{ role_path }}/tasks/validate_config.yml""
+    16: 
+    17:     - when: matrix_bridge_rustpush_enabled | bool
+    18:       ansible.builtin.include_tasks: ""{{ role_path }}/tasks/setup_install.yml""
+    19: 
+    20: - tags:
+    21:     - setup-all
+    22:     - setup-rustpush-bridge
+    23:   block:
+    24:     - when: not matrix_bridge_rustpush_enabled | bool
+    25:       ansible.builtin.include_tasks: ""{{ role_path }}/tasks/setup_uninstall.yml""",,,,,,,,,,,
+1d4cc5958f3a2bd9d151724372f8206562ca7e05b7957f4491775ede8f82cc3f,complex_expression_length_chars,complex-expression,expression,ceph/ceph-ansible,6148fd9a7eff6195ccdf8702ca0f48a7022e6019,Q4,infrastructure-playbooks/rolling_update.yml,playbook,716,groups['standby_mdss'] | default([]) | length > 0,49,100,>,true,true,1,false,6,,,,false,79,,,,,,,,,,,,,,ceph/ceph-ansible|B3_upper_middle|current=true,B3_upper_middle,4,0.2500000000,4,Is this Jinja or conditional expression too complex and in need of simplification?,711,796,1359,false,local-window,"   711:                 name: ""ceph-mds@{{ hostvars[item]['ansible_facts']['hostname'] }}""
+   712:                 state: stopped
+   713:                 enabled: false
+   714:               delegate_to: ""{{ item }}""
+   715:               with_items: ""{{ groups['standby_mdss'] }}""
+   716:               when: groups['standby_mdss'] | default([]) | length > 0
+   717: 
+   718:             # dedicated task for masking systemd unit
+   719:             # somehow, having a single task doesn't work in containerized context
+   720:             - name: Mask systemd units for standby ceph mds
+   721:               ansible.builtin.systemd:
+   722:                 name: ""ceph-mds@{{ hostvars[item]['ansible_facts']['hostname'] }}""
+   723:                 masked: true
+   724:               delegate_to: ""{{ item }}""
+   725:               with_items: ""{{ groups['standby_mdss'] }}""
+   726:               when: groups['standby_mdss'] | default([]) | length > 0
+   727: 
+   728:             - name: Wait until all standbys mds are stopped
+   729:               ansible.builtin.command: ""{{ container_exec_cmd | default('') }} ceph --cluster {{ cluster }} fs dump -f json""
+   730:               changed_when: false
+   731:               register: wait_standbys_down
+   732:               retries: 300
+   733:               delay: 5
+   734:               until: (wait_standbys_down.stdout | from_json).standbys | length == 0
+   735: 
+   736:         - name: Create active_mdss group
+   737:           ansible.builtin.add_host:
+   738:             name: ""{{ mds_active_host[0] if mds_active_host is defined else groups.get(mds_group_name)[0] }}""
+   739:             groups: active_mdss
+   740:             ansible_host: ""{{ hostvars[mds_active_host[0] if mds_active_host is defined else groups.get(mds_group_name)[0]]['ansible_host'] | default(omit) }}""
+   741:             ansible_port: ""{{ hostvars[mds_active_host[0] if mds_active_host is defined else groups.get(mds_group_name)[0]]['ansible_port'] | default(omit) }}""
+   742: 
+   743: 
+   744: - name: Upgrade active mds
+   745:   vars:
+   746:     upgrade_ceph_packages: true
+   747:   hosts: active_mdss
+   748:   tags: mdss
+   749:   become: true
+   750:   gather_facts: false
+   751:   tasks:
+   752:     - name: Import ceph-defaults role
+   753:       ansible.builtin.import_role:
+   754:         name: ceph-defaults
+   755: 
+   756:     - name: Import ceph-facts role
+   757:       ansible.builtin.import_role:
+   758:         name: ceph-facts
+   759: 
+   760:     - name: Prevent restart from the packaging
+   761:       ansible.builtin.systemd:
+   762:         name: ceph-mds@{{ ansible_facts['hostname'] }}
+   763:         enabled: false
+   764:         masked: true
+   765:       when: not containerized_deployment | bool
+   766: 
+   767:     - name: Import ceph-handler role
+   768:       ansible.builtin.import_role:
+   769:         name: ceph-handler
+   770: 
+   771:     - name: Import ceph-common role
+   772:       ansible.builtin.import_role:
+   773:         name: ceph-common
+   774:       when: not containerized_deployment | bool
+   775: 
+   776:     - name: Import ceph-container-common role
+   777:       ansible.builtin.import_role:
+   778:         name: ceph-container-common
+   779:       when: containerized_deployment | bool
+   780: 
+   781:     - name: Import ceph-config role
+   782:       ansible.builtin.import_role:
+   783:         name: ceph-config
+   784: 
+   785:     - name: Import ceph-mds role
+   786:       ansible.builtin.import_role:
+   787:         name: ceph-mds
+   788: 
+   789:     - name: Restart ceph mds
+   790:       ansible.builtin.systemd:
+   791:         name: ceph-mds@{{ ansible_facts['hostname'] }}
+   792:         state: restarted
+   793:         enabled: true
+   794:         masked: false
+   795:       when: not containerized_deployment | bool
+   796: ",,,,,,,,,,,
+c2755a9df0c579f86d80deef3387a3e5819f7b50677c862bfcc3b6bd484bdab3,complex_expression_length_chars,complex-expression,expression,rtdevx/homelab,a23266aa968127747db1aa91d544ab60ce402f55,Q1,ansible/site/roles/docker_swarm_join_worker/tasks/main.yml,tasks,21,{{ hostvars[groups['dockermgrs'][0]].ansible_host }},52,100,>,true,false,1,false,3,,,,false,3,,,,,,,,,,,,,,rtdevx/homelab|B4_high|current=false,B4_high,6,0.1666666667,6,Is this Jinja or conditional expression too complex and in need of simplification?,16,25,25,false,local-window,"    16:       - docker
+    17:       - swarm
+    18:       - join
+    19:       - --token
+    20:       - ""{{ worker_token }}""
+    21:       - ""{{ hostvars[groups['dockermgrs'][0]].ansible_host }}:2377""
+    22:   when:
+    23:     - worker_token is defined
+    24:     - ""'Swarm: inactive' in swarm_check.stdout""
+    25:   changed_when: true",,,,,,,,,,,
+8445676e9b6a4b53ae5cc14dec44eb310b33b08eebadaec2c03e2d9fb082b116,complex_expression_length_chars,complex-expression,expression,osism/testbed,ef457f4318fd7f7dce061cafe13159bcbb87f74e,Q2,playbooks/cleanup.yml,playbook,15,{{ cloud_envs[hostvars[groups['all'][0]]['nodepool']['label']] }},65,100,>,true,true,1,false,6,,,,false,2,,,,,,,,,,,,,,osism/testbed|B4_high|current=true,B4_high,15,0.0666666667,15,Is this Jinja or conditional expression too complex and in need of simplification?,10,29,29,false,local-window,"    10:     basepath: ""{{ ansible_user_dir }}/src/{{ repositories['testbed']['path'] }}""
+    11: 
+    12:   tasks:
+    13:     - name: Set cloud fact (Zuul deployment)
+    14:       ansible.builtin.set_fact:
+    15:         cloud: ""{{ cloud_envs[hostvars[groups['all'][0]]['nodepool']['label']] }}""
+    16:       when: ""'nodepool' in hostvars[groups['all'][0]]""
+    17: 
+    18:     - name: Set cloud fact (local deployment)
+    19:       ansible.builtin.set_fact:
+    20:         cloud: ""{{ testbed_cloud | default('ci') }}""
+    21:       when: ""'nodepool' not in hostvars[groups['all'][0]]""
+    22: 
+    23:     - name: Clean the cloud environment
+    24:       ansible.builtin.shell:
+    25:         cmd: |
+    26:           OS_CLOUD={{ cloud }} ~/venv/bin/python3 cleanup.py
+    27:         chdir: ""{{ basepath }}/terraform/scripts""
+    28:       failed_when: false
+    29:       changed_when: true",,,,,,,,,,,
+1da9c8b796a66ebbfc1b5d1cd8dc8b683cdebed39bafb8a7226e147c122a2bbb,complex_expression_length_chars,complex-expression,expression,eyulf/homelab,5cef75d48f9df9a47c8b9fe37f3c20ce7a4d2b91,Q3,ansible/roles/kubernetes_controller/tasks/pki.yml,tasks,108,"{{ lookup('community.sops.sops', 'etc/kubernetes/pki/etcd/' + item + '-' + inventory_hostname + '.key', rstrip=false) }}",120,100,>,true,false,1,false,1,,,,false,15,,,,,,,,,,,,,,eyulf/homelab|B5_current_positive_tail|current=false,B5_current_positive_tail,5,0.2000000000,5,Is this Jinja or conditional expression too complex and in need of simplification?,103,136,136,false,local-window,"   103:   when:
+   104:     - inventory_hostname in groups['k8s_controllers']
+   105: 
+   106: - name: PKI | configure /etc/kubernetes/pki/etcd/{{ item }}.key # noqa name[template]
+   107:   ansible.builtin.copy: # noqa template-instead-of-copy
+   108:     content: ""{{ lookup('community.sops.sops', 'etc/kubernetes/pki/etcd/' + item + '-' + inventory_hostname + '.key', rstrip=false) }}""
+   109:     dest: /etc/kubernetes/pki/etcd/{{ item }}.key
+   110:     owner: root
+   111:     group: root
+   112:     mode: '0600'
+   113:   loop: '{{ kubernetes_controllers_etcd_pki_key_host_files }}'
+   114:   tags:
+   115:     - kubernetes
+   116:     - kubernetes-controller
+   117:     - pki
+   118:   when:
+   119:     - inventory_hostname in groups['k8s_controllers']
+   120: 
+   121: - name: PKI | configure /etc/kubernetes/pki/sa.{{ item }}
+   122:   ansible.builtin.copy: # noqa template-instead-of-copy
+   123:     content: ""{{ lookup('community.sops.sops', 'etc/kubernetes/pki/sa.' + item, rstrip=false) }}""
+   124:     dest: /etc/kubernetes/pki/sa.{{ item }}
+   125:     owner: root
+   126:     group: root
+   127:     mode: '0600'
+   128:   loop:
+   129:     - key
+   130:     - pub
+   131:   tags:
+   132:     - kubernetes
+   133:     - kubernetes-controller
+   134:     - pki
+   135:   when:
+   136:     - inventory_hostname in groups['k8s_controllers']",,,,,,,,,,,
+a8ce248558c8ecb2f3aa928e746ce1568a1de9657138572b4a47afb3e147981f,complex_expression_length_chars,complex-expression,expression,IBM/community-automation,afb9918393fe94243f66abac73fb4ec316fd13de,Q4,ansible/roles/request_ocp_fyre/tasks/request-ocp-fyre.yml,tasks,119,"(cluster_details_response.status == 200) and (cluster_details_response.json[ clusterName ] | selectattr(""node"", 'equalto', clusterName+""-bootstrap"") | list | co",169,100,>,true,true,1,false,10,,,,false,28,,,,,,,,,,,,,,IBM/community-automation|B5_current_positive_tail|current=true,B5_current_positive_tail,23,0.0434782609,23,Is this Jinja or conditional expression too complex and in need of simplification?,114,174,174,false,local-window,"   114:     password: ""{{ fyreapikey }}""
+   115:     return_content: yes
+   116:     force_basic_auth: ""{{ fyre_force_basic_auth }}""
+   117:   changed_when: false
+   118:   register: cluster_details_response
+   119:   until: (cluster_details_response.status == 200) and (cluster_details_response.json[ clusterName ] | selectattr(""node"", 'equalto', clusterName+""-bootstrap"") | list | count == 0)
+   120:   retries: 240
+   121:   delay: 30
+   122: 
+   123: - name: check cluster status
+   124:   no_log: True
+   125:   uri:
+   126:     url: ""{{fyre_opshowclusterurl}}""
+   127:     method: GET
+   128:     user:  ""{{ fyreuser }}""
+   129:     validate_certs: False
+   130:     password: ""{{ fyreapikey }}""
+   131:     return_content: yes
+   132:     force_basic_auth: ""{{ fyre_force_basic_auth }}""
+   133:   changed_when: false
+   134:   register: all_user_clusters_response
+   135:   until: (all_user_clusters_response.status == 200) and (all_user_clusters_response.json.clusters | selectattr('name', 'equalto', clusterName) | map(attribute='status') | list | first == 'deployed')
+   136:   retries: 240
+   137:   delay: 20
+   138: 
+   139: - name: Derive Info from Fyre Api
+   140:   no_log: True
+   141:   set_fact:
+   142:     fyre_inf_public_ip: ""{{ cluster_details_response.json[clusterName] | selectattr('node', 'equalto', fyre_inf_node_name) | map(attribute='publicip') | list | first }}""
+   143:     fyre_inf_root_password: ""{{ cluster_details_response.json[clusterName] | selectattr('node', 'equalto', fyre_inf_node_name) | map(attribute='root_password') | list | first }}""
+   144: 
+   145: - name: remove new host from localhost known_hosts ip
+   146:   command: ""ssh-keygen -R {{ fyre_inf_public_ip }}""
+   147:   changed_when: false 
+   148:   # changed_when: false Technically not true but change is not particularly meaningful
+   149:   failed_when: false
+   150:   delegate_to: localhost
+   151: - name: remove new host from localhost known_hosts
+   152:   command: ""ssh-keygen -R {{ fyre_inf_node_name }}""
+   153:   changed_when: false 
+   154:   # changed_when: false Technically not true but change is not particularly meaningful
+   155:   failed_when: false
+   156:   delegate_to: localhost
+   157: - name: remove new host from localhost known_hosts fqdn
+   158:   command: ""ssh-keygen -R {{ fyre_inf_node_name }}.fyre.ibm.com"" 
+   159:   changed_when: false 
+   160:   # changed_when: false Technically not true but change is not particularly meaningful
+   161:   failed_when: false
+   162:   delegate_to: localhost
+   163: 
+   164: - name: Add inf host to group
+   165:   no_log: True
+   166:   add_host:
+   167:     name: ""{{ fyre_inf_public_ip }}""
+   168:     groups: ""{{ fyre_ocp_inf_group }}""
+   169:     ansible_user: ""root""
+   170:     inf_public_ip: ""{{ fyre_inf_public_ip }}""
+   171:     inf_root_password: ""{{ fyre_inf_root_password }}""
+   172:     clusterName: ""{{ clusterName }}""
+   173:   changed_when: false
+   174:   when: ""fyre_addAnsibleHost|bool == true""",,,,,,,,,,,
+b46098187763a7ad73234a903a84965d6107dc41543aa90d320c48bb861bcd86,complex_expression_length_chars,complex-expression,expression,oravirt/ansible-oracle,9bffeb3b188b575ead0b794bf240f7563187ee82,Q4,roles/oradb_manage_db/tasks/ocenv.yml,tasks,10,{{ oracle_group }},18,100,>,true,false,1,false,0,,,,false,2,,,,,,,,,,,,,,oravirt/ansible-oracle|B1_low|current=false,B1_low,960,0.0010416667,960,Is this Jinja or conditional expression too complex and in need of simplification?,5,46,46,false,local-window,"     5:     - name: manage_db | create directory dbenv
+     6:       ansible.builtin.file:
+     7:         dest: ""{{ dbenvdir }}""
+     8:         state: directory
+     9:         owner: ""{{ oracle_user }}""
+    10:         group: ""{{ oracle_group }}""
+    11:         mode: '0755'
+    12: 
+    13:     - name: manage_db | copy ocenv
+    14:       ansible.builtin.copy:
+    15:         src: ocenv
+    16:         dest: ""{{ dbenvdir }}""
+    17:         owner: ""{{ oracle_user }}""
+    18:         group: ""{{ oracle_group }}""
+    19:         mode: '0644'
+    20: 
+    21:     - name: manage_db | Check if .bashrc exists
+    22:       ansible.builtin.stat:
+    23:         path: ""{{ oracle_user_home }}/.bashrc""
+    24:       register: bashrc_status
+    25: 
+    26:     # OUI in RAC mode has issues with echo in '.bashrc'
+    27:     # Move the echo to .bash_profile
+    28:     # This task should be removed in a later Release of ansible-oracle
+    29:     - name: manage_db | Remove ocenv from .bashrc
+    30:       ansible.builtin.blockinfile:
+    31:         path: ""{{ oracle_user_home }}/.bashrc""
+    32:         marker: ""# {mark} ocenv ANSIBLE MANAGED BLOCK""
+    33:         backup: false
+    34:         state: absent
+    35:       when: bashrc_status.stat.exists
+    36: 
+    37:     - name: manage_db | add ocenv to .bash_profile  # noqa: args[module]
+    38:       ansible.builtin.blockinfile:
+    39:         path: ""{{ oracle_user_home }}/.bash_profile""
+    40:         marker: ""# {mark} ocenv ANSIBLE MANAGED BLOCK""
+    41:         block: ""{{ ocenv_bashrc_init_section }}""
+    42:         create: true
+    43:         owner: ""{{ oracle_user }}""
+    44:         group: ""{{ oracle_group }}""
+    45:         mode: 0644
+    46:         state: ""{{ 'present' if ocenv_bashrc_init else 'absent' }}""",,,,,,,,,,,
+c4a018fea7e19564b6e739bff96ef2630d9594cdc908faf740b93cf97a0f1e12,complex_expression_length_chars,complex-expression,expression,IBM/ibm-spectrum-scale-install-infra,6e9fdebea0d9a7e66563ea3595d9eff160986d25,Q4,roles/grafana_bridge_install/tasks/zypper/install.yml,tasks,5,{{ scale_install_all_packages }},32,100,>,true,false,1,false,0,,,,false,0,,,,,,,,,,,,,,IBM/ibm-spectrum-scale-install-infra|B2_lower_middle|current=false,B2_lower_middle,1075,0.0009302326,1075,Is this Jinja or conditional expression too complex and in need of simplification?,1,8,8,true,local-window,"     1: ---
+     2: - block:
+     3:     - name: install | Install GPFS grafana packages
+     4:       zypper:
+     5:           name: ""{{ scale_install_all_packages }}""
+     6:           state: present
+     7:           disable_gpg_check: no
+     8:        ",,,,,,,,,,,
+a84984065b6ccd9602f4593738513ccbce419276fb1dfec433e56dccdaeafdf1,complex_expression_length_chars,complex-expression,expression,electrocucaracha/krd,fe54e6752bc86b7c23056a15ea70f34d2be5cb33,Q1,playbooks/roles/qat_driver/tasks/main.yml,tasks,36,"ansible_os_family in ['ClearLinux', 'Suse']",43,100,>,true,false,1,false,2,,,,false,1,,,,,,,,,,,,,,electrocucaracha/krd|B3_upper_middle|current=false,B3_upper_middle,21,0.0476190476,21,Is this Jinja or conditional expression too complex and in need of simplification?,31,67,67,false,local-window,"    31:   become: true
+    32:   ansible.builtin.copy:
+    33:     mode: preserve
+    34:     src: qat_service.service
+    35:     dest: /etc/systemd/system/qat_service.service
+    36:   when: ansible_os_family in ['ClearLinux', 'Suse']
+    37:   notify:
+    38:     - Start qat_service service
+    39: - name: Configure number of processes per qat device
+    40:   when: qat_driver_plugin_mode == ""kernel""
+    41:   block:
+    42:     - name: Get qat devices
+    43:       ansible.builtin.shell: >
+    44:         set -o pipefail ; /usr/local/bin/adf_ctl status | grep up | awk '{print $4 substr($1, 4)}' | tr -d ','
+    45: 
+    46:       args:
+    47:         executable: /bin/bash
+    48:       register: qat_driver_devices
+    49:       changed_when: false
+    50:     - name: Ensure SHIM config section
+    51:       ansible.builtin.blockinfile:
+    52:         dest: ""/etc/{{ item }}.conf""
+    53:         block: |
+    54:           [SHIM]
+    55:           NumberCyInstances = {{ qat_driver_shim.num_crypto_instances }}
+    56:           NumberDcInstances = {{ qat_driver_shim.num_decompression_instances }}
+    57:           NumProcesses = {{ qat_driver_shim.num_processes }}
+    58:           LimitDevAccess = {{ qat_driver_shim.limit_dev_access }}
+    59:           # Crypto - User instance #0
+    60:           Cy0Name = ""UserCY0""
+    61:           Cy0IsPolled = 1
+    62:           # List of core affinities
+    63:           Cy0CoreAffinity = 0
+    64:       loop: ""{{ qat_driver_devices.stdout_lines }}""
+    65:     - name: Restart qat services
+    66:       ansible.builtin.command: /usr/local/bin/adf_ctl restart
+    67:       changed_when: false",,,,,,,,,,,
+97bf2038f751d542ca0d88a524df54cb7249675bf1e6c2b233a66a3dde680042,complex_expression_length_chars,complex-expression,expression,adoptium/infrastructure,d31f47293b3a0166a4f9d7b8c51475d548999408,Q4,ansible/playbooks/AdoptOpenJDK_Unix_Playbook/regenContainers.yml,playbook,94,{{ item.split('|||') | join(' | ') }},37,100,>,true,true,1,false,7,,,,false,21,,,,,,,,,,,,,,adoptium/infrastructure|B3_upper_middle|current=true,B3_upper_middle,1,1.0000000000,1,Is this Jinja or conditional expression too complex and in need of simplification?,89,95,95,false,local-window,"    89:       changed_when: false
+    90:       failed_when: false
+    91: 
+    92:     - name: Display running aqa_ containers after rebuild
+    93:       debug:
+    94:         msg: ""{{ item.split('|||') | join(' | ') }}""
+    95:       loop: ""{{ rebuilt_containers_raw.stdout_lines }}""",,,,,,,,,,,
+724a3cf9aa47343cfda1445b7425dcdc1886c205891ebd4ac5aa51f6aaa311a5,complex_expression_length_chars,complex-expression,expression,freeipa/ansible-freeipa,5ba9b59d5b614abdb0af70fc9f2d336e5479e833,Q4,roles/ipasmartcard_client/tasks/main.yml,tasks,63,{{ ipasmartcard_client_remove_pam_pkcs11_packages }},52,100,>,true,false,1,false,0,,,,false,11,,,,,,,,,,,,,,freeipa/ansible-freeipa|B4_high|current=false,B4_high,121,0.0082644628,121,Is this Jinja or conditional expression too complex and in need of simplification?,58,143,176,false,local-window,"    58: 
+    59:   # REMOVE pam_pkcs11
+    60: 
+    61:   - name: Ensure pam_pkcs11 is missing
+    62:     ansible.builtin.package:
+    63:       name: ""{{ ipasmartcard_client_remove_pam_pkcs11_packages }}""
+    64:       state: absent
+    65: 
+    66:   # KINIT
+    67: 
+    68:   - name: Set default principal if not given
+    69:     ansible.builtin.set_fact:
+    70:       ipaadmin_principal: admin
+    71:     when: ipaadmin_principal is undefined
+    72: 
+    73:   - name: Authenticate using kinit with password for ""{{ ipaadmin_principal }}""
+    74:     ansible.builtin.command: kinit ""{{ ipaadmin_principal }}""
+    75:     args:
+    76:       stdin: ""{{ ipaadmin_password }}""
+    77:     when: ipaadmin_password is defined
+    78: 
+    79:   - name: Authenticate using kinit with keytab for ""{{ ipaadmin_principal }}""
+    80:     ansible.builtin.command: kinit -kt ""{{ ipaadmin_keytab }}"" ""{{ ipaadmin_principal }}""
+    81:     when: ipaadmin_keytab is defined
+    82: 
+    83:   # Enable and start smartcard daemon
+    84: 
+    85:   - name: Enable and start smartcard daemon
+    86:     ansible.builtin.service:
+    87:       name: pcscd
+    88:       enabled: true
+    89:       state: started
+    90: 
+    91:   # GET VARS FROM IPA
+    92: 
+    93:   - name: Get VARS from IPA
+    94:     ipasmartcard_client_get_vars:
+    95:     register: ipasmartcard_client_vars
+    96: 
+    97:   # Add pkcs11 module to systemwide db
+    98: 
+    99:   - name: Add pkcs11 module to systemwide db
+   100:     ansible.builtin.script: ipasmartcard_client_add_pkcs11_module_to_systemwide_db.sh
+   101:                             ""{{ ipasmartcard_client_vars.NSS_DB_DIR }}""
+   102: 
+   103:   # Ensure /etc/sssd/pki exists
+   104: 
+   105:   - name: Prepare for authselect
+   106:     when: ipasmartcard_client_vars.USE_AUTHSELECT
+   107:     block:
+   108:     - name: Ensure /etc/sssd/pki exists
+   109:       ansible.builtin.file:
+   110:         path: /etc/sssd/pki
+   111:         state: directory
+   112:         mode: ""0711""
+   113: 
+   114:     - name: Ensure /etc/sssd/pki/sssd_auth_ca_db.pem is absent
+   115:       ansible.builtin.file:
+   116:         path: /etc/sssd/pki/sssd_auth_ca_db.pem
+   117:         state: absent
+   118: 
+   119:   # Upload smartcard CA certificates to systemwide db
+   120: 
+   121:   - name: Upload smartcard CA certificates to systemwide db
+   122:     ansible.builtin.script: ipasmartcard_client_add_ca_to_systemwide_db.sh
+   123:                             ""{{ item }}""
+   124:                             ""{{ ipasmartcard_client_vars.NSS_DB_DIR }}""
+   125:     with_items: ""{{ result_validate_ca_certs.ca_cert_files }}""
+   126: 
+   127:   # Newer version of sssd use OpenSSL and read the CA certs
+   128:   # from /etc/sssd/pki/sssd_auth_ca_db.pem
+   129: 
+   130:   - name: Add CA certs to /etc/sssd/pki/sssd_auth_ca_db.pem
+   131:     ansible.builtin.script: ipasmartcard_client_add_ca_to_sssd_auth_ca_db.sh
+   132:                             ""{{ item }}""
+   133:                             /etc/sssd/pki/sssd_auth_ca_db.pem
+   134:     with_items: ""{{ result_validate_ca_certs.ca_cert_files }}""
+   135:     when: ipasmartcard_client_vars.USE_AUTHSELECT
+   136: 
+   137:   # Update ipa CA certificate store
+   138: 
+   139:   - name: Update ipa CA certificate store
+   140:     ansible.builtin.command: ipa-certupdate
+   141: 
+   142:   # Run authselect or authconfig to configure smartcard auth
+   143: ",,,,,,,,,,,
+b3214db5a414a4ddfec80a21f03b20637020b448fc8ee0396007be2dc154c880,complex_expression_length_chars,complex-expression,expression,trailofbits/algo,20e22a8715c198b38c01c1ca62d0953b93587a74,Q3,main.yml,playbook,43,"{{ uv_package_list.stdout | regex_search('ansible\s+([0-9]+\.[0-9]+\.[0-9]+)', '\1') | first }}",95,100,>,true,true,1,false,7,,,,false,6,,,,,,,,,,,,,,trailofbits/algo|B4_high|current=true,B4_high,9,0.1111111111,9,Is this Jinja or conditional expression too complex and in need of simplification?,38,88,88,false,local-window,"    38:       register: uv_package_list
+    39:       changed_when: false
+    40: 
+    41:     - name: Extract ansible version from uv package list
+    42:       set_fact:
+    43:         current_ansible_version: ""{{ uv_package_list.stdout | regex_search('ansible\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') | first }}""
+    44: 
+    45:     - name: Verify Python meets Algo VPN requirements
+    46:       assert:
+    47:         that: (ansible_python.version.major|string + '.' + ansible_python.version.minor|string) is version('3.11', '>=')
+    48:         msg: >
+    49:           Python version is not supported.
+    50:           You must upgrade to at least Python 3.11 to use this version of Algo.
+    51:           See for more details - https://trailofbits.github.io/algo/troubleshooting.html#python-version-is-not-supported
+    52: 
+    53:     - name: Verify Ansible meets Algo VPN requirements
+    54:       assert:
+    55:         that:
+    56:           - current_ansible_version is version(required_ansible_version.ver, required_ansible_version.op)
+    57:           - not ipaddr.failed
+    58:         msg: >
+    59:           Ansible version is {{ current_ansible_version }}.
+    60:           You must update the requirements to use this version of Algo.
+    61:           Try to run: uv sync
+    62: 
+    63:     - name: Check cryptography library SECP384R1 support
+    64:       command: >
+    65:         {{ ansible_playbook_python }} -c
+    66:         ""from cryptography.hazmat.primitives.asymmetric.ec import SECP384R1""
+    67:       changed_when: false
+    68:       failed_when: false
+    69:       register: _crypto_check
+    70:       when: ipsec_enabled | default(true) | bool
+    71: 
+    72:     - name: Verify cryptography library supports IPsec requirements
+    73:       assert:
+    74:         that: _crypto_check.rc == 0
+    75:         msg: >
+    76:           The Python cryptography library is missing or does not support SECP384R1.
+    77:           IPsec/IKEv2 requires the cryptography package with elliptic curve support.
+    78:           Fix: Run ./algo (manages dependencies automatically) or: uv sync && uv run ansible-playbook main.yml
+    79:       when: ipsec_enabled | default(true) | bool
+    80: 
+    81: - name: Include prompts playbook
+    82:   import_playbook: input.yml
+    83: 
+    84: - name: Include cloud provisioning playbook
+    85:   import_playbook: cloud.yml
+    86: 
+    87: - name: Include server configuration playbook
+    88:   import_playbook: server.yml",,,,,,,,,,,
+509f6443c655a49955cadb5fcbed4bc568f11404b72f9b6fd59b010c7f39d00a,complex_expression_length_chars,complex-expression,expression,yunionio/ocboot,b781237b81676ff5718525da798292e207124e01,Q4,onecloud/roles/primary-master-node/setup_cloud/tasks/main.yml,tasks,109,{{ default_masklen_ret.stdout if default_masklen_ret is defined and default_masklen_ret.stdout is defined else '64' }},118,100,>,true,false,1,false,3,,,,false,12,,,,,,,,,,,,,,yunionio/ocboot|B5_current_positive_tail|current=false,B5_current_positive_tail,4,0.2500000000,4,Is this Jinja or conditional expression too complex and in need of simplification?,104,189,447,false,local-window,"   104:     executable: /bin/bash
+   105:   when: ip_type is not defined or ip_type != 'ipv6'
+   106: 
+   107: - name: Set default ip masklen
+   108:   set_fact:
+   109:     default_masklen: ""{{ default_masklen_ret.stdout if default_masklen_ret is defined and default_masklen_ret.stdout is defined else '64' }}""
+   110: 
+   111: - name: Set dual-stack gateways
+   112:   set_fact:
+   113:     default_gateway_v6: ""{{ default_gateway_v6_ret.stdout if default_gateway_v6_ret is defined and default_gateway_v6_ret.stdout is defined else '' }}""
+   114:     default_gateway_v4: ""{{ default_gateway_v4_ret.stdout if default_gateway_v4_ret is defined and default_gateway_v4_ret.stdout is defined else '' }}""
+   115:   when: ip_type is defined and ip_type == 'dual-stack'
+   116: 
+   117: - name: include k8s cloud if needed
+   118:   include_tasks: ""k8s_cloud.yml""
+   119:   when:
+   120:   - k8s_or_k3s == 'k8s'
+   121: 
+   122: - block:
+   123: 
+   124:   - name: test if version file contains cloudpods-ee image
+   125:     shell: |
+   126:       cat ""{{ offline_data_path }}/versions.json"" |jq  '.dockers |to_entries[]' |grep -wq cloudpods-ee
+   127:     register: has_cloudpack_image
+   128:     failed_when: false
+   129:     args:
+   130:       executable: /bin/bash
+   131: 
+   132:   - name: construct create cluster use hyper image
+   133:     set_fact:
+   134:       use_hyper_image: true
+   135:       edition: ee
+   136:     when:
+   137:     - has_cloudpack_image.rc == 0
+   138: 
+   139:   when:
+   140:   - online_status | default("""") == ""offline""
+   141:   - offline_data_path | length > 0
+   142:   - use_ee|default(false)|bool == true
+   143: 
+   144: - name: construct create cluster args disable-resource-management
+   145:   set_fact:
+   146:     disable_resource_management: true
+   147:   when:
+   148:   - is_kylin_based is defined
+   149:   - is_kylin_based |default(false)|bool == true
+   150: 
+   151: - name: Copy onecloud kubernetes manifests
+   152:   ansible.builtin.template:
+   153:     src: ""onecloud-manifests.yaml.j2""
+   154:     dest: ""/tmp/onecloud-manifests.yaml""
+   155: 
+   156: - name: include cluster task if needed
+   157:   include_tasks: ""k8s_create_cluster.yml""
+   158:   when:
+   159:   - k8s_or_k3s == 'k8s'
+   160: 
+   161: - name: misc
+   162:   debug:
+   163:     msg: '{{ K3S_CMDLINE_PREFIX }} kubectl apply -f /tmp/onecloud-manifests.yaml'
+   164: 
+   165: - name: Create onecloud cluster CRD
+   166:   shell: |
+   167:     KUBECONFIG={{ENV_KUBECONFIG}} {{ K3S_CMDLINE_PREFIX }} kubectl apply -f /tmp/onecloud-manifests.yaml
+   168:   register: result
+   169:   until: result.rc == 0
+   170:   retries: 6
+   171:   delay: 10
+   172:   when:
+   173:   - k8s_or_k3s == 'k3s'
+   174: 
+   175: - name: Copy fetch-rcadmin.sh to /opt/yunion/bin/
+   176:   template:
+   177:     src: ""fetch-rcadmin.sh.j2""
+   178:     dest: ""/opt/yunion/bin/fetch-rcadmin.sh""
+   179:     mode: '0755'
+   180: 
+   181: - name: Init waiter script
+   182:   include_role:
+   183:     name: utils/onecloud-waiter
+   184: 
+   185: - name: ""Execute `/opt/yunion/bin/wait-onecloud-services.sh` to wait essential services to be running. You can open another terminal and execute `kubectl get pods -n onecloud -w` to watch the process.""
+   186:   shell: ""bash /opt/yunion/bin/wait-onecloud-services.sh""
+   187: 
+   188: - name: Use customized DNS entries
+   189:   shell: |",,,,,,,,,,,
+76d41feb4ba86898dcab097e5bad8438023804fe0bc984977c981731e047180f,complex_expression_length_chars,complex-expression,expression,IDR/deployment,77f7a7e438a41ca775e85b629c0f84cc636ffad7,Q2,ansible/idr-haproxy.yml,playbook,25,"{{
+  groups[idr_environment | default('idr') + '-omeroreadonly-hosts'] |
+  map('extract', hostvars,
+    ['ansible_' + (idr_net_iface | default('eth0')), 'ipv4',",182,100,>,true,true,1,false,10,,,,false,1,,,,,,,,,,,,,,IDR/deployment|B5_current_positive_tail|current=true,B5_current_positive_tail,19,0.0526315789,19,Is this Jinja or conditional expression too complex and in need of simplification?,20,64,64,false,local-window,"    20:   pre_tasks:
+    21: 
+    22:   - name: Get all omeroreadonly IP
+    23:     set_fact:
+    24:       _omero_omeroreadonly_hosts: >-
+    25:         {{
+    26:           groups[idr_environment | default('idr') + '-omeroreadonly-hosts'] |
+    27:           map('extract', hostvars,
+    28:             ['ansible_' + (idr_net_iface | default('eth0')), 'ipv4', 'address']) | sort
+    29:         }}
+    30: 
+    31:   - name: Get external omeroreadonly IP
+    32:     set_fact:
+    33:       omero_omeroreadonly_hosts_external: >-
+    34:         {{
+    35:           _omero_omeroreadonly_hosts[
+    36:             ([
+    37:               idr_backend_reserved_offset,
+    38:               _omero_omeroreadonly_hosts | length - 1
+    39:             ] | min):]
+    40:         }}
+    41: 
+    42:   roles:
+    43:   - role: ome.selinux_utils
+    44:   - role: ome.haproxy
+    45:     haproxy_cfg_template: ""{{ playbook_dir }}/templates/haproxy.cfg.j2""
+    46:     # haproxy needs some special setup to log to a file
+    47:     haproxy_syslog_configure_udp: True
+    48:     haproxy_syslog_enable: True
+    49: 
+    50:   tasks:
+    51: 
+    52:   - name: Create client autoconfiguration directory
+    53:     become: yes
+    54:     file:
+    55:       path: /srv/www/connection
+    56:       state: directory
+    57:       mode: 0755
+    58: 
+    59:   - name: Create client autoconfiguration file
+    60:     become: yes
+    61:     template:
+    62:       src: templates/omero-client.json.j2
+    63:       dest: /srv/www/connection/omero-client.json
+    64:       mode: 0644",,,,,,,,,,,
+261ad87de0217ddeebc6ae2036ac9e7b076b6a2caefdb85c5cf9dd194618f626,complex_expression_length_chars,complex-expression,expression,trilioData/triliovault-cfg-scripts,30ca8d696541328662432c9e271c95bd3606771c,Q2,ansible/roles/ansible-horizon-plugin/tasks/remove_trilio_pth.yml,tasks,11,{{ TRILIO_FILE }},17,100,>,true,false,1,false,0,,,,false,3,,,,,,,,,,,,,,trilioData/triliovault-cfg-scripts|B1_low|current=false,B1_low,214,0.0046728972,214,Is this Jinja or conditional expression too complex and in need of simplification?,6,13,13,false,local-window,"     6: - set_fact:
+     7:     TRILIO_FILE : ""{{VENV_PKGLIB.stdout}}/trilio.pth""
+     8: 
+     9: - name: Removing trilio.pth file
+    10:   file:
+    11:     path: ""{{ TRILIO_FILE }}""
+    12:     state: absent
+    13: ",,,,,,,,,,,
+094fd03a271b95f5bb0fefe5b27841f8ad50d51bad9291e074e5a33dfefa7bfc,complex_expression_length_chars,complex-expression,expression,Ableton/ansible-role-jenkins-swarm-client,f9b3effc48230ff2404f07fcc9b6af3b4d1614c2,Q2,tasks/unix/install.yml,tasks,75,{{ jenkins_swarm_home }},24,100,>,true,false,1,false,0,,,,false,14,,,,,,,,,,,,,,Ableton/ansible-role-jenkins-swarm-client|B2_lower_middle|current=false,B2_lower_middle,79,0.0126582278,79,Is this Jinja or conditional expression too complex and in need of simplification?,70,78,78,false,local-window,"    70: 
+    71: - name: Copy configuration file
+    72:   become: true
+    73:   ansible.builtin.template:
+    74:     src: ""swarm-client-config.yml.j2""
+    75:     dest: ""{{ jenkins_swarm_home }}/swarm-client-config.yml""
+    76:     owner: ""{{ jenkins_config_owner }}""
+    77:     group: ""{{ jenkins_config_group }}""
+    78:     mode: ""0644""",,,,,,,,,,,
+40e25910cd8bcca5c5ada354da19ef7ba677a568e2f72472c2b065d9b7a32bbb,complex_expression_length_chars,complex-expression,expression,ls1intum/artemis-ansible-collection,02e584e629e7eda53301159bc2790e45a14f444c,Q2,roles/proxy/tasks/deprecations.yml,tasks,24,{{ proxy_ssl_certificate_key_path }},36,100,>,true,false,1,false,0,,,,false,4,,,,,,,,,,,,,,ls1intum/artemis-ansible-collection|B3_upper_middle|current=false,B3_upper_middle,60,0.0166666667,60,Is this Jinja or conditional expression too complex and in need of simplification?,19,26,26,false,local-window,"    19: - name: Set default values for deprecated variables
+    20:   set_fact:
+    21:     servers:
+    22:       - name: ""_""
+    23:         ssl_certificate_path: ""{{ proxy_ssl_certificate_path }}""
+    24:         ssl_certificate_key_path: ""{{ proxy_ssl_certificate_key_path }}""
+    25:         default_server: true
+    26:   when: proxy_ssl_certificate_path is defined or proxy_ssl_certificate_key_path is defined",,,,,,,,,,,
+f793ec34570e01f7d384c3f3a7a524ddf0961f1cfd4975d1db5f5962bd906d17,complex_expression_length_chars,complex-expression,expression,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,Q3,playbooks/secrets.yml,playbook,71,(groups.syncservice | default([])) | length > 0,47,100,>,true,true,1,false,6,,,,false,7,,,,,,,,,,,,,,Alfresco/alfresco-ansible-deployment|B3_upper_middle|current=true,B3_upper_middle,1,1.0000000000,1,Is this Jinja or conditional expression too complex and in need of simplification?,66,151,214,false,local-window,"    66:     - name: Ensure sync_db_password is set when required
+    67:       ansible.builtin.assert:
+    68:         that: sync_db_password is defined and sync_db_password | length > 0
+    69:         msg: ""sync_db_password must have been already set at this point""
+    70:         quiet: true
+    71:       when: (groups.syncservice | default([])) | length > 0
+    72: 
+    73:     - name: Ensure ca_signing_key_passphrase is set when required
+    74:       ansible.builtin.assert:
+    75:         that: ca_signing_key_passphrase is defined and ca_signing_key_passphrase | length > 0
+    76:         msg: ""ca_signing_key_passphrase must have been already set at this point""
+    77:         quiet: true
+    78:       when: ats_mtls_required and ats_mtls_capable
+    79: 
+    80:     - name: Ensure certs_p12_passphrase is set when required
+    81:       ansible.builtin.assert:
+    82:         that: certs_p12_passphrase is defined and certs_p12_passphrase | length > 0
+    83:         msg: ""certs_p12_passphrase must have been already set at this point""
+    84:         quiet: true
+    85:       when: ats_mtls_required and ats_mtls_capable
+    86: 
+    87:     - name: Validate external Elasticsearch auth mode and region
+    88:       ansible.builtin.assert:
+    89:         that:
+    90:           - external_elasticsearch_auth_mode in ['basic', 'aws-iam']
+    91:           - external_elasticsearch_auth_mode != 'aws-iam' or (es_aws_region | length > 0)
+    92:         msg: >-
+    93:           external_elasticsearch requires elasticsearch_auth_mode to be 'basic' or 'aws-iam',
+    94:           and elasticsearch_aws_region to be set when using 'aws-iam'.
+    95:         quiet: true
+    96:       vars:
+    97:         es_aws_region: ""{{ groups.external_elasticsearch | default([]) | map('extract', hostvars, ['elasticsearch_aws_region']) | first | default('') }}""
+    98:       when: (groups.external_elasticsearch | default([])) | length > 0
+    99: 
+   100:     - name: Ensure elasticsearch_password is set when required
+   101:       ansible.builtin.assert:
+   102:         that: elasticsearch_password is defined and elasticsearch_password | length > 0
+   103:         msg: ""elasticsearch_password must have been already set at this point""
+   104:         quiet: true
+   105:       when:
+   106:         - ((groups.elasticsearch | default([])) + (groups.external_elasticsearch | default([]))) | length > 0
+   107:         - external_elasticsearch_auth_mode != 'aws-iam'
+   108: 
+   109:     - name: Ensure identity_admin_password is set when required
+   110:       ansible.builtin.assert:
+   111:         that: identity_admin_password is defined and identity_admin_password | length > 0
+   112:         msg: ""identity_admin_password must have been already set at this point""
+   113:         quiet: true
+   114:       when: ((groups.identity | default([])) + (groups.external_identity | default([]))) | length > 0
+   115: 
+   116:     - name: Ensure reposearch_shared_secret is set when required
+   117:       ansible.builtin.assert:
+   118:         that: reposearch_shared_secret is defined and reposearch_shared_secret | length > 0
+   119:         msg: ""reposearch_shared_secret must have been already set at this point""
+   120:         quiet: true
+   121:       when: (legacy_indexer_hosts | length > 0) or (acs_play_community_search_enabled and indexer_hosts | length > 0)
+   122: 
+   123:     - name: Ensure cic_remote_client_secret is set when required
+   124:       ansible.builtin.assert:
+   125:         that: cic_remote_client_secret is defined and cic_remote_client_secret | length > 0
+   126:         msg: ""cic_remote_client_secret must be provided manually as it can't be autogenerated""
+   127:         quiet: true
+   128:       when: cic_enabled
+   129: 
+   130: - name: Set secrets for Search auth
+   131:   hosts: repository:legacy_indexers:search:indexers
+   132:   gather_facts: false
+   133:   tasks:
+   134:     - name: Set tracking/search shared secret
+   135:       ansible.builtin.set_fact:
+   136:         reposearch_shared_secret: ""{{ hostvars.localhost.reposearch_shared_secret }}""
+   137:       when: (legacy_indexer_hosts | length > 0) or (acs_play_community_search_enabled and indexer_hosts | length > 0)
+   138: 
+   139: - name: Set secrets for Repo database auth
+   140:   hosts: repository:database:indexers:search_enterprise:cic
+   141:   gather_facts: false
+   142:   tasks:
+   143:     - name: Set repo_db_password secret
+   144:       ansible.builtin.set_fact:
+   145:         repo_db_password: ""{{ hostvars.localhost.repo_db_password }}""
+   146: 
+   147: - name: Set secrets for Sync database auth
+   148:   hosts: syncservice:database
+   149:   gather_facts: false
+   150:   tasks:
+   151:     - name: Set sync_db_password secret",,,,,,,,,,,
+8cef9c405e086b18a9f6a235251b67384313537bf5051f2faa4f26ffd3614d5a,complex_expression_length_chars,complex-expression,expression,ansible-network/windmill-config,91d52c11ec5492688d64cac9100a6a7a7e120793,Q1,ansible/group_vars/all.yaml,vars,87,{{ _iptables_public_tcp_ports_base + _iptables_public_tcp_ports_extra }},72,100,>,true,false,1,false,0,,,,false,2,,,,,,,,,,,,,,ansible-network/windmill-config|B4_high|current=false,B4_high,4,0.2500000000,4,Is this Jinja or conditional expression too complex and in need of simplification?,82,87,87,false,local-window,"    82: 
+    83: _iptables_public_tcp_ports_base:
+    84:   - 22
+    85: _iptables_public_tcp_ports_extra: []
+    86: 
+    87: iptables_public_tcp_ports: ""{{ _iptables_public_tcp_ports_base + _iptables_public_tcp_ports_extra }}""",,,,,,,,,,,
+93bbca511007d5193326cf8177dec543676da44b1526b047de3017a9ecfe5996,complex_expression_length_chars,complex-expression,expression,bluebanquise/bluebanquise,fcc5b8776f3b1bde7ca4fba65b8cb2e77617f7b0,Q4,collections/infrastructure/roles/firewall/tasks/main.yml,tasks,34,"{{ (os_firewall | default(true) | bool) | ternary(true, false) }}",65,100,>,true,true,1,false,6,,,,false,7,,,,,,,,,,,,,,bluebanquise/bluebanquise|B4_high|current=true,B4_high,31,0.0322580645,31,Is this Jinja or conditional expression too complex and in need of simplification?,29,44,44,false,local-window,"    29:     - package
+    30: 
+    31: - name: ""service <|> Manage {{ firewall_services_to_start | join(' ') }} state""
+    32:   ansible.builtin.service:
+    33:     name: ""{{ item }}""
+    34:     enabled: ""{{ (os_firewall | default(true) | bool) | ternary(true, false) }}""
+    35:     state: ""{{ (os_firewall | default(true) | bool) | ternary('started', 'stopped') }}""
+    36:   loop: ""{{ firewall_services_to_start }}""
+    37:   tags:
+    38:     - service
+    39: 
+    40: - name: ""include_tasks <|> Configure firewall if requested""
+    41:   ansible.builtin.include_tasks: ""firewalld.yml""
+    42:   when: os_firewall | default(true) | bool
+    43:   tags:
+    44:     - internal",,,,,,,,,,,
+2038b7cfbbea5d78e7fec2f5079df366ff258906d1637064bf4152c926f6c8b9,complex_expression_length_chars,complex-expression,expression,ARGOeu/argo-ansible,67536b4b1a06a44ec061f9cd7facf8930eeb4b12,Q3,roles/argo-api-authn/tasks/authn-init.yml,tasks,16,create_service_type_call_response.failed and 'ams already exists' not in create_service_type_call_response.json.error.message,125,100,>,true,false,1,false,3,,,,false,4,,,,,,,,,,,,,,ARGOeu/argo-ansible|B5_current_positive_tail|current=false,B5_current_positive_tail,1,1.0000000000,1,Is this Jinja or conditional expression too complex and in need of simplification?,11,63,63,false,local-window,"    11:     status_code: 201
+    12:     validate_certs: no
+    13:   retries: 3
+    14:   delay: 3
+    15:   register: create_service_type_call_response
+    16:   failed_when: create_service_type_call_response.failed and 'ams already exists' not in create_service_type_call_response.json.error.message
+    17:   tags:
+    18:     - authn_init
+    19:     - authn_init:create_service_type
+    20: 
+    21: - name: Get the uuid of ams service type
+    22:   uri:
+    23:     url: ""https://{{ authn_host_domain_name }}:{{ authn_service_port }}/v1/service-types?key={{ authn_service_token }}""
+    24:     method: GET
+    25:     body: ""{{ lookup('template', 'authn_create_service_type_body.j2') }}""
+    26:     body_format: json
+    27:     return_content: yes
+    28:     status_code: 200
+    29:     validate_certs: no
+    30:   retries: 5
+    31:   delay: 10
+    32:   register: get_uuid_response
+    33:   until: get_uuid_response.status == 200
+    34:   tags:
+    35:     - authn_init
+    36:     - authn_init:get_service_type
+    37: 
+    38: - name: Display uuid of ams service type
+    39:   debug:
+    40:     msg: ""{{ get_uuid_response.json.service_types[0].uuid }}""
+    41:   tags:
+    42:     - authn_init
+    43:     - authn_init:get_service_type
+    44: 
+    45: 
+    46: - name: Creating the authm (auth method) in the service-type
+    47:   uri:
+    48:     url: ""https://{{ authn_host_domain_name }}:{{ authn_service_port }}/v1/service-types/ams/authm?key={{ authn_service_token }}""
+    49:     method: POST
+    50:     body: ""{{ lookup('template', 'authn_creating_the_authn_in_service_type_body.j2') }}""
+    51:     body_format: json
+    52:     return_content: yes
+    53:     status_code:
+    54:       - 201   # Created
+    55:       - 409   # HTTP Error 409: Conflict - already exists
+    56:     validate_certs: no
+    57:   retries: 3
+    58:   delay: 3
+    59:   register: creating_authn_call_response
+    60:   ignore_errors: true
+    61:   tags:
+    62:     - authn_init
+    63:     - authn_init:creating_authn",,,,,,,,,,,
+901e6a4f178102045e1518a89dcef638fa1dec8fbbe3f1341b8dce5218e6e741,complex_expression_length_chars,complex-expression,expression,gantsign/development-environment,eeffd50b7a2a5b2a6c218bc1ff9ecb93789968d4,Q1,provisioning/init.yml,playbook,92,(kubernetes_repo is defined and kubernetes_repo.changed) or (chrome_repo is defined and chrome_repo.changed) or (vscode_repo is defined and vscode_repo.changed),160,100,>,true,true,1,false,11,,,,false,0,,,,,,,,,,,,,,gantsign/development-environment|B5_current_positive_tail|current=true,B5_current_positive_tail,2,0.5000000000,2,Is this Jinja or conditional expression too complex and in need of simplification?,87,94,94,false,local-window,"    87:     - name: Run apt-get update
+    88:       become: true
+    89:       ansible.builtin.apt:
+    90:         update_cache: true
+    91:       when: >
+    92:         (kubernetes_repo is defined and kubernetes_repo.changed)
+    93:         or (chrome_repo is defined and chrome_repo.changed)
+    94:         or (vscode_repo is defined and vscode_repo.changed)",,,,,,,,,,,
+6dd9024a67e547e9ef29566a523121f5103139c2a10559b7c330eb9ff7f62f1a,complex_expression_length_chars,complex-expression,expression,anokfireball/homelab-as-code,d8fe576217e433a746fff052b772c949ee6f1e50,Q2,ansible/gateway/roles/ansible-pull/tasks/main.yaml,tasks,60,{{ sops_age_key }},18,100,>,true,false,1,false,0,,,,false,5,,,,,,,,,,,,,,anokfireball/homelab-as-code|B1_low|current=false,B1_low,54,0.0185185185,54,Is this Jinja or conditional expression too complex and in need of simplification?,55,62,62,false,local-window,"    55:   community.sops.load_vars:
+    56:     file: secrets.sops.yaml
+    57: 
+    58: - name: store age key for sops decyption
+    59:   copy:
+    60:     content: ""{{ sops_age_key }}""
+    61:     dest: /home/ansible/.config/sops/age/keys.txt
+    62:     mode: '0600'",,,,,,,,,,,
+b5f7c3f4feea44accdf7f7f69dea06fb74032290c13a26327b62f013df6e453f,complex_expression_length_chars,complex-expression,expression,sebdanielsson/infra,abc768b1d6cd78d1e2feef1262645bb2769fb5df,Q1,ansible/flightradar.yml,playbook,10,"{{ lookup('env', 'ADSB_LAT') }}",31,100,>,true,false,1,false,1,,,,false,1,,,,,,,,,,,,,,sebdanielsson/infra|B2_lower_middle|current=false,B2_lower_middle,10,0.1000000000,10,Is this Jinja or conditional expression too complex and in need of simplification?,5,90,193,false,local-window,"     5:   vars:
+     6:     ansible_python_interpreter: ""/usr/bin/python3""
+     7:     sops_age_key: ""{{ lookup('env', 'SOPS_AGE_KEY') }}""
+     8:     # Antenna position. Kept out of git in ansible/.env.flightradar.sops —
+     9:     # it is the home address in another coordinate system.
+    10:     adsb_lat: ""{{ lookup('env', 'ADSB_LAT') }}""
+    11:     adsb_lon: ""{{ lookup('env', 'ADSB_LON') }}""
+    12:     adsb_alt_m: ""{{ lookup('env', 'ADSB_ALT_M') }}""
+    13:     tailscale_oauth_client_id: ""{{ lookup('env', 'TAILSCALE_OAUTH_CLIENT_ID') }}""
+    14:     tailscale_oauth_client_secret: ""{{ lookup('env', 'TAILSCALE_OAUTH_CLIENT_SECRET') }}""
+    15: 
+    16:   handlers:
+    17:     - name: Import handlers
+    18:       ansible.builtin.import_tasks: handlers/main.yml
+    19: 
+    20:   roles:
+    21:     - name: Install and configure cloudflared
+    22:       role: sebdanielsson.cloudflared
+    23:       vars:
+    24:         cloudflare_tunnel_enable: true
+    25:         cloudflare_tunnel_credential: ""{{ lookup('env', 'CLOUDFLARE_TUNNEL_FLIGHTRADAR') }}""
+    26:       state: present
+    27: 
+    28:     - name: Install and configure Tailscale
+    29:       role: artis3n.tailscale.machine
+    30:       tailscale_args: ""--ssh""
+    31:       vars:
+    32:         tailscale_authkey: ""{{ lookup('env', 'TAILSCALE_SERVER_OAUTH') }}""
+    33:         tailscale_oauth_preauthorized: true
+    34:         tailscale_tags: [""server""]
+    35:       state: present
+    36: 
+    37:     - name: Install Docker
+    38:       role: geerlingguy.docker
+    39:       vars:
+    40:         docker_edition: ce
+    41:         docker_yum_repo_enable_test: 0
+    42:         docker_yum_repo_enable_nightly: 0
+    43:         docker_packages_state: present
+    44:         docker_install_compose_plugin: true
+    45:         docker_compose_package: docker-compose-plugin
+    46:         docker_compose_package_state: present
+    47:         docker_install_compose: false
+    48:         docker_users:
+    49:           - sebastian
+    50:         docker_service_manage: true
+    51:         docker_service_state: started
+    52:         docker_service_enabled: true
+    53:         docker_restart_handler_state: restarted
+    54:         docker_daemon_options:
+    55:           log-driver: ""json-file""
+    56:           log-opts:
+    57:             max-size: ""10m""
+    58:             max-file: ""3""
+    59: 
+    60:   tasks:
+    61:     - name: Install sops for environment file decryption
+    62:       ansible.builtin.get_url:
+    63:         url: ""https://github.com/getsops/sops/releases/download/v3.13.2/sops-v3.13.2.linux.{{ 'arm64' if ansible_facts.architecture == 'aarch64' else 'amd64' }}""
+    64:         checksum: ""sha256:https://github.com/getsops/sops/releases/download/v3.13.2/sops-v3.13.2.checksums.txt""
+    65:         dest: /usr/local/bin/sops
+    66:         owner: root
+    67:         group: root
+    68:         mode: '0755'
+    69: 
+    70:     - name: Set hostname
+    71:       ansible.builtin.hostname:
+    72:         name: flightradar
+    73:         use: systemd
+    74: 
+    75:     - name: Generate locale
+    76:       community.general.locale_gen:
+    77:         name: en_US.UTF-8
+    78:         state: present
+    79: 
+    80:     - name: Ensure net.ipv4.ip_forward is enabled
+    81:       ansible.posix.sysctl:
+    82:         name: net.ipv4.ip_forward
+    83:         value: ""1""
+    84:         sysctl_set: true
+    85:         reload: true
+    86:         sysctl_file: /etc/sysctl.d/99-tailscale.conf
+    87:         state: present
+    88: 
+    89:     - name: Ensure net.ipv6.conf.all.forwarding is enabled
+    90:       ansible.posix.sysctl:",,,,,,,,,,,
+4997e5116873ec842174b170865890327b23434c490bfc37f6ea1c631dede0e6,complex_expression_length_chars,complex-expression,expression,TechDufus/dotfiles,abe3beabdf436c1a7aeeff66b6c2f5903f7b9878,Q4,roles/btop/tasks/Archlinux.yml,tasks,8,can_install_packages | default(false),37,100,>,true,false,1,false,2,,,,false,2,,,,,,,,,,,,,,TechDufus/dotfiles|B3_upper_middle|current=false,B3_upper_middle,700,0.0014285714,700,Is this Jinja or conditional expression too complex and in need of simplification?,3,13,13,false,local-window,"     3:   community.general.pacman:
+     4:     name:
+     5:       - btop
+     6:     state: present
+     7:   become: true
+     8:   when: can_install_packages | default(false)
+     9: 
+    10: - name: ""{{ role_name }} | {{ ansible_facts['distribution'] }} | Packages skipped (no sudo)""
+    11:   ansible.builtin.debug:
+    12:     msg: ""Package installation skipped: btop""
+    13:   when: not (can_install_packages | default(false))",,,,,,,,,,,
+81f77fc8c089169ce4e1d7a50448a1a0e4c03bafcc7022bb1ca704cf7f0f0c74,complex_expression_length_chars,complex-expression,expression,oravirt/ansible-oracle,9bffeb3b188b575ead0b794bf240f7563187ee82,Q4,roles/cxoracle/tasks/main.yml,tasks,44,_cx_oracle_source is match('^(http(s)?|ftp)://'),48,100,>,true,true,1,false,6,,,,false,14,,,,,,,,,,,,,,oravirt/ansible-oracle|B3_upper_middle|current=true,B3_upper_middle,1,1.0000000000,1,Is this Jinja or conditional expression too complex and in need of simplification?,39,60,60,false,local-window,"    39:         client_key: ""{{ get_url_ssl_client_key | default(omit) }}""
+    40:       environment: ""{{ proxy_env | default(omit) }}""
+    41:       when:
+    42:         - not is_sw_source_local
+    43:         - oracle_sw_copy
+    44:         - _cx_oracle_source is match('^(http(s)?|ftp)://')
+    45: 
+    46:     # The ansible-oracle modules are using Python3 only
+    47:     # => Install cx_Oracle for Python3 only
+    48:     - name: cx_oracle | Install cx_oracle for Python3
+    49:       ansible.builtin.pip:
+    50:         name: ""{{ _cxoracle_tempdir.path }}/{{ _cx_oracle_filename }}""
+    51:         executable: pip3
+    52:         extra_args: ""{{ extra_args }}""
+    53:         umask: ""{{ cx_oracle_umask | default(omit) }}""
+    54:         state: present
+    55: 
+    56:   always:
+    57:     - name: ""Cleanup cx_oracle from {{ _cxoracle_tempdir.path }}""
+    58:       ansible.builtin.file:
+    59:         path: ""{{ _cxoracle_tempdir.path }}""
+    60:         state: absent",,,,,,,,,,,
+498592047339cb6770bd4e3f229aef8c5aad689ab0374f721b4ca70f997ba7c1,complex_expression_length_chars,complex-expression,expression,grycap/im,5e54aa6e02108a615abf2670abaa4aa1c56add02,Q1,contextualization/basic.yml,playbook,40,python3_version is success and python3_version.stdout|int < 5,61,100,>,true,false,1,false,4,,,,false,2,,,,,,,,,,,,,,grycap/im|B4_high|current=false,B4_high,12,0.0833333333,12,Is this Jinja or conditional expression too complex and in need of simplification?,35,120,121,false,local-window,"    35:       changed_when: python_install.stdout_lines|length > 1
+    36:       when: (python2_version is failed and python3_version is failed) or python3_version.stdout|int < 5
+    37: 
+    38:     - name: Link correct python version in Ubuntu 14
+    39:       raw: ls /usr/bin/python3.5 && sudo rm -f /usr/bin/python3 && sudo ln -s /usr/bin/python3.5 /usr/bin/python3
+    40:       when: python3_version is success and python3_version.stdout|int < 5
+    41:       ignore_errors: yes
+    42: 
+    43:     - name: Bootstrap with python RedHat/CentOS
+    44:       raw: sudo yum install -y python3
+    45:       ignore_errors: yes
+    46:       register: python_install
+    47:       changed_when: python_install.stdout_lines|length > 1
+    48:       when: python2_version is failed and python3_version is failed
+    49: 
+    50:     - name: RedHat/CentOS install python3-dnf
+    51:       command: sudo yum install -y python3 python3-dnf
+    52:       ignore_errors: yes
+    53: 
+    54:     - name: Bootstrap with python SUSE
+    55:       raw: sudo zypper -n install python3 python3-xml
+    56:       ignore_errors: yes
+    57:       register: python_install
+    58:       changed_when: python_install.stdout_lines|length > 1
+    59:       when: python2_version is failed and python3_version is failed
+    60: 
+    61:     - name: Link python 3 or 2 in case is needed
+    62:       raw: ls /usr/bin/python || { ls /usr/bin/python3 && ln -s /usr/bin/python3 /usr/bin/python; } || { ls /usr/bin/python2 && ln -s /usr/bin/python2 /usr/bin/python; }
+    63:       become: yes
+    64:       ignore_errors: yes
+    65: 
+    66:     # In case of redhat systems libselinux-python3 is needed
+    67:     - name: Install libselinux-python3 on RH systems
+    68:       raw: ls /usr/bin/python3 && yum -y install libselinux-python3
+    69:       become: yes
+    70:       ignore_errors: yes
+    71: 
+    72:     # In case of redhat systems libselinux-python is needed
+    73:     - name: Install libselinux-python on RH systems
+    74:       raw: ls /usr/bin/python2 && yum -y install libselinux-python
+    75: 
+    76:       become: yes
+    77:       ignore_errors: yes
+    78: 
+    79:     # Set the correct hostname
+    80:     - name: Set the hostname of the node
+    81:       hostname: name={{ IM_NODE_FQDN }}
+    82:       become: yes
+    83:       ignore_errors: yes
+    84: 
+    85:     # In case of redhat systems disable SELinux
+    86:     - name: Disable SELinux in REL systems
+    87:       selinux: state=disabled
+    88:       become: yes
+    89:       ignore_errors: yes
+    90: 
+    91:     # Add the authorized_key to the nodes to enable accessing without password
+    92:     # pk_file var must be added by the ctxt agent
+    93:     - name: Add the authorized_key to the nodes
+    94:       authorized_key: user={{ansible_user}} key=""{{ lookup('file', pk_file) }}""
+    95: 
+    96:     # Added to solve GCE issues removing the key
+    97:     - name: Add the authorized_key to the nodes again
+    98:       lineinfile: dest=""/home/{{ansible_user}}/.ssh/authorized_keys"" line=""{{ lookup('file', pk_file) }}2""
+    99:       ignore_errors: yes
+   100: 
+   101:     - name: Gather Facts
+   102:       setup:
+   103: 
+   104:     - name: Ubuntu apt update
+   105:       apt: update_cache=yes cache_valid_time=3600
+   106:       when: ansible_distribution == ""Ubuntu""
+   107:       ignore_errors: yes
+   108:       register: apt_update
+   109:       become: yes
+   110:       become_method: sudo
+   111:       async: 120
+   112:       poll: 1
+   113:   
+   114:     - name: Ubuntu force apt update (avoid apt lock)
+   115:       command: apt update
+   116:       when: ansible_distribution == ""Ubuntu"" and apt_update is failed
+   117:       ignore_errors: yes
+   118:       become: yes
+   119:       become_method: sudo
+   120:       async: 120",,,,,,,,,,,
+b62ab1cf3f1fb2f6d6bde43f62f06ea8f4eb0005f7ca70b96b1f9c62f2452b80,complex_expression_length_chars,complex-expression,expression,carnivuth/labcraft,3547209dd2823344c728f8054eff0074675e6558,Q1,playbooks/roles/align_services/tasks/main.yml,tasks,15,{{ compose_files.files | map(attribute='path') | map('dirname') | map('basename') }},84,100,>,true,true,1,false,6,,,,false,1,,,,,,,,,,,,,,carnivuth/labcraft|B4_high|current=true,B4_high,1,1.0000000000,1,Is this Jinja or conditional expression too complex and in need of simplification?,10,95,169,false,local-window,"    10:   register: compose_files
+    11:   delegate_to: localhost
+    12: 
+    13: - name: Set apps variable to all compose files when unset
+    14:   ansible.builtin.set_fact:
+    15:     align_services_apps: ""{{ compose_files.files | map(attribute='path') | map('dirname') | map('basename') }}""
+    16:   when: align_services_apps is not defined
+    17: 
+    18: - name: Include compose file
+    19:   ansible.builtin.include_vars:
+    20:     hash_behaviour: merge
+    21:     file: ""files/{{ item }}/docker-compose.yml""
+    22:   loop: ""{{ align_services_apps }}""
+    23: 
+    24: - name: Get Services users
+    25:   ansible.builtin.set_fact:
+    26:     users: ""{{ services | dict2items | json_query('[*].value.container_name') }}""
+    27: 
+    28: - name: Create compose dir
+    29:   become: true
+    30:   ansible.builtin.file:
+    31:     path: ""{{ align_services_docker_compose_base_dir }}/{{ item }}""
+    32:     state: directory
+    33:     mode: ""644""
+    34:   loop: ""{{ align_services_apps }}""
+    35: 
+    36: - name: Copy docker compose file
+    37:   become: true
+    38:   register: docker_compose_file_status
+    39:   ansible.builtin.copy:
+    40:     src: ""{{ item }}/docker-compose.yml""
+    41:     dest: ""{{ align_services_docker_compose_base_dir }}/{{ item }}/docker-compose.yml""
+    42:     mode: ""644""
+    43:   loop: ""{{ align_services_apps }}""
+    44: 
+    45: - name: Create application group and save GUID
+    46:   become: true
+    47:   ansible.builtin.group:
+    48:     name: ""services""
+    49:   register: group_data
+    50: 
+    51: - name: Create application users and save PUIDs and GUIDs
+    52:   become: true
+    53:   ansible.builtin.user:
+    54:     name: ""{{ item }}""
+    55:     create_home: true
+    56:     home: ""{{ align_services_docker_compose_base_dir }}/{{ item }}""
+    57:     groups: [""services""]
+    58:   register: users_data
+    59:   loop: ""{{ users }}""
+    60: 
+    61: - name: generate env files based on templates
+    62:   become: true
+    63:   when: ""align_services_apps is contains(item)""
+    64:   ansible.builtin.template:
+    65:     dest: ""{{ align_services_docker_compose_base_dir }}/{{ item }}/.env""
+    66:     src: files/{{ item }}/env.j2
+    67:     mode: '600'
+    68:   vars:
+    69:     container_puid: ""{{ users_data.results[index].uid }}""
+    70:     container_pgid: ""{{ users_data.results[index].group }}""
+    71:     services_pgid: ""{{ group_data.gid }}""
+    72:     container_host: ""{{ item | regex_replace('_', '-') }}.{{ align_services_apps_domain }}""
+    73:   loop: ""{{ users }}""
+    74:   loop_control:
+    75:     index_var: index
+    76: 
+    77: - name: Create DNS records
+    78:   community.general.cloudflare_dns:
+    79:     zone: ""{{ vault_cloudflare_domain }}""
+    80:     type: ""{{ align_services_dns_record_type }}""
+    81:     record: ""{{ item | regex_replace('_', '-') }}.{{ align_services_apps_domain }}""
+    82:     value: ""{{ align_services_dns_value }}""
+    83:     api_token: ""{{ vault_cloudflare_api_token }}""
+    84:     state: present
+    85:   loop: ""{{ align_services_apps }}""
+    86: 
+    87: - name: Find template files (.j2) under etc
+    88:   ansible.builtin.find:
+    89:     paths: ""roles/align_services/files/{{ item }}/etc""
+    90:     patterns: ""*.j2""
+    91:     recurse: true
+    92:   register: template_files
+    93:   delegate_to: localhost
+    94:   loop: ""{{ align_services_apps }}""
+    95: ",,,,,,,,,,,
+7c13f88cbbe5562b7d00d06f1358569fc4cb52ab0da4a821984a0d3ec6d883e2,complex_expression_length_chars,complex-expression,expression,os-migrate/os-migrate,60e4123dd2391233d23149d7dfb6ebe4b0870590,Q3,roles/import_users_keypairs/tasks/main.yml,tasks,8,"{{ (read_users_keypairs.resources | os_migrate.os_migrate.stringfilter(os_migrate_users_filter, attribute='params.user_ref.name')) }}",133,100,>,true,false,1,false,3,,,,false,1,,,,,,,,,,,,,,os-migrate/os-migrate|B5_current_positive_tail|current=false,B5_current_positive_tail,7,0.1428571429,7,Is this Jinja or conditional expression too complex and in need of simplification?,3,27,27,false,local-window,"     3:     path: ""{{ os_migrate_data_dir }}/users_keypairs.yml""
+     4:   register: read_users_keypairs
+     5: 
+     6: - name: Filter users' keypairs to import based on user name
+     7:   ansible.builtin.set_fact:
+     8:     filtered_users_keypairs: ""{{ (read_users_keypairs.resources
+     9:       | os_migrate.os_migrate.stringfilter(os_migrate_users_filter,
+    10:          attribute='params.user_ref.name')) }}""
+    11: 
+    12: - name: Filter users' keypairs to import based on keypair name
+    13:   ansible.builtin.set_fact:
+    14:     filtered_users_keypairs: ""{{ (filtered_users_keypairs
+    15:       | from_yaml
+    16:       | os_migrate.os_migrate.stringfilter(os_migrate_keypairs_filter,
+    17:          attribute='params.name')) }}""
+    18: 
+    19: - name: Import users_keypairs
+    20:   os_migrate.os_migrate.import_keypair:
+    21:     cloud: dst
+    22:     data: ""{{ item }}""
+    23:     validate_certs: ""{{ os_migrate_dst_validate_certs | default(omit) }}""
+    24:     ca_cert: ""{{ os_migrate_dst_ca_cert | default(omit) }}""
+    25:     client_cert: ""{{ os_migrate_dst_client_cert | default(omit) }}""
+    26:     client_key: ""{{ os_migrate_dst_client_key | default(omit) }}""
+    27:   loop: ""{{ filtered_users_keypairs }}""",,,,,,,,,,,
+069ff7c101993027974ac41ed414351d2c0b55491b6b0195dc9d0193a2794b93,complex_expression_length_chars,complex-expression,expression,OpenConext/OpenConext-deploy,d7b35efed821c922222da7d457a4fd52e16b40a8,Q3,roles/haproxy_mgnt/tasks/main.yml,tasks,22,"{{ (haproxy_applications | selectattr('name', 'equalto', app_name) | map(attribute='servers') | first) }}",105,100,>,true,true,1,false,6,,,,false,6,,,,,,,,,,,,,,OpenConext/OpenConext-deploy|B5_current_positive_tail|current=true,B5_current_positive_tail,11,0.0909090909,11,Is this Jinja or conditional expression too complex and in need of simplification?,17,67,67,false,local-window,"    17:     weight_complementing: ""{{ 100 - weight | int }}""
+    18: 
+    19: # get a list of servers from haproxy_applications, we filter on app_name
+    20: - name: Get the server list from the servers configured in haproxy_applications
+    21:   ansible.builtin.set_fact:
+    22:     selected_servers: ""{{ (haproxy_applications | selectattr('name', 'equalto', app_name) | map(attribute='servers') | first) }}""
+    23: 
+    24: - name: Check if the patchproces is running, except when called from the patchproces
+    25:   ansible.builtin.stat:
+    26:     path: /tmp/patchprocesstarted
+    27:   register: patch_process_started
+    28: 
+    29: - block:
+    30:     - name: End the play if the patchprocess is running
+    31:       ansible.builtin.debug:
+    32:         msg: ""The patchprocess is running. No loadbalancer management allowed""
+    33:     - ansible.builtin.meta: end_play
+    34:   when: patch_process_started.stat.exists and skip_patch_check is not defined
+    35: 
+    36: - name: Create an empty list
+    37:   ansible.builtin.set_fact:
+    38:     server_labels_with_weights: []
+    39: 
+    40: # Here we set weight for app_filter = app_filtervalue (for example color=blauw) to weight
+    41: # weight_complementing (100 - weight) on other servers (for example color=rood)
+    42: # we get the corresponding label (for example DOCKER2ROOD ) and add this to the list of dictionaries
+    43: - name: Create list with labels and weights as dictionaries
+    44:   ansible.builtin.set_fact:
+    45:     server_labels_with_weights: ""{{ server_labels_with_weights + [{ 'label': item.label, 'weight': (weight if  item[app_filter]  ==  app_filtervalue  else weight_complementing) }] }}""
+    46:   loop: ""{{ selected_servers }}""
+    47: 
+    48: - name: Show the created list
+    49:   ansible.builtin.debug:
+    50:     msg: ""{{ server_labels_with_weights }}""
+    51: 
+    52: # Now we have a label and the weight we want to set
+    53: # lets write it to the socket
+    54: - name: Set weights for haproxy hosts
+    55:   community.general.haproxy:
+    56:     state: enabled
+    57:     host: ""{{ item.label }}""
+    58:     fail_on_not_found: true
+    59:     socket: /var/lib/haproxy/haproxy.stats
+    60:     weight: ""{{ item.weight }}""
+    61:     backend: ""{{ app_name }}_be""
+    62:   with_items: ""{{ server_labels_with_weights }}""
+    63:   register: ""haproxy_weights""
+    64: 
+    65: - name: Write the state to the correct state file
+    66:   ansible.builtin.shell: echo ""show servers state"" | socat /var/lib/haproxy/haproxy.stats - > /var/lib/haproxy/state
+    67:   when: ""haproxy_weights.changed""",,,,,,,,,,,
+2c58b3fd24ce34697e00818dc4b00a44eca0e225bd4d20e78847da70322321ef,complex_expression_length_chars,complex-expression,expression,dev-sec/ansible-collection-hardening,3102eddbd116c5f8c1581aca543d372dbc326764,Q2,roles/nginx_hardening/tasks/main.yml,tasks,89,{{ nginx_dh_size }},19,100,>,true,false,1,false,0,,,,false,11,,,,,,,,,,,,,,dev-sec/ansible-collection-hardening|B1_low|current=false,B1_low,102,0.0098039216,102,Is this Jinja or conditional expression too complex and in need of simplification?,84,94,94,false,local-window,"    84:     - ""{{ nginx_configuration_dir }}/conf.d/default.conf""
+    85:     - ""{{ nginx_configuration_dir }}/sites-enabled/default""
+    86: 
+    87: - name: Generate dh group
+    88:   community.crypto.openssl_dhparam:
+    89:     path: ""{{ nginx_configuration_dir }}/dh{{ nginx_dh_size }}.pem""
+    90:     size: ""{{ nginx_dh_size }}""
+    91:     mode: ""0640""
+    92:     owner: ""{{ nginx_owner_user }}""
+    93:     group: ""{{ nginx_owner_group }}""
+    94:   notify: Restart nginx",,,,,,,,,,,
+20add09d325a24e715b69d2b7b7663be6e809913bdba541551671a39a7b48389,complex_expression_length_chars,complex-expression,expression,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,Q3,roles/sync/handlers/main.yml,tasks,21,{{ ports_cfg.sync.http }},25,100,>,true,false,1,false,0,,,,false,0,,,,,,,,,,,,,,Alfresco/alfresco-ansible-deployment|B2_lower_middle|current=false,B2_lower_middle,340,0.0029411765,340,Is this Jinja or conditional expression too complex and in need of simplification?,16,25,25,false,local-window,"    16:   notify:
+    17:     - Wait-alfresco-sync-ready
+    18: 
+    19: - name: Wait-alfresco-sync-ready
+    20:   ansible.builtin.uri:
+    21:     url: ""http://127.0.0.1:{{ ports_cfg.sync.http }}/alfresco/healthcheck""
+    22:   register: sync_result
+    23:   until: sync_result.status == 200
+    24:   retries: 12
+    25:   delay: 10",,,,,,,,,,,
+b1801ae1d8be43b545102e970cd79437e87ee8fdc25f19ed361fb38d14c0b642,complex_expression_length_chars,complex-expression,expression,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,Q3,roles/transformers/defaults/main.yml,vars,24,{{ transformers_libreoffice_version[0:3] }},43,100,>,true,false,1,false,1,,,,false,10,,,,,,,,,,,,,,Alfresco/alfresco-ansible-deployment|B3_upper_middle|current=false,B3_upper_middle,361,0.0027700831,361,Is this Jinja or conditional expression too complex and in need of simplification?,19,45,45,false,local-window,"    19: 
+    20: transformers_libreoffice_version: 7.2.5.1
+    21: transformers_libreoffice_archive_name: ""{{ transformers_libreoffice_artifact_name }}-{{ transformers_libreoffice_version }}-{{ transformers_pkg_format }}.gz""
+    22: transformers_libreoffice_archive_url: ""{{ transformers_libreoffice_repository }}/{{ transformers_libreoffice_artifact_name }}/{{ transformers_libreoffice_version }}/{{ transformers_libreoffice_archive_name }}""
+    23: transformers_libreoffice_archive_checksum: ""sha1:{{ transformers_libreoffice_archive_url }}.sha1""
+    24: transformers_libreoffice_home: ""/opt/libreoffice{{ transformers_libreoffice_version[0:3] }}/""
+    25: 
+    26: transformers_pdf_artifact_name: alfresco-pdf-renderer
+    27: transformers_pdf_repository: https://artifacts.alfresco.com/nexus/content/groups/public/org/alfresco
+    28: 
+    29: transformers_pdf_version: 1.3.0-81
+    30: transformers_pdf_archive_name: ""{{ transformers_pdf_artifact_name }}-{{ transformers_pdf_version }}-linux.tgz""
+    31: transformers_pdf_archive_url: ""{{ transformers_pdf_repository }}/{{ transformers_pdf_artifact_name }}/{{ transformers_pdf_version }}/{{ transformers_pdf_archive_name }}""
+    32: transformers_pdf_archive_checksum: ""sha1:{{ transformers_pdf_archive_url }}.sha1""
+    33: 
+    34: transformers_imagemagick_version: 7.1.2-13-ci-1
+    35: transformers_imagemagick_repository: https://artifacts.alfresco.com/nexus/content/groups/public/org/alfresco
+    36: 
+    37: transformers_aio_artifact_name: alfresco-transform-core-aio
+    38: transformers_aio_repository: https://artifacts.alfresco.com/nexus/content/groups/public/org/alfresco
+    39: 
+    40: transformers_aio_version: 5.4.3
+    41: transformers_aio_archive_url: ""{{ transformers_aio_repository }}/{{ transformers_aio_artifact_name }}/{{ transformers_aio_version }}/{{ transformers_aio_artifact_name }}-{{ transformers_aio_version }}.jar""
+    42: transformers_aio_archive_checksum: ""sha1:{{ transformers_aio_archive_url }}.sha1""
+    43: 
+    44: transformers_el_repos_retries: 3
+    45: transformers_el_repos_delay: 5",,,,,,,,,,,
+829e5c832018c6a5fbe080c5a40f88ab9b3aa5cfcd2f971578222edadae2584d,complex_expression_length_chars,complex-expression,expression,redhat-openstack/infrared,d00a414759c83765e8fd2e19d48f06d492736a93,Q4,plugins/virsh/cleanup.yml,playbook,139,{{ vms_to_omit|default([])|union([item]) }},43,100,>,true,true,1,false,6,,,,false,24,,,,,,,,,,,,,,redhat-openstack/infrared|B3_upper_middle|current=true,B3_upper_middle,2,0.5000000000,2,Is this Jinja or conditional expression too complex and in need of simplification?,134,152,152,false,local-window,"   134:       when: provision.prefix is not defined
+   135: 
+   136:     - block:
+   137:         - name: Generating a list of VMs to omit based on prefix
+   138:           set_fact:
+   139:             vms_to_omit: ""{{ vms_to_omit|default([])|union([item]) }}""
+   140:           when: provision.prefix in item
+   141:           with_items: ""{{ groups['all'] }}""
+   142: 
+   143:         - debug:
+   144:             msg: ""VMs list to omit from the inventory file, based on the '{{ provision.prefix }}' prefix: {{ vms_to_omit }}""
+   145: 
+   146:         - name: Remove cleaned up hosts from inventory file
+   147:           include_role:
+   148:             name: inventory-update
+   149:           vars:
+   150:             inventory_file_name: 'hosts-virsh-cleanup-prefix'
+   151:             omit_hosts: ""{{ vms_to_omit }}""
+   152:       when: provision.prefix is defined",,,,,,,,,,,
+9ed1d0a1dafdfca320e1bfecf084d173303e6b38c07ebb7c83b140be01a857f6,complex_expression_length_chars,complex-expression,expression,ansible/instruqt,e23435acd50f1f645c88958c8dee4fe2929014b6,Q3,images/ansible/lightspeed-101-setup.yml,playbook,330,{{ __start_containers_async_item.env | default(omit) }},55,100,>,true,false,1,false,2,,,,false,53,,,,,,,,,,,,,,ansible/instruqt|B4_high|current=false,B4_high,258,0.0038759690,258,Is this Jinja or conditional expression too complex and in need of simplification?,325,410,638,false,local-window,"   325:             env_host: ""{{ __start_containers_async_item.env_host | default(omit) }}""
+   326:             etc_hosts: ""{{ __start_containers_async_item.etc_hosts | default(omit) }}""
+   327:             ip: ""{{ __start_containers_async_item.ip | default(omit) }}""
+   328:             network: ""{{ __start_containers_async_item.network | default(omit) }}""
+   329:             state: ""{{ __start_containers_async_item.state | default('started') }}""
+   330:             env: ""{{ __start_containers_async_item.env | default(omit) }}""
+   331:             generate_systemd: ""{{ __start_containers_async_item.generate_systemd | default(omit) }}""
+   332:             cmd_args: ""{{ __start_containers_async_item.cmd_args | default(omit) }}""
+   333:           async: 1000
+   334:           poll: 0
+   335:           loop: ""{{ lab_containers }}""
+   336:           loop_control:
+   337:             loop_var: __start_containers_async_item
+   338:             label: ""{{ __start_containers_async_item.name }}""
+   339:           register: __start_containers_async
+   340:           changed_when: not __start_containers_async.changed
+   341: 
+   342:         - name: Start custom containers | Async
+   343:           ansible.builtin.async_status:
+   344:             jid: ""{{ __start_containers_async_result_item.ansible_job_id }}""
+   345:           retries: 60
+   346:           delay: 1
+   347:           loop: ""{{ __start_containers_async.results }}""
+   348:           loop_control:
+   349:             loop_var: __start_containers_async_result_item
+   350:             label: ""{{ __start_containers_async_result_item.__start_containers_async_item.name }}""
+   351:           until: __start_containers_async_result.finished
+   352:           register: __start_containers_async_result
+   353:           when: __start_containers_async_result_item.ansible_job_id is defined
+   354: 
+   355:         - name: Add custom containers to /etc/hosts
+   356:           ansible.builtin.lineinfile:
+   357:             path: /etc/hosts
+   358:             mode: ""0644""
+   359:             state: present
+   360:             line: ""{{ __hosts_file_item.ip }} {{ __hosts_file_item.name }}""
+   361:           loop: ""{{ lab_containers }}""
+   362:           loop_control:
+   363:             loop_var: __hosts_file_item
+   364:             label: ""{{ __hosts_file_item.name }}""
+   365: 
+   366:         - name: Wait for container services to start
+   367:           ansible.builtin.wait_for:
+   368:             host: ""{{ __containers_start_async_item.name }}""
+   369:             port: ""{{ __containers_start_async_item.listen_port }}""
+   370:             delay: 1
+   371:             timeout: 120
+   372:           loop: ""{{ lab_containers }}""
+   373:           loop_control:
+   374:             loop_var: __containers_start_async_item
+   375:             label: ""{{ __containers_start_async_item.name }}""
+   376:           async: 1000
+   377:           poll: 0
+   378:           register: __containers_start_async
+   379:           changed_when: not __containers_start_async.changed
+   380: 
+   381:         - name: Wait for container services to start | Async
+   382:           ansible.builtin.async_status:
+   383:             jid: ""{{ __containers_start_async_result_item.ansible_job_id }}""
+   384:           retries: 90
+   385:           delay: 1
+   386:           loop: ""{{ __containers_start_async.results }}""
+   387:           loop_control:
+   388:             loop_var: __containers_start_async_result_item
+   389:             label: ""{{ __containers_start_async_result_item.__containers_start_async_item.name }}""
+   390:           until: __containers_start_async_result.finished
+   391:           register: __containers_start_async_result
+   392:           when: __containers_start_async_result_item.ansible_job_id is defined
+   393: 
+   394:         - name: Enable and start gitea container systemd
+   395:           ansible.builtin.systemd:
+   396:             name: container-gitea
+   397:             state: started
+   398:             enabled: true
+   399:             daemon_reload: true
+   400: 
+   401:         - name: Add custom containers to inventory
+   402:           ansible.builtin.add_host:
+   403:             name: ""{{ __add_containers_item.name }}""
+   404:             groups: ""{{ __add_containers_item.groups | default(omit) }}""
+   405:           loop: ""{{ lab_containers }}""
+   406:           loop_control:
+   407:             loop_var: __add_containers_item
+   408:             label: ""{{ __add_containers_item.name }}""
+   409: 
+   410:     - name: Configure local repo - {{ gitea_clone_address }}",,,,,,,,,,,
+7c41a2cc8cb42c1cf3cfb32ec6220e1eb569d5f59e8fa3c9aaef7caedfc49673,complex_expression_length_chars,complex-expression,expression,mageops/ansible-infrastructure,5c612ace8b03fdd369ce0dcdd5e74b638a35f6a8,Q4,roles/cs.blackfire/tasks/main.yml,tasks,57,"(blackfire_server_token | default('', true) | string | length) > 0",66,100,>,true,true,1,false,6,,,,false,7,,,,,,,,,,,,,,mageops/ansible-infrastructure|B4_high|current=true,B4_high,36,0.0277777778,36,Is this Jinja or conditional expression too complex and in need of simplification?,52,57,57,false,local-window,"    52:       when: aws_use
+    53: 
+    54:   when:
+    55:     - blackfire_install | bool
+    56:     - (blackfire_server_id | default('', true) | string | length) > 0
+    57:     - (blackfire_server_token | default('', true) | string | length) > 0",,,,,,,,,,,
+cf3782005bdff75ac37d24f3345109e4085d4d31bf75d8957a5ea97483db862f,complex_expression_length_chars,complex-expression,expression,axivo/k3s-cluster,f0e3a56f57f0e13f9f8624af2bb370c7eb92063f,Q3,roles/longhorn/tasks/validation.yaml,tasks,191,{{ longhorn_result.stdout if longhorn_result.stdout | length > 0 else 'No chart comparison changes found.' }},109,100,>,true,false,1,false,2,,,,false,35,,,,,,,,,,,,,,axivo/k3s-cluster|B5_current_positive_tail|current=false,B5_current_positive_tail,37,0.0270270270,37,Is this Jinja or conditional expression too complex and in need of simplification?,186,191,191,false,local-window,"   186:               changed_when: false
+   187:               failed_when: longhorn_result.rc > 1
+   188: 
+   189:             - name: Chart values comparison result
+   190:               ansible.builtin.debug:
+   191:                 msg: ""{{ longhorn_result.stdout if longhorn_result.stdout | length > 0 else 'No chart comparison changes found.' }}""",,,,,,,,,,,
+96578abe4112ab5374c08c687969da80a4870b1d1b6086965f7fb203770062c0,complex_expression_length_chars,complex-expression,expression,ric03uec/clawrium,77274d5ca3d71b5a057df332482dd678446d9544,Q2,src/clawrium/platform/registry/zeroclaw/playbooks/skills_apply.yaml,playbook,112,"{{
+  (
+    (tracking_raw.content | b64decode).splitlines()
+    if (tracking_stat.stat.exists and tracking_raw.content is defined)
+    else []
+  )
+  | map('trim'",244,100,>,true,true,1,false,17,,,,false,11,,,,,,,,,,,,,,ric03uec/clawrium|B5_current_positive_tail|current=true,B5_current_positive_tail,46,0.0217391304,46,Is this Jinja or conditional expression too complex and in need of simplification?,107,192,275,false,local-window,"   107:       when: tracking_stat.stat.exists
+   108: 
+   109:     - name: Parse tracked slug list
+   110:       ansible.builtin.set_fact:
+   111:         tracked_skill_names: >-
+   112:           {{
+   113:             (
+   114:               (tracking_raw.content | b64decode).splitlines()
+   115:               if (tracking_stat.stat.exists and tracking_raw.content is defined)
+   116:               else []
+   117:             )
+   118:             | map('trim')
+   119:             | reject('equalto', '')
+   120:             | select('match', '^[a-z0-9][a-z0-9_-]*$')
+   121:             | list
+   122:           }}
+   123: 
+   124:     # Use the on-disk workspace/skills/ children as the ""is installed on
+   125:     # host"" check. Phase 0 confirmed source-dirname == slug, so the
+   126:     # dirname IS the slug we'd pass to `zeroclaw skills remove`. We
+   127:     # don't parse `zeroclaw skills list` stdout — the format is
+   128:     # human-oriented and version-fragile.
+   129:     - name: List installed skill dirs in zeroclaw workspace
+   130:       ansible.builtin.find:
+   131:         paths: ""{{ workspace_skills }}""
+   132:         file_type: directory
+   133:         depth: 1
+   134:       register: installed_skill_dirs
+   135: 
+   136:     - name: Compute set of slugs currently installed on host
+   137:       ansible.builtin.set_fact:
+   138:         installed_slugs: >-
+   139:           {{ installed_skill_dirs.files
+   140:              | map(attribute='path')
+   141:              | map('basename')
+   142:              | list }}
+   143: 
+   144:     - name: Compute prune set (tracked but not desired AND still installed)
+   145:       # Pruning is bounded to:
+   146:       #   (slugs we've installed in a prior apply)
+   147:       #     ∩ (slugs currently on host)
+   148:       #     \ (desired slugs)
+   149:       # The intersection with installed_slugs avoids ""remove a slug that
+   150:       # was already removed natively"" (which would error in `zeroclaw
+   151:       # skills remove`).
+   152:       ansible.builtin.set_fact:
+   153:         skills_to_prune: >-
+   154:           {{ tracked_skill_names
+   155:              | difference(desired_skill_names)
+   156:              | intersect(installed_slugs) }}
+   157: 
+   158:     - name: Uninstall clawrium-managed skills no longer in desired state
+   159:       ansible.builtin.command:
+   160:         argv:
+   161:           - ""{{ zeroclaw_bin }}""
+   162:           - skills
+   163:           - remove
+   164:           - ""{{ item }}""
+   165:       become_user: ""{{ agent_name }}""
+   166:       loop: ""{{ skills_to_prune }}""
+   167:       # The slug regex is re-checked here as a third defense-in-depth
+   168:       # layer — if a malformed entry somehow slipped past the earlier
+   169:       # validate task (impossible because that task fails the play),
+   170:       # we still refuse to pass it as a CLI argument.
+   171:       when:
+   172:         - item is match('^[a-z0-9][a-z0-9_-]*$')
+   173:       register: zeroclaw_remove_results
+   174:       changed_when: zeroclaw_remove_results.rc == 0
+   175: 
+   176:     # Install set is ALL desired slugs — no `difference(installed_slugs)`
+   177:     # filter. Skipping install for already-present slugs would bypass
+   178:     # the native audit gate, which is the primary reason we wrap the
+   179:     # native CLI (per #382 ATX B2). A re-install of an unchanged skill
+   180:     # is the price of audit-on-every-install.
+   181:     - name: Ensure remote staging root exists (0700, agent-owned)
+   182:       ansible.builtin.file:
+   183:         path: ""{{ remote_staging_root }}""
+   184:         state: directory
+   185:         owner: ""{{ agent_name }}""
+   186:         group: ""{{ agent_name }}""
+   187:         mode: ""0700""
+   188:       when: desired_skill_names | length > 0
+   189: 
+   190:     # Pre-remove already-installed desired skills. zeroclaw v0.7.5's
+   191:     # `skills install` is NOT overwrite-idempotent — it errors with
+   192:     # ""Destination skill already exists"" when the slug is already in",,,,,,,,,,,
+02cf0816a92a4f19c0f793d689c95a29911a9bf0e9347285d0afe25a48a716aa,complex_expression_length_chars,complex-expression,expression,Checkmk/ansible-collection-checkmk.general,50be8bde935f94e4702f40c9a549f86ffe773db1,Q2,roles/server/tasks/configure-site.yml,tasks,18,{{ item.var }},14,100,>,true,false,1,false,0,,,,false,2,,,,,,,,,,,,,,Checkmk/ansible-collection-checkmk.general|B1_low|current=false,B1_low,52,0.0192307692,52,Is this Jinja or conditional expression too complex and in need of simplification?,13,36,36,false,local-window,"    13: 
+    14: - name: ""{{ outer_item.name }}: Apply OMD Configuration.""  # noqa no-changed-when
+    15:   become: true
+    16:   ansible.builtin.shell: |
+    17:     set -o pipefail
+    18:     omd config {{ outer_item.name }} set {{ item.var }} {{ item.value }}
+    19:   args:
+    20:     executable: /bin/bash
+    21:   loop: ""{{ outer_item.omd_config }}""
+    22:   when: outer_item.state != ""absent""  and outer_item.omd_config| length > 0
+    23:   tags:
+    24:     - configure-sites
+    25: 
+    26: - name: ""{{ outer_item.name }}: Start Site.""
+    27:   become: true
+    28:   ansible.builtin.shell: |
+    29:     set -o pipefail
+    30:     omd start {{ outer_item.name }}
+    31:   args:
+    32:     executable: /bin/bash
+    33:     creates: ""/opt/omd/sites/{{ outer_item.name }}/tmp/run/live""
+    34:   when: outer_item.state == ""started""
+    35:   tags:
+    36:     - configure-sites",,,,,,,,,,,
+672092ab7f0b8b5f8edd0338b79f9f04a6f5bfe9488bb7e483334ab06d839c3f,complex_expression_length_chars,complex-expression,expression,confluentinc/cp-ansible,11aa6b84f2ac19da7dc259c23fe854e01a1c5be3,Q3,roles/schema_registry/tasks/health_check.yml,tasks,27,{{schema_registry_listener_port}},33,100,>,true,false,1,false,0,,,,false,19,,,,,,,,,,,,,,confluentinc/cp-ansible|B2_lower_middle|current=false,B2_lower_middle,1184,0.0008445946,1184,Is this Jinja or conditional expression too complex and in need of simplification?,22,107,122,false,local-window,"    22:     oauth_client_assertion_template_file: ""{{ schema_registry_oauth_client_assertion_template_file_dest_path }}""
+    23:   when: rbac_enabled or schema_registry_oauth_enabled
+    24: 
+    25: - name: Wait for API to return 200
+    26:   uri:
+    27:     url: ""{{schema_registry_http_protocol}}://{{ hostvars[inventory_hostname]|confluent.platform.resolve_and_format_hostname }}:{{schema_registry_listener_port}}/subjects""
+    28:     status_code: 200
+    29:     validate_certs: false
+    30:     # Basic auth header is redundant for non rbac install
+    31:     url_username: ""{{schema_registry_health_check_user}}""
+    32:     url_password: ""{{schema_registry_health_check_password}}""
+    33:     force_basic_auth: true
+    34:   register: result1
+    35:   until: result1.status == 200
+    36:   retries: ""{{ schema_registry_health_check_retries }}""
+    37:   delay: ""{{ schema_registry_health_check_retry_delay }}""
+    38:   when:
+    39:     - schema_registry_authentication_type != 'mtls'
+    40:     - not ( rbac_enabled or schema_registry_oauth_enabled)
+    41:   ignore_errors: true
+    42: 
+    43: - name: Wait for API to return 200
+    44:   uri:
+    45:     url: ""{{schema_registry_http_protocol}}://{{ hostvars[inventory_hostname]|confluent.platform.resolve_and_format_hostname }}:{{schema_registry_listener_port}}/subjects""
+    46:     status_code: 200
+    47:     validate_certs: false
+    48:     headers:
+    49:       Authorization: ""Bearer {{ authorization_token }}""
+    50:   register: result1_oauth
+    51:   until: result1_oauth.status == 200
+    52:   retries: ""{{ schema_registry_health_check_retries }}""
+    53:   delay: ""{{ schema_registry_health_check_retry_delay }}""
+    54:   when:
+    55:     - schema_registry_authentication_type != 'mtls'
+    56:     - rbac_enabled or schema_registry_oauth_enabled
+    57:   no_log: ""{{mask_secrets|bool}}""
+    58:   ignore_errors: true
+    59: 
+    60: - set_fact:
+    61:     certs_chain: ""{{ssl_file_dir_final}}/schema_registry.chain""
+    62: 
+    63: - name: Wait for API to return 200 - mTLS
+    64:   uri:
+    65:     url: ""{{schema_registry_http_protocol}}://{{ hostvars[inventory_hostname]|confluent.platform.resolve_and_format_hostname }}:{{schema_registry_listener_port}}/subjects""
+    66:     status_code: 200
+    67:     validate_certs: false
+    68:     client_cert: ""{{ schema_registry_cert_path if ssl_provided_keystore_and_truststore else certs_chain }}""
+    69:     client_key: ""{{schema_registry_key_path}}""
+    70:     # Basic auth header is redundant for non rbac install
+    71:     url_username: ""{{schema_registry_health_check_user}}""
+    72:     url_password: ""{{schema_registry_health_check_password}}""
+    73:     force_basic_auth: true
+    74:   register: result2
+    75:   until: result2.status == 200
+    76:   retries: ""{{ schema_registry_health_check_retries }}""
+    77:   delay: ""{{ schema_registry_health_check_retry_delay }}""
+    78:   when:
+    79:     - schema_registry_authentication_type == 'mtls'
+    80:     - not (rbac_enabled or schema_registry_oauth_enabled)
+    81:   ignore_errors: true
+    82: 
+    83: - name: Wait for API to return 200 - mTLS
+    84:   uri:
+    85:     url: ""{{schema_registry_http_protocol}}://{{ hostvars[inventory_hostname]|confluent.platform.resolve_and_format_hostname }}:{{schema_registry_listener_port}}/subjects""
+    86:     status_code: 200
+    87:     validate_certs: false
+    88:     client_cert: ""{{ schema_registry_cert_path if ssl_provided_keystore_and_truststore else certs_chain }}""
+    89:     client_key: ""{{schema_registry_key_path}}""
+    90:     headers:
+    91:       Authorization: ""Bearer {{ authorization_token }}""
+    92:   register: result2_oauth
+    93:   until: result2_oauth.status == 200
+    94:   retries: ""{{ schema_registry_health_check_retries }}""
+    95:   delay: ""{{ schema_registry_health_check_retry_delay }}""
+    96:   when:
+    97:     - schema_registry_authentication_type == 'mtls'
+    98:     - rbac_enabled or schema_registry_oauth_enabled
+    99:   no_log: ""{{mask_secrets|bool}}""
+   100:   ignore_errors: true
+   101: 
+   102: - name: Fetch Log Files and Error out
+   103:   block:
+   104:     - name: Fetch Files for Debugging Failure
+   105:       # Cannot use include_role in Ansible Handlers: https://github.com/ansible/ansible/issues/20493
+   106:       include_tasks: ../../common/tasks/fetch_logs.yml
+   107:       vars:",,,,,,,,,,,
+6d6e27d7d32d0ed254dccf656d9c6d18af0ac5551866983d4264f8fc93c5dc55,complex_expression_length_chars,complex-expression,expression,ansible/ansible-zuul-jobs,acb7ddbcd03b090e8db140d379e656559a37cf63,Q3,playbooks/ansible-network-ios-appliance/pre.yaml,playbook,13,{{ hostvars['ios'].ansible_host }},34,100,>,true,false,1,false,1,,,,false,0,,,,,,,,,,,,,,ansible/ansible-zuul-jobs|B3_upper_middle|current=false,B3_upper_middle,93,0.0107526882,93,Is this Jinja or conditional expression too complex and in need of simplification?,8,32,32,false,local-window,"     8:         mode: ""0700""
+     9: 
+    10:     - name: Relax SSH security to be compatible with the appliance
+    11:       copy:
+    12:         content: |
+    13:           Host {{ hostvars['ios'].ansible_host }}
+    14:             stricthostkeychecking no
+    15:             userknownhostsfile=/dev/null
+    16:             HostKeyAlgorithms +ssh-rsa
+    17:             KexAlgorithms +diffie-hellman-group1-sha1
+    18:         dest: ~/.ssh/config
+    19:         mode: ""0600""
+    20: 
+    21:     - name: Ensure tox
+    22:       include_role:
+    23:         name: ensure-tox
+    24: 
+    25:     - name: Setup tox role
+    26:       include_role:
+    27:         name: tox
+    28:       vars:
+    29:         tox_envlist: venv
+    30:         tox_extra_args: -vv -- ansible-playbook -v -c network_cli playbooks/ansible-network-ios-appliance/files/bootstrap.yaml
+    31:         tox_install_siblings: false
+    32:         zuul_work_dir: ""{{ zuul.projects['github.com/ansible/ansible-zuul-jobs'].src_dir }}""",,,,,,,,,,,
+abc07f5f17512338423bf0ce85042835514daab8c0c91c7880ba709ea91559af,complex_expression_length_chars,complex-expression,expression,nmime/ansible-k8s-full-setup,345f3044199bb323b5c34b3667657e7289abf3a1,Q2,roles/k8s-cluster-management/tasks/main.yml,tasks,1957,(gw_svc.resources | default([])) | length > 0,45,100,>,true,true,1,false,6,,,,false,202,,,,,,,,,,,,,,nmime/ansible-k8s-full-setup|B3_upper_middle|current=true,B3_upper_middle,2,0.5000000000,2,Is this Jinja or conditional expression too complex and in need of simplification?,1952,2037,3693,false,local-window,"  1952:     namespace: cilium-system
+  1953:     label_selectors:
+  1954:       - ""io.cilium.gateway/owning-gateway=main-gateway""
+  1955:   when: k8s_create_external_tls | default(true) | bool
+  1956:   register: gw_svc
+  1957:   until: (gw_svc.resources | default([])) | length > 0
+  1958:   retries: 30
+  1959:   delay: 10
+  1960:   failed_when: false
+  1961: 
+  1962: - name: Record the controller-owned main Gateway NodePorts
+  1963:   ansible.builtin.set_fact:
+  1964:     gateway_http_node_port: >-
+  1965:       {{ (gw_svc.resources[0].spec.ports
+  1966:           | selectattr('port', 'equalto', 80)
+  1967:           | map(attribute='nodePort') | first) | int }}
+  1968:     gateway_https_node_port: >-
+  1969:       {{ (gw_svc.resources[0].spec.ports
+  1970:           | selectattr('port', 'equalto', 443)
+  1971:           | map(attribute='nodePort') | first) | int }}
+  1972:   when:
+  1973:     - gw_svc.resources | default([]) | length > 0
+  1974:     - k8s_create_external_tls | default(true) | bool
+  1975: 
+  1976: - name: Allow the Cilium operator reconciliation loop to settle
+  1977:   ansible.builtin.pause:
+  1978:     seconds: 10
+  1979:   when: k8s_create_external_tls | default(true) | bool
+  1980: 
+  1981: - name: Re-read the controller-owned main Gateway service
+  1982:   kubernetes.core.k8s_info:
+  1983:     kind: Service
+  1984:     namespace: cilium-system
+  1985:     name: ""{{ gw_svc.resources[0].metadata.name }}""
+  1986:   register: stable_gw_svc
+  1987:   when:
+  1988:     - gw_svc.resources | default([]) | length > 0
+  1989:     - k8s_create_external_tls | default(true) | bool
+  1990: 
+  1991: - name: Require stable valid main Gateway NodePorts
+  1992:   ansible.builtin.assert:
+  1993:     that:
+  1994:       - stable_gw_svc.resources | default([]) | length == 1
+  1995:       - gateway_http_node_port >= 30000
+  1996:       - gateway_http_node_port <= 32767
+  1997:       - gateway_https_node_port >= 30000
+  1998:       - gateway_https_node_port <= 32767
+  1999:       - >-
+  2000:         gateway_http_node_port ==
+  2001:         ((stable_gw_svc.resources[0].spec.ports
+  2002:           | selectattr('port', 'equalto', 80)
+  2003:           | map(attribute='nodePort') | first) | int)
+  2004:       - >-
+  2005:         gateway_https_node_port ==
+  2006:         ((stable_gw_svc.resources[0].spec.ports
+  2007:           | selectattr('port', 'equalto', 443)
+  2008:           | map(attribute='nodePort') | first) | int)
+  2009:     fail_msg: >-
+  2010:       Cilium changed the main Gateway NodePorts during reconciliation; refusing
+  2011:       to publish stale ports to the external load balancer.
+  2012:   when: k8s_create_external_tls | default(true) | bool
+  2013: 
+  2014: - name: Read the Hetzner load balancer before Gateway convergence
+  2015:   ansible.builtin.command:
+  2016:     argv: [hcloud, load-balancer, describe, '{{ load_balancer_name }}', -o, json]
+  2017:   register: gateway_lb_config
+  2018:   changed_when: false
+  2019:   retries: 5
+  2020:   delay: 5
+  2021:   until: gateway_lb_config.rc == 0
+  2022:   when:
+  2023:     - lb_enabled | default(false) | bool
+  2024:     - k8s_create_external_tls | default(true) | bool
+  2025: 
+  2026: - name: Index the current Hetzner Gateway services
+  2027:   ansible.builtin.set_fact:
+  2028:     gateway_lb_http_service: >-
+  2029:       {{ ((gateway_lb_config.stdout | from_json).services
+  2030:           | selectattr('listen_port', 'equalto', 80) | list | first)
+  2031:           | default({}) }}
+  2032:     gateway_lb_https_service: >-
+  2033:       {{ ((gateway_lb_config.stdout | from_json).services
+  2034:           | selectattr('listen_port', 'equalto', 443) | list | first)
+  2035:           | default({}) }}
+  2036:   when:
+  2037:     - lb_enabled | default(false) | bool",,,,,,,,,,,
+b4386eb8304edf7e5befe9ece91f8284c0db1c0203e2ebdece32ad448d6272f1,complex_expression_length_chars,complex-expression,expression,clusterinthecloud/ansible,a378fceff7cd03dbd36da1fc4bd5a4ed09270c60,Q2,roles/webui/tasks/main.yml,tasks,133,"""0 static files copied to"" not in collectstatic_result.stdout",61,100,>,true,false,1,false,2,,,,false,3,,,,,,,,,,,,,,clusterinthecloud/ansible|B4_high|current=false,B4_high,10,0.1000000000,10,Is this Jinja or conditional expression too complex and in need of simplification?,128,213,228,false,local-window,"   128: - name: Collect static files
+   129:   ansible.builtin.command:
+   130:     cmd: ""{{ webui_venv.virtualenv }}/bin/python manage.py collectstatic --no-input""
+   131:     chdir: ""{{ webui_dir }}""
+   132:   register: collectstatic_result
+   133:   changed_when: '""0 static files copied to"" not in collectstatic_result.stdout'
+   134: 
+   135: # TODO move this (and other copies of it) to a central role
+   136: - name: Create citc config dir
+   137:   ansible.builtin.file:
+   138:     path: /etc/citc
+   139:     state: directory
+   140:     mode: ""0755""
+   141: 
+   142: - name: Create webui mysql config
+   143:   ansible.builtin.template:
+   144:     src: my.cnf.j2
+   145:     dest: /etc/citc/webui.my.cnf
+   146:     owner: webui
+   147:     group: webui
+   148:     mode: ""660""
+   149: 
+   150: - name: Create webui database
+   151:   community.mysql.mysql_db:
+   152:     name: webui
+   153:     state: present
+   154: 
+   155: - name: Create webui MySQL user
+   156:   community.mysql.mysql_user:
+   157:     name: webui
+   158:     password: ""{{ webui_database_password }}""
+   159:     priv: 'webui.*:ALL'
+   160:     state: present
+   161: 
+   162: - name: Run migrations
+   163:   ansible.builtin.command:
+   164:     cmd: ""{{ webui_venv.virtualenv }}/bin/python manage.py migrate --no-input""
+   165:     chdir: ""{{ webui_dir }}""
+   166:   register: migrate_result
+   167:   changed_when: '""No migrations to apply"" not in migrate_result.stdout'
+   168: 
+   169: - name: Create django admin
+   170:   ansible.builtin.command:
+   171:     cmd: ""{{ webui_venv.virtualenv }}/bin/python manage.py createsuperuser --username citc --email citc@localhost""
+   172:     chdir: ""{{ webui_dir }}""
+   173:   environment:
+   174:     DJANGO_SUPERUSER_PASSWORD: ""{{ webui_superuser_password }}""
+   175:   no_log: true
+   176:   register: createsuperuser_result
+   177:   changed_when: '""Creating user"" in createsuperuser_result.stdout'
+   178: 
+   179: - name: Add webui password to secrets
+   180:   ansible.builtin.lineinfile:
+   181:     path: /usr/sbin/get_secrets
+   182:     line: echo webui ""{{ webui_superuser_password }}""
+   183: 
+   184: - name: Create webui config file
+   185:   ansible.builtin.template:
+   186:     src: webui.yaml.j2
+   187:     dest: /etc/citc/webui.yaml
+   188:     owner: webui
+   189:     group: webui
+   190:     mode: ""660""
+   191: 
+   192: # TODO make checkout readable only by correct user
+   193: 
+   194: - name: Install gunicorn service file
+   195:   ansible.builtin.copy:
+   196:     src: gunicorn.service
+   197:     dest: /etc/systemd/system/gunicorn.service
+   198:     mode: u=rw,g=r,o=
+   199: 
+   200: - name: Install gunicorn socket file
+   201:   ansible.builtin.copy:
+   202:     src: gunicorn.socket
+   203:     dest: /etc/systemd/system/gunicorn.socket
+   204:     mode: u=rw,g=r,o=
+   205: 
+   206: - name: Start and enable gunicorn
+   207:   ansible.builtin.systemd:
+   208:     name: gunicorn
+   209:     state: started
+   210:     enabled: true
+   211:     daemon_reexec: true
+   212: 
+   213: - name: Install firewalld",,,,,,,,,,,
+179bc6681f16d361dda41248e399c7ad6a7eae2123b21d91a31130b9dbbaf77f,complex_expression_length_chars,complex-expression,expression,ansible/instruqt,e23435acd50f1f645c88958c8dee4fe2929014b6,Q3,images/ansible/mesh-lab-install.yml,playbook,223,"(item.labels[""mesh-type""] == ""hop"") or (item.labels[""mesh-type""] == ""execution"")",80,100,>,true,true,1,false,7,,,,false,45,,,,,,,,,,,,,,ansible/instruqt|B4_high|current=true,B4_high,25,0.0400000000,25,Is this Jinja or conditional expression too complex and in need of simplification?,218,303,654,false,local-window,"   218:       args: ""{{ gcp_inventory_host_vars | default(omit) }}""
+   219:       loop: ""{{ __gcp_node_instance_info.resources }}""
+   220:       loop_control:
+   221:         label: ""{{ item.name }}""
+   222:       when:
+   223:         - (item.labels[""mesh-type""] == ""hop"") or (item.labels[""mesh-type""] == ""execution"")
+   224:         - (__gcp_node_instance_info.resources is defined) and (__gcp_node_instance_info.resources | length > 0)
+   225:       tags:
+   226:         - create-instances
+   227: 
+   228:     - name: Add gcp controller hosts to inventory
+   229:       ansible.builtin.add_host:
+   230:         name: ""{{ item.name }}""
+   231:         groups: ""automationcontroller""
+   232:         ansible_host: ""{{ item.networkInterfaces[0].accessConfigs[0].natIP }}""
+   233:       args: ""{{ gcp_inventory_host_vars | default(omit) }}""
+   234:       loop: ""{{ __gcp_node_instance_info.resources }}""
+   235:       loop_control:
+   236:         label: ""{{ item.name }}""
+   237:       when:
+   238:         - item.labels[""mesh-type""] == ""controller""
+   239:         - (__gcp_node_instance_info.resources is defined) and (__gcp_node_instance_info.resources | length > 0)
+   240:       tags:
+   241:         - create-instances
+   242:         - configure-controller
+   243: 
+   244:     - name: Create install SSH key
+   245:       when: (__gcp_node_instance_info.resources is defined) and (__gcp_node_instance_info.resources | length > 0)
+   246:       tags:
+   247:         - create-instances
+   248:         - install-controller
+   249:       block:
+   250:         - name: Create temp dir for ssh keys
+   251:           ansible.builtin.tempfile:
+   252:             state: directory
+   253:             prefix: instruqt_ssh_
+   254:           register: _ssh_tempdir
+   255: 
+   256:         - name: Generate temp OpenSSH key pair for nodes
+   257:           community.crypto.openssh_keypair:
+   258:             path: ""{{ _ssh_tempdir.path }}/instruqt_lab""
+   259:             force: true
+   260: 
+   261:   handlers:
+   262:     - name: Remove existing gcloud instances
+   263:       when: (gcp_instances is defined) and (gcp_instances | length > 0)
+   264:       tags:
+   265:         - delete-instances
+   266:       block:
+   267:         - name: Remove gcloud instances
+   268:           google.cloud.gcp_compute_instance:
+   269:             name: ""{{ __remove_instances_job_async_item.name }}""
+   270:             state: absent
+   271:             zone: ""{{ gcp_zone }}""
+   272:             <<: *gcp_login
+   273:           loop: ""{{ gcp_instances }}""
+   274:           loop_control:
+   275:             loop_var: __remove_instances_job_async_item
+   276:             label: ""{{ __remove_instances_job_async_item.name }}""
+   277:           async: 1000
+   278:           poll: 0
+   279:           register: __remove_instances_job_async
+   280:           changed_when: not __remove_instances_job_async.changed
+   281: 
+   282:         - name: ""Remove existing gcloud instances | Wait for finish the instance deletion""
+   283:           ansible.builtin.async_status: # noqa args[module]
+   284:             jid: ""{{ __remove_instances_job_async_result_item.ansible_job_id }}""
+   285:           retries: 60
+   286:           delay: 1
+   287:           loop: ""{{ __remove_instances_job_async.results }}""
+   288:           loop_control:
+   289:             loop_var: __remove_instances_job_async_result_item
+   290:             label: ""{{ __remove_instances_job_async_result_item.__remove_instances_job_async_item.name }}""
+   291:           until: __remove_instances_job_async_result.finished
+   292:           register: __remove_instances_job_async_result
+   293:           when: __remove_instances_job_async_result_item.ansible_job_id is defined
+   294: 
+   295: # Run configuration on all instances
+   296: - name: Run config and setup on all instances
+   297:   hosts: all
+   298:   become: true
+   299:   gather_facts: true
+   300: 
+   301:   pre_tasks:
+   302:     - name: Include variable tasks
+   303:       ansible.builtin.include_tasks:",,,,,,,,,,,
+1410917618331f870305e7897b7a5762f13da5fb8a3cf2070d0d44296820a037,complex_expression_length_chars,complex-expression,expression,nextcloud/ansible-collection-nextcloud-admin,4f61f963e6ed9c0a66c5be71afb2f7442479ccdd,Q1,roles/install_nextcloud/tasks/setup_env.yml,tasks,52,"{{ lookup('ansible.builtin.password', 'nextcloud_instances/' + nextcloud_instance_name + '/db_admin.pwd') }}",108,100,>,true,false,1,false,1,,,,false,7,,,,,,,,,,,,,,nextcloud/ansible-collection-nextcloud-admin|B5_current_positive_tail|current=false,B5_current_positive_tail,2,0.5000000000,2,Is this Jinja or conditional expression too complex and in need of simplification?,47,60,60,false,local-window,"    47:       ansible.builtin.set_fact:
+    48:         ansible_become_flags: '-s /bin/sh'
+    49: 
+    50: - name: setup_env | Generate database user password
+    51:   ansible.builtin.set_fact:
+    52:     nextcloud_db_pwd: ""{{ lookup('ansible.builtin.password', 'nextcloud_instances/' + nextcloud_instance_name + '/db_admin.pwd') }}""
+    53:   when: nextcloud_db_pwd is not defined
+    54: 
+    55: - name: setup_env | Generate database root password
+    56:   ansible.builtin.set_fact:
+    57:     nextcloud_mysql_root_pwd: ""{{ lookup('ansible.builtin.password', 'nextcloud_instances/' + nextcloud_instance_name + '/db_root.pwd') }}""
+    58:   when:
+    59:     - nextcloud_db_backend in [""mysql"", ""mariadb""]
+    60:     - nextcloud_mysql_root_pwd is not defined",,,,,,,,,,,
+94a94b512068945ae39619eafb8b3cbc0bfce36c694441ae307a574757945f21,complex_expression_length_chars,complex-expression,expression,osism/testbed,ef457f4318fd7f7dce061cafe13159bcbb87f74e,Q2,playbooks/deploy.yml,playbook,182,"{{ (manager_console_log.stdout_lines | default([]))
+   + (manager_console_log.stderr_lines | default([])) }}",108,100,>,true,true,1,false,8,,,,false,37,,,,,,,,,,,,,,osism/testbed|B5_current_positive_tail|current=true,B5_current_positive_tail,14,0.0714285714,14,Is this Jinja or conditional expression too complex and in need of simplification?,177,262,410,false,local-window,"   177:           failed_when: false
+   178: 
+   179:         - name: Show the captured manager serial console log
+   180:           ansible.builtin.debug:
+   181:             msg: >-
+   182:               {{ (manager_console_log.stdout_lines | default([]))
+   183:                  + (manager_console_log.stderr_lines | default([])) }}
+   184: 
+   185:         # When manager bring-up fails, capture cloud-side state so the
+   186:         # failure is diagnosable from the job log alone (CI credentials are
+   187:         # not otherwise accessible). All queries are read-only, best-effort,
+   188:         # and use the build's own cloud credentials:
+   189:         #   - the floating IP's port_id shows whether it is associated to the
+   190:         #     expected manager port (vs a foreign/absent one);
+   191:         #   - the tenant server/port/FIP inventory surfaces leftover or
+   192:         #     unexpected resources in the shared project;
+   193:         #   - the live host-key fingerprint records which host actually
+   194:         #     answers the manager address (e.g. when the ssh probe reports a
+   195:         #     changed host key).
+   196:         - name: Capture floating IP association for the manager address
+   197:           ansible.builtin.command:
+   198:             chdir: ""{{ terraform_path }}""
+   199:             cmd: >-
+   200:               {{ ansible_user_dir }}/venv/bin/openstack
+   201:               floating ip show {{ manager_host }} -f yaml
+   202:           environment:
+   203:             OS_CLOUD: ""{{ cloud }}""
+   204:           register: manager_fip_show
+   205:           changed_when: false
+   206:           failed_when: false
+   207: 
+   208:         - name: Show the floating IP association
+   209:           ansible.builtin.debug:
+   210:             msg: >-
+   211:               {{ (manager_fip_show.stdout_lines | default([]))
+   212:                  + (manager_fip_show.stderr_lines | default([])) }}
+   213: 
+   214:         - name: Capture tenant server, port and floating IP inventory
+   215:           ansible.builtin.command:
+   216:             chdir: ""{{ terraform_path }}""
+   217:             cmd: ""{{ ansible_user_dir }}/venv/bin/openstack {{ item }}""
+   218:           environment:
+   219:             OS_CLOUD: ""{{ cloud }}""
+   220:           loop:
+   221:             - server list --long -f yaml
+   222:             - port list --long -f yaml
+   223:             - floating ip list --long -f yaml
+   224:           register: manager_tenant_inventory
+   225:           changed_when: false
+   226:           failed_when: false
+   227: 
+   228:         - name: Show the tenant inventory
+   229:           ansible.builtin.debug:
+   230:             msg: >-
+   231:               {{ (item.stdout_lines | default([]))
+   232:                  + (item.stderr_lines | default([])) }}
+   233:           loop: ""{{ manager_tenant_inventory.results }}""
+   234:           loop_control:
+   235:             label: ""{{ item.item }}""
+   236: 
+   237:         - name: Fingerprint the host key now presented at the manager address
+   238:           ansible.builtin.shell:
+   239:             cmd: >-
+   240:               set -o pipefail;
+   241:               ssh-keyscan -T 5 {{ manager_host }} 2>/dev/null | ssh-keygen -lf -
+   242:           args:
+   243:             executable: /bin/bash
+   244:           register: manager_hostkey_now
+   245:           changed_when: false
+   246:           failed_when: false
+   247: 
+   248:         - name: Show the host key fingerprints now presented
+   249:           ansible.builtin.debug:
+   250:             msg: >-
+   251:               {{ (manager_hostkey_now.stdout_lines | default([]))
+   252:                  + (manager_hostkey_now.stderr_lines | default([])) }}
+   253: 
+   254:         - name: Fail the deploy after capturing console diagnostics
+   255:           ansible.builtin.fail:
+   256:             msg: >-
+   257:               Manager bring-up failed at task '{{ ansible_failed_task.name }}':
+   258:               {{ ansible_failed_result.msg | default('see task result above') }}.
+   259:               The serial console log was captured above (task ""Show the
+   260:               captured manager serial console log"") for diagnosis. If this was
+   261:               the public-key probe, the usual cause is cloud-init not having
+   262:               written the image user's authorized_keys in time.",,,,,,,,,,,
+20916e0132ea368e5518c2068eda1053171e2a8d139cb364fc189bcdcfa03046,complex_expression_length_chars,complex-expression,expression,michnmi/ansible_internal,25f44a7ad44d44b7b91837256958ff443ba28a1e,Q3,roles/base/mktxp/tasks/setup-mktpx.yml,tasks,6,{{ mktxp_user }},16,100,>,true,false,1,false,0,,,,false,1,,,,,,,,,,,,,,michnmi/ansible_internal|B1_low|current=false,B1_low,76,0.0131578947,76,Is this Jinja or conditional expression too complex and in need of simplification?,1,28,28,true,local-window,"     1: ---
+     2: - name: ""Setup-mktpx: Setup the directory for the configuration""
+     3:   ansible.builtin.file:
+     4:     path: ""{{ mktxp_conf_dir }}""
+     5:     state: directory
+     6:     owner: ""{{ mktxp_user }}""
+     7:     group: ""{{ mktxp_user }}""
+     8:     mode: ""0750""
+     9: 
+    10: - name: ""Setup-mktpx: Setup the mktxp configuration""
+    11:   ansible.builtin.template:
+    12:     src: templates/mktxp.conf.j2
+    13:     dest: ""{{ mktxp_conf_dir }}/mktxp.conf""
+    14:     owner: ""{{ mktxp_user }}""
+    15:     group: ""{{ mktxp_user }}""
+    16:     mode: ""0600""
+    17:   notify:
+    18:     - restart mktxp
+    19: 
+    20: - name: ""Setup-mktpx: Setup the systemd configuration""
+    21:   ansible.builtin.template:
+    22:     src: templates/mktxp.systemd.j2
+    23:     dest: ""{{ mktxp_service_path }}""
+    24:     owner: root
+    25:     group: root
+    26:     mode: ""0644""
+    27:   notify:
+    28:     - reload systemd",,,,,,,,,,,
+2a445c4f65fada9ba02ae42d11d853fc3d59aa226f4288a425c6481edabb27a6,complex_expression_length_chars,complex-expression,expression,NSLS2/nsls2.ioc_deploy,10518de6b2fbd124ce01d7b67512558f3bcf7b8e,Q4,roles/manage_iocs/tasks/install.yml,tasks,65,{{ manage_iocs_log_directory }},31,100,>,true,false,1,false,0,,,,false,11,,,,,,,,,,,,,,NSLS2/nsls2.ioc_deploy|B2_lower_middle|current=false,B2_lower_middle,348,0.0028735632,348,Is this Jinja or conditional expression too complex and in need of simplification?,60,90,90,false,local-window,"    60:   ansible.builtin.debug:
+    61:     msg: ""IOC port number is {{ manage_iocs_ioc_port.stdout }}""
+    62: 
+    63: - name: Create base log directory if it doesn't exist
+    64:   ansible.builtin.file:
+    65:     path: ""{{ manage_iocs_log_directory }}""
+    66:     owner: ""{{ manage_iocs_ioc_user.stdout }}""
+    67:     group: ""{{ manage_iocs_ioc_group }}""
+    68:     state: directory
+    69:     mode: ""02775""
+    70: 
+    71: - name: Get path to ioc log directory
+    72:   ansible.builtin.set_fact:
+    73:     manage_iocs_ioc_log_dir:
+    74:       ""{{ manage_iocs_log_directory }}/{{ manage_iocs_ioc_name }}""
+    75: 
+    76: - name: Create ioc log directory if it doesn't exist
+    77:   ansible.builtin.file:
+    78:     path: ""{{ manage_iocs_ioc_log_dir }}""
+    79:     state: directory
+    80:     owner: ""{{ manage_iocs_ioc_user.stdout }}""
+    81:     group: ""{{ manage_iocs_ioc_group }}""
+    82:     mode: ""02775""
+    83: 
+    84: - name: Install IOC service file
+    85:   ansible.builtin.template:
+    86:     src: templates/softioc.service.j2
+    87:     dest: ""/etc/systemd/system/softioc-{{ manage_iocs_ioc_name }}.service""
+    88:     owner: root
+    89:     group: root
+    90:     mode: ""0644""",,,,,,,,,,,
+85adbf95efe0064f3ee318d1703e3acb0f10eb321393dbea5fe17d8c875c28be,complex_expression_length_chars,complex-expression,expression,CentOS-PaaS-SIG/linchpin,0703f6bcb683afa7f543e9f3e8f4153bc3c9b36f,Q4,linchpin/provision/roles/openstack/tasks/teardown_os_router.yml,tasks,11,{{ res_def['network'] | default(omit) }},40,100,>,true,false,1,false,3,,,,false,7,,,,,,,,,,,,,,CentOS-PaaS-SIG/linchpin|B3_upper_middle|current=false,B3_upper_middle,1142,0.0008756567,1142,Is this Jinja or conditional expression too complex and in need of simplification?,6,49,49,false,local-window,"     6:     enable_snat: ""{{ res_def['enable_snat'] | default(omit) }}""
+     7:     external_fixed_ips: ""{{ res_def['external_fixed_ips'] | default(omit) }}""
+     8:     interface: ""{{ res_def['interface'] | default(omit) }}""
+     9:     interfaces: []
+    10:     name: ""{{ res_def['name'] }}""
+    11:     network: ""{{ res_def['network'] | default(omit) }}""
+    12:     key: ""{{ res_def['key'] | default(omit) }}""
+    13:     project: ""{{ res_def['project'] | default(omit) }}""
+    14:     region_name: ""{{ res_def['region_name'] | default(omit) }}""
+    15:     state: ""{{ state }}""
+    16:     timeout: ""{{ res_def['timeout'] | default(600) }}""
+    17:     verify: false
+    18:     wait: true
+    19:   register: res_def_output_auth
+    20:   no_log: ""{{ not debug_mode }}""
+    21:   when: state=='absent'
+    22: 
+    23: - name: ""provision os_router""
+    24:   os_router:
+    25:     admin_state_up: ""{{ res_def['admin_state_up'] | default(omit) }}""
+    26:     api_timeout: ""{{ res_def['api_timeout'] | default(omit) }}""
+    27:     auth: ""{{ auth_var | omit_filter(omit) }}""
+    28:     enable_snat: ""{{ res_def['enable_snat'] | default(omit) }}""
+    29:     external_fixed_ips: ""{{ res_def['external_fixed_ips'] | default(omit) }}""
+    30:     interface: ""{{ res_def['interface'] | default(omit) }}""
+    31:     interfaces: ""{{ res_def['interfaces'] | default(omit) }}""
+    32:     name: ""{{ res_def['name'] }}""
+    33:     network: ""{{ res_def['network'] | default(omit) }}""
+    34:     key: ""{{ res_def['key'] | default(omit) }}""
+    35:     project: ""{{ res_def['project'] | default(omit) }}""
+    36:     region_name: ""{{ res_def['region_name'] | default(omit) }}""
+    37:     state: ""{{ state }}""
+    38:     timeout: ""{{ res_def['timeout'] | default(600) }}""
+    39:     verify: false
+    40:     wait: true
+    41:   register: res_def_output_auth
+    42:   no_log: ""{{ not debug_mode }}""
+    43:   when: state=='present'
+    44: 
+    45: - name: ""Append outputitem to topology_outputs""
+    46:   set_fact:
+    47:     topology_outputs_os_network: ""{{ topology_outputs_os_network +
+    48:                                      [ res_def_output_auth ] }}""
+    49:   when: state=='present'",,,,,,,,,,,
+a19059d0746e1422528d5884458fdaf9c016961b4a21b29b00568d17bb75e434,complex_expression_length_chars,complex-expression,expression,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,Q2,tasks/section_6/cis_6.2.4.1.yml,tasks,38,"item is match(""/var/log/((u|b|w)tmp*|lastlog)"")",47,100,>,true,true,1,false,7,,,,false,7,,,,,,,,,,,,,,ansible-lockdown/RHEL9-CIS|B3_upper_middle|current=true,B3_upper_middle,1,1.0000000000,1,Is this Jinja or conditional expression too complex and in need of simplification?,33,55,55,false,local-window,"    33:       loop: ""{{ discovered_logfiles.stdout_lines }}""
+    34: 
+    35:     - name: ""6.2.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions tmp min 664""
+    36:       when:
+    37:         - discovered_logfiles.stdout_lines | length > 0
+    38:         - item is match(""/var/log/((u|b|w)tmp*|lastlog)"")
+    39:       ansible.builtin.file:
+    40:         path: ""{{ item }}""
+    41:         mode: 'ug-x,o-wx'
+    42:       failed_when: discovered_logfile_tmp_list.state not in '[ file, absent ]'
+    43:       register: discovered_logfile_tmp_list
+    44:       loop: ""{{ discovered_logfiles.stdout_lines }}""
+    45: 
+    46:     - name: ""6.2.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions else all 640""
+    47:       when:
+    48:         - discovered_logfiles.stdout_lines | length > 0
+    49:         - item is not match(""/var/log/((u|b|w)tmp*|lastlog|sssd)"")
+    50:       ansible.builtin.file:
+    51:         path: ""{{ item }}""
+    52:         mode: 'u-x,g-wx,o-rwx'
+    53:       failed_when: discovered_logfile_else_list.state not in '[ file, absent ]'
+    54:       register: discovered_logfile_else_list
+    55:       loop: ""{{ discovered_logfiles.stdout_lines }}""",,,,,,,,,,,
+bb2e5f9a5aabd740776b04d809d29789c3441d9d6263ec3e99464e453786f6ce,complex_expression_length_chars,complex-expression,expression,spantaleev/matrix-docker-ansible-deploy,8309e7932dd995f83fb022d646fe4b1c4f2a9d98,Q4,roles/custom/matrix-bot-mjolnir/tasks/setup_install.yml,tasks,73,"{{ matrix_bot_mjolnir_configuration | to_nice_yaml(indent=2, width=999999) }}",77,100,>,true,false,1,false,2,,,,false,18,,,,,,,,,,,,,,spantaleev/matrix-docker-ansible-deploy|B4_high|current=false,B4_high,2808,0.0003561254,2808,Is this Jinja or conditional expression too complex and in need of simplification?,68,111,111,false,local-window,"    68:   when: ""matrix_bot_mjolnir_container_image_self_build | bool""
+    69:   register: matrix_bot_mjolnir_container_image_build_result
+    70: 
+    71: - name: Ensure matrix-bot-mjolnir config installed
+    72:   ansible.builtin.copy:
+    73:     content: ""{{ matrix_bot_mjolnir_configuration | to_nice_yaml(indent=2, width=999999) }}""
+    74:     dest: ""{{ matrix_bot_mjolnir_config_path }}/production.yaml""
+    75:     mode: '0644'
+    76:     owner: ""{{ matrix_user_name }}""
+    77:     group: ""{{ matrix_group_name }}""
+    78:   register: matrix_bot_mjolnir_config_result
+    79: 
+    80: - name: Ensure matrix-bot-mjolnir container network is created
+    81:   when: matrix_bot_mjolnir_container_network != 'host'
+    82:   community.general.docker_network:
+    83:     enable_ipv6: ""{{ devture_systemd_docker_base_ipv6_enabled }}""
+    84:     name: ""{{ matrix_bot_mjolnir_container_network }}""
+    85:     driver: bridge
+    86:     driver_options: ""{{ devture_systemd_docker_base_container_networks_driver_options }}""
+    87: 
+    88: - name: Ensure matrix-bot-mjolnir.service installed
+    89:   ansible.builtin.template:
+    90:     src: ""{{ role_path }}/templates/systemd/matrix-bot-mjolnir.service.j2""
+    91:     dest: ""{{ devture_systemd_docker_base_systemd_path }}/matrix-bot-mjolnir.service""
+    92:     mode: '0644'
+    93:   register: matrix_bot_mjolnir_systemd_service_result
+    94: 
+    95: - name: Determine whether Mjolnir needs a restart
+    96:   ansible.builtin.set_fact:
+    97:     matrix_bot_mjolnir_restart_necessary: >-
+    98:       {{
+    99:         matrix_bot_mjolnir_migration_requires_restart | default(false)
+   100:         or matrix_bot_mjolnir_config_result.changed | default(false)
+   101:         or matrix_bot_mjolnir_systemd_service_result.changed | default(false)
+   102:         or matrix_bot_mjolnir_container_image_pull_result.changed | default(false)
+   103:         or matrix_bot_mjolnir_container_image_build_result.changed | default(false)
+   104:       }}
+   105: 
+   106: - name: Ensure matrix-bot-mjolnir.service restarted, if necessary
+   107:   ansible.builtin.service:
+   108:     name: ""matrix-bot-mjolnir.service""
+   109:     state: restarted
+   110:     daemon_reload: true
+   111:   when: ""matrix_bot_mjolnir_migration_requires_restart | bool""",,,,,,,,,,,
+78bebbf68614061b69aecfa92bd5a6859cff5355fc1b837f013b10ea464033b1,complex_expression_length_chars,complex-expression,expression,openfun/arnold,f19ea6d060de69f01e750fab289b9fb7a991e27d,Q2,tasks/set_vars.yml,tasks,120,"{{ apps_filter.split(',') | map('regex_replace', '([\w-]+)', ""name=='\1'"") | join(' || ') }}",92,100,>,true,true,1,false,10,,,,false,8,,,,,,,,,,,,,,openfun/arnold|B4_high|current=true,B4_high,12,0.0833333333,12,Is this Jinja or conditional expression too complex and in need of simplification?,115,148,148,false,local-window,"   115: #    [?name=='richie' || name=='edxapp']
+   116: - name: Set app filtering query
+   117:   ansible.builtin.set_fact:
+   118:     # We use escaped double quotes in the first regex_replace filter to be able
+   119:     # to add single quotes around app name in the query
+   120:     apps_filter_query: ""[?{{ apps_filter.split(',') | map('regex_replace', '([\\w-]+)', \""name=='\\1'\"") | join(' || ') }}]"" # noqa jinja[spacing]
+   121:   when: apps_filter is defined and apps_filter | length > 1
+   122: 
+   123: - name: Filter apps
+   124:   ansible.builtin.set_fact:
+   125:     apps: ""{{ apps | json_query(apps_filter_query) }}""
+   126:   when: apps_filter_query is defined
+   127: 
+   128: - name: Display selected applications (apps)
+   129:   ansible.builtin.debug:
+   130:     var: apps
+   131:     verbosity: 1
+   132: 
+   133: - name: Run tasks for apps
+   134:   ansible.builtin.include_tasks: tasks/run_tasks_for_apps.yml
+   135:   vars:
+   136:     tasks:
+   137:       - tasks/set_vault_for_app
+   138: 
+   139: - name: Include ""all"" type vars for applications
+   140:   ansible.builtin.include_tasks: tasks/load_app_defaults.yml
+   141:   vars:
+   142:     file: ""{{ item.path }}""
+   143:   with_items: '{{ apps | json_query(""[*].vars[?type==`all`]"") | flatten }}' # noqa jinja[invalid]
+   144: 
+   145: - name: Print namespace details
+   146:   ansible.builtin.debug:
+   147:     msg: ""Namespace {{ namespace_name }} - domain {{ domain_name }}""
+   148:     verbosity: 1",,,,,,,,,,,
+25bf53a6273852061df3b1def8048fe52764a88c0207783b02bd7b75984b1f9e,complex_expression_length_chars,complex-expression,expression,redhatci/ansible-collection-redhatci-ocp,4b12e633ee5215ec02c302032fffb3d5f3e37425,Q4,roles/hostedbm/tasks/create-agent.yml,tasks,87,"{{
+  hostedbm_infraenv_spec | combine({
+    ""kernelArguments"": [
+      {
+        ""operation"": ""append"",
+        ""value"": ""nameserver="" + hostedbm_inject_dns_nam",205,100,>,true,false,1,false,3,,,,false,13,,,,,,,,,,,,,,redhatci/ansible-collection-redhatci-ocp|B5_current_positive_tail|current=false,B5_current_positive_tail,19,0.0526315789,19,Is this Jinja or conditional expression too complex and in need of simplification?,82,167,209,false,local-window,"    82:       sshAuthorizedKey: ""{{ hostedbm_sshkey }}""
+    83: 
+    84: - name: Define InfraEnv spec with kernelArguments
+    85:   ansible.builtin.set_fact:
+    86:     hostedbm_infraenv_spec: >-
+    87:       {{
+    88:         hostedbm_infraenv_spec | combine({
+    89:           ""kernelArguments"": [
+    90:             {
+    91:               ""operation"": ""append"",
+    92:               ""value"": ""nameserver="" + hostedbm_inject_dns_nameserver
+    93:             }
+    94:           ]
+    95:         }, recursive=True)
+    96:       }}
+    97:   when: hostedbm_inject_dns | bool
+    98: 
+    99: - name: Create InfraEnv YAML file
+   100:   kubernetes.core.k8s:
+   101:     kubeconfig: ""{{ hostedbm_kubeconfig_file | default(omit) }}""
+   102:     definition:
+   103:       apiVersion: agent-install.openshift.io/v1beta1
+   104:       kind: InfraEnv
+   105:       metadata:
+   106:         annotations:
+   107:           infraenv.agent-install.openshift.io/enable-ironic-agent: ""true""
+   108:         labels:
+   109:           agentclusterinstalls.extensions.hive.openshift.io/location: ""{{ hostedbm_location_label }}""
+   110:           networkType: dhcp
+   111:         name: ""{{ hostedbm_infraenv_name }}""
+   112:         namespace: ""{{ hostedbm_agent_ns }}""
+   113:       spec: ""{{ hostedbm_infraenv_spec }}""
+   114: 
+   115: - name: Pause for sometime before checking for Discovery iso image.
+   116:   ansible.builtin.pause:
+   117:     seconds: 20
+   118: 
+   119: - name: Check if Discovery iso image is Ready
+   120:   kubernetes.core.k8s_info:
+   121:     api_version: agent-install.openshift.io/v1beta1
+   122:     kind: InfraEnv
+   123:     kubeconfig: ""{{ hostedbm_kubeconfig_file | default(omit) }}""
+   124:     name: ""{{ hostedbm_infraenv_name }}""
+   125:     namespace: ""{{ hostedbm_agent_ns }}""
+   126:   register: _hostedbm_infraenv_info
+   127:   until:
+   128:     - _hostedbm_infraenv_info != none
+   129:     - ""'resources' in _hostedbm_infraenv_info""
+   130:     - _hostedbm_infraenv_info.resources != none
+   131:     - _hostedbm_infraenv_info.resources | length > 0
+   132:     - _hostedbm_infraenv_info.resources[0].status.conditions | json_query(""[?type=='ImageCreated' && status=='True']"") != none
+   133:     - _hostedbm_infraenv_info.resources[0].status.conditions | json_query(""[?type=='ImageCreated' && status=='True']"") | length > 0
+   134:   retries: 3
+   135:   delay: 20
+   136: 
+   137: - name: Create Secrets with creds of hardware inventory
+   138:   kubernetes.core.k8s:
+   139:     kubeconfig: ""{{ hostedbm_kubeconfig_file | default(omit) }}""
+   140:     definition:
+   141:       apiVersion: v1
+   142:       kind: Secret
+   143:       metadata:
+   144:         name: ""{{ item.name }}-creds""
+   145:         namespace: ""{{ hostedbm_agent_ns }}""
+   146:       type: Opaque
+   147:       data:
+   148:         username: ""{{ item.username | b64encode }}""
+   149:         password: ""{{ item.password | b64encode }}""
+   150:     state: present
+   151:   loop: ""{{ hostedbm_inventory }}""
+   152:   loop_control:
+   153:     loop_var: item
+   154: 
+   155: - name: Set initial annotations for bmh without installer-args
+   156:   ansible.builtin.set_fact:
+   157:     hostedbm_dynamic_annotation:
+   158:       'inspect.metal3.io': 'disabled'
+   159: 
+   160: - name: Add installer-args annotation incase custom dns server is used
+   161:   ansible.builtin.set_fact:
+   162:     hostedbm_dynamic_annotation: |
+   163:       {{
+   164:         hostedbm_dynamic_annotation | combine({
+   165:           'bmac.agent-install.openshift.io/installer-args':
+   166:             '[""--append-karg"", ""nameserver=' ~ hostedbm_inject_dns_nameserver ~ '""]'
+   167:         })",,,,,,,,,,,
+887f6f1ed6dd1f229c7428ac4b4a09f41d315bf557b03ced917d82ea8c00b994,complex_expression_length_chars,complex-expression,expression,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,Q3,roles/common/defaults/main.yml,vars,138,"{{- groups.external_identity | default([]) | map('extract', hostvars, ['identity_port']) | first | default('8082') -}}",118,100,>,true,true,1,false,9,,,,false,29,,,,,,,,,,,,,,Alfresco/alfresco-ansible-deployment|B5_current_positive_tail|current=true,B5_current_positive_tail,48,0.0208333333,48,Is this Jinja or conditional expression too complex and in need of simplification?,133,157,157,false,local-window,"   133:     http: 9090
+   134:     admin: 9093
+   135:   elasticsearch:
+   136:     http: ""{{- groups.external_elasticsearch | default([]) | map('extract', hostvars, ['elasticsearch_port']) | first | default('9200') -}}""
+   137:   identity:
+   138:     http: ""{{- groups.external_identity | default([]) | map('extract', hostvars, ['identity_port']) | first | default('8082') -}}""
+   139: 
+   140: # Default download location of necessary artefacts
+   141: download_location: /tmp/ansible_artefacts
+   142: 
+   143: os_fallback:
+   144:   - ../vars/{{ ansible_distribution }}{{ ansible_distribution_version }}.yml
+   145:   - ../vars/{{ ansible_distribution }}{{ ansible_distribution_major_version }}.yml
+   146:   - ../vars/{{ ansible_distribution }}.yml
+   147:   - ../vars/{{ ansible_os_family }}.yml
+   148:   - ../vars/{{ ansible_system }}.yml
+   149: 
+   150: os_family_yml: ""{{ ansible_os_family }}.yml""
+   151: os_distribution_yml: ""{{ ansible_distribution }}.yml""
+   152: os_version_yml: ""{{ ansible_distribution }}{{ ansible_distribution_major_version }}.yml""
+   153: 
+   154: nexus_user: ""{{ lookup('env', 'NEXUS_USERNAME') | default(null) }}""
+   155: nexus_password: ""{{ lookup('env', 'NEXUS_PASSWORD') | default(null) }}""
+   156: 
+   157: bssrf_protection_enabled: false",,,,,,,,,,,
+0ac7ad927fd536c4f265dd92ecde071ede9482bc4449e36428e2345482e8cc0b,complex_expression_length_chars,complex-expression,expression,ansible/galaxy-operator,a05c8663b7e5cf4c2350fb1faa074a378b86f0fc,Q3,roles/restore/tasks/secrets.yml,tasks,135,{{ item.value.name }},21,100,>,true,false,1,false,0,,,,false,28,,,,,,,,,,,,,,ansible/galaxy-operator|B1_low|current=false,B1_low,280,0.0035714286,280,Is this Jinja or conditional expression too complex and in need of simplification?,130,139,139,false,local-window,"   130:   k8s:
+   131:     definition:
+   132:       apiVersion: v1
+   133:       kind: Secret
+   134:       metadata:
+   135:         name: ""{{ item.value.name }}""
+   136:         namespace: '{{ ansible_operator_meta.namespace }}'
+   137:         ownerReferences: null
+   138:   loop: ""{{ secrets | dict2items }}""
+   139:   no_log: ""{{ no_log }}""",,,,,,,,,,,
+8fa9f865affbd841c7e79832a54713e5ac285ea44d1d3cf06677bc8b2939f646,complex_expression_length_chars,complex-expression,expression,agross/ansible-home-network,c265b9d5da06639b97d06cf6df201b390c9865be,Q4,host_vars/argus/systemd-networkd.yml,vars,18,{{ interfaces.lan.ip4.dns }},28,100,>,true,false,1,false,0,,,,false,3,,,,,,,,,,,,,,agross/ansible-home-network|B2_lower_middle|current=false,B2_lower_middle,530,0.0018867925,530,Is this Jinja or conditional expression too complex and in need of simplification?,13,28,28,false,local-window,"    13:         - Address: >-
+    14:             {{
+    15:               (interfaces.lan.ip6.address ~ '/' ~ interfaces.lan.ip6.prefix) |
+    16:               ansible.utils.ipaddr('host/prefix')
+    17:             }}
+    18:         - DNS: ""{{ interfaces.lan.ip4.dns }}""
+    19:         - DNS: ""{{ interfaces.lan.ip6.dns }}""
+    20:         - DNSDefaultRoute: true
+    21:         - Domains: ""{{ dns.search_domains | join(' ') }}""
+    22:         - MulticastDNS: true
+    23: 
+    24:         - IPv6LinkLocalAddressGenerationMode: stable-privacy
+    25:         - IPv6AcceptRA: false
+    26: 
+    27:         - Gateway: ""{{ network_gateway.ip4 }}""
+    28:         - Gateway: ""{{ network_gateway.ip6 }}""",,,,,,,,,,,
+e87ace4598cb0c2ceb4c43c83775715c2b5bc55d837cfd170c6011e15fecb256,complex_expression_length_chars,complex-expression,expression,ARGOeu/argo-ansible,67536b4b1a06a44ec061f9cd7facf8930eeb4b12,Q3,roles/commons/tasks/users.yml,tasks,39,{{ item.generate_ssh_key | default(omit) }},43,100,>,true,false,1,false,2,,,,false,15,,,,,,,,,,,,,,ARGOeu/argo-ansible|B3_upper_middle|current=false,B3_upper_middle,30,0.0333333333,30,Is this Jinja or conditional expression too complex and in need of simplification?,34,75,75,false,local-window,"    34:     password: ""{{item.password if item.password is defined else '!'}}""
+    35:     comment: ""{{item.name if item.name is defined else ''}}""
+    36:     uid: ""{{item.uid | default(omit)}}""
+    37:     home: ""{{ item.home | default('/home/' + item.username) }}""
+    38:     createhome: ""{{'yes' if users_create_homedirs else 'no'}}""
+    39:     generate_ssh_key: ""{{ item.generate_ssh_key | default(omit) }}""
+    40:     update_password: ""{{item.update_password | default(omit)}}""
+    41:   with_items: ""{{users}}""
+    42:   tags: ['users','users-configuration']
+    43: 
+    44: - name: SSH keys
+    45:   authorized_key:
+    46:     user: ""{{item.0.username}}""
+    47:     key: ""{{item.1}}""
+    48:     path: ""{{ item.0.home | default('/home/' + item.0.username) }}/.ssh/authorized_keys""
+    49:   with_subelements:
+    50:     - ""{{users}}""
+    51:     - ssh_key
+    52:     - skip_missing: yes
+    53:   tags: ['users','users-configuration']
+    54: 
+    55: - name: Setup user profiles
+    56:   blockinfile:
+    57:     block: ""{{item.profile}}""
+    58:     dest: ""{{ item.home | default('/home/' + item.username) }}/.profile""
+    59:     owner: ""{{item.username}}""
+    60:     group: ""{{item.group | default(item.username if users_create_per_user_group else users_group)}}""
+    61:     mode: 0644
+    62:     create: true
+    63:   when: users_create_homedirs and item.profile is defined
+    64:   with_items: ""{{users}}""
+    65: 
+    66: - name: Deleted user removal
+    67:   user: name=""{{item.username}}"" state=absent
+    68:   with_items: ""{{users_deleted}}""
+    69:   tags: ['users','users-configuration']
+    70: 
+    71: - name: Deleted per-user group removal
+    72:   group: name=""{{item.username}}"" state=absent
+    73:   with_items: ""{{users_deleted}}""
+    74:   when: users_create_per_user_group
+    75:   tags: ['users','users-configuration']",,,,,,,,,,,

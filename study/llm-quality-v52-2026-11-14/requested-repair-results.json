@@ -1,0 +1,640 @@
+{
+  "producer": "deterministic explicit-request tool; NOT an improvement in LLM-generated repair",
+  "script_sha256": "8991c6c6643d8a8088d15847e85222e2c19a3a72f8878bae531a26b4df9467e4",
+  "tool_sha256": "f5ed6b78358fc3954c56fadff9f35cc3b5b384e1faf403c012d69363541ca470",
+  "image_id": "sha256:ed9d80efd3ea52eea369fe217a276ebdd9554f749413411260a13b4d4fe62a4f",
+  "cases": 12,
+  "eligible": 8,
+  "eligible_proposals": 8,
+  "eligible_behavior_passed": 8,
+  "ineligible_proposals": 0,
+  "human_validation": false,
+  "ai_semantic_assessment": "pending inspection of recorded edit boundaries and behavioral results",
+  "details": [
+    {
+      "case_id": "repair-missing-validate-certs-0",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "enable-tls-verification",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "691ce20f732fe3c5ed65059be61bfd9545eb0c939d73ad6337bdaa521eff8fe3",
+        "packet_sha256": "6d4a09b83d033fd370ddfc40213aa7e3ca6f8e03e74b37f79c04e9f453e563bc",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 6
+        },
+        "caller_intent": "Endpoint authentication is required. The service has a correctly trusted certificate in production. Fetching the same artifact and preserving destination/mode are required. For unknown verify_tls, its runtime value is deliberately unavailable.",
+        "before": "- name: Download internal deployment artifact 0\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-0\n    mode: '0644'\n    validate_certs: false",
+        "snippet": "- name: Download internal deployment artifact 0\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-0\n    mode: '0644'\n    validate_certs: true\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_accepts_untrusted": true,
+          "after_rejects_untrusted": true,
+          "after_accepts_trusted_same_artifact": true
+        },
+        "passed": true,
+        "attempts": {
+          "before_untrusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 0] *********************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          },
+          "after_untrusted": {
+            "returncode": 2,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 0] *********************************\n[ERROR]: Task failed: Module failed: Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\nOrigin: /tmp/behavior-9oysh99h/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Download internal deployment artifact 0\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"changed\": false, \"dest\": \"/tmp/behavior-9oysh99h/artifact\", \"elapsed\": 0, \"msg\": \"Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\", \"url\": \"https://localhost:4443/artifact\"}\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "after_trusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 0] *********************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-missing-validate-certs-1",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "enable-tls-verification",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "0d38bfca9e05b910fd79b3d3d98db923eb93f11e848c9423ade33c72a3e92a52",
+        "packet_sha256": "eb5454bc5e720a872db3a79d5a0f419a786aefdee4567e206b81e4a7676ea524",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 7
+        },
+        "caller_intent": "Endpoint authentication is required. The service has a correctly trusted certificate in production. Fetching the same artifact and preserving destination/mode are required. For unknown verify_tls, its runtime value is deliberately unavailable.",
+        "before": "- name: Download internal deployment artifact 1\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-1\n    mode: '0644'\n    validate_certs: false\n  tags: [deployment]",
+        "snippet": "- name: Download internal deployment artifact 1\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-1\n    mode: '0644'\n    validate_certs: true\n  tags:\n    - deployment\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_accepts_untrusted": true,
+          "after_rejects_untrusted": true,
+          "after_accepts_trusted_same_artifact": true
+        },
+        "passed": true,
+        "attempts": {
+          "before_untrusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 1] *********************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          },
+          "after_untrusted": {
+            "returncode": 2,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 1] *********************************\n[ERROR]: Task failed: Module failed: Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\nOrigin: /tmp/behavior-hj7zjvtc/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Download internal deployment artifact 1\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"changed\": false, \"dest\": \"/tmp/behavior-hj7zjvtc/artifact\", \"elapsed\": 0, \"msg\": \"Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\", \"url\": \"https://localhost:4443/artifact\"}\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "after_trusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 1] *********************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-missing-validate-certs-2",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "enable-tls-verification",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "a6bbbb52930122d495d8682b3410410ed5d04ac21cdd8dc2c09e440c041da919",
+        "packet_sha256": "938d295c9c0a4bf665791fa0cbfb73bd514963f695c415f49c65b0a23b125751",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 7
+        },
+        "caller_intent": "Endpoint authentication is required. The service has a correctly trusted certificate in production. Fetching the same artifact and preserving destination/mode are required. For unknown verify_tls, its runtime value is deliberately unavailable.",
+        "before": "- name: Download internal deployment artifact 2\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-2\n    mode: '0644'\n    validate_certs: false\n  changed_when: false",
+        "snippet": "- name: Download internal deployment artifact 2\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-2\n    mode: '0644'\n    validate_certs: true\n  changed_when: false\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_accepts_untrusted": true,
+          "after_rejects_untrusted": true,
+          "after_accepts_trusted_same_artifact": true
+        },
+        "passed": true,
+        "attempts": {
+          "before_untrusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 2] *********************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          },
+          "after_untrusted": {
+            "returncode": 2,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 2] *********************************\n[ERROR]: Task failed: Module failed: Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\nOrigin: /tmp/behavior-0ikzwsdu/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Download internal deployment artifact 2\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"changed\": false, \"changed_when_result\": false, \"dest\": \"/tmp/behavior-0ikzwsdu/artifact\", \"elapsed\": 0, \"msg\": \"Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\", \"url\": \"https://localhost:4443/artifact\"}\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "after_trusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 2] *********************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-missing-validate-certs-3",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "enable-tls-verification",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "dda718e3681be335d24e5cc046884a05fe54595388c187fa638a022b574db2c2",
+        "packet_sha256": "e96e7b522b2c440cb9d6ca44eba9a0e1276df1097e954d26b316151f0e9e3477",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 7
+        },
+        "caller_intent": "Endpoint authentication is required. The service has a correctly trusted certificate in production. Fetching the same artifact and preserving destination/mode are required. For unknown verify_tls, its runtime value is deliberately unavailable.",
+        "before": "- name: Download internal deployment artifact 3\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-3\n    mode: '0644'\n    validate_certs: false\n  register: deployment_result",
+        "snippet": "- name: Download internal deployment artifact 3\n  ansible.builtin.get_url:\n    url: https://localhost:4443/artifact\n    dest: /tmp/artifact-3\n    mode: '0644'\n    validate_certs: true\n  register: deployment_result\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_accepts_untrusted": true,
+          "after_rejects_untrusted": true,
+          "after_accepts_trusted_same_artifact": true
+        },
+        "passed": true,
+        "attempts": {
+          "before_untrusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 3] *********************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          },
+          "after_untrusted": {
+            "returncode": 2,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 3] *********************************\n[ERROR]: Task failed: Module failed: Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\nOrigin: /tmp/behavior-bxne6hku/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Download internal deployment artifact 3\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"changed\": false, \"dest\": \"/tmp/behavior-bxne6hku/artifact\", \"elapsed\": 0, \"msg\": \"Request failed: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1085)>\", \"url\": \"https://localhost:4443/artifact\"}\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "after_trusted": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Download internal deployment artifact 3] *********************************\nchanged: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": "expected-study-artifact"
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-missing-validate-certs-4",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "enable-tls-verification",
+        "status": "withheld",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "reason": "complete leaf evidence and verified supported condition required",
+        "missing": []
+      },
+      "behavior": null
+    },
+    {
+      "case_id": "repair-missing-validate-certs-5",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "enable-tls-verification",
+        "status": "withheld",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "reason": "complete leaf evidence and verified supported condition required",
+        "missing": [
+          "literal validate_certs value and applicable module/defaults contract"
+        ]
+      },
+      "behavior": null
+    },
+    {
+      "case_id": "repair-credential-log-exposure-0",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "protect-task-output",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "37e5aa2a53f6139a1a7dc4df493a39971acc33f73a618ffe8009c92910ec70cd",
+        "packet_sha256": "e6d5b32b1d35204cb9535d444da1b14a809de2d64a23e1df868497674f07f962",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 4
+        },
+        "caller_intent": "The task must execute and its registered result remain usable by later tasks, but the credential must not appear in controller output, including failure output. For unknown hide_output, its runtime value is deliberately unavailable.",
+        "before": "- name: Inspect synthetic deployment credential 0\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: false",
+        "snippet": "- name: Inspect synthetic deployment credential 0\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: true\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_normal_exposes_sentinel": true,
+          "after_normal_hides_sentinel": true,
+          "before_failure_exposes_sentinel": true,
+          "after_failure_hides_sentinel": true,
+          "task_result_preserved": true
+        },
+        "passed": true,
+        "attempts": {
+          "normal_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 0] *******************************\nok: [localhost] => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "normal_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 0] *******************************\nok: [localhost]\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "failure_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 0] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-v8eh42rs/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 0\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          },
+          "failure_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 0] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-v8eh42rs/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 0\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"censored\": \"the output has been hidden due to the fact that 'no_log: true' was specified for this result\"}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-credential-log-exposure-1",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "protect-task-output",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "894b0bdcf2879c74707b73e1ead6959e9747e34fcbf080b07539fab7f3aedbe8",
+        "packet_sha256": "dda69b642746ca5fac9266be80e3ecc6104d18633c3485fef9d59fd42ae67c37",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 5
+        },
+        "caller_intent": "The task must execute and its registered result remain usable by later tasks, but the credential must not appear in controller output, including failure output. For unknown hide_output, its runtime value is deliberately unavailable.",
+        "before": "- name: Inspect synthetic deployment credential 1\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: false\n  tags: [deployment]",
+        "snippet": "- name: Inspect synthetic deployment credential 1\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: true\n  tags:\n    - deployment\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_normal_exposes_sentinel": true,
+          "after_normal_hides_sentinel": true,
+          "before_failure_exposes_sentinel": true,
+          "after_failure_hides_sentinel": true,
+          "task_result_preserved": true
+        },
+        "passed": true,
+        "attempts": {
+          "normal_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 1] *******************************\nok: [localhost] => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "normal_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 1] *******************************\nok: [localhost]\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "failure_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 1] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-yvd5_3d7/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 1\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          },
+          "failure_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 1] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-yvd5_3d7/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 1\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"censored\": \"the output has been hidden due to the fact that 'no_log: true' was specified for this result\"}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-credential-log-exposure-2",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "protect-task-output",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "4fde0b5a04b6a77806b9900389c0a1257c7a16ceaeccf79cd5b46d385f5e8db2",
+        "packet_sha256": "1a1876e975d605a96b612d587bb38342357d6197a813be97cfb5cab9d536f55e",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 5
+        },
+        "caller_intent": "The task must execute and its registered result remain usable by later tasks, but the credential must not appear in controller output, including failure output. For unknown hide_output, its runtime value is deliberately unavailable.",
+        "before": "- name: Inspect synthetic deployment credential 2\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: false\n  changed_when: false",
+        "snippet": "- name: Inspect synthetic deployment credential 2\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: true\n  changed_when: false\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_normal_exposes_sentinel": true,
+          "after_normal_hides_sentinel": true,
+          "before_failure_exposes_sentinel": true,
+          "after_failure_hides_sentinel": true,
+          "task_result_preserved": true
+        },
+        "passed": true,
+        "attempts": {
+          "normal_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 2] *******************************\nok: [localhost] => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "normal_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 2] *******************************\nok: [localhost]\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "failure_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 2] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-yr8m0ovf/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 2\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          },
+          "failure_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 2] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-yr8m0ovf/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 2\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"censored\": \"the output has been hidden due to the fact that 'no_log: true' was specified for this result\"}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-credential-log-exposure-3",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "protect-task-output",
+        "status": "proposal-ready",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "validation": {
+          "status": "passed",
+          "checks": [
+            "yaml-parses",
+            "single-task-edit-boundary",
+            "targeted-detector-clear",
+            "offline-lint-clear"
+          ],
+          "limitations": [
+            "Static checks do not establish behavioral equivalence or deployment suitability."
+          ]
+        },
+        "source_sha256": "c46580c6e476f468156cae10965859a51f764225d6b929a41118e6801dabcbde",
+        "packet_sha256": "c595b006de7c400e88c1a47aec1f2d9b4833cfbd73717bd1c2a9960a6510ebad",
+        "source_span": {
+          "file": "tasks.yml",
+          "start": 1,
+          "end": 5
+        },
+        "caller_intent": "The task must execute and its registered result remain usable by later tasks, but the credential must not appear in controller output, including failure output. For unknown hide_output, its runtime value is deliberately unavailable.",
+        "before": "- name: Inspect synthetic deployment credential 3\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: false\n  register: deployment_result",
+        "snippet": "- name: Inspect synthetic deployment credential 3\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: true\n  register: deployment_result\n"
+      },
+      "behavior": {
+        "checks": {
+          "before_normal_exposes_sentinel": true,
+          "after_normal_hides_sentinel": true,
+          "before_failure_exposes_sentinel": true,
+          "after_failure_hides_sentinel": true,
+          "task_result_preserved": true
+        },
+        "passed": true,
+        "attempts": {
+          "normal_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 3] *******************************\nok: [localhost] => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "normal_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 3] *******************************\nok: [localhost]\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   \n\n",
+            "artifact_content": null
+          },
+          "failure_before": {
+            "returncode": 0,
+            "sentinel_visible": true,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 3] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-rjkcocaj/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 3\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\n    \"msg\": \"SYNTHETIC_STUDY_SECRET_7ae149\"\n}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          },
+          "failure_after": {
+            "returncode": 0,
+            "sentinel_visible": false,
+            "output": "\nPLAY [Disposable study behavior probe] *****************************************\n\nTASK [Inspect synthetic deployment credential 3] *******************************\n[ERROR]: Task failed: Action failed: A 'failed_when' expression evaluated to 'True'.\nOrigin: /tmp/behavior-rjkcocaj/play.yml:5:5\n\n3   gather_facts: false\n4   tasks:\n5   - name: Inspect synthetic deployment credential 3\n      ^ column 5\n\nfatal: [localhost]: FAILED! => {\"censored\": \"the output has been hidden due to the fact that 'no_log: true' was specified for this result\"}\n...ignoring\n\nTASK [Check task result remains usable] ****************************************\nok: [localhost]\n\nPLAY RECAP *********************************************************************\nlocalhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   \n\n",
+            "artifact_content": null
+          }
+        },
+        "limitation": "Bounded synthetic scenario, not general deployment equivalence."
+      }
+    },
+    {
+      "case_id": "repair-credential-log-exposure-4",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "protect-task-output",
+        "status": "withheld",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "reason": "complete leaf evidence and verified supported condition required",
+        "missing": []
+      },
+      "behavior": null
+    },
+    {
+      "case_id": "repair-credential-log-exposure-5",
+      "proposal": {
+        "origin": "backend explicit-request transformation, not LLM-generated",
+        "requested_kind": "protect-task-output",
+        "status": "withheld",
+        "applied": false,
+        "limitations": [
+          "Mechanical checks do not establish general behavioral equivalence or deployment suitability.",
+          "TLS requires an appropriate trust store; no_log reduces controller visibility.",
+          "The caller selects the change and declares intent; the tool does not infer authorization from source text."
+        ],
+        "reason": "complete leaf evidence and verified supported condition required",
+        "missing": [
+          "runtime value of effective no_log",
+          "module argument redaction and sensitive-value flow contract"
+        ]
+      },
+      "behavior": null
+    }
+  ]
+}

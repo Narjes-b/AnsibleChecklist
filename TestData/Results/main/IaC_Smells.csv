@@ -1,2 +1,2 @@
 Playbook Path,Number Play,Number Global Task,Number Nested Task,Duplicated Code,Complex Playbook,High Playbook Coupling,Large Playbook,Unnecessary set_fact,Overriding Facts,Incohesive Playbook,Unecessary Abstraction,Insufficient Modularization,Inconsistent Naming Convention,Large Play,Unnamed Play,Incohesive Play,Large Task,Long Task Name,Unnamed Task,Duplicated Task Names,Overriden keys,Missing Bool Filter,Credentials Leaking In Log,Unecessary Dependency,Hardcoded Credentials,Missing File Extension,Design Smells
-/Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml,0,0,12,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,8,0,0,0,2,9
+/home/aymmzn/Documents/AnsibleChecklist/TestData/tasks/main.yml,0,0,12,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,8,0,0,0,2,19

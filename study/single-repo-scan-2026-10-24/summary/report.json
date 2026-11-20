@@ -1,0 +1,326 @@
+{
+  "schema_version": 3,
+  "contract": "ansibleguard://schemas/output-v3.json",
+  "kind": "run-report",
+  "status": "completed_with_diagnostics",
+  "profile": "technical-full",
+  "target": "/home/aymmzn/Documents/AnsibleChecklist/study/repositories/NSLS2/nsls2.ioc_deploy",
+  "tools": {
+    "gitleaks": "completed",
+    "ansible_lint": "completed"
+  },
+  "counts": {
+    "files": 448,
+    "files_by_class": {
+      "unclassified": 448
+    },
+    "files_by_artifact_kind": {
+      "empty": 1,
+      "metadata": 3,
+      "multi-document": 16,
+      "playbook": 1,
+      "tasks": 96,
+      "vars": 331
+    },
+    "raw_findings": 1447,
+    "canonical_occurrences": 1436,
+    "raw_by_severity": {
+      "error": 2,
+      "note": 1250,
+      "warning": 195
+    },
+    "canonical_by_severity": {
+      "error": 2,
+      "note": 1250,
+      "warning": 184
+    },
+    "raw_by_provider": {
+      "ansible-lint": 122,
+      "ansibleguard": 1325
+    },
+    "canonical_by_concept": {
+      "ansible-lint-issue": 1,
+      "complex-expression": 20,
+      "complex-playbook": 2,
+      "duplicate-task-names": 1,
+      "duplicated-code": 2,
+      "empty-abstraction": 1,
+      "insecure-permissions": 2,
+      "large-play": 1,
+      "large-playbook": 3,
+      "large-task": 2,
+      "long-yaml-line": 10,
+      "loop-legacy-syntax": 27,
+      "missing-abstraction": 2,
+      "missing-tags": 417,
+      "non-idempotent-command": 4,
+      "read-only-command-change": 6,
+      "role-readme-absent": 22,
+      "shell-module-migration": 5,
+      "undeclared-input-contract": 618,
+      "undocumented-complex-task": 8,
+      "unnecessary-set-fact": 12,
+      "unresolved-runtime-input": 65,
+      "variable-naming-convention": 202,
+      "variable-use-before-definition": 3
+    },
+    "canonical_by_finding_category": {
+      "compatibility": 27,
+      "correctness": 690,
+      "documentation": 30,
+      "lint": 1,
+      "maintainability": 35,
+      "reliability": 6,
+      "security": 2,
+      "structure": 3,
+      "style": 642
+    },
+    "canonical_by_file_class": {
+      "unclassified": 1436
+    },
+    "canonical_by_artifact_kind": {
+      "empty": 1,
+      "playbook": 14,
+      "tasks": 1195,
+      "vars": 226
+    },
+    "canonical_by_file_class_and_finding_category": {
+      "unclassified": {
+        "compatibility": 27,
+        "correctness": 690,
+        "documentation": 30,
+        "lint": 1,
+        "maintainability": 35,
+        "reliability": 6,
+        "security": 2,
+        "structure": 3,
+        "style": 642
+      }
+    },
+    "canonical_by_artifact_kind_and_finding_category": {
+      "empty": {
+        "structure": 1
+      },
+      "playbook": {
+        "compatibility": 1,
+        "correctness": 1,
+        "maintainability": 2,
+        "style": 10
+      },
+      "tasks": {
+        "compatibility": 26,
+        "correctness": 632,
+        "documentation": 30,
+        "lint": 1,
+        "maintainability": 33,
+        "reliability": 6,
+        "security": 2,
+        "structure": 2,
+        "style": 463
+      },
+      "vars": {
+        "correctness": 57,
+        "style": 169
+      }
+    },
+    "suppressed_external_findings": 0
+  },
+  "analysis_scope": {
+    "internal": {
+      "scope": "discovered-yaml",
+      "selected_files": 448,
+      "processed_files": 448,
+      "structurally_analyzed_files": 97
+    },
+    "ansible_lint": {
+      "scope": "v005-selected",
+      "target": "/home/aymmzn/Documents/AnsibleChecklist/study/repositories/NSLS2/nsls2.ioc_deploy",
+      "population_files": 448,
+      "population_sha256": "205f4a0d1c7c5859f0b555894bdd6fb53266ca460422e098a293721e2bb231c1"
+    },
+    "gitleaks": {
+      "scope": "requested-target-and-optional-git-range",
+      "target": "/home/aymmzn/Documents/AnsibleChecklist/study/repositories/NSLS2/nsls2.ioc_deploy"
+    }
+  },
+  "analysis_health": {
+    "status": "completed_with_diagnostics",
+    "overall_status": "completed_with_diagnostics",
+    "selected_files": 448,
+    "processed_files": 448,
+    "parsed_files": 448,
+    "parse_failed_files": 0,
+    "internal_detectors": {
+      "completed_files": 448,
+      "partial_files": 0,
+      "failed_files": 0
+    },
+    "internal_status": "completed",
+    "provider_status": "completed",
+    "providers": {
+      "ansible_lint": "completed",
+      "gitleaks": "completed"
+    },
+    "include_resolutions": {
+      "DYNAMIC": 4,
+      "DYNAMIC_ROLE": 1,
+      "STATIC_MISSING": 1,
+      "STATIC_RESOLVED": 17,
+      "STATIC_ROLE": 6
+    },
+    "unresolved_dynamic_includes": 4,
+    "unresolved_dynamic_roles": 1,
+    "diagnostic_count": 1,
+    "fault_count": 0,
+    "faults_by_category": {},
+    "faults_by_nature": {},
+    "complete": true
+  },
+  "timings": {
+    "discovery_seconds": 0.024446266004815698,
+    "parse_seconds": 3.36002232201281,
+    "symbol_index_seconds": 0.5557509310019668,
+    "internal_detectors_seconds": 12.020065946999239,
+    "ansible_lint_seconds": 14.667842146998737,
+    "gitleaks_seconds": 0.41186204299447127,
+    "providers_seconds": 14.669260246009799,
+    "pre_reporting_total_seconds": 30.902113502001157,
+    "cpu_seconds": 17.263924189,
+    "detectors_seconds": {
+      "become-scope-too-broad": 0.00017700385069474578,
+      "credential-log-exposure": 0.04332003410672769,
+      "deprecated-modules": 0.013542968896217644,
+      "duplicate-mapping-key": 7.734796963632107e-05,
+      "duplicate-task-name": 0.08161219485918991,
+      "duplicated-code": 0.002448348037432879,
+      "file-kind-family": 0.0017886190908029675,
+      "galaxy-meta-incomplete": 0.0004467200778890401,
+      "handler-issues": 0.0037660148518625647,
+      "high-coupling": 0.0007662621501367539,
+      "incohesive-play": 0.000158407143317163,
+      "incohesive-playbook": 0.00018332008039578795,
+      "large-play": 0.0014290620165411383,
+      "large-playbook": 0.32123030500952154,
+      "large-task": 0.08715937801753171,
+      "loop-legacy-syntax": 0.001085434079868719,
+      "missing-bool-filters": 0.0011305030493531376,
+      "missing-checklist-family": 0.11123772512655705,
+      "missing-file-extension": 0.0007656989910174161,
+      "missing-tags": 0.000665563071379438,
+      "missing-validate-certs": 0.0010020217450801283,
+      "molecule-test-absent": 0.010132689058082178,
+      "overriding-facts": 0.0011305948137305677,
+      "paper-candidate-family": 0.19256369199138135,
+      "partial-checklist-family": 1.0616640030930284,
+      "redirected-module": 0.0005573291564360261,
+      "review-checklist-family": 0.052596696972614154,
+      "role-readme-absent": 0.005986992997350171,
+      "shell-module-migration": 0.002804207004373893,
+      "unnamed-play": 0.00012634199811145663,
+      "unnamed-task": 0.08446944708703086,
+      "unnecessary-abstraction": 0.00017546903109177947,
+      "unnecessary-set-fact": 0.018044780241325498,
+      "unused-include-vars": 0.003487013833364472,
+      "variable-naming-convention": 0.00044741397141478956,
+      "vault-inline-overload": 0.6872890860540792
+    }
+  },
+  "performance": {
+    "yaml_files_parsed": 448,
+    "yaml_parse_operations": 448,
+    "tasks_indexed": 438,
+    "include_relationships": 29,
+    "variable_usage_names": 181,
+    "runtime_uncertainty_files": 448,
+    "cache_hits": 0,
+    "cache_misses": 448,
+    "cache_errors": 0,
+    "module_metadata_status": "completed",
+    "module_metadata_requested_modules": 22,
+    "module_metadata_resolved_modules": 22,
+    "module_metadata_subprocesses": 1,
+    "symbol_definitions": 232,
+    "symbol_queries": 1919,
+    "peak_memory_mb": 106.41015625,
+    "yaml_files_per_second": 14.497390282738701,
+    "tasks_per_second": 14.173787821070427,
+    "symbol_queries_per_second": 62.09931239414189,
+    "detectors_skipped": {}
+  },
+  "reproducibility": {
+    "ansibleguard_version": "0.0.7.1",
+    "structural_metrics_version": "declared-leaf-tasks-v3",
+    "ansibleguard_git_sha": "eb15545e32dcd42a355a6d54580d7387043c2dba",
+    "execution_environment": "local",
+    "research_image_digest": null,
+    "environment_files": {
+      "requirements.txt": "a5caf8db717d65df845ddcdeccc9f1c3f107d853595daa360c90bddf1d3bfb73",
+      "Dockerfile.research": "39df2a10b363641eb3a63e112ba2ebefb2f71037244253663d272a101d9b657b",
+      "collections.lock.yml": "0ca2b2e99935150530a38410365169958d85a92ee791ded0e9e6f746e5d9ddae"
+    },
+    "python_version": "3.14.8",
+    "python_implementation": "CPython",
+    "platform": "Linux-7.2.9-arch1-1-x86_64-with-glibc2.44",
+    "ansible_core_version": "2.21.0",
+    "ansible_lint_version": "26.4.0",
+    "ansible_doc_disabled": false,
+    "ansible_doc_executable": "/home/aymmzn/Documents/AnsibleChecklist/.venv/bin/ansible-doc",
+    "ansible_doc_version": "ansible-doc [core 2.21.0]\n  config file = None\n  configured module search path = ['/home/aymmzn/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']\n  ansible python module location = /home/aymmzn/Documents/AnsibleChecklist/.venv/lib/python3.14/site-packages/ansible\n  ansible collection location = /home/aymmzn/.ansible/collections:/usr/share/ansible/collections\n  executable location = /home/aymmzn/Documents/AnsibleChecklist/.venv/bin/ansible-doc\n  python version = 3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810] (/home/aymmzn/Documents/AnsibleChecklist/.venv/bin/python3)\n  jinja version = 3.1.6\n  pyyaml version = 6.0.1 (without libyaml)",
+    "ansible_collections_paths": null,
+    "rule_catalog_sha256": "e1edc860d923670964ce6bb5d4f41c207df19e10739fd15305d616eeff80dfb1",
+    "rule_count": 76,
+    "collections": {
+      "status": "completed",
+      "install_roots": [
+        "/home/aymmzn/.ansible/collections/ansible_collections"
+      ],
+      "items": {
+        "community.network": "5.1.0",
+        "dellemc.os10": "1.2.7",
+        "dellemc.os6": "1.0.7",
+        "dellemc.os9": "1.0.4",
+        "nvidia.nvue": "1.2.9",
+        "openstack.kolla": "1.0.0",
+        "stackhpc.linux": "1.5.2",
+        "stackhpc.network": "1.0.0",
+        "stackhpc.openstack": "0.10.2"
+      }
+    },
+    "gitleaks_version": "8.30.1",
+    "target_git_sha": "10518de6b2fbd124ce01d7b67512558f3bcf7b8e",
+    "base_sha": null,
+    "head_sha": null,
+    "config": {
+      "path": null,
+      "sha256": null
+    }
+  },
+  "pr_comparison": {
+    "status": "not-compared",
+    "introduced": null,
+    "policy_conclusion": null
+  },
+  "artifacts": {
+    "contract": "contract.json",
+    "summary": "summary/summary.csv",
+    "trust_summary": "summary/run-summary.md",
+    "diagnostics": "summary/diagnostics.json",
+    "raw_json": "raw/findings.json",
+    "raw_csv": "raw/findings.csv",
+    "raw_text": "raw/findings.txt",
+    "suppressed_external": "raw/suppressed-external-findings.json",
+    "canonical_json": "canonical/occurrences.json",
+    "canonical_csv": "canonical/occurrences.csv",
+    "canonical_text": "canonical/occurrences.txt",
+    "sarif": "canonical/findings.sarif",
+    "run_metadata": "metadata/run.json",
+    "file_selection": "metadata/file-selection.json",
+    "review_metrics": "metadata/review-metrics.json",
+    "per_file": "files/<repository-relative-path>/"
+  },
+  "compatibility": {
+    "status": "deprecated-after-one-release",
+    "root_aliases_preserved": true,
+    "per_file_reports": "mirrored directories at the output root"
+  }
+}

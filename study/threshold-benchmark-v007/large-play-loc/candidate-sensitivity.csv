@@ -1,0 +1,9 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+large_play_loc,large-play,q1,9,5479,3877,0.70761088,169,157,0.92899408
+large_play_loc,large-play,q2_median,17,5479,2734,0.49899617,169,143,0.84615385
+large_play_loc,large-play,q3,37,5479,1699,0.31009308,169,133,0.78698225
+large_play_loc,large-play,p80,46,5479,1509,0.27541522,169,124,0.73372781
+large_play_loc,large-play,current,50,5479,1451,0.26482935,169,122,0.72189349
+large_play_loc,large-play,tukey_upper_fence,79,5479,1255,0.22905640,169,118,0.69822485
+large_play_loc,large-play,p90,82,5479,1246,0.22741376,169,117,0.69230769
+large_play_loc,large-play,p95,125,5479,1204,0.21974813,169,115,0.68047337

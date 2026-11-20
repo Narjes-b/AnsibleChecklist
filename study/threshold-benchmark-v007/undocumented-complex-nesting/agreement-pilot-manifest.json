@@ -1,0 +1,19 @@
+{
+  "metric_id": "undocumented_complex_nesting_depth",
+  "pilot_band_counts": {
+    "B1_low": 38,
+    "B4_high": 37
+  },
+  "pilot_prediction_counts": {
+    "false": 38,
+    "true": 37
+  },
+  "pilot_projects": 61,
+  "pilot_rows": 75,
+  "pilot_sha256": "5ea826547b70c92f24129d6bc9194ccf8f040b0af202eb53bbe4693e8adcae1f",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 483,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

@@ -1,0 +1,6 @@
+- name: Visible repository variable
+  hosts: all
+  tasks:
+    - name: Read inventory value
+      debug:
+        msg: "{{ calibration_inventory_value }}"

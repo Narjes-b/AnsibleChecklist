@@ -1,0 +1,259 @@
+\chapter{Discussion}
+\label{chap:discussion}
+
+\section{Purpose of the Discussion}
+The results chapters report what was measured. This chapter interprets those
+measurements against the research questions, the design objectives, and the
+claim boundaries. The current v0.0.7 run adds a larger diagnostic population,
+a paired role-contract correction, and a numerical benchmark. Together these
+show that the artifact can preserve source evidence,
+provider provenance, semantic uncertainty, and execution health across a
+large frozen population. Those properties make later human validation
+possible; they do not replace it.
+
+\section{Synthesis of the Four Research Questions}
+\subsection{RQ1: Broad Coverage Requires Explicit Ownership}
+The 76-concept catalogue is broader than any one provider because its purpose
+is to operationalise a review checklist, not reproduce a linter. Native
+AnsibleGuard detectors cover repository structure, role relationships,
+runtime-variable evidence, testing/documentation signals, and policy-oriented
+checks. ansible-lint remains authoritative for established Ansible idioms such
+as FQCN and naming conventions. GitLeaks contributes candidate-secret pattern
+evidence. Where two providers describe the same underlying concern,
+canonicalisation keeps one review occurrence while retaining both evidence
+records.
+
+This ownership model avoids two opposite errors. Reimplementing all
+ansible-lint rules would create unnecessary divergence from a mature tool;
+delegating the complete checklist would leave repository semantics and review
+workflow concerns uncovered. The 15 Yes, 18 Partial, and 5 No checklist mapping
+also prevents the catalogue size from being mistaken for complete automation.
+Human concerns such as architectural appropriateness remain human concerns.
+
+\subsection{RQ2: Completion Is Not the Same as Provider Success}
+All 149 repository analyses completed, yet ansible-lint was partial on 21
+repositories and the run retained 200 diagnostics. This is a stronger result
+than reporting 149 successful process exits. It demonstrates that repository
+orchestration survived provider-local problems and that the output tells a
+consumer where evidence is incomplete. A provider timeout, missing dependency,
+configuration failure, or YAML parse problem is an environment/execution fact;
+it is not an ordinary source smell and must not contribute to a quality score.
+
+The separation has direct consequences for automation. A CI policy may fail on
+an error-level occurrence, retry on a provider tool error, warn on partial
+coverage, or accept a documented unavailable optional provider. Treating all
+four cases as findings would make remediation misleading. Treating them all as
+zero findings would make the scan falsely reassuring.
+
+\subsection{RQ3: Version Deltas Reflect Evidence Semantics}
+The paired comparison holds repositories, SHAs, selected files, and LOC
+constant. Consequently, the fall from 331,123 to 328,385 raw findings and the
+rise from 297,557 to 307,951 canonical occurrences cannot be explained by a
+different corpus. They arise from changed emission, identity, provenance, and
+semantic classification behaviour.
+
+In particular, v0.0.6 avoids unsafe matching of generic location-only findings
+across files, preserves repeated assignment evidence where appropriate, and
+names dynamic/runtime limitations as \code{UNCERTAIN}. The increase from
+19,431 to 43,669 uncertain occurrences is therefore not evidence that source
+quality suddenly worsened. Conversely, the decrease in non-uncertain evidence
+from 278,126 to 264,282 is not proof that precision improved. Both are
+observable effects of a more conservative evidence model; accuracy still
+requires labelled examples.
+
+\subsection{RQ4: The Variable Problem Is Now Mechanism-Specific}
+The variable detector reports 43,035 occurrences, of which 41,351 are
+\code{UNCERTAIN} and 1,684 are \code{UNRESOLVED}. This split changes the
+research question from ``why is the total large?'' to ``which evidence source
+is absent or dynamic in each mechanism?'' Static include/import propagation,
+lexically scoped Jinja loop variables, ordered persistent definitions, and
+guard modelling remove demonstrated semantic errors without leaking symbols
+to disconnected files.
+
+The remaining unresolved set is concentrated. SAP, Linuxfabrik, Infrared,
+Forklift, and CMS account for 1,314 of 1,684 cases (78.03\%). Their dominant
+mechanisms---dynamic \code{include_vars}, role-entry contracts, composed
+variables, plugin inputs, extra variables, and external derivations---suggest
+targeted improvements. A global suppression would hide useful strict cases;
+mechanism-aware producers or uncertainty reasons are the defensible next step.
+
+\section{Interpreting the Main Result Distributions}
+\subsection{Why Style Dominates}
+Style contributes 127,420 canonical occurrences (41.38\%), and
+\code{missing-tags} alone contributes 83,446. This dominance is partly a
+property of granularity: a repetitive task-level convention can fire many
+times, while a repository-level architecture concern may fire once. It does
+not follow that style is the most harmful problem in the corpus.
+
+For this reason, the complete \code{technical-full} profile is appropriate for
+research inventory and deep auditing, but it should not be the only view shown
+to every user. Security, reliability, quality, migration, or PR profiles let a
+consumer align evidence with a decision. Counts should also be grouped by rule
+and repository before prioritisation so a high-frequency convention does not
+visually erase a low-frequency error.
+
+\subsection{Severity, Status, and Diagnostics Are Independent Axes}
+The 184,323 warnings, 116,729 notes, and 6,899 errors express remediation
+priority assigned to source evidence. Semantic status expresses what the
+detector knows about the predicate. Diagnostics express whether analysis
+executed as intended. These axes answer different questions:
+\begin{itemize}
+  \item severity asks how strongly policy should react;
+  \item status asks whether evidence is confirmed by the detector, uncertain,
+  exposed, unresolved, or ordered in conflict;
+  \item diagnostic level asks how analysis health should be communicated.
+\end{itemize}
+An error-severity occurrence can still be uncertain. A warning can be
+confirmed. A provider tool error is neither of those source judgements. Output
+consumers must preserve this multidimensional model rather than collapse it to
+one score.
+
+\subsection{Canonicalisation Is Evidence Compression, Not Deletion}
+The difference between 328,385 raw findings and 307,951 canonical occurrences
+is 20,434 records, or 6.22\%. These records were not declared false positives.
+They were merged when multiple pieces of provider evidence supported one
+review occurrence. The contributing evidence remains available for audit.
+Canonicalisation therefore reduces review duplication while allowing the user
+to inspect which provider, rule, coordinate, message, and fingerprint produced
+the conclusion.
+
+\section{Evidence-to-Decision Traceability}
+Table~\ref{tab:evidence_decision} translates major observations into defensible
+actions. This is intentionally more conservative than ranking repositories by
+their total count.
+
+\begin{longtable}{p{4.0cm}p{5.1cm}p{5.1cm}}
+\caption{From observed evidence to interpretation and action.}
+\label{tab:evidence_decision}\\
+\toprule Observation & Defensible interpretation & Recommended action \\
+\midrule\endfirsthead
+\toprule Observation & Defensible interpretation & Recommended action \\
+\midrule\endhead
+High total dominated by \code{missing-tags} & Repeated policy/style convention,
+not an equal number of severe defects & Use a profile, group by rule, and
+configure tag policy before remediation. \\
+\code{UNRESOLVED} variable & No modelled definition, guard, producer, or named
+uncertainty source is visible & Inspect source context and role/inventory
+contract; fix source or add demonstrated producer semantics. \\
+\code{UNCERTAIN} variable & A concrete dynamic or external limitation prevents
+a strict resolution claim & Review the recorded uncertainty reason; do not
+label it false positive automatically. \\
+ansible-lint \code{partial} & Some delegated evidence is incomplete & Inspect
+provider diagnostics, dependency/configuration, and root plan; do not report a
+clean delegated result. \\
+GitLeaks candidate & A secret-like pattern is present & Validate deployability,
+test/example context, and rotation need; preserve original evidence. \\
+Raw count falls while canonical rises & Provider emission and occurrence
+identity changed differently & Compare rule/provider/status deltas on the
+frozen population; do not infer quality improvement from either total alone. \\
+One repository dominates a rule & Mechanism or project convention is
+concentrated & Sample that repository separately and avoid generalising its
+pattern to the ecosystem. \\
+\bottomrule
+\end{longtable}
+
+\section{Implications for Stakeholders}
+\textbf{Developers} need short, local feedback. They should begin with a fast
+or quality profile and inspect exact source context, then escalate uncertain
+semantic cases rather than suppress the entire rule. \textbf{Pull-request
+reviewers} need introduced/fixed/unchanged classification, with file-aware
+identity and review-range rules. \textbf{Maintainers} need complete repository
+structure, dependency, documentation, and testing evidence.
+
+\textbf{Security engineers} need security-focused findings plus GitLeaks
+provenance, but must distinguish candidate patterns from confirmed exploitable
+secrets. \textbf{CI/platform teams} need stable JSON/SARIF, schema validation,
+exit policy, and provider health. \textbf{Researchers and supervisors} need
+immutable manifests, denominators, version and configuration identities, aggregate
+CSV, per-repository envelopes, and explicit limitations. The same analyzer can
+serve these users only because profiles change the view while the underlying
+evidence contract remains stable.
+
+\section{Implications for Static-Analysis Design}
+Three broader design conclusions follow. First, infrastructure-as-code analysis
+needs an artifact model: a defaults file, task file, inventory, and CI fixture
+do not have interchangeable semantics. Second, cross-file reasoning should be
+graph-constrained. Repository-wide symbol unions reduce apparent findings but
+introduce unsound leakage. Third, uncertainty should be first-class data. A
+detector that cannot resolve a dynamic include should name that limitation,
+not force a binary clean/defect answer.
+
+Provider orchestration also belongs to the analysis model. The location and
+configuration of ansible-lint project roots affect both duplication and
+coverage. Collapsing overlapping unconfigured roots while preserving
+independently configured roots is therefore correctness work, not only an
+execution optimisation. Similarly, packaging the canonical schema and copying
+it into outputs is part of reproducibility: a wheel installed outside the
+source checkout must validate exactly the same contract.
+
+\section{Threats to Validity and Mitigations}
+\begin{longtable}{p{3.0cm}p{5.4cm}p{5.7cm}}
+\caption{Validity threats, current mitigation, and residual risk.}
+\label{tab:validity_matrix}\\
+\toprule Type & Threat & Mitigation and residual limitation \\
+\midrule\endfirsthead
+\toprule Type & Threat & Mitigation and residual limitation \\
+\midrule\endhead
+Construct & A finding count may be mistaken for defects or quality. & Terms are
+defined as detector evidence; status, severity, diagnostics, and canonical
+units are separate. Human correctness remains unmeasured. \\
+Internal & Version differences may result from population drift. & The paired
+comparison fixes 149 SHAs, 27,709 files, and 1,178,908 LOC. Tool/config changes
+must still be recorded when reproducing. \\
+Internal & Provider failure may masquerade as absence of findings. & Health and
+diagnostics are explicit and repository execution is isolated. A partial run
+still lacks some delegated evidence. \\
+External & Mature public repositories may not represent all Ansible use. & The
+eligibility pipeline and attrition evidence are documented. Results are not
+claimed as ecosystem prevalence. \\
+Conclusion & Large totals may create spurious accuracy claims. & Descriptive
+statistics, mechanism samples, and claim boundaries are used. No precision or
+recall is reported without an adjudicated benchmark. \\
+Reliability & Local checkout assumptions may break installed execution. & The
+schema is packaged and wheel-install gates run outside the checkout. External
+provider availability remains environment-dependent. \\
+Researcher bias & Mechanism labels may reflect one analyst. & Samples retain
+source/provenance for audit; the proposed next evaluation uses two blind
+reviewers, adjudication, and agreement reporting. \\
+\bottomrule
+\end{longtable}
+
+\section{How the Versioned Evidence Fits Together}
+The v0.0.6 chapter preserves the complete 149-repository experiment and its
+paired v0.0.5 comparator. The current v0.0.7 chapter uses a 207-repository
+frozen manifest, but its production aggregate has 206 analyzable repositories.
+The paired role-contract run holds those 206 outputs fixed. The corrected
+threshold benchmark separately covers all 207 repositories. These populations
+answer different questions: a change in total between v0.0.6 and v0.0.7
+cannot be attributed solely to a detector version, while the paired 206-run
+comparison can isolate the role-contract mechanism. The benchmark's 207-of-207
+completion describes metric extraction, not provider execution health.
+
+The single-agent variable review narrows plausible error mechanisms but is not
+an independent accuracy benchmark. For the numerical thresholds, the 24
+frozen agreement pilots and weighted primary packets are ready; no double
+human labels have been entered. In particular, the Q3 large-task candidate
+would more than double the current review workload, but no quality estimate
+yet justifies adopting it.
+
+\section{Priorities for the Next Iteration}
+The next iteration should be governed by labelled evidence and concentrated
+mechanisms rather than by reducing the largest number. The order is:
+\begin{enumerate}
+  \item create a reproducible stratified sample across concept, provider,
+  status, severity, and repository concentration;
+  \item define TP, FP, and borderline guidance per sampled rule, use two
+  independent reviewers, adjudicate, and report agreement;
+  \item refine demonstrated variable producers such as inventory/plugin inputs
+  and dynamic \code{include_vars} families, then investigate the Miarka miss;
+  \item build a mutation or curated benchmark for recall-sensitive rules;
+  \item keep provider health, schema portability, remote equivalence, and the
+  frozen population as non-regression gates;
+  \item publish exact versions, configurations, manifests, schema hashes, and
+  labelled evidence with the next result set.
+\end{enumerate}
+
+This priority order avoids optimising for a cosmetically smaller count. A rule
+should change only when source evidence demonstrates an incorrect predicate,
+missing semantic mechanism, unsuitable default policy, or output-contract
+problem.

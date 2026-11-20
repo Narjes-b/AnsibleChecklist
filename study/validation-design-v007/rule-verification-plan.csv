@@ -1,0 +1,61 @@
+rule_id,category,family,required_occurrences,optional_occurrences,heldout_required,heldout_required_repositories,catalog_status,verification_mode,oracle_or_basis,human_items_this_design,human_items_uniform_design,allocation_note
+ansibleguard/loop-legacy-syntax,compatibility,objective_correctness,6376,0,1647,41,stable,A-deterministic,independent scan for with_* keys; ansible-core accepts with_* so the claim is deprecation policy,10,40,audit of edge cases; whole population verified automatically
+ansibleguard/redirected-module,compatibility,objective_correctness,881,0,207,14,stable,A-deterministic,ansible-core runtime.yml / ansible-doc plugin routing for the resolved collection,10,30,audit of edge cases; whole population verified automatically
+ansibleguard/broken-role-dependency,correctness,objective_correctness,1,0,0,0,stable,A-deterministic,role dependency graph self-reference / cycle,0,0,no heldout required occurrences
+ansibleguard/invalid-numeric-value,correctness,objective_correctness,4,0,0,0,stable,A-deterministic,ansible-core argument spec / port range,0,0,no heldout required occurrences
+ansibleguard/invalid-task-attribute-type,correctness,objective_correctness,47,0,24,5,stable,A-deterministic,ansible-core task attribute definitions (Task.fattributes isa),10,24,audit of edge cases; whole population verified automatically
+ansibleguard/missing-bool-filters,correctness,variable_reference_reasoning,19,0,13,7,stable,A-deterministic,parser: quoted 'true'/'false' in when,10,13,audit of edge cases; whole population verified automatically
+ansibleguard/missing-handler,correctness,objective_correctness,8,0,1,1,stable,A-deterministic,"independent handler resolution incl. imports, listen, role handlers",1,1,audit of edge cases; whole population verified automatically
+ansibleguard/overriden-keys,correctness,objective_correctness,6,0,2,2,stable,A-deterministic,YAML parser duplicate-key detection (ruamel/PyYAML strict),2,2,audit of edge cases; whole population verified automatically
+ansibleguard/role-variable-precedence-collision,correctness,variable_reference_reasoning,50,0,24,6,stable,A-deterministic,same key in defaults/ and vars/ of one role,10,24,audit of edge cases; whole population verified automatically
+ansibleguard/shell-environment-export,correctness,variable_reference_reasoning,6,0,2,1,stable,A-deterministic,parser: export in shell task,2,2,audit of edge cases; whole population verified automatically
+ansibleguard/unpinned-ansible-dependency,dependencies,objective_correctness,449,0,163,11,stable,A-deterministic,requirements/meta parser: dependency without version,10,30,audit of edge cases; whole population verified automatically
+ansibleguard/galaxy-meta-incomplete,documentation,style_policy,0,676,0,0,candidate,A-deterministic,meta/main.yml required keys,0,0,no heldout required occurrences
+ansibleguard/role-readme-absent,documentation,structure_reuse,0,3123,0,0,stable,A-deterministic,file existence,0,0,no heldout required occurrences
+ansibleguard/deprecated-modules,maintainability,maintainability_complexity,338,0,47,4,stable,A-deterministic,ansible-core runtime.yml deprecation metadata,10,30,audit of edge cases; whole population verified automatically
+ansibleguard/incomplete-task,maintainability,maintainability_complexity,34,0,7,4,stable,A-deterministic,regex over task names/comments (independent regex),7,7,audit of edge cases; whole population verified automatically
+ansibleguard/redundant-default-value,maintainability,variable_reference_reasoning,23,0,11,4,stable,A-deterministic,compare set value with role defaults (independent resolver),10,11,audit of edge cases; whole population verified automatically
+ansibleguard/unused-handler,maintainability,maintainability_complexity,29,0,4,3,stable,A-deterministic,independent notify resolution incl. includes and roles,4,4,audit of edge cases; whole population verified automatically
+ansibleguard/unsafe-file-write,reliability,security,7,0,1,1,stable,A-deterministic,parser: unsafe_writes true,1,1,audit of edge cases; whole population verified automatically
+ansibleguard/missing-validate-certs,security,security,577,0,95,12,stable,A-deterministic,parser: validate_certs false (module honours the option per ansible-doc),10,30,audit of edge cases; whole population verified automatically
+ansibleguard/vault-inline-overload,security,security,0,2,0,0,stable,A-deterministic,count of inline vault blocks,0,0,no heldout required occurrences
+ansibleguard/empty-abstraction,structure,structure_reuse,1,0,1,1,stable,A-deterministic,role/include layout check,1,1,audit of edge cases; whole population verified automatically
+ansibleguard/unexpected-task-location,structure,structure_reuse,6,0,5,1,stable,A-deterministic,role layout check: tasks/ file that is a mapping,5,5,audit of edge cases; whole population verified automatically
+ansibleguard/unstructured-module,structure,structure_reuse,31,0,1,1,experimental,A-deterministic,"role layout check: no tasks/main.{yml,yaml}",1,1,audit of edge cases; whole population verified automatically
+ansibleguard/duplicate-task-names,style,style_policy,1282,0,426,39,stable,A-deterministic,parser: equal names within one play,10,30,audit of edge cases; whole population verified automatically
+ansibleguard/missing-file-extension,style,style_policy,14,0,6,4,stable,A-deterministic,parser: included file reference without extension,6,6,audit of edge cases; whole population verified automatically
+ansibleguard/missing-tags,style,style_policy,0,98005,0,0,stable,A-deterministic,parser: no tags on task or inherited,0,0,no heldout required occurrences
+ansibleguard/unnamed-play,style,style_policy,1661,0,440,21,stable,A-deterministic,parser: play has no name key,10,30,audit of edge cases; whole population verified automatically
+ansibleguard/unnamed-task,style,style_policy,10244,0,2916,35,stable,A-deterministic,parser: task has no name key,10,40,audit of edge cases; whole population verified automatically
+ansibleguard/unnecessary-abstraction,style,structure_reuse,607,0,218,24,stable,A-deterministic,parser: block with exactly one task,10,30,audit of edge cases; whole population verified automatically
+ansibleguard/variable-naming-convention,style,style_policy,0,24121,0,0,candidate,A-deterministic,regex over variable names / role prefix,0,0,no heldout required occurrences
+ansibleguard/molecule-test-absent,testing,style_policy,0,1814,0,0,stable,A-deterministic,file existence,0,0,no heldout required occurrences
+ansibleguard/undocumented-complex-task,documentation,maintainability_complexity,1285,0,492,25,experimental,B-threshold,undocumented_complex_* thresholds plus comment presence,30,30,banded by metric value for the threshold panel
+ansibleguard/complex-expression,maintainability,maintainability_complexity,11003,0,3561,50,stable,B-threshold,thresholds complex_expression_length 100 / score 6,30,40,banded by metric value for the threshold panel
+ansibleguard/complex-playbook,maintainability,maintainability_complexity,2514,0,678,53,stable,B-threshold,complexity budget over playbook thresholds,30,40,banded by metric value for the threshold panel
+ansibleguard/duplicated-code,maintainability,structure_reuse,603,0,263,34,stable,B-threshold,similarity thresholds 0.4 / 0.5,30,30,banded by metric value for the threshold panel
+ansibleguard/excessive-nesting,maintainability,maintainability_complexity,57,0,49,2,stable,B-threshold,threshold excessive_nesting_depth 3,30,30,banded by metric value for the threshold panel
+ansibleguard/high-coupling,maintainability,maintainability_complexity,480,0,109,28,experimental,B-threshold,thresholds Num_Imports 4 / Num_Roles 5,30,30,banded by metric value for the threshold panel
+ansibleguard/insufficient-modularization,maintainability,structure_reuse,79,0,19,9,stable,B-threshold,size thresholds across plays,19,19,banded by metric value for the threshold panel
+ansibleguard/large-play,maintainability,maintainability_complexity,1444,0,294,34,stable,B-threshold,thresholds LOC_play 50 / num_tasks_play 7 / avg_task_play 15,30,30,banded by metric value for the threshold panel
+ansibleguard/large-playbook,maintainability,maintainability_complexity,3100,0,796,56,stable,B-threshold,thresholds LOC_playbook 110 / num_plays 4 / avg_play_size 50,30,40,banded by metric value for the threshold panel
+ansibleguard/large-task,maintainability,maintainability_complexity,12179,0,3857,54,stable,B-threshold,threshold LOC_task = 15,30,40,banded by metric value for the threshold panel
+ansibleguard/become-scope-too-broad,security,security,467,0,133,18,stable,B-threshold,threshold MIN_TASKS_FOR_BROAD_BECOME = 5,30,30,banded by metric value for the threshold panel
+ansibleguard/missing-abstraction,structure,structure_reuse,1648,0,450,50,stable,B-threshold,threshold missing_abstraction_tasks 10,30,30,banded by metric value for the threshold panel
+ansibleguard/inconsistent-naming-convention,style,style_policy,52,0,9,9,stable,B-threshold,threshold special_chars 3 over task/play names,9,9,banded by metric value for the threshold panel
+ansibleguard/long-statement,style,style_policy,5530,0,902,27,stable,B-threshold,threshold long_statement_length 160,30,40,banded by metric value for the threshold panel
+ansibleguard/long-task-name,style,style_policy,5236,0,1133,39,stable,B-threshold,threshold task_name_len 75,30,40,banded by metric value for the threshold panel
+ansibleguard/non-idempotent-command,correctness,objective_correctness,1476,0,303,37,stable,C-semantic,"command semantics (guards, check mode)",30,30,stratified two-stage sample
+ansibleguard/overriding-facts,correctness,variable_reference_reasoning,23,0,14,6,stable,C-semantic,set_fact reassignment intent,14,14,census
+ansibleguard/unguarded-variable,correctness,variable_reference_reasoning,997,51477,269,14,candidate,C-semantic,"variable resolution; uncertainty by design (role inputs, includes)",30,30,stratified two-stage sample
+ansibleguard/unscoped-shell-variable,correctness,variable_reference_reasoning,80,0,11,4,stable,C-semantic,shell semantics versus task environment,11,11,census
+ansibleguard/variable-use-before-definition,correctness,variable_reference_reasoning,178,10,39,9,experimental,C-semantic,task-order reasoning over includes,30,30,stratified two-stage sample
+ansibleguard/shell-instead-of-module,maintainability,maintainability_complexity,687,0,127,28,experimental,C-semantic,module availability and equivalence,30,30,stratified two-stage sample
+ansibleguard/unused-registered-variable,maintainability,variable_reference_reasoning,1210,0,367,44,stable,C-semantic,"use across files, includes, roles",30,30,stratified two-stage sample
+ansibleguard/read-only-command-change,reliability,objective_correctness,835,0,156,24,stable,C-semantic,command semantics (read-only query),30,30,stratified two-stage sample
+ansibleguard/silent-error-suppression,reliability,objective_correctness,2016,0,570,38,experimental,C-semantic,whether failure is handled elsewhere,40,40,stratified two-stage sample
+ansibleguard/credentials-leaking-in-log,security,security,6251,603,1797,48,stable,C-semantic,module argument_spec no_log as partial oracle; dynamic no_log expressions need humans,40,40,stratified two-stage sample
+ansibleguard/default-credentials,security,security,248,0,40,17,experimental,C-semantic,well-known default versus documented example,30,30,stratified two-stage sample
+ansibleguard/insecure-permissions,security,security,450,0,113,31,experimental,C-semantic,mode predicate plus what path/key the mode protects,30,30,stratified two-stage sample
+ansibleguard/plaintext-sensitive-variable,security,security,668,0,198,31,stable,C-semantic,secret versus path/placeholder judgement,30,30,stratified two-stage sample
+ansibleguard/unnecessary-set-fact,style,variable_reference_reasoning,0,2106,0,0,experimental,C-semantic,bounded execution graph reasoning,0,0,no heldout required occurrences

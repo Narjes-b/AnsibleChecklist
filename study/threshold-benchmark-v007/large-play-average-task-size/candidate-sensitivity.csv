@@ -1,0 +1,9 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+large_play_avg_task_size,large-play,q1,0,5479,3420,0.62420150,169,143,0.84615385
+large_play_avg_task_size,large-play,q2_median,6.4,5479,3070,0.56032123,169,142,0.84023669
+large_play_avg_task_size,large-play,q3,11,5479,1890,0.34495346,169,131,0.77514793
+large_play_avg_task_size,large-play,p80,12,5479,1725,0.31483847,169,129,0.76331361
+large_play_avg_task_size,large-play,current,15,5479,1451,0.26482935,169,122,0.72189349
+large_play_avg_task_size,large-play,p90,17,5479,1347,0.24584778,169,122,0.72189349
+large_play_avg_task_size,large-play,p95,22.8875,5479,1200,0.21901807,169,117,0.69230769
+large_play_avg_task_size,large-play,tukey_upper_fence,27.5,5479,1135,0.20715459,169,115,0.68047337

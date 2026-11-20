@@ -1,0 +1,8 @@
+file,file_class,ansible_artifact_kind,parse_status,document_type,structural_status,gitleaks_status,ansible_lint_status,errors,warnings,notes,total,raw_findings,canonical_occurrences,ansibleguard_findings,ansible_lint_findings,gitleaks_findings,new_pr_findings,new_pr_actionable_findings,new_pr_optional_findings,new_pr_findings_by_category,pr_comparison_status
+tasks/disable-other-firewalls.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,1,6,7,7,7,7,0,0,,,,,not-compared
+tasks/main.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,0,8,8,8,8,8,0,0,,,,,not-compared
+.,unclassified,review-metadata,not-applicable,review-metadata,not-applicable,completed,partial,0,0,1,1,1,1,1,0,0,,,,,not-compared
+handlers/main.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,0,1,1,1,1,1,0,0,,,,,not-compared
+main.yml,unclassified,unclassified,not-applicable,not-applicable,not-applicable,not-applicable,not-applicable,0,0,1,1,1,1,1,0,0,,,,,not-compared
+defaults/main.yml,unclassified,vars,parsed,vars,skipped,completed,partial,0,0,0,0,0,0,0,0,0,,,,,not-compared
+meta/main.yml,unclassified,metadata,parsed,metadata,skipped,completed,partial,0,0,0,0,0,0,0,0,0,,,,,not-compared

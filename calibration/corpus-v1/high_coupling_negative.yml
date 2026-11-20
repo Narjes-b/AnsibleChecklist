@@ -1,0 +1,4 @@
+- name: Small play
+  hosts: all
+  tasks:
+    - ansible.builtin.include_tasks: one.yml

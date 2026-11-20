@@ -1,0 +1,188 @@
+\chapter{System Implementation}
+This chapter describes the implemented architecture at the v0.0.6 freeze.
+The v0.0.7 role-argument and benchmark corrections are described in
+Chapter~\ref{chap:v007}.
+\label{chap:implementation}
+
+\section{Architecture}
+AnsibleGuard v0.0.6 is not a renamed ansible-lint configuration. It is an
+orchestrator and semantic analyser with its own parsers, artifact model,
+execution graph, rule registry, comparison engine, canonical data model, and
+report generators. ansible-lint and GitLeaks are isolated evidence providers.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+ c/.style={draw=ansblue,rounded corners=3pt,fill=anspaper,
+ text width=32mm,minimum height=11mm,align=center,font=\small},
+ a/.style={-{Latex[length=2.2mm]},thick,ansblue}]
+\node[c] (entry) at (0,0) {CLI / Python API\\repository selection};
+\node[c] (parse) at (4.3,0) {Discovery and tolerant\\YAML/Jinja parsing};
+\node[c] (graph) at (8.6,0) {Artifact, symbol and\\execution graphs};
+\node[c] (providers) at (0,-2.6) {Isolated ansible-lint\\and GitLeaks providers};
+\node[c] (canon) at (4.3,-2.6) {Canonical occurrences\\and provider health};
+\node[c] (rules) at (8.6,-2.6) {Internal semantic rules\\and source evidence};
+\node[c] (outputs) at (4.3,-5.2) {Output-v3 validation\\JSON, CSV, SARIF, text};
+\draw[a] (entry)--(parse); \draw[a] (parse)--(graph);
+\draw[a] (graph)--(rules);
+\draw[a] (entry)--(providers);
+\draw[a] (rules)--(canon);
+\draw[a] (providers)--(canon);
+\draw[a] (canon)--(outputs);
+\end{tikzpicture}
+\caption{Implementation evidence flow. Internal rules and external providers
+produce separate evidence that is reconciled in the canonical output model;
+provider failures remain explicit health records.}
+\label{fig:implementation_architecture}
+\end{figure}
+
+\section{Parsing and Artifact Model}
+Discovery applies repository exclusions and records every selected path. YAML
+is loaded tolerantly so Ansible tags such as \code{!vault} and \code{!unsafe}
+do not abort the repository. Source coordinates are retained for findings.
+Jinja expressions are analysed as a second language embedded in scalar values.
+The classifier distinguishes playbooks, task and handler files, defaults,
+role variables, inventory, group/host variables, metadata, and import-only
+files. This prevents, for example, task-shape rules from running on inventory.
+
+Jinja names introduced by \code{for} are lexical locals. A loop variable is
+visible only between its matching \code{for} and \code{endfor}; nested blocks
+use a scope stack. It neither leaks after the block nor becomes a repository
+definition. Guards such as \code{x is defined}, short-circuit expressions,
+\code{default}, and \code{omit} are attached to the expression scope in which
+they protect a use.
+
+\section{Repository Execution Semantics}
+Static \code{include_tasks} and \code{import_tasks} targets form directed
+execution edges. Persistent definitions, including \code{set_fact}, propagate
+only along reachable static edges and only after their producer in program
+order. They are never unioned across all repository files. This is important:
+a fact created in one disconnected role must not suppress a finding in another.
+Dynamic includes cannot safely name one successor and therefore contribute an
+explicit uncertainty reason rather than a fabricated definition.
+
+For a variable use $u$ in file $f$, let $D(u)$ be visible definitions, $G(u)$
+lexically valid guards, $R(u)$ modelled runtime sources, and $Q(u)$ named
+uncertainty sources. The state function is:
+\[
+S(u)=
+\begin{cases}
+\mathrm{CONFIRMED} & D(u)\cup G(u)\cup R(u)\neq\varnothing,\\
+\mathrm{ORDERED\_CONFLICT} & \text{a producer exists but follows }u,\\
+\mathrm{UNCERTAIN} & Q(u)\neq\varnothing,\\
+\mathrm{UNRESOLVED} & \text{otherwise.}
+\end{cases}
+\]
+For the credential detector, \code{EXPOSED} records sensitive output without a
+known \code{no_log} protection. These labels describe detector evidence; they
+are not manual TP/FP judgements.
+
+\section{Rule System and Responsibility Boundaries}
+Rules are registered with a stable identifier, category, severity, compatible
+artifact classes, detector, message, and evidence fields. The implementation
+contains 76 concepts grouped into the canonical result categories. The 38-item
+review checklist is represented separately as 15 automated, 18 partial, and 5
+manual criteria, because a concept count and checklist coverage answer
+different questions.
+
+\begin{table}[H]
+\centering\small
+\caption{Responsibility of each analysis component.}
+\begin{tabularx}{\textwidth}{p{3cm}X X}
+\toprule
+Component & Delegated responsibility & Deliberately retained elsewhere \\
+\midrule
+AnsibleGuard & Cross-file variables, execution order, repository structure,
+documentation/testing presence, semantic source evidence, canonicalisation &
+Does not reproduce every ansible-lint implementation \\
+ansible-lint & Established Ansible syntax, FQCN, task/action and formatting
+rules under its own configuration and project root & Cross-provider semantic
+states and repository-wide evidence \\
+GitLeaks & Secret-pattern evidence in content and, when enabled, history &
+Ansible execution semantics and final secret classification \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Overlap is preserved as provider evidence and merged only when canonical keys
+show the same source occurrence and concept. It is not discarded silently.
+Provider absence, timeout, non-zero exit, parse failure, or partial output is a
+diagnostic with environment context—not an ordinary smell in the analysed
+source.
+
+\section{ansible-lint Project Roots}
+ansible-lint is invoked at the smallest meaningful project roots. Candidate
+roots are normalised and collapsed before execution. If an unconfigured nested
+root is covered by an ancestor, it is not linted again; otherwise findings
+would be duplicated. Independently configured roots remain separate because
+their configuration can change exclusions, profiles, and rule behaviour.
+Tests cover both overlapping and independent-root cases.
+
+\section{Canonical Occurrences and Comparisons}
+A provider finding is normalised into a versioned occurrence containing source
+path, region, concept/rule identity, category, severity, status, message,
+fingerprints, and provider evidence. Exact native fingerprints have priority.
+Semantic matching requires file identity plus sufficiently specific rule and
+location evidence. A generic location-only result is never matched across
+files as a rename, avoiding false ``moved'' classifications.
+
+The comparison output partitions occurrences into introduced, fixed,
+unchanged, and moved/uncertain sets. Versioned envelopes must pass the shared
+v3 validator. The PR comparison utility still accepts the explicitly detected
+legacy list form; it does not treat an invalid v3 envelope as legacy data.
+
+\section{Output-v3 Contract}
+The canonical JSON Schema is packaged inside the Python distribution and
+copied into each scan output. Consequently, an installed wheel validates its
+results outside the source checkout. Runtime checks align with the schema for
+critical fields: non-empty identifiers and paths, positive coordinates,
+bounded regions, recognised severity/status values, typed fingerprints,
+provider names and states, and structured provider evidence.
+
+\begin{table}[H]
+\centering\small
+\caption{Principal scan-output artifacts.}
+\begin{tabularx}{\textwidth}{p{4cm}X}
+\toprule
+Artifact & Purpose \\
+\midrule
+\code{summary/} & Repository and all-repository aggregates, provider health,
+status/severity/category/rule totals, selected files and LOC \\
+\code{raw/} & Provider-native findings retained for audit and debugging \\
+\code{canonical/} & Deduplicated occurrences with merged provider evidence \\
+\code{metadata/} & Commit SHA, configuration, versions, timings, diagnostics,
+manifest and reproducibility data \\
+\code{files/} & Per-source-file reports where requested \\
+\code{diff/} & Introduced, fixed, unchanged and moved/uncertain comparisons \\
+\code{output-v3.schema.json} & Exact contract used to validate the output \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+CSV summaries are projections of the same contract. Repository identity and
+SHA establish the population; selected file and LOC columns establish the
+denominator; raw and canonical totals distinguish provider output from merged
+occurrences; provider columns expose contribution and health; status, severity,
+category, and concept columns give orthogonal distributions; diagnostic fields
+record incomplete execution. Acronyms are expanded in the report's front
+matter, while machine column names remain stable for scripts.
+
+\section{Interfaces and Workflows}
+The same engine supports a repository path, a local working-tree change, a
+commit range, or a pull request. A full scan discovers all selected artifacts.
+Diff modes analyse the relevant revisions and compare canonical occurrences,
+so a changed line is not automatically assumed to introduce every finding in
+its file. Named profiles select coherent rule/provider sets for full analysis,
+security review, correctness, maintainability, CI gating, structural analysis,
+or git-focused review. JSON is the authoritative interchange representation;
+CSV supports aggregation, SARIF supports code-scanning interfaces, and text or
+Markdown supports human review.
+
+\section{Verification Strategy}
+Verification is layered: detector unit tests; parsing, scope and graph tests;
+provider-root and failure-state tests; schema/serializer contract tests;
+comparison regressions; package-install tests; focused remote-equivalence
+checks; then the frozen repository study. Documentation staleness,
+\code{compileall}, and whitespace checks guard release quality. This verifies
+implementation consistency and reproducibility; it is not substituted for a
+future independent human accuracy study.

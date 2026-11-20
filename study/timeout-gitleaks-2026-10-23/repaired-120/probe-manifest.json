@@ -1,0 +1,62 @@
+{
+  "purpose": "bounded current GitLeaks adapter triage on complete frozen tree; not archived rerun",
+  "project": "encapsulate-xyz/cosmos-ansible",
+  "commit_sha": "a49d30281d2d3c763ef0d50a7aaddc751a460863",
+  "source_blobs": 417,
+  "source_bytes": 470774640,
+  "acquisition_seconds": 4.662162678010645,
+  "max_source_blob_bytes": 104857600,
+  "worker_timeout_seconds": 150.0,
+  "native_timeout_seconds": 120.0,
+  "status": "completed",
+  "worker_result": {
+    "status": "completed",
+    "eligible_for_performance_scoring": false,
+    "findings": 80058,
+    "suppressed": 1540,
+    "metadata": {
+      "provider": "gitleaks",
+      "scan_mode": "dir",
+      "executable": "/usr/bin/gitleaks",
+      "config": "built-in-default",
+      "config_sha256": null,
+      "timeout_seconds": 120.0,
+      "max_output_bytes": 67108864,
+      "suppressed_known_noise": 1540
+    }
+  },
+  "returncode": 0,
+  "last_event": {
+    "stage": "adapter",
+    "state": "end",
+    "elapsed_seconds": 75.87426763999974,
+    "status": "completed",
+    "duration_seconds": 75.8741910430108
+  },
+  "gitleaks_version": "version is set by build process",
+  "gitleaks_sha256": "ef931a755d99f66e78923685cde6b475e16f2eda0e044ede2f396421d1984ef3",
+  "stack_dumps": 7,
+  "implementation_sha256": "08ee977f27a019a9a23237b6bbafcb3aa9273c7051df0f084521ae77574a7f23",
+  "dependency_sha256": {
+    "src/ansibleguard/external/gitleaks.py": "826c014f4479f5ff99eca918af04642c4734360112cb23ce13631fdf435646b3",
+    "scripts/profile_frozen_context.py": "4d3ddec88046530faa204387c39e2a48d92edaa9b56dbb48b853165a70953eac",
+    "scripts/retrieve_sample_evidence.py": "aa079a5b9b2037c6dc213e06940e59f9301709da35d80531611bc12fa99e6328"
+  },
+  "eligible_for_performance_scoring": false,
+  "model_calls": 0,
+  "local_directory": "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-gitleaks-repaired-2026-10-23",
+  "output_sha256": {
+    "top-functions.csv": "7cab4a99fb42ef8aac34723fe2e71fbc43ba0e876db3ba8e8dc533400ac333e1",
+    "stack-frames.csv": "2a339d3b5ae064e710edece20ee413d2f20807dfeac67143a664ac581fadf2ab",
+    "stage-events.json": "e5eef7eb3961bb8022e2cfe3b7e4589532afc8d2bbbaa276e4f14cc1b80424bd",
+    "source-inventory.csv": "aec9786f7f3843683ee3fb5d7743e9008b030c61f54f9cafe74c57e9177893bc"
+  },
+  "limits": [
+    "Current adapter/binary, not archived environment",
+    "Original executable bits/history/config not reproduced",
+    "Native and worker deadlines intentionally shorter than study",
+    "No target programs executed",
+    "Raw source/logs remain local; source paths and counts published",
+    "No repository completeness/accuracy claim"
+  ]
+}

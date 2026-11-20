@@ -1,0 +1,9 @@
+- name: Play
+  hosts: all
+  tasks:
+    - name: تثبيت الحزمة
+      debug:
+        msg: hi
+    - name: إعادة تشغيل الخدمة
+      debug:
+        msg: hi

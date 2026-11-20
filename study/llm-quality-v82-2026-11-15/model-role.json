@@ -1,0 +1,10 @@
+{
+  "role": "Select claims from a backend-certified menu; no original factual prose, assessment or citation selection.",
+  "deterministic_control": "Selecting c0 without a model yields the same primary summary, assessment and citations by construction; relevance/style benefit is unmeasured.",
+  "isolated_LLM_intelligence_gain_established": false,
+  "claim_selection_validity": {
+    "completed": 96,
+    "valid": 96
+  },
+  "free_prose_baseline": "Prior V7 raw-window strict9/48 and scoped42/48 remain unchanged; the new style is a different pipeline."
+}

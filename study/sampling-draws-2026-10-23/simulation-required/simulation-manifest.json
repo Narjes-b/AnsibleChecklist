@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "purpose": "synthetic point-estimator design check; not measured accuracy",
+  "run_id": "v0071-rerun-2026-10-22",
+  "instrument": "required",
+  "design": {
+    "groups_per_stratum": 3,
+    "occurrences_per_group": 2,
+    "census_at": 30
+  },
+  "replications_per_scenario": 400,
+  "seed": "recovery-design-check-20261023-v1",
+  "scenarios": {
+    "constant-60": [
+      0.6,
+      0.0,
+      0.0
+    ],
+    "size-positive-60": [
+      0.6,
+      1.2,
+      0.8
+    ],
+    "size-negative-60": [
+      0.6,
+      1.2,
+      -0.8
+    ],
+    "heterogeneous-95": [
+      0.95,
+      1.2,
+      0.0
+    ],
+    "near-boundary-995": [
+      0.995,
+      0.8,
+      0.0
+    ],
+    "all-positive": [
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "numpy_version": "2.4.6",
+  "sampler_sha256": "206e945c9d1c3532f16425a9d446265bf05ae5618dc98842a2fa5f144ffd42fb",
+  "implementation_sha256": "4fb21e131f50d6302496bdd9bfca87027421b3facd99f4d5b6569f54af804b9d",
+  "frame_manifest_sha256": "fc560b03d5f91febfbec7ecb29a5ecfa2d48a2565cc998386a99032f43af939e",
+  "occurrences_sha256": "71be3560cfb8194aa50d63a0ce323737e35ca9aaec0d01004d114b3bd995cecd",
+  "group_map_sha256": null,
+  "output_sha256": {
+    "simulation-results.csv": "cf8b14754c89a1ff5766f2262877d4ff71f81f8d9512bcc30eb395204b25aecf"
+  },
+  "eligible_for_performance_scoring": false,
+  "confidence_interval_status": "not-evaluated",
+  "limits": [
+    "No nonresponse or reviewer error",
+    "No final evaluation population certified",
+    "Finite planted binary populations, not actual labels",
+    "HT fractions can lie outside [0,1]",
+    "Global and stratum-calibrated Hajek ratios can have finite-sample bias",
+    "No interval or final-budget acceptance gate passed"
+  ]
+}

@@ -1,0 +1,13 @@
+case_id,eligible,status,decision_matches_ai_reference,actionability,raw_code_proposal,delivered_code_proposal
+repair-missing-validate-certs-3,True,ok,True,not-actionable,False,False
+repair-credential-log-exposure-5,False,ok,True,not-actionable,False,False
+repair-credential-log-exposure-4,False,ok,True,not-actionable,False,False
+repair-missing-validate-certs-5,False,ok,True,not-actionable,False,False
+repair-missing-validate-certs-0,True,ok,True,not-actionable,False,False
+repair-credential-log-exposure-0,True,ok,True,not-actionable,False,False
+repair-missing-validate-certs-4,False,ok,True,not-actionable,False,False
+repair-credential-log-exposure-2,True,ok,True,not-actionable,False,False
+repair-missing-validate-certs-1,True,ok,True,not-actionable,False,False
+repair-missing-validate-certs-2,True,ok,True,not-actionable,False,False
+repair-credential-log-exposure-3,True,ok,True,not-actionable,False,False
+repair-credential-log-exposure-1,True,ok,True,not-actionable,False,False

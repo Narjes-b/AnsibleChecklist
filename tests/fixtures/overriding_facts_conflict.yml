@@ -1,0 +1,9 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: first
+      set_fact:
+        environment_type: staging
+    - name: second
+      set_fact:
+        environment_type: production

@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1207" viewBox="0 0 1120 1207">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;font-size:12px}.title{font-size:18px;font-weight:700}.axis{stroke:#94a3b8}.box{fill:#bfdbfe;stroke:#1d4ed8;stroke-width:1.5}.median{stroke:#0f172a;stroke-width:2}.current{stroke:#dc2626;stroke-width:2;stroke-dasharray:4 3}.whisker{stroke:#475569}</style>
+<text x="20" y="28" class="title">Numerical detector distributions (per-metric log₁₀(value + 1) scale)</text>
+<text x="20" y="71">cohesion_playbook_score</text>
+<line x1="285" y1="69" x2="1080" y2="69" class="axis"/>
+<line x1="750.05" y1="69" x2="1080.00" y2="69" class="whisker"/>
+<rect x="750.05" y="60" width="329.95" height="18" class="box"/>
+<line x1="1080.00" y1="59" x2="1080.00" y2="79" class="median"/>
+<line x1="670.91" y1="55" x2="670.91" y2="83" class="current"/>
+<text x="890" y="94">Q1=0.5 M=1 Q3=1 current=0.4</text>
+<text x="20" y="119">complex_expression_length_chars</text>
+<line x1="285" y1="117" x2="1080" y2="117" class="axis"/>
+<line x1="474.25" y1="117" x2="1060.14" y2="117" class="whisker"/>
+<rect x="825.12" y="108" width="133.76" height="18" class="box"/>
+<line x1="892.45" y1="107" x2="892.45" y2="127" class="median"/>
+<line x1="1080.00" y1="103" x2="1080.00" y2="131" class="current"/>
+<text x="890" y="142">Q1=22 M=33 Q3=49 current=100</text>
+<text x="20" y="167">complex_expression_score</text>
+<line x1="285" y1="165" x2="1080" y2="165" class="axis"/>
+<line x1="285.00" y1="165" x2="1017.02" y2="165" class="whisker"/>
+<rect x="285.00" y="156" width="448.84" height="18" class="box"/>
+<line x1="285.00" y1="155" x2="285.00" y2="175" class="median"/>
+<line x1="1080.00" y1="151" x2="1080.00" y2="179" class="current"/>
+<text x="890" y="190">Q1=0 M=0 Q3=2 current=6</text>
+<text x="20" y="215">complex_playbook_budget</text>
+<line x1="285" y1="213" x2="1080" y2="213" class="axis"/>
+<line x1="331.48" y1="213" x2="1080.00" y2="213" class="whisker"/>
+<rect x="451.90" y="204" width="327.63" height="18" class="box"/>
+<line x1="579.76" y1="203" x2="579.76" y2="223" class="median"/>
+<line x1="983.87" y1="199" x2="983.87" y2="227" class="current"/>
+<text x="890" y="238">Q1=0.3 M=0.5894 Q3=1.1758 current=2</text>
+<text x="20" y="263">excessive_nesting_depth</text>
+<line x1="285" y1="261" x2="1080" y2="261" class="axis"/>
+<line x1="285.00" y1="261" x2="285.00" y2="261" class="whisker"/>
+<rect x="285.00" y="252" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="251" x2="285.00" y2="271" class="median"/>
+<line x1="1080.00" y1="247" x2="1080.00" y2="275" class="current"/>
+<text x="890" y="286">Q1=0 M=0 Q3=0 current=3</text>
+<text x="20" y="311">high_coupling_import_count</text>
+<line x1="285" y1="309" x2="1080" y2="309" class="axis"/>
+<line x1="285.00" y1="309" x2="285.00" y2="309" class="whisker"/>
+<rect x="285.00" y="300" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="299" x2="285.00" y2="319" class="median"/>
+<line x1="1080.00" y1="295" x2="1080.00" y2="323" class="current"/>
+<text x="890" y="334">Q1=0 M=0 Q3=0 current=4</text>
+<text x="20" y="359">high_coupling_role_count</text>
+<line x1="285" y1="357" x2="1080" y2="357" class="axis"/>
+<line x1="285.00" y1="357" x2="285.00" y2="357" class="whisker"/>
+<rect x="285.00" y="348" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="347" x2="285.00" y2="367" class="median"/>
+<line x1="1080.00" y1="343" x2="1080.00" y2="371" class="current"/>
+<text x="890" y="382">Q1=0 M=0 Q3=0 current=5</text>
+<text x="20" y="407">large_play_avg_task_size</text>
+<line x1="285" y1="405" x2="1080" y2="405" class="axis"/>
+<line x1="285.00" y1="405" x2="1080.00" y2="405" class="whisker"/>
+<rect x="285.00" y="396" width="590.75" height="18" class="box"/>
+<line x1="760.82" y1="395" x2="760.82" y2="415" class="median"/>
+<line x1="944.15" y1="391" x2="944.15" y2="419" class="current"/>
+<text x="890" y="430">Q1=0 M=6.4 Q3=11 current=15</text>
+<text x="20" y="455">large_play_loc</text>
+<line x1="285" y1="453" x2="1080" y2="453" class="axis"/>
+<line x1="410.75" y1="453" x2="1080.00" y2="453" class="whisker"/>
+<rect x="702.74" y="444" width="242.20" height="18" class="box"/>
+<line x1="809.38" y1="443" x2="809.38" y2="463" class="median"/>
+<line x1="998.32" y1="439" x2="998.32" y2="467" class="current"/>
+<text x="890" y="478">Q1=9 M=17 Q3=37 current=50</text>
+<text x="20" y="503">large_play_task_count</text>
+<line x1="285" y1="501" x2="1080" y2="501" class="axis"/>
+<line x1="285.00" y1="501" x2="1080.00" y2="501" class="whisker"/>
+<rect x="285.00" y="492" width="530.00" height="18" class="box"/>
+<line x1="550.00" y1="491" x2="550.00" y2="511" class="median"/>
+<line x1="1080.00" y1="487" x2="1080.00" y2="515" class="current"/>
+<text x="890" y="526">Q1=0 M=1 Q3=3 current=7</text>
+<text x="20" y="551">large_playbook_avg_play_size</text>
+<line x1="285" y1="549" x2="1080" y2="549" class="axis"/>
+<line x1="285.00" y1="549" x2="285.00" y2="549" class="whisker"/>
+<rect x="285.00" y="540" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="539" x2="285.00" y2="559" class="median"/>
+<line x1="1080.00" y1="535" x2="1080.00" y2="563" class="current"/>
+<text x="890" y="574">Q1=0 M=0 Q3=0 current=50</text>
+<text x="20" y="599">large_playbook_avg_task_size</text>
+<line x1="285" y1="597" x2="1080" y2="597" class="axis"/>
+<line x1="285.00" y1="597" x2="1080.00" y2="597" class="whisker"/>
+<rect x="754.52" y="588" width="177.54" height="18" class="box"/>
+<line x1="846.94" y1="587" x2="846.94" y2="607" class="median"/>
+<line x1="1053.20" y1="583" x2="1053.20" y2="611" class="current"/>
+<text x="890" y="622">Q1=4.4444 M=6.6 Q3=9.3333 current=15</text>
+<text x="20" y="647">large_playbook_loc</text>
+<line x1="285" y1="645" x2="1080" y2="645" class="axis"/>
+<line x1="397.68" y1="645" x2="1080.00" y2="645" class="whisker"/>
+<rect x="701.97" y="636" width="251.31" height="18" class="box"/>
+<line x1="832.40" y1="635" x2="832.40" y2="655" class="median"/>
+<line x1="1050.61" y1="631" x2="1050.61" y2="659" class="current"/>
+<text x="890" y="670">Q1=12 M=28 Q3=60 current=110</text>
+<text x="20" y="695">large_playbook_play_count</text>
+<line x1="285" y1="693" x2="1080" y2="693" class="axis"/>
+<line x1="285.00" y1="693" x2="285.00" y2="693" class="whisker"/>
+<rect x="285.00" y="684" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="683" x2="285.00" y2="703" class="median"/>
+<line x1="1080.00" y1="679" x2="1080.00" y2="707" class="current"/>
+<text x="890" y="718">Q1=0 M=0 Q3=0 current=4</text>
+<text x="20" y="743">large_playbook_task_count</text>
+<line x1="285" y1="741" x2="1080" y2="741" class="axis"/>
+<line x1="285.00" y1="741" x2="1080.00" y2="741" class="whisker"/>
+<rect x="479.50" y="732" width="388.99" height="18" class="box"/>
+<line x1="673.99" y1="731" x2="673.99" y2="751" class="median"/>
+<line x1="1062.99" y1="727" x2="1062.99" y2="755" class="current"/>
+<text x="890" y="766">Q1=1 M=3 Q3=7 current=15</text>
+<text x="20" y="791">large_task_loc</text>
+<line x1="285" y1="789" x2="1080" y2="789" class="axis"/>
+<line x1="468.95" y1="789" x2="1080.00" y2="789" class="whisker"/>
+<rect x="712.11" y="780" width="209.24" height="18" class="box"/>
+<line x1="801.40" y1="779" x2="801.40" y2="799" class="median"/>
+<line x1="1020.78" y1="775" x2="1020.78" y2="803" class="current"/>
+<text x="890" y="814">Q1=4 M=6 Q3=10 current=15</text>
+<text x="20" y="839">long_statement_chars</text>
+<line x1="285" y1="837" x2="1080" y2="837" class="axis"/>
+<line x1="393.44" y1="837" x2="989.01" y2="837" class="whisker"/>
+<rect x="737.21" y="828" width="150.16" height="18" class="box"/>
+<line x1="811.82" y1="827" x2="811.82" y2="847" class="median"/>
+<line x1="1080.00" y1="823" x2="1080.00" y2="851" class="current"/>
+<text x="890" y="862">Q1=17 M=28 Q3=46 current=160</text>
+<text x="20" y="887">long_task_name_chars</text>
+<line x1="285" y1="885" x2="1080" y2="885" class="axis"/>
+<line x1="285.00" y1="885" x2="1080.00" y2="885" class="whisker"/>
+<rect x="847.40" y="876" width="130.20" height="18" class="box"/>
+<line x1="915.57" y1="875" x2="915.57" y2="895" class="median"/>
+<line x1="1072.96" y1="871" x2="1072.96" y2="899" class="current"/>
+<text x="890" y="910">Q1=21 M=31 Q3=44 current=75</text>
+<text x="20" y="935">missing_abstraction_leaf_tasks</text>
+<line x1="285" y1="933" x2="1080" y2="933" class="axis"/>
+<line x1="285.00" y1="933" x2="1080.00" y2="933" class="whisker"/>
+<rect x="479.50" y="924" width="388.99" height="18" class="box"/>
+<line x1="673.99" y1="923" x2="673.99" y2="943" class="median"/>
+<line x1="957.85" y1="919" x2="957.85" y2="947" class="current"/>
+<text x="890" y="958">Q1=1 M=3 Q3=7 current=10</text>
+<text x="20" y="983">play_name_special_chars</text>
+<line x1="285" y1="981" x2="1080" y2="981" class="axis"/>
+<line x1="285.00" y1="981" x2="285.00" y2="981" class="whisker"/>
+<rect x="285.00" y="972" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="971" x2="285.00" y2="991" class="median"/>
+<line x1="1080.00" y1="967" x2="1080.00" y2="995" class="current"/>
+<text x="890" y="1006">Q1=0 M=0 Q3=0 current=3</text>
+<text x="20" y="1031">task_name_special_chars</text>
+<line x1="285" y1="1029" x2="1080" y2="1029" class="axis"/>
+<line x1="285.00" y1="1029" x2="285.00" y2="1029" class="whisker"/>
+<rect x="285.00" y="1020" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="1019" x2="285.00" y2="1039" class="median"/>
+<line x1="1080.00" y1="1015" x2="1080.00" y2="1043" class="current"/>
+<text x="890" y="1054">Q1=0 M=0 Q3=0 current=3</text>
+<text x="20" y="1079">undocumented_complex_boolean_ops</text>
+<line x1="285" y1="1077" x2="1080" y2="1077" class="axis"/>
+<line x1="285.00" y1="1077" x2="285.00" y2="1077" class="whisker"/>
+<rect x="285.00" y="1068" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="1067" x2="285.00" y2="1087" class="median"/>
+<line x1="1080.00" y1="1063" x2="1080.00" y2="1091" class="current"/>
+<text x="890" y="1102">Q1=0 M=0 Q3=0 current=4</text>
+<text x="20" y="1127">undocumented_complex_jinja_filters</text>
+<line x1="285" y1="1125" x2="1080" y2="1125" class="axis"/>
+<line x1="285.00" y1="1125" x2="285.00" y2="1125" class="whisker"/>
+<rect x="285.00" y="1116" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="1115" x2="285.00" y2="1135" class="median"/>
+<line x1="1080.00" y1="1111" x2="1080.00" y2="1139" class="current"/>
+<text x="890" y="1150">Q1=0 M=0 Q3=0 current=4</text>
+<text x="20" y="1175">undocumented_complex_nesting_depth</text>
+<line x1="285" y1="1173" x2="1080" y2="1173" class="axis"/>
+<line x1="285.00" y1="1173" x2="285.00" y2="1173" class="whisker"/>
+<rect x="285.00" y="1164" width="1.00" height="18" class="box"/>
+<line x1="285.00" y1="1163" x2="285.00" y2="1183" class="median"/>
+<line x1="1080.00" y1="1159" x2="1080.00" y2="1187" class="current"/>
+<text x="890" y="1198">Q1=0 M=0 Q3=0 current=5</text>
+</svg>

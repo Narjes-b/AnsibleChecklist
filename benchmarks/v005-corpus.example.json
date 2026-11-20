@@ -1,0 +1,14 @@
+{
+  "benchmarks": [
+    {
+      "name": "small-role",
+      "root": "../tests/fixtures",
+      "repeat": 2
+    },
+    {
+      "name": "medium-project",
+      "root": "../tests",
+      "repeat": 1
+    }
+  ]
+}

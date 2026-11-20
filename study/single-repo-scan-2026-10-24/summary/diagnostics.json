@@ -1,0 +1,13 @@
+{
+  "schema_version": 3,
+  "contract": "ansibleguard://schemas/output-v3.json",
+  "kind": "diagnostics",
+  "items": [
+    {
+      "file": ".",
+      "stage": "review-range-detectors",
+      "status": "not-evaluated",
+      "message": "commit HEAD records a parent that is not present in this checkout; diff-dependent review rules (missing-release-note, missing-test-update, untested-override-change, removed-copyright-notice) were not evaluated"
+    }
+  ]
+}

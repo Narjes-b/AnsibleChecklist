@@ -1,0 +1,54 @@
+{
+  "purpose": "development functional replay; not an immutable release evaluation",
+  "pr_count": 21,
+  "pr_exits": {
+    "0": 21
+  },
+  "complete_provider_comparisons": 14,
+  "lint_excluded_comparisons": 7,
+  "counts": {
+    "introduced": 44,
+    "fixed": 7,
+    "moved": 683,
+    "unchanged": 51058,
+    "uncertain": 4
+  },
+  "all_clones_clean": true,
+  "leftover_worktrees": 0,
+  "automated_attribution": {
+    "supported": 50,
+    "needs_review": 1
+  },
+  "human_attribution_review": "pending",
+  "provider_diagnostic_categories": {
+    "CMSgov/bluebutton-web-deployment": {
+      "syntax-check-failure": 66
+    },
+    "CentOS-PaaS-SIG/linchpin": {
+      "provider-startup-or-output-failure": 2
+    },
+    "UtrechtUniversity/yoda": {
+      "invalid-project-lint-configuration": 2
+    },
+    "ansible-lockdown/RHEL7-STIG": {
+      "invalid-project-lint-configuration": 2
+    },
+    "cfpb/aurora": {
+      "syntax-check-failure": 74
+    },
+    "snyssen/infra-snyssen.be": {
+      "syntax-check-failure": 36
+    },
+    "usegalaxy-eu/vgcn": {
+      "syntax-check-failure": 2
+    }
+  },
+  "implementation_stable_during_run": false,
+  "implementation_changed_paths": [
+    "src/ansibleguard/report/llm_evidence.py",
+    "src/ansibleguard/report/llm_explain.py",
+    "src/ansibleguard/report/llm_runtime.py"
+  ],
+  "input_manifest_sha256": "27a0fa35f5ce6c0bd305c7b44e92abec0fe00a27cfc494b3ed6c2ed30df90cca",
+  "timing_limitations": "Concurrent host workloads; not a controlled performance benchmark."
+}

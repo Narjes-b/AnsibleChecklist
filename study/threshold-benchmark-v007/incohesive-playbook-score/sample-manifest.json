@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "LABELING_CODEBOOK.md": "c27e2363b914efbb9ca609902e227b8f6d665bc17cae93fb49b59dc4a9e22e70",
+    "RESULTS.md": "de7b0567483cdf8182d3a29d290b992b0f25f1657fe9f659145784078ea8c165",
+    "agreement-pilot-manifest.json": "29394ab095660afba024ff981e35cdf4403cb4cf2a8e69f3219be1370f6bdb5f",
+    "agreement-pilot.csv": "39b9b77a02c3660f3050108a97b1c0819f6d050e8bfead575c70faaf32ee1fc1",
+    "candidate-sensitivity.csv": "f9b8c4f1af9512e50119ab46240553f95a7b5611e60dfa07cc5cdf8f30319f75",
+    "review-sample.csv": "c54d3e11e4b76ec2f86439dc5a77140dc083772f4353734c9e8aa843cc5ce277"
+  },
+  "metric_id": "cohesion_playbook_score",
+  "population_observations": 2369,
+  "review_sample_sha256": "c54d3e11e4b76ec2f86439dc5a77140dc083772f4353734c9e8aa843cc5ce277",
+  "sample_projects": 131,
+  "sample_rows": 208,
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "working_labels_are_mutable": true
+}

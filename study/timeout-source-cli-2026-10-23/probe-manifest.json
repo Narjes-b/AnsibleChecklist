@@ -1,0 +1,141 @@
+{
+  "purpose": "Complete source-only CLI diagnostic on verified frozen blob mirror; not historical full profile rerun",
+  "status": "completed",
+  "returncode": 0,
+  "seconds": 8.08944183800486,
+  "timeout_seconds": 150,
+  "command": [
+    "/home/aymmzn/Documents/AnsibleChecklist/.venv/bin/ansibleguard",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-gitleaks-repaired-2026-10-23/source",
+    "--profile",
+    "snapshot-source",
+    "--file-manifest",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-context-2026-10-23/worker/classification.csv",
+    "--fail-on",
+    "analysis-error",
+    "-o",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-source-cli-corrected-2026-10-23/scan"
+  ],
+  "source_inventory_sha256": "aec9786f7f3843683ee3fb5d7743e9008b030c61f54f9cafe74c57e9177893bc",
+  "module_docs_disabled": true,
+  "providers_requested": false,
+  "model_calls": 0,
+  "eligible_for_performance_scoring": false,
+  "git_head": "7c10b2eef444efdea1ef7315126107bf900fb95c",
+  "source_sha": "a49d30281d2d3c763ef0d50a7aaddc751a460863",
+  "project": "encapsulate-xyz/cosmos-ansible",
+  "log_sha256": {
+    "stdout.log": "8f43f5f56ac392621923099da1b8e0639dd9121f19697c77cf04076ef981a195",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_blobs_verified_after_run": 417,
+  "source_bytes_verified_after_run": 470774640,
+  "scan_report_status": "completed",
+  "analysis_health": {
+    "status": "completed",
+    "overall_status": "completed",
+    "selected_files": 145,
+    "processed_files": 145,
+    "parsed_files": 145,
+    "parse_failed_files": 0,
+    "internal_detectors": {
+      "completed_files": 145,
+      "partial_files": 0,
+      "failed_files": 0
+    },
+    "internal_status": "completed",
+    "provider_status": "completed",
+    "providers": {
+      "ansible_lint": "not-requested",
+      "gitleaks": "not-requested"
+    },
+    "include_resolutions": {
+      "DYNAMIC": 6,
+      "STATIC_MISSING": 49,
+      "STATIC_RESOLVED": 39,
+      "STATIC_ROLE": 31
+    },
+    "unresolved_dynamic_includes": 6,
+    "unresolved_dynamic_roles": 0,
+    "diagnostic_count": 0,
+    "fault_count": 0,
+    "faults_by_category": {},
+    "faults_by_nature": {},
+    "complete": true
+  },
+  "tools": {
+    "gitleaks": "not-requested",
+    "ansible_lint": "not-requested"
+  },
+  "timings": {
+    "discovery_seconds": 0.018629530008183792,
+    "parse_seconds": 1.4757737809995888,
+    "symbol_index_seconds": 0.25739164400147274,
+    "internal_detectors_seconds": 4.275652924989117,
+    "ansible_lint_seconds": 1.752699608914554e-05,
+    "gitleaks_seconds": 6.267899880185723e-05,
+    "providers_seconds": 0.00010611400648485869,
+    "pre_reporting_total_seconds": 6.301795912004309,
+    "cpu_seconds": 8.064201468,
+    "detectors_seconds": {
+      "become-scope-too-broad": 0.0002171300002373755,
+      "credential-log-exposure": 0.021476119989529252,
+      "deprecated-modules": 0.005814356030896306,
+      "duplicate-mapping-key": 4.704100138042122e-05,
+      "duplicate-task-name": 0.06704128596174996,
+      "duplicated-code": 0.0017059099482139573,
+      "file-kind-family": 0.001189016955322586,
+      "galaxy-meta-incomplete": 0.00023032403260003775,
+      "handler-issues": 0.08702926192199811,
+      "high-coupling": 0.0006279360532062128,
+      "incohesive-play": 0.00030313903698697686,
+      "incohesive-playbook": 0.00038326505455188453,
+      "large-play": 0.012287247023778036,
+      "large-playbook": 0.2824102240265347,
+      "large-task": 0.0709343230118975,
+      "loop-legacy-syntax": 0.0006547520461026579,
+      "missing-bool-filters": 0.0008470750035485253,
+      "missing-checklist-family": 0.08606513406266458,
+      "missing-file-extension": 0.0006205709796631709,
+      "missing-tags": 0.00047282000014092773,
+      "missing-validate-certs": 0.0007309549546334893,
+      "molecule-test-absent": 0.008078708095126785,
+      "overriding-facts": 0.0008870220481185243,
+      "paper-candidate-family": 0.14479390301858075,
+      "partial-checklist-family": 0.29180847499810625,
+      "redirected-module": 0.000369624060112983,
+      "review-checklist-family": 0.03642935697280336,
+      "role-readme-absent": 0.0014907200093148276,
+      "shell-module-migration": 0.0021340990060707554,
+      "unnamed-play": 9.76591109065339e-05,
+      "unnamed-task": 0.0692873410298489,
+      "unnecessary-abstraction": 0.00015693294699303806,
+      "unnecessary-set-fact": 0.008760126002016477,
+      "unused-include-vars": 0.0030647729436168447,
+      "variable-naming-convention": 0.00030247599352151155,
+      "vault-inline-overload": 0.039653262007050216
+    }
+  },
+  "counts": {
+    "files": 145,
+    "raw_findings": 1128,
+    "canonical_occurrences": 1127,
+    "suppressed_external_findings": 0
+  },
+  "scan_artifact_sha256": {
+    "run_metadata.json": "4e3e544e0f4c4a5cd891504e2136fd24e7ed8cc2974dfbf33d47a33e79612d02",
+    "summary/report.json": "ee742cff66661640ec689553d403c975c8263356e8e8739e9cb9ba1629f36d5c",
+    "summary.csv": "2a90ae2ebb1f0b2c4ce641a6fbe2801f8041fbe908bb62a25190747dff253ba7",
+    "diagnostics.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "findings.json": "9811a84c228bf2edd6fdb10883d27e603e60bea5ca58fe4bf03b37a3d47590ff",
+    "findings.csv": "3003028b2935e9637c038a84a21309150120d1f88884b7aa8a88e6f95e75fde4",
+    "findings.sarif": "a77b14364e0862ed3ae2ab344f89e6f98d44049c87d87fe85542c22cd4c7a2a8",
+    "canonical/occurrences.json": "95a31c2b07602b6bf81e927fcf46f55a281fba1ba7e632e2be18c3407a18f545"
+  },
+  "limits": [
+    "Source-only snapshot-source profile; providers and review history excluded",
+    "Ansible module docs disabled; source metrics are current V3",
+    "Fresh Git mirror/source modes differ from archived execution",
+    "Counts are unvalidated tool outputs; historical failure/denominators unchanged"
+  ]
+}

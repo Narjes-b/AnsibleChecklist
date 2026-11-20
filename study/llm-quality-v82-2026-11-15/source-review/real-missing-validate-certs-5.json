@@ -1,0 +1,25 @@
+{
+  "case_id": "real-missing-validate-certs-5",
+  "family": "missing-validate-certs",
+  "occurrence": {
+    "file": "linchpin/provision/roles/aws/tasks/provision_aws_ec2_vpc_nat_gateway.yml",
+    "line": 3,
+    "rule_id": "missing-validate-certs",
+    "message": "validate_certs is set to False in ec2_vpc_subnet_facts — TLS certificate validation is disabled, making the connection vulnerable to MITM attacks."
+  },
+  "intent": null,
+  "snippets": [
+    {
+      "file": "linchpin/provision/roles/aws/tasks/provision_aws_ec2_vpc_nat_gateway.yml",
+      "text": "    2 |   - name: \"set ec2_vpc_subnet facts\"\n    3 |     ec2_vpc_subnet_facts:\n    4 |       filters: \"{{ res_def['subnet_filters'] }}\"\n    5 |       aws_access_key: \"{{ auth_var['aws_access_key_id'] | default(omit) }}\"\n    6 |       aws_secret_key: \"{{  auth_var['aws_secret_access_key'] | default(omit) }}\"\n    7 |       security_token: \"{{ res_def['security_token'] | default(omit) }}\"\n    8 |       region: \"{{ res_def['region'] }}\"\n    9 |       ec2_url: \"{{ res_def['ec2_url'] | default(omit) }}\"\n   10 |       profile: \"{{ res_def['profile'] | default(omit) }}\"\n   11 |       debug_botocore_endpoint_logs: \"{{ debug_mode | default(omit) }}\"\n   12 |       validate_certs: false\n   13 |     register: subnet_facts\n   14 | "
+    },
+    {
+      "file": "linchpin/provision/roles/aws/tasks/provision_aws_ec2_vpc_nat_gateway.yml",
+      "text": "   34 |   when: res_def['subnet_filters'] is defined"
+    }
+  ],
+  "missing": [],
+  "files": {
+    "linchpin/provision/roles/aws/tasks/provision_aws_ec2_vpc_nat_gateway.yml": "- block:\n  - name: \"set ec2_vpc_subnet facts\"\n    ec2_vpc_subnet_facts:\n      filters: \"{{ res_def['subnet_filters'] }}\"\n      aws_access_key: \"{{ auth_var['aws_access_key_id'] | default(omit) }}\"\n      aws_secret_key: \"{{  auth_var['aws_secret_access_key'] | default(omit) }}\"\n      security_token: \"{{ res_def['security_token'] | default(omit) }}\"\n      region: \"{{ res_def['region'] }}\"\n      ec2_url: \"{{ res_def['ec2_url'] | default(omit) }}\"\n      profile: \"{{ res_def['profile'] | default(omit) }}\"\n      debug_botocore_endpoint_logs: \"{{ debug_mode | default(omit) }}\"\n      validate_certs: false\n    register: subnet_facts\n\n  - name: \"set subnet ids\"\n    set_fact:\n      subnet_ids: \"{{ subnet_facts.subnets|map(attribute='id')|list }}\"\n\n  - name: \"fail if there are too many subnet ids\"\n    fail:\n      msg: >-\n        \"Found too many subnets, refine the filters or add tags:\n         {{ subnet_id }}\"\n    when: subnet_ids | length > 1\n\n  - name: \"fail if there are no subnet ids\"\n    fail:\n      msg: \"No subnet was found, refine the filters or add tags\"\n    when: subnet_ids | length == 0\n\n  - name: \"set the subnet id\"\n    set_fact:\n      subnet_id: \"{{ subnet_ids[0] }}\"\n  when: res_def['subnet_filters'] is defined\n\n- name: \"set the subnet id when it is defined in res_defs\"\n  set_fact:\n    subnet_id: res_def['subnet_id']\n  when: res_def['subnet_id'] is defined\n\n- name: \"fail when subnet id is not found\"\n  fail:\n    msg: \"subnet_id is not defined or wasn't found by subnet_filters\"\n  when: subnet_id is undefined\n\n- name: \"Provision/Teardown AWS VPC NAT Gateways\"\n  ec2_vpc_nat_gateway:\n    state: present\n    aws_access_key: \"{{ auth_var['aws_access_key_id'] | default(omit) }}\"\n    aws_secret_key: \"{{  auth_var['aws_secret_access_key'] | default(omit) }}\"\n    region: \"{{ res_def['region'] }}\"\n    security_token: \"{{ res_def['security_token'] | default(omit) }}\"\n    validate_certs: false\n    allocation_id: \"{{ res_def['allocation_id'] | default(omit) }}\"\n    client_token: \"{{ res_def['client_token'] | default(omit) }}\"\n    if_exist_do_not_create: \"{{ res_def['force'] | default(omit) }}\"\n    debug_botocore_endpoint_logs: \"{{ debug_mode | default(omit) }}\"\n    wait_timeout: \"{{ res_def['wait_timeout'] | default(omit) }}\"\n    wait: \"{{ res_def['wait'] | default(omit) }}\"\n    subnet_id: \"{{ subnet_id | default(omit) }}\"\n    ec2_url: \"{{ res_def['ec2_url'] | default(omit) }}\"\n    eip_address: \"{{ res_def['eip_address'] | default(omit) }}\"\n    profile: \"{{ res_def['profile'] | default(omit) }}\"\n  register: res_def_output\n\n- name: \"Append outputitem to topology_outputs\"\n  set_fact:\n    topology_outputs_aws_net: \"{{ topology_outputs_aws_net +\n                                  [res_def_output] }}\"\n  when: res_def_output['changed']\n\n- name: \"Add type to resource\"\n  set_fact:\n    topology_outputs_aws_net: \"{{ topology_outputs_aws_net |\n                                  add_res_data(lookup('vars', 'role_name'),\n                                               res_def['role']) }}\"\n"
+  }
+}

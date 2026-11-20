@@ -1,0 +1,85 @@
+{
+  "purpose": "Agent diagnostic flags, not independent human labels or an exhaustive quality score",
+  "flags": [
+    {
+      "case_id": "development-credential-log-exposure-1",
+      "kind": "contradiction",
+      "agent_observation": "Summary claims no effective no_log protection although the packet records true.",
+      "raw_summary": "The task displays a sensitive variable 'service_password' without effective no_log protection.",
+      "raw_reasoning": "The backend evidence shows that the task is configured with `no_log: true`, but this does not guarantee that the sensitive value will not be logged elsewhere in the execution process. The rule's condition hint indicates that this is a static risk pattern, not proof of a deployed secret leak.",
+      "source_record": "study/runs/icpc2027-development-v43-pass3-20261110/development-credential-log-exposure-1-scoped.json",
+      "source_sha256": "2c6be3f37c21f91587a3f1886852d03b921eb02a71121fa1772c661ba15bc331",
+      "human_review": "pending"
+    },
+    {
+      "case_id": "development-credential-log-exposure-4",
+      "kind": "contradiction",
+      "agent_observation": "Summary ignores effective inherited no_log:true.",
+      "raw_summary": "The task displays a sensitive variable 'service_password' without effective no_log protection.",
+      "raw_reasoning": "The backend evidence shows that the task is configured with no_log: true, but it does not verify if the sensitive value is handled or displayed effectively. The condition is marked as unsupported due to limitations in verifying the flow of sensitive values and custom module redaction.",
+      "source_record": "study/runs/icpc2027-development-v43-pass3-20261110/development-credential-log-exposure-4-scoped.json",
+      "source_sha256": "cbdb0c4e7fe7bce130c35ddda4f4524c8429f00407591400913a7e1ad9f83592",
+      "human_review": "pending"
+    },
+    {
+      "case_id": "development-unguarded-variable-1",
+      "kind": "contradiction",
+      "agent_observation": "Summary denies a visible definition although the packet anchors task vars.",
+      "raw_summary": "The variable 'ServicePort' is used in the task but has no visible definition or runtime input contract.",
+      "raw_reasoning": "The backend evidence shows that the variable 'ServicePort' is not supported because it lacks a visible source definition. The variable is defined within the task, which should make it visible, but this specific case indicates an issue with how the variable's visibility is being interpreted by the backend.",
+      "source_record": "study/runs/icpc2027-development-v43-pass3-20261110/development-unguarded-variable-1-scoped.json",
+      "source_sha256": "7e7dfb517ec8c45681809210c5e8f1b1645133dd80cf43e312e2e445d5b00b6d",
+      "human_review": "pending"
+    },
+    {
+      "case_id": "development-unguarded-variable-4",
+      "kind": "contradiction",
+      "agent_observation": "Summary denies a visible definition although the packet anchors role defaults.",
+      "raw_summary": "The variable 'ServicePort' is used in the task but has no visible definition or runtime input contract.",
+      "raw_reasoning": "The backend evidence shows that the variable 'ServicePort' is not supported because it lacks a visible source definition. The variable is defined within the task, which should make it visible, but this specific case indicates an issue with how the variable's visibility is being evaluated.",
+      "source_record": "study/runs/icpc2027-development-v43-pass3-20261110/development-unguarded-variable-4-scoped.json",
+      "source_sha256": "071199bff776baf3d57cdcf1dc455e28702ecb5780ab9669466be855ab25f3aa",
+      "human_review": "pending"
+    },
+    {
+      "case_id": "development-missing-validate-certs-2",
+      "kind": "overstatement",
+      "agent_observation": "Summary says TLS verification is disabled despite an unresolved variable.",
+      "raw_summary": "The task disables TLS certificate verification using the variable 'verify_tls'. The literal value of 'validate_certs' is not provided in the source code.",
+      "raw_reasoning": "The backend evidence indicates that the literal value of 'validate_certs' is missing, which is required to determine if the condition exists. Without this information, it's impossible to assess whether the task explicitly disables TLS certificate verification.",
+      "source_record": "study/runs/icpc2027-development-v43-pass3-20261110/development-missing-validate-certs-2-scoped.json",
+      "source_sha256": "d95bb88a0069854887478aeea0da52aaeaed0d7a6c43057869666ddc69c8ace2",
+      "human_review": "pending"
+    },
+    {
+      "case_id": "development-missing-validate-certs-5",
+      "kind": "overstatement",
+      "agent_observation": "Summary says TLS verification is disabled despite an unresolved variable.",
+      "raw_summary": "The task disables TLS certificate verification using a variable `{{ verify_tls }}`. The backend evidence does not provide the literal value of this variable or confirm its applicability according to the module's defaults.",
+      "raw_reasoning": "The source code shows that `validate_certs` is set to a variable, but the backend evidence lacks the actual value of `verify_tls` and does not clarify whether this variable aligns with the module's default behavior. Without this information, it's impossible to determine if the condition is supported or unsupported.",
+      "source_record": "study/runs/icpc2027-development-v43-pass3-20261110/development-missing-validate-certs-5-scoped.json",
+      "source_sha256": "e41abe6578df4be876da99b0005d238d20d4b698da4b9dc94d9b7ab4f153fbd1",
+      "human_review": "pending"
+    },
+    {
+      "case_id": "development-challenge-logging-task-protected",
+      "kind": "contradiction",
+      "agent_observation": "Summary claims no effective no_log protection although the task explicitly overrides inherited false with true.",
+      "raw_summary": "The task displays a sensitive variable without effective no_log protection.",
+      "raw_reasoning": "The 'no_log' parameter is set to true, but the backend evidence indicates that this does not guarantee the variable will not be logged. The specific rule for handling sensitive values and custom module redaction is not certified.",
+      "source_record": "study/runs/icpc2027-development-v43-challenges-20261110/development-challenge-logging-task-protected-scoped.json",
+      "source_sha256": "ebea13187aa41540611f0e023a40518ca142f3415420e0c2205eb2fa0593340d",
+      "human_review": "pending"
+    },
+    {
+      "case_id": "development-challenge-variable-local-role",
+      "kind": "contradiction",
+      "agent_observation": "Summary denies a visible definition although the packet anchors a local role default.",
+      "raw_summary": "The variable 'ApiPort' is referenced in the task but has no visible definition or runtime input contract.",
+      "raw_reasoning": "The variable 'ApiPort' is used in the debug message, but it is not defined within the task or any included files. The backend confirms that there is no visible source definition for this variable.",
+      "source_record": "study/runs/icpc2027-development-v43-challenges-20261110/development-challenge-variable-local-role-scoped.json",
+      "source_sha256": "f22155302aa164e04167d017495a4c7903a53657c56b17f4e5a3b6930abe4f5a",
+      "human_review": "pending"
+    }
+  ]
+}

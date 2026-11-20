@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "purpose": "calibration-only probability draw; retrieval and labels pending",
+  "eligible_for_performance_scoring": false,
+  "run_id": "v0071-rerun-2026-10-22",
+  "instrument": "required",
+  "prior_item_reuse": "not filtered; development draw, not a fresh agreement pilot",
+  "seed": "recovery-two-stage-20261023-v1",
+  "python_version": "3.14.8",
+  "design": {
+    "groups_per_stratum": 5,
+    "occurrences_per_group": 2,
+    "census_at": 30
+  },
+  "frame_manifest_sha256": "fc560b03d5f91febfbec7ecb29a5ecfa2d48a2565cc998386a99032f43af939e",
+  "occurrences_sha256": "71be3560cfb8194aa50d63a0ce323737e35ca9aaec0d01004d114b3bd995cecd",
+  "implementation_sha256": "206e945c9d1c3532f16425a9d446265bf05ae5618dc98842a2fa5f144ffd42fb",
+  "grouping": "repository-identity-only; shared-content independence unverified",
+  "group_map_sha256": null,
+  "population_occurrences": 59891,
+  "selected_occurrences": 1266,
+  "strata": 167,
+  "expected_selected_occurrences": 1274.6978302332698,
+  "output_sha256": {
+    "selection-ledger.csv": "23047a3ce9f956434c853c87f8e6af2a3e6a83498dfc6b28aa5fb903e150df7b",
+    "sampling-plan.csv": "93a3683a3e749162d32727d52ba5beb48cfbb9b465d80da18d03ef0f0f553d35"
+  }
+}

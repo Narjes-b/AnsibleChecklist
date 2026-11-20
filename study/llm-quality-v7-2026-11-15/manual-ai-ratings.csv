@@ -1,0 +1,97 @@
+case_id,mode,content_adequate,decisive_citation_support,notes
+real-unguarded-variable-1,window,no,no,Request exceeds the unchanged conservative context budget; unavailable output remains a failure.
+real-unguarded-variable-1,scoped,yes,yes,Observed use and absent runtime contract are accurately distinguished; the cited galaxy_persistent_directory reference supports the bounded unknown judgment.
+evaluation-missing-validate-certs-5,scoped,yes,yes,Runtime verify_tls is explicitly unknown and the value line is cited; no invented value or deployment harm.
+evaluation-missing-validate-certs-5,window,no,no,Reasoning correctly notices verify_tls is unknown but the explicit absent decision denies rather than abstains; fixed unknown reference not matched.
+real-unguarded-variable-0,window,no,no,Request exceeds the unchanged conservative context budget; no answer is available.
+real-unguarded-variable-0,scoped,yes,yes,Limits claim of no visible definition to supplied source and missing runtime contracts; use citation establishes only the observed reference.
+real-credential-log-exposure-5,scoped,yes,yes,Sensitive MySQL argument is cited and missing output/redaction context is admitted; no definitive actual leak claimed.
+real-credential-log-exposure-5,window,no,no,Absence of no_log is treated as supported output exposure for mysql_user although module redaction is unknown; source alone cannot establish effective leakage.
+real-insecure-permissions-4,window,no,no,Misreads unquoted decimal 2750 as sticky/group-write rather than parsed octal 5276; rationale does not establish actual bit policy.
+real-insecure-permissions-4,scoped,no,no,Backend contradiction check rejects prose misinterpreting parsed permission bits; kept unsuccessful.
+evaluation-credential-log-exposure-0,scoped,yes,yes,Direct debug and no_log false are cited together; model limits interpretation to static output-risk pattern.
+evaluation-credential-log-exposure-0,window,yes,no,"Direct debug with explicit no_log false supports the static risk, but the returned citation points only to the message, omitting the decisive false logging control."
+real-missing-validate-certs-4,window,no,no,Claims no explicit setting/module parameter despite supplied literal false; explicit absent state and unknown prose disagree with fixed supported source reference.
+real-missing-validate-certs-4,scoped,yes,yes,Exact literal false certificate setting is correctly explained without asserting active TLS or exploitability; decisive setting line cited.
+real-insecure-permissions-3,scoped,yes,yes,"Actual permission bits are unknown for complete blockinfile task with omitted mode; exact leaf span and destination support bounded omission, not a default mode."
+real-insecure-permissions-3,window,no,no,Omitted mode is treated as evidence of no unsafe bits; actual destination permissions remain unknown and a task-name citation does not establish mode.
+evaluation-unguarded-variable-1,window,no,no,Misses the visible prior unconditional set_fact definition and incorrectly claims ServicePort has no prior definition; cites only the use.
+evaluation-unguarded-variable-1,scoped,yes,yes,Correctly identifies prior scope-visible ServicePort definition at line 3 and use at line 6; both are cited.
+real-missing-validate-certs-0,scoped,yes,yes,Literal YAML no is correctly normalized as disabled validation; setting line supports the bounded static claim.
+real-missing-validate-certs-0,window,yes,yes,Explicit validate_certs no supports disabled validation and is cited; possible security risk is conditional rather than asserted active exploitation.
+evaluation-missing-validate-certs-1,window,no,yes,"Enabled literal is correctly cited and decision matches, but summary incorrectly describes the rule condition as requiring off OR unknown rather than separating unknown evidence from established condition. Whole-prose rubric retained."
+evaluation-missing-validate-certs-1,scoped,yes,yes,Literal true establishes enabled certificate verification and is exactly cited.
+evaluation-credential-log-exposure-5,scoped,yes,yes,Inherited runtime hide_output remains unknown; cites the dynamic parent control and displayed variable without claiming proven leakage.
+evaluation-credential-log-exposure-5,window,no,no,Infers unprotected actual debug output from an unresolved inherited hide_output variable; header-only citation omits decisive dynamic control.
+evaluation-unguarded-variable-5,window,no,no,"Acknowledges an unrelated defaults file cannot establish a runtime input contract, yet chooses absent instead of unknown and summarizes absence of definition; citations do not establish runtime absence."
+evaluation-unguarded-variable-5,scoped,yes,yes,Observed ServicePort reference and missing runtime input contract yield appropriate uncertainty; exact reference cited.
+evaluation-credential-log-exposure-2,scoped,yes,yes,Unknown hide_output is correctly treated as unknown effective output protection; both dynamic control and sensitive reference are cited.
+evaluation-credential-log-exposure-2,window,no,no,"Treats a runtime-valued no_log expression as absent protection and asserts logged sensitive output; cites only the displayed value, not the runtime control."
+evaluation-insecure-permissions-4,window,yes,no,"Correctly applies grouped-directory exception to quoted 2775 and developers group, but only mode is cited; directory state and declared group establishing the exception are omitted from citations."
+evaluation-insecure-permissions-4,scoped,yes,yes,Correctly states quoted octal 2775 has no world-write under grouped-directory exception; exact mode citation supports typed fact.
+evaluation-credential-log-exposure-3,scoped,yes,yes,Inherited literal no_log false and direct sensitive debug reference jointly support a static risk; both decisive lines are cited.
+evaluation-credential-log-exposure-3,window,no,no,"Inverts inherited no_log false as established protection/absent risk, despite describing the false value; debug header does not support this decision."
+real-unguarded-variable-3,window,no,no,Conditional prose admits external inputs but decisive absent assessment disagrees with unknown runtime reference; use alone is not decisive.
+real-unguarded-variable-3,scoped,yes,yes,root_folder reference does not establish runtime definedness; cited use and bounded missing-input conclusion are consistent.
+real-unguarded-variable-2,scoped,yes,yes,jenkins_pimt_path use cited and missing runtime definition/input contract explicitly retained; no proven runtime failure.
+real-unguarded-variable-2,window,no,no,"Conservative context budget prevents a request; retained unavailable output, no truncation or retry."
+evaluation-missing-validate-certs-0,window,yes,yes,Source-only output accurately states literal false disables verification and cites line 7.
+evaluation-missing-validate-certs-0,scoped,yes,yes,Literal false and exact citation support disabled certificate configuration; no unobserved attack claims.
+evaluation-unguarded-variable-3,scoped,yes,yes,Observed use is correctly separated from missing runtime definedness contract; exact use citation.
+evaluation-unguarded-variable-3,window,no,no,"Claims undefined runtime value from no visible definition, while choosing absent; runtime input absence is not established."
+evaluation-insecure-permissions-5,window,no,no,Admits desired_mode unknown but chooses absent and calls the variable undefined; cannot establish missing bit condition or runtime undefinedness.
+evaluation-insecure-permissions-5,scoped,yes,yes,Explicit runtime desired_mode expression does not establish actual bits; dynamic mode and destination are cited and uncertainty retained.
+evaluation-insecure-permissions-0,scoped,yes,yes,Correct octal 0777/decimal 511 and world-write reasoning; exact mode line supports bit condition.
+evaluation-insecure-permissions-0,window,yes,yes,"Correctly identifies world-write in quoted 0777 and cites the decisive mode, without inferring deployment harm."
+evaluation-unguarded-variable-0,window,no,no,Calls a reference without visible definition established unguarded-variable condition despite unknown inventory/extra-vars contract; fails unchanged unknown reference.
+evaluation-unguarded-variable-0,scoped,yes,yes,Distinguishes visible reference and no visible definition from unknown runtime inputs; citation locates actual use.
+evaluation-missing-validate-certs-4,scoped,yes,yes,"Literal true accurately explained as enabled verification, with exact decisive setting reference."
+evaluation-missing-validate-certs-4,window,yes,yes,Correct source-only literal-true interpretation and no missing-validation condition; exact setting cited.
+evaluation-unguarded-variable-2,window,no,no,Cites an unrelated role default and use but selects absent instead of unknown; unsupported scope and fix requirement are not established.
+evaluation-unguarded-variable-2,scoped,yes,yes,"No visible definition/runtime contract is treated as missing evidence, not proof of runtime absence; exact reference cited."
+real-unguarded-variable-5,scoped,yes,yes,Sensitive task variable use is cited; no visible definition does not become assertion of runtime undefinedness.
+real-unguarded-variable-5,window,no,no,Conditional warning about variables is not proof of absent condition; assessment must remain unknown without runtime input contract.
+evaluation-missing-validate-certs-2,window,no,no,Narrative admits runtime verify_tls unavailable but explicit absent decision denies instead of abstaining; mode source does not support an absent condition.
+evaluation-missing-validate-certs-2,scoped,yes,yes,verify_tls runtime value remains unknown; correct abstention and exact runtime expression citation.
+real-missing-validate-certs-2,scoped,yes,yes,Correct static literal false explanation and exact setting citation; no asserted observed runtime attack.
+real-missing-validate-certs-2,window,yes,yes,"Source-only literal false is correctly explained and exactly cited, with runtime-context boundary."
+evaluation-insecure-permissions-1,window,no,no,Incorrectly says 0644 grants no group/other permissions (it grants read); citation points to path instead of decisive mode.
+evaluation-insecure-permissions-1,scoped,yes,yes,Quoted 0644 is correctly parsed as decimal 420 with no world-write/setuid/setgid; exact mode source supports policy.
+real-missing-validate-certs-5,scoped,yes,yes,Correctly identifies configured-off literal false in NAT gateway task and cites that setting; static semantics only.
+real-missing-validate-certs-5,window,no,no,Assesses the preceding ec2_vpc_subnet_facts task instead of the flagged NAT gateway task with explicit validate_certs false; wrong task and wrong citation.
+evaluation-unguarded-variable-4,window,no,no,In-flight request was interrupted by the session stop; resume preserves it as interrupted-unknown without rerunning it.
+evaluation-unguarded-variable-4,scoped,yes,yes,Correctly identifies prior visible ServicePort definition and use; both decisive lines are cited.
+real-credential-log-exposure-1,scoped,no,no,"Larger grammar/guidance exceeds conservative token allowance for this packet; retained unavailable output, no truncation."
+real-credential-log-exposure-1,window,no,no,Absence of direct debug statements does not establish absent output exposure for opaque Jenkins script redaction; reference remains unknown.
+real-credential-log-exposure-0,window,no,no,Asserts effective unprotected API/URL exposure without establishing module/output policy; returned citation is unrelated --config line instead of sensitive API argument.
+real-credential-log-exposure-0,scoped,no,yes,"Cites actual sensitive command argument and honestly withholds judgment for unverified redaction/flow; unchanged AI reference calls this supported, so reference disagreement remains unsuccessful."
+real-credential-log-exposure-2,scoped,no,no,Conservative context budget prevents request with full decisive source packet; kept as failure without source truncation or retry.
+real-credential-log-exposure-2,window,no,no,Reasoning admits unverified script output protection but explicit absent state denies instead of abstaining; header-only citation not decisive for effective exposure.
+real-missing-validate-certs-3,window,yes,yes,Source-only literal false accurately stated with exact citation and runtime-context boundary.
+real-missing-validate-certs-3,scoped,yes,yes,"Literal false accurately explains configured-off validation, supported by exact setting line."
+evaluation-insecure-permissions-3,scoped,yes,yes,Correctly parses quoted 2777 as octal/1535 decimal and identifies established world-write; decisive mode cited.
+evaluation-insecure-permissions-3,window,no,no,Calls world-write unconfirmable despite literal 2777; reasoning fails bit interpretation and contradicts definite present condition.
+real-credential-log-exposure-3,window,no,no,Explains preceding XML-read shell task as direct debug exposure instead of the flagged JDBC-writing task; claims actionability from absent controls without declared intent.
+real-credential-log-exposure-3,scoped,no,no,Conservative prompt budget rejects the complete packet; unavailable output remains failure.
+real-unguarded-variable-4,scoped,yes,yes,Explicitly distinguishes missing inventory/extra-vars contracts from runtime undefinedness; exact root_folder use cited.
+real-unguarded-variable-4,window,no,no,Conditional prose still chooses absent instead of unknown despite admitting external context; use alone does not establish complete runtime input contract.
+real-credential-log-exposure-4,window,no,no,"Inverts absence of explicit controls into unsupported risk, and task-name citation does not establish output protection or encryption."
+real-credential-log-exposure-4,scoped,no,no,"Conservative unknown differs from fixed supported reference; free reasoning additionally calls no_log required protection despite explicitly uncertified custom module redaction, an unsupported necessity claim."
+evaluation-credential-log-exposure-1,scoped,yes,yes,Effective no_log true correctly censors controller output without erasing registered data; both control and message are cited.
+evaluation-credential-log-exposure-1,window,yes,no,"Correctly identifies literal true output protection, but cites only the debug message and omits the decisive no_log true line."
+real-insecure-permissions-1,window,yes,no,"Correctly describes copied-file mode 0777, but cites mode on preceding directory task at line 8 instead of actual copy setting at line 21."
+real-insecure-permissions-1,scoped,yes,yes,Correct 0777 world-write fact for the exact copied-file task; actual mode line 21 and destination are cited.
+evaluation-insecure-permissions-2,scoped,yes,yes,Unknown desired_mode correctly leaves permission bits unknown; exact runtime expression and destination are cited.
+evaluation-insecure-permissions-2,window,no,no,Narrative admits desired_mode unavailable but explicit absent state denies the condition instead of abstaining; citation does not establish safe bits.
+real-insecure-permissions-2,window,no,no,No explicit permission settings does not establish absent insecure bits; decisive state must remain unknown and task-name citation is insufficient.
+real-insecure-permissions-2,scoped,yes,yes,Unknown destination permission bits are not inferred from omitted mode; exact complete leaf span supports omission and boundary.
+real-insecure-permissions-0,scoped,yes,yes,Exact directory mode 0777/decimal511 supports established world-write; actual flagged mode and path cited.
+real-insecure-permissions-0,window,yes,yes,Correct directory world-write fact with exact mode citation; limitation keeps remediation dependent on intended sharing.
+real-missing-validate-certs-1,window,yes,yes,Accurately identifies literal false in URI task and cites both setting and HTTP URL; no asserted active TLS exploit.
+real-missing-validate-certs-1,scoped,yes,yes,Literal false configuration accurately described and exactly cited; no claim of active HTTPS for HTTP URL.
+real-insecure-permissions-5,scoped,yes,yes,Omitted template mode does not establish existing permissions; exact complete leaf span supports omission and missing runtime contract.
+real-insecure-permissions-5,window,no,no,Infers unsafe bits absent from unspecified mode and owner/group values; template header is not decisive evidence of actual permission bits.
+evaluation-missing-validate-certs-3,window,yes,yes,Correct literal false explanation and exact citation; generic security risk remains explicitly conditional.
+evaluation-missing-validate-certs-3,scoped,yes,yes,Literal false correctly explained as configured-off verification; exact line cited without observed harm claim.
+evaluation-credential-log-exposure-4,scoped,yes,yes,Inherited no_log true correctly censors direct debug output without erasing registered/reused values; parent control and message are both cited.
+evaluation-credential-log-exposure-4,window,no,no,"Invents insufficiency of literal inherited no_log true because debug is unguarded; established effective protection contradicts the present-risk verdict, header citation not decisive."

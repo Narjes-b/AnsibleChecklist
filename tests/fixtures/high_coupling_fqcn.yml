@@ -1,0 +1,9 @@
+- name: deploy with FQCN imports
+  hosts: localhost
+  tasks:
+    - ansible.builtin.include_tasks: setup.yml
+    - ansible.builtin.import_tasks: configure.yml
+    - include_role:
+        name: monitoring
+    - ansible.builtin.include_role:
+        name: logging

@@ -1,0 +1,112 @@
+sample_kind,sampling_seed,sampling_stratum,project,commit_sha,file,line,occurrence_id,concept_id,rule_id,resolution_status,uncertainty_sources,variable,classification_correct,defect_label,root_cause_label,suppression_safe,runtime_failure_if_executed,actionable_without_more_context,evidence_needed,reviewer_confidence,matched_detector_occurrence,definition_site_count,definition_sites,argument_contract,source_context,rationale,reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,defaults,NationalGenomicsInfrastructure/miarka-provision,52daa7027450753c62cb0f38a2b5ef546cae7ede,roles/tarzan/defaults/main.yml,8,,manual-source-review,ansibleguard/unguarded-variable,MISSED_SOURCE_CANDIDATE,[],tarzan_proj_dir,not-applicable,TP,internal_missing,not-applicable,yes,yes,none,medium,no,0,[],none,"1: ---
+2: # Versions
+3: tarzan_kong_version: ""3.9.1""
+4: 
+5: # Directories
+6: tarzan_root_dir: ""{{ sw_path }}/tarzan""
+7: tarzan_conf_dir: ""{{ ngi_pipeline_conf }}/tarzan""
+8: tarzan_log_dir:  ""{{ tarzan_proj_dir }}/logs""
+9: 
+10: # Config files
+11: tarzan_server_conf_file: ""{{ tarzan_conf_dir }}/kong.conf""
+12: tarzan_cert_conf_file: ""{{ tarzan_conf_dir }}/tarzan_cert_config.txt""
+13: tarzan_entity_conf_file: ""{{ tarzan_conf_dir }}/kong.yml""
+14: tarzan_singularity_def_file: ""{{ tarzan_conf_dir }}/kong.def""
+15: 
+16: # Host name (used in cert config)",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/arkcase-eureka/tasks/main.yml,7,d67e1f25971702ef72f08cbe8b6894ce2f1fe55949b5958ebf0332b138fc070d,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",arkcase_portal_extension,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - name: deploy arkcase-eureka
+2:   include_tasks: ""{{ role_path }}/../arkcase-microservice/tasks/deploy_microservice.yml""
+3:   vars:
+4:     microservice:
+5:       name: arkcase-eureka
+6:       version: ""{{ arkcase_eureka_version | default(arkcase_version) }}""
+7:       java_opts: ""-Dserver.port=8761 -Dmanagement.server.port=8761 -Xmx512M -Dspring.config.import=configserver:https://{{ config_server_host | default(internal_host) }}/config -Dspring.profiles.include={{ arkcase_portal_extension ~ ',' if arkcase_portal_extension != '' else '' }}server,runtime -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStorePassword={{ java_trust_store_pass }} -Djavax.net.ssl.keyStore={{ java_key_store }} -Djavax.net.ssl.trustStore={{ java_trust_store}} -Djavax.net.ssl.keyStorePassword={{ java_key_store_pass }}""",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/arkcase-eureka/tasks/main.yml,7,29a464305799260113895c7182a6a7a0e21204e3f848ad36a21d3956ae86c3c6,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",java_key_store,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - name: deploy arkcase-eureka
+2:   include_tasks: ""{{ role_path }}/../arkcase-microservice/tasks/deploy_microservice.yml""
+3:   vars:
+4:     microservice:
+5:       name: arkcase-eureka
+6:       version: ""{{ arkcase_eureka_version | default(arkcase_version) }}""
+7:       java_opts: ""-Dserver.port=8761 -Dmanagement.server.port=8761 -Xmx512M -Dspring.config.import=configserver:https://{{ config_server_host | default(internal_host) }}/config -Dspring.profiles.include={{ arkcase_portal_extension ~ ',' if arkcase_portal_extension != '' else '' }}server,runtime -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStorePassword={{ java_trust_store_pass }} -Djavax.net.ssl.keyStore={{ java_key_store }} -Djavax.net.ssl.trustStore={{ java_trust_store}} -Djavax.net.ssl.keyStorePassword={{ java_key_store_pass }}""",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/arkcase-eureka/tasks/main.yml,7,d833e4ab981989cabf211dc727519ea40b33e8b2109c467c06b6e966e1148d23,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",java_key_store_pass,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - name: deploy arkcase-eureka
+2:   include_tasks: ""{{ role_path }}/../arkcase-microservice/tasks/deploy_microservice.yml""
+3:   vars:
+4:     microservice:
+5:       name: arkcase-eureka
+6:       version: ""{{ arkcase_eureka_version | default(arkcase_version) }}""
+7:       java_opts: ""-Dserver.port=8761 -Dmanagement.server.port=8761 -Xmx512M -Dspring.config.import=configserver:https://{{ config_server_host | default(internal_host) }}/config -Dspring.profiles.include={{ arkcase_portal_extension ~ ',' if arkcase_portal_extension != '' else '' }}server,runtime -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStorePassword={{ java_trust_store_pass }} -Djavax.net.ssl.keyStore={{ java_key_store }} -Djavax.net.ssl.trustStore={{ java_trust_store}} -Djavax.net.ssl.keyStorePassword={{ java_key_store_pass }}""",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/arkcase-eureka/tasks/main.yml,7,fb05d783fec5dde9213dfde037069a10b9149e5cbc8a9d83af4cb866e3fb21c4,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",java_trust_store,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - name: deploy arkcase-eureka
+2:   include_tasks: ""{{ role_path }}/../arkcase-microservice/tasks/deploy_microservice.yml""
+3:   vars:
+4:     microservice:
+5:       name: arkcase-eureka
+6:       version: ""{{ arkcase_eureka_version | default(arkcase_version) }}""
+7:       java_opts: ""-Dserver.port=8761 -Dmanagement.server.port=8761 -Xmx512M -Dspring.config.import=configserver:https://{{ config_server_host | default(internal_host) }}/config -Dspring.profiles.include={{ arkcase_portal_extension ~ ',' if arkcase_portal_extension != '' else '' }}server,runtime -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStorePassword={{ java_trust_store_pass }} -Djavax.net.ssl.keyStore={{ java_key_store }} -Djavax.net.ssl.trustStore={{ java_trust_store}} -Djavax.net.ssl.keyStorePassword={{ java_key_store_pass }}""",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/arkcase-eureka/tasks/main.yml,7,10bfe1256eade15c8e7dd28b168920deff9de635f218d15640b5abbdafff2dc2,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",java_trust_store_pass,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - name: deploy arkcase-eureka
+2:   include_tasks: ""{{ role_path }}/../arkcase-microservice/tasks/deploy_microservice.yml""
+3:   vars:
+4:     microservice:
+5:       name: arkcase-eureka
+6:       version: ""{{ arkcase_eureka_version | default(arkcase_version) }}""
+7:       java_opts: ""-Dserver.port=8761 -Dmanagement.server.port=8761 -Xmx512M -Dspring.config.import=configserver:https://{{ config_server_host | default(internal_host) }}/config -Dspring.profiles.include={{ arkcase_portal_extension ~ ',' if arkcase_portal_extension != '' else '' }}server,runtime -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStorePassword={{ java_trust_store_pass }} -Djavax.net.ssl.keyStore={{ java_key_store }} -Djavax.net.ssl.trustStore={{ java_trust_store}} -Djavax.net.ssl.keyStorePassword={{ java_key_store_pass }}""",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/alfresco-ce/tasks/alfresco_downloads.yml,6,480e756558b46b1a3ce3ef17617d4acad00e81a08b21e97d8a18fcf1ad05f21e,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",alfresco_build_number,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - include_tasks: ""{{ role_path }}/../common/tasks/download.yml""
+2:   loop:
+3:     - name: Alfresco Content Services CE
+4:       dest: ""{{ root_folder }}/install/alfresco/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip""
+5:       owner: alfresco
+6:       url: https://download.alfresco.com/cloudfront/release/community/{{ alfresco_release_name }}{{ alfresco_build_number }}/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip
+7:     - name: Alfresco Records Management CE
+8:       dest: ""{{ root_folder }}/install/alfresco/alfresco-rm-community-{{ alfresco_records_management_version }}.zip""
+9:       owner: alfresco
+10:       url: https://download.alfresco.com/cloudfront/release/community/RM/{{ alfresco_records_management_version }}/alfresco-community.zip
+11: 
+12:       ",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/alfresco-ce/tasks/alfresco_downloads.yml,4,7bd4d75cbb66016556ff5042337ab30f6abb963d39f50c6aca8a10bb2929a587,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",alfresco_content_services_version,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - include_tasks: ""{{ role_path }}/../common/tasks/download.yml""
+2:   loop:
+3:     - name: Alfresco Content Services CE
+4:       dest: ""{{ root_folder }}/install/alfresco/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip""
+5:       owner: alfresco
+6:       url: https://download.alfresco.com/cloudfront/release/community/{{ alfresco_release_name }}{{ alfresco_build_number }}/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip
+7:     - name: Alfresco Records Management CE
+8:       dest: ""{{ root_folder }}/install/alfresco/alfresco-rm-community-{{ alfresco_records_management_version }}.zip""
+9:       owner: alfresco
+10:       url: https://download.alfresco.com/cloudfront/release/community/RM/{{ alfresco_records_management_version }}/alfresco-community.zip
+11: 
+12:       ",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/alfresco-ce/tasks/alfresco_downloads.yml,8,2afe17437d64b0f7b890d6fd45612cf1c708ff2c3bbe850bd1781049b0d9931d,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",alfresco_records_management_version,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - include_tasks: ""{{ role_path }}/../common/tasks/download.yml""
+2:   loop:
+3:     - name: Alfresco Content Services CE
+4:       dest: ""{{ root_folder }}/install/alfresco/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip""
+5:       owner: alfresco
+6:       url: https://download.alfresco.com/cloudfront/release/community/{{ alfresco_release_name }}{{ alfresco_build_number }}/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip
+7:     - name: Alfresco Records Management CE
+8:       dest: ""{{ root_folder }}/install/alfresco/alfresco-rm-community-{{ alfresco_records_management_version }}.zip""
+9:       owner: alfresco
+10:       url: https://download.alfresco.com/cloudfront/release/community/RM/{{ alfresco_records_management_version }}/alfresco-community.zip
+11: 
+12:       ",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/alfresco-ce/tasks/alfresco_downloads.yml,6,82b53934ecf148406269fc00df3514d4534511bc6a992715c396d54a774a8440,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",alfresco_release_name,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - include_tasks: ""{{ role_path }}/../common/tasks/download.yml""
+2:   loop:
+3:     - name: Alfresco Content Services CE
+4:       dest: ""{{ root_folder }}/install/alfresco/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip""
+5:       owner: alfresco
+6:       url: https://download.alfresco.com/cloudfront/release/community/{{ alfresco_release_name }}{{ alfresco_build_number }}/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip
+7:     - name: Alfresco Records Management CE
+8:       dest: ""{{ root_folder }}/install/alfresco/alfresco-rm-community-{{ alfresco_records_management_version }}.zip""
+9:       owner: alfresco
+10:       url: https://download.alfresco.com/cloudfront/release/community/RM/{{ alfresco_records_management_version }}/alfresco-community.zip
+11: 
+12:       ",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer
+source-first-issue,v007-variable-resolution-primary-20260917,import-only,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/alfresco-ce/tasks/alfresco_downloads.yml,4,7b9b55940425f6a78aa0e201b3feb75ed109febc8bc8acd50e8867109ba1ffcf,undeclared-input-contract,ansibleguard/unguarded-variable,EXTERNAL_INPUT_UNCERTAIN,"[""possible_required_role_input""]",root_folder,yes,TP,internal_missing,not-applicable,yes,yes,none,medium,yes,0,[],none,"1: - include_tasks: ""{{ role_path }}/../common/tasks/download.yml""
+2:   loop:
+3:     - name: Alfresco Content Services CE
+4:       dest: ""{{ root_folder }}/install/alfresco/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip""
+5:       owner: alfresco
+6:       url: https://download.alfresco.com/cloudfront/release/community/{{ alfresco_release_name }}{{ alfresco_build_number }}/alfresco-content-services-community-distribution-{{ alfresco_content_services_version }}.zip
+7:     - name: Alfresco Records Management CE
+8:       dest: ""{{ root_folder }}/install/alfresco/alfresco-rm-community-{{ alfresco_records_management_version }}.zip""
+9:       owner: alfresco
+10:       url: https://download.alfresco.com/cloudfront/release/community/RM/{{ alfresco_records_management_version }}/alfresco-community.zip
+11: 
+12:       ",Source-first review found an unguarded internal-looking variable with no YAML definition or required argument contract; detector matching was performed only after identification.,codex-agent-source-reviewer

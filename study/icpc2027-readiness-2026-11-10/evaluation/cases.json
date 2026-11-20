@@ -1,0 +1,1223 @@
+{
+  "version": 1,
+  "purpose": "bounded tool-case evaluation; no population accuracy claim",
+  "development": [
+    {
+      "case_id": "development-missing-validate-certs-0",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch development_0\n  ansible.builtin.get_url:\n    url: https://example.invalid/development_0\n    dest: /tmp/development_0\n    mode: '0644'\n    validate_certs: false\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-1",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch development_1\n  ansible.builtin.get_url:\n    url: https://example.invalid/development_1\n    dest: /tmp/development_1\n    mode: '0644'\n    validate_certs: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-2",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch development_2\n  ansible.builtin.get_url:\n    url: https://example.invalid/development_2\n    dest: /tmp/development_2\n    mode: '0644'\n    validate_certs: '{{ verify_tls }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-3",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch development_3\n  ansible.builtin.get_url:\n    url: https://example.invalid/development_3\n    dest: /tmp/development_3\n    mode: '0644'\n    validate_certs: false\n  tags:\n    - diagnostic_0\n    - diagnostic_1\n    - diagnostic_2\n    - diagnostic_3\n    - diagnostic_4\n    - diagnostic_5\n    - diagnostic_6\n    - diagnostic_7\n    - diagnostic_8\n    - diagnostic_9\n    - diagnostic_10\n    - diagnostic_11\n    - diagnostic_12\n    - diagnostic_13\n    - diagnostic_14\n    - diagnostic_15\n    - diagnostic_16\n    - diagnostic_17\n    - diagnostic_18\n    - diagnostic_19\n  when: feature_enabled\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-4",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch development_4\n  ansible.builtin.get_url:\n    url: https://example.invalid/development_4\n    dest: /tmp/development_4\n    mode: '0644'\n    validate_certs: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-5",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch development_5\n  ansible.builtin.get_url:\n    url: https://example.invalid/development_5\n    dest: /tmp/development_5\n    mode: '0644'\n    validate_certs: '{{ verify_tls }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-insecure-permissions-0",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage development_0\n  ansible.builtin.file:\n    path: /srv/development_0\n    state: touch\n    group: developers\n    mode: '0777'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-insecure-permissions-1",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage development_1\n  ansible.builtin.file:\n    path: /srv/development_1\n    state: touch\n    group: developers\n    mode: '0644'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-insecure-permissions-2",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage development_2\n  ansible.builtin.file:\n    path: /srv/development_2\n    state: touch\n    group: developers\n    mode: '{{ desired_mode }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-insecure-permissions-3",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage development_3\n  ansible.builtin.file:\n    path: /srv/development_3\n    state: directory\n    group: developers\n    mode: '2777'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-insecure-permissions-4",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage development_4\n  ansible.builtin.file:\n    path: /srv/development_4\n    state: directory\n    group: developers\n    mode: '2775'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-insecure-permissions-5",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage development_5\n  ansible.builtin.file:\n    path: /srv/development_5\n    state: directory\n    group: developers\n    mode: '{{ desired_mode }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-0",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show development_0\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: false\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-1",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show development_1\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-2",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show development_2\n  ansible.builtin.debug:\n    msg: '{{ service_password }}'\n  no_log: '{{ hide_output }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-3",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Inherited logging control\n  no_log: false\n  block:\n    - name: Show development_3\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-4",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Inherited logging control\n  no_log: true\n  block:\n    - name: Show development_4\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-5",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Inherited logging control\n  no_log: '{{ hide_output }}'\n  block:\n    - name: Show development_5\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-unguarded-variable-0",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show development_0\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-unguarded-variable-1",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show development_1\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n  vars:\n    ServicePort: 8080\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-unguarded-variable-2",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "roles/unrelated/defaults/main.yml": "ServicePort: 9090\n",
+        "tasks.yml": "- name: Show development_2\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-unguarded-variable-3",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show development_3\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-unguarded-variable-4",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show development_4\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n  vars:\n    ServicePort: 8080\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-unguarded-variable-5",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "roles/unrelated/defaults/main.yml": "ServicePort: 9090\n",
+        "tasks.yml": "- name: Show development_5\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    }
+  ],
+  "evaluation": [
+    {
+      "case_id": "evaluation-missing-validate-certs-0",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch evaluation_0\n  action:\n    module: ansible.builtin.get_url\n    url: https://example.invalid/evaluation_0\n    dest: /tmp/evaluation_0\n    mode: '0644'\n    validate_certs: false\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-1",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch evaluation_1\n  action:\n    module: ansible.builtin.get_url\n    url: https://example.invalid/evaluation_1\n    dest: /tmp/evaluation_1\n    mode: '0644'\n    validate_certs: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-2",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch evaluation_2\n  action:\n    module: ansible.builtin.get_url\n    url: https://example.invalid/evaluation_2\n    dest: /tmp/evaluation_2\n    mode: '0644'\n    validate_certs: '{{ verify_tls }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-3",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch evaluation_3\n  action:\n    module: ansible.builtin.get_url\n    url: https://example.invalid/evaluation_3\n    dest: /tmp/evaluation_3\n    mode: '0644'\n    validate_certs: false\n  tags:\n    - diagnostic_0\n    - diagnostic_1\n    - diagnostic_2\n    - diagnostic_3\n    - diagnostic_4\n    - diagnostic_5\n    - diagnostic_6\n    - diagnostic_7\n    - diagnostic_8\n    - diagnostic_9\n    - diagnostic_10\n    - diagnostic_11\n    - diagnostic_12\n    - diagnostic_13\n    - diagnostic_14\n    - diagnostic_15\n    - diagnostic_16\n    - diagnostic_17\n    - diagnostic_18\n    - diagnostic_19\n  when: feature_enabled\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-4",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch evaluation_4\n  action:\n    module: ansible.builtin.get_url\n    url: https://example.invalid/evaluation_4\n    dest: /tmp/evaluation_4\n    mode: '0644'\n    validate_certs: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-5",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Fetch evaluation_5\n  action:\n    module: ansible.builtin.get_url\n    url: https://example.invalid/evaluation_5\n    dest: /tmp/evaluation_5\n    mode: '0644'\n    validate_certs: '{{ verify_tls }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 1,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-0",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Permission wrapper\n  tags: [permissions]\n  block:\n    - name: Manage evaluation_0\n      ansible.builtin.file:\n        path: /srv/evaluation_0\n        state: touch\n        group: developers\n        mode: '0777'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-1",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Permission wrapper\n  tags: [permissions]\n  block:\n    - name: Manage evaluation_1\n      ansible.builtin.file:\n        path: /srv/evaluation_1\n        state: touch\n        group: developers\n        mode: '0644'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-2",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Permission wrapper\n  tags: [permissions]\n  block:\n    - name: Manage evaluation_2\n      ansible.builtin.file:\n        path: /srv/evaluation_2\n        state: touch\n        group: developers\n        mode: '{{ desired_mode }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-3",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Permission wrapper\n  tags: [permissions]\n  block:\n    - name: Manage evaluation_3\n      ansible.builtin.file:\n        path: /srv/evaluation_3\n        state: directory\n        group: developers\n        mode: '2777'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-4",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Permission wrapper\n  tags: [permissions]\n  block:\n    - name: Manage evaluation_4\n      ansible.builtin.file:\n        path: /srv/evaluation_4\n        state: directory\n        group: developers\n        mode: '2775'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-5",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Permission wrapper\n  tags: [permissions]\n  block:\n    - name: Manage evaluation_5\n      ansible.builtin.file:\n        path: /srv/evaluation_5\n        state: directory\n        group: developers\n        mode: '{{ desired_mode }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-0",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Logging wrapper\n  tags: [logging]\n  block:\n    - name: Show evaluation_0\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n      no_log: false\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-1",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Logging wrapper\n  tags: [logging]\n  block:\n    - name: Show evaluation_1\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n      no_log: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-2",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Logging wrapper\n  tags: [logging]\n  block:\n    - name: Show evaluation_2\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n      no_log: '{{ hide_output }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-3",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Inherited logging control\n  no_log: false\n  block:\n    - name: Show evaluation_3\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-4",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Inherited logging control\n  no_log: true\n  block:\n    - name: Show evaluation_4\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-5",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Inherited logging control\n  no_log: '{{ hide_output }}'\n  block:\n    - name: Show evaluation_5\n      ansible.builtin.debug:\n        msg: '{{ service_password }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 4,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-0",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show evaluation_0\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-1",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Produce runtime value\n  ansible.builtin.set_fact:\n    ServicePort: 8080\n- name: Show evaluation_1\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 6,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-2",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "roles/unrelated/defaults/main.yml": "ServicePort: 9090\n",
+        "tasks.yml": "- name: Show evaluation_2\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-3",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Show evaluation_3\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-4",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Produce runtime value\n  ansible.builtin.set_fact:\n    ServicePort: 8080\n- name: Show evaluation_4\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 6,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-5",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "roles/unrelated/defaults/main.yml": "ServicePort: 9090\n",
+        "tasks.yml": "- name: Show evaluation_5\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "semantic_subject": "variable:ServicePort",
+        "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-unguarded-variable-0",
+      "family": "unguarded-variable",
+      "kind": "real",
+      "repository": "ARTbio/GalaxyKickStart",
+      "sha": "d04bc40174594a2996a23a1c1b07155de4a694e4",
+      "source_sha256": "cc0713be3addf7fa857b4183071006c28e898f086d6871417883ff1aa2674005",
+      "occurrence": {
+        "file": "roles/GKS-to-slurm_master_node/tasks/set_nfs_sharing.yml",
+        "line": 14,
+        "rule_id": "unguarded-variable",
+        "message": "Internal variable 'galaxy_persistent_directory' has no visible definition, runtime producer, default, or defined guard.",
+        "semantic_subject": "variable:galaxy_persistent_directory"
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-unguarded-variable-1",
+      "family": "unguarded-variable",
+      "kind": "real",
+      "repository": "ARTbio/GalaxyKickStart",
+      "sha": "d04bc40174594a2996a23a1c1b07155de4a694e4",
+      "source_sha256": "cc0713be3addf7fa857b4183071006c28e898f086d6871417883ff1aa2674005",
+      "occurrence": {
+        "file": "roles/GKS-to-slurm_master_node/tasks/set_nfs_sharing.yml",
+        "line": 15,
+        "rule_id": "unguarded-variable",
+        "message": "Internal variable 'galaxy_persistent_directory' has no visible definition, runtime producer, default, or defined guard.",
+        "semantic_subject": "variable:galaxy_persistent_directory"
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-credential-log-exposure-0",
+      "family": "credential-log-exposure",
+      "kind": "real",
+      "repository": "ARTbio/GalaxyKickStart",
+      "sha": "d04bc40174594a2996a23a1c1b07155de4a694e4",
+      "source_sha256": "e4264fe7283d7f6949b6702e31e290d27289151fb433d9c449095197cafcb673",
+      "occurrence": {
+        "file": "roles/run_data_manager_role/tasks/gks_install_data_managers.yml",
+        "line": 21,
+        "rule_id": "credential-log-exposure",
+        "message": "Task 'Install Data-managers and Genomes' handles a sensitive value but does not have a proven no_log: true (sensitive variable reference(s): galaxy_tools_api_key) \u2014 secrets may leak in logs."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-credential-log-exposure-1",
+      "family": "credential-log-exposure",
+      "kind": "real",
+      "repository": "Ableton/ansible-role-jenkins-jcasc",
+      "sha": "a62ef61b70877018fb6763b17f7d29a771fbc597",
+      "source_sha256": "3399e8552653cd690b28d7bd6db2d0d8715163ee9511b4d070230fe25b26a507",
+      "occurrence": {
+        "file": "tasks/configure-jenkins-users.yml",
+        "line": 2,
+        "rule_id": "credential-log-exposure",
+        "message": "Task 'Ensure Jenkins users exist' handles a sensitive value but does not have a proven no_log: true (sensitive argument(s): community.general.jenkins_script.password; sensitive variable reference(s): jenkins_web_password, password) \u2014 secrets may leak in logs."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-credential-log-exposure-2",
+      "family": "credential-log-exposure",
+      "kind": "real",
+      "repository": "Ableton/ansible-role-jenkins-jcasc",
+      "sha": "a62ef61b70877018fb6763b17f7d29a771fbc597",
+      "source_sha256": "3399e8552653cd690b28d7bd6db2d0d8715163ee9511b4d070230fe25b26a507",
+      "occurrence": {
+        "file": "tasks/configure-jenkins-users.yml",
+        "line": 31,
+        "rule_id": "credential-log-exposure",
+        "message": "Task 'Set API tokens for Jenkins users' handles a sensitive value but does not have a proven no_log: true (sensitive argument(s): community.general.jenkins_script.password; sensitive variable reference(s): api_token, jenkins_token_name, jenkins_web_password) \u2014 secrets may leak in logs."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-insecure-permissions-0",
+      "family": "insecure-permissions",
+      "kind": "real",
+      "repository": "Ableton/ansible-role-jenkins-jcasc",
+      "sha": "a62ef61b70877018fb6763b17f7d29a771fbc597",
+      "source_sha256": "e34c7131fa3d51d53a746a14f481627e979ef8369c37d6d73194926116158f95",
+      "occurrence": {
+        "file": "tasks/configure-jobs.yml",
+        "line": 2,
+        "rule_id": "insecure-permissions",
+        "message": "World-writable directory has no sticky bit, allowing users to remove or replace each other's entries."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-insecure-permissions-1",
+      "family": "insecure-permissions",
+      "kind": "real",
+      "repository": "Ableton/ansible-role-jenkins-jcasc",
+      "sha": "a62ef61b70877018fb6763b17f7d29a771fbc597",
+      "source_sha256": "e34c7131fa3d51d53a746a14f481627e979ef8369c37d6d73194926116158f95",
+      "occurrence": {
+        "file": "tasks/configure-jobs.yml",
+        "line": 14,
+        "rule_id": "insecure-permissions",
+        "message": "World-writable permissions grant write access to other users."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-unguarded-variable-2",
+      "family": "unguarded-variable",
+      "kind": "real",
+      "repository": "Ableton/ansible-role-jenkins-jcasc",
+      "sha": "a62ef61b70877018fb6763b17f7d29a771fbc597",
+      "source_sha256": "a64572e8194fd82257c627c3bf34638f443315f5957876e7663db26ffec2369f",
+      "occurrence": {
+        "file": "tasks/install-plugins.yml",
+        "line": 48,
+        "rule_id": "unguarded-variable",
+        "message": "Internal variable 'jenkins_pimt_path' has no visible definition, runtime producer, default, or defined guard.",
+        "semantic_subject": "variable:jenkins_pimt_path"
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-insecure-permissions-2",
+      "family": "insecure-permissions",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "bb8e0e27136c70a9735cad62ecdb8b8ae7eb3c742c7730c500c9c7739ec2e62a",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/activemq/tasks/main.yml",
+        "line": 260,
+        "rule_id": "insecure-permissions",
+        "message": "Sensitive file written without explicit mode; defaults to system umask (typically 0644, world-readable)."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-insecure-permissions-3",
+      "family": "insecure-permissions",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "bb8e0e27136c70a9735cad62ecdb8b8ae7eb3c742c7730c500c9c7739ec2e62a",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/activemq/tasks/main.yml",
+        "line": 341,
+        "rule_id": "insecure-permissions",
+        "message": "Sensitive file written without explicit mode; defaults to system umask (typically 0644, world-readable)."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-credential-log-exposure-3",
+      "family": "credential-log-exposure",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "bb8e0e27136c70a9735cad62ecdb8b8ae7eb3c742c7730c500c9c7739ec2e62a",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/activemq/tasks/main.yml",
+        "line": 188,
+        "rule_id": "credential-log-exposure",
+        "message": "Task 'add jdbc data source, if not already added' handles a sensitive value but does not have a proven no_log: true (sensitive variable reference(s): default_database_password) \u2014 secrets may leak in logs."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-credential-log-exposure-4",
+      "family": "credential-log-exposure",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "bb8e0e27136c70a9735cad62ecdb8b8ae7eb3c742c7730c500c9c7739ec2e62a",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/activemq/tasks/main.yml",
+        "line": 260,
+        "rule_id": "credential-log-exposure",
+        "message": "Task 'put authentication credentials in credentials.properties file' handles a sensitive value but does not have a proven no_log: true (sensitive variable reference(s): activemq_password) \u2014 secrets may leak in logs."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-unguarded-variable-3",
+      "family": "unguarded-variable",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "bb8e0e27136c70a9735cad62ecdb8b8ae7eb3c742c7730c500c9c7739ec2e62a",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/activemq/tasks/main.yml",
+        "line": 23,
+        "rule_id": "unguarded-variable",
+        "message": "Internal variable 'root_folder' has no visible definition, runtime producer, default, or defined guard.",
+        "semantic_subject": "variable:root_folder"
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-unguarded-variable-4",
+      "family": "unguarded-variable",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "bb8e0e27136c70a9735cad62ecdb8b8ae7eb3c742c7730c500c9c7739ec2e62a",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/activemq/tasks/main.yml",
+        "line": 24,
+        "rule_id": "unguarded-variable",
+        "message": "Internal variable 'root_folder' has no visible definition, runtime producer, default, or defined guard.",
+        "semantic_subject": "variable:root_folder"
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-missing-validate-certs-0",
+      "family": "missing-validate-certs",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "017ac3f1091cc8a74c20edd4c6e5ba1a5d64de7b6b7b36daba6138b32e9c6f61",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/alfresco-change-password/tasks/main.yml",
+        "line": 16,
+        "rule_id": "missing-validate-certs",
+        "message": "validate_certs is set to 'no' in uri \u2014 TLS certificate validation is disabled, making the connection vulnerable to MITM attacks."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-missing-validate-certs-1",
+      "family": "missing-validate-certs",
+      "kind": "real",
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "source_sha256": "412e847372a4ab03e65e06f7769c5dd999b45b74039756af81cbd746f194b6b1",
+      "occurrence": {
+        "file": "vagrant/provisioning/roles/alfresco-search-services/tasks/main.yml",
+        "line": 169,
+        "rule_id": "missing-validate-certs",
+        "message": "validate_certs is set to False in uri \u2014 TLS certificate validation is disabled, making the connection vulnerable to MITM attacks."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-credential-log-exposure-5",
+      "family": "credential-log-exposure",
+      "kind": "real",
+      "repository": "AtlasOfLivingAustralia/ala-install",
+      "sha": "aa2070a840f5debc3b78095c31b58004d04d2063",
+      "source_sha256": "bd07d48f969611b3ff3a4e55575918aef1a027c1fa0392f553b081db2394b856",
+      "occurrence": {
+        "file": "ansible/archived/roles/ozatlas-proxy/tasks/main.yml",
+        "line": 11,
+        "rule_id": "credential-log-exposure",
+        "message": "Task 'create DB user' handles a sensitive value but does not have a proven no_log: true (sensitive variable reference(s): ozatlas_proxy_db_password) \u2014 secrets may leak in logs."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-unguarded-variable-5",
+      "family": "unguarded-variable",
+      "kind": "real",
+      "repository": "AtlasOfLivingAustralia/ala-install",
+      "sha": "aa2070a840f5debc3b78095c31b58004d04d2063",
+      "source_sha256": "bd07d48f969611b3ff3a4e55575918aef1a027c1fa0392f553b081db2394b856",
+      "occurrence": {
+        "file": "ansible/archived/roles/ozatlas-proxy/tasks/main.yml",
+        "line": 12,
+        "rule_id": "unguarded-variable",
+        "message": "Internal variable 'ozatlas_proxy_db_username' has no visible definition, runtime producer, default, or defined guard.",
+        "semantic_subject": "variable:ozatlas_proxy_db_username"
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-insecure-permissions-4",
+      "family": "insecure-permissions",
+      "kind": "real",
+      "repository": "AtlasOfLivingAustralia/ala-install",
+      "sha": "aa2070a840f5debc3b78095c31b58004d04d2063",
+      "source_sha256": "a48b7af342c21ed018c5b39c1645e91b60c89eb0e5c81b8699e2e7b5cfb4cfdd",
+      "occurrence": {
+        "file": "ansible/roles/ansible-elasticsearch/tasks/elasticsearch-template.yml",
+        "line": 3,
+        "rule_id": "insecure-permissions",
+        "message": "World-writable permissions grant write access to other users."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-insecure-permissions-5",
+      "family": "insecure-permissions",
+      "kind": "real",
+      "repository": "AtlasOfLivingAustralia/ala-install",
+      "sha": "aa2070a840f5debc3b78095c31b58004d04d2063",
+      "source_sha256": "e0a32a6c73d126cb0a6c69c6bcec92cfcbfdacf7e1aab2c5e1cd9d67700cc52a",
+      "occurrence": {
+        "file": "ansible/roles/apikey/tasks/main.yml",
+        "line": 45,
+        "rule_id": "insecure-permissions",
+        "message": "Sensitive file written without explicit mode; defaults to system umask (typically 0644, world-readable)."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-missing-validate-certs-2",
+      "family": "missing-validate-certs",
+      "kind": "real",
+      "repository": "AtlasOfLivingAustralia/ala-install",
+      "sha": "aa2070a840f5debc3b78095c31b58004d04d2063",
+      "source_sha256": "ba4fb722b00ce62f0391b1265f78b0730f28b026e97f4be770067de9ae7ec24b",
+      "occurrence": {
+        "file": "ansible/roles/geoserver/tasks/ecodata-geoserver.yml",
+        "line": 159,
+        "rule_id": "missing-validate-certs",
+        "message": "validate_certs is set to False in uri \u2014 TLS certificate validation is disabled, making the connection vulnerable to MITM attacks."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-missing-validate-certs-3",
+      "family": "missing-validate-certs",
+      "kind": "real",
+      "repository": "AtlasOfLivingAustralia/ala-install",
+      "sha": "aa2070a840f5debc3b78095c31b58004d04d2063",
+      "source_sha256": "ba4fb722b00ce62f0391b1265f78b0730f28b026e97f4be770067de9ae7ec24b",
+      "occurrence": {
+        "file": "ansible/roles/geoserver/tasks/ecodata-geoserver.yml",
+        "line": 204,
+        "rule_id": "missing-validate-certs",
+        "message": "validate_certs is set to False in uri \u2014 TLS certificate validation is disabled, making the connection vulnerable to MITM attacks."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-missing-validate-certs-4",
+      "family": "missing-validate-certs",
+      "kind": "real",
+      "repository": "CentOS-PaaS-SIG/linchpin",
+      "sha": "0703f6bcb683afa7f543e9f3e8f4153bc3c9b36f",
+      "source_sha256": "b789671a397131126060d718f8f94412433c2873219691306fc26ac72123733e",
+      "occurrence": {
+        "file": "linchpin/provision/roles/aws/tasks/provision_aws_ec2_eip.yml",
+        "line": 2,
+        "rule_id": "missing-validate-certs",
+        "message": "validate_certs is set to False in ec2_eip \u2014 TLS certificate validation is disabled, making the connection vulnerable to MITM attacks."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "real-missing-validate-certs-5",
+      "family": "missing-validate-certs",
+      "kind": "real",
+      "repository": "CentOS-PaaS-SIG/linchpin",
+      "sha": "0703f6bcb683afa7f543e9f3e8f4153bc3c9b36f",
+      "source_sha256": "0604d589e849e500a345a3a61cf4199d3b52d126b1046271a098fffab91c1e10",
+      "occurrence": {
+        "file": "linchpin/provision/roles/aws/tasks/provision_aws_ec2_vpc_nat_gateway.yml",
+        "line": 3,
+        "rule_id": "missing-validate-certs",
+        "message": "validate_certs is set to False in ec2_vpc_subnet_facts \u2014 TLS certificate validation is disabled, making the connection vulnerable to MITM attacks."
+      },
+      "exposure": "previous calibration corpus; not independent population evaluation",
+      "eligible_for_population_scoring": false
+    }
+  ],
+  "selection_ledger": [
+    {
+      "repository": "ARTbio/GalaxyKickStart",
+      "sha": "d04bc40174594a2996a23a1c1b07155de4a694e4",
+      "selected": 3
+    },
+    {
+      "repository": "Ableton/ansible-role-jenkins-jcasc",
+      "sha": "a62ef61b70877018fb6763b17f7d29a771fbc597",
+      "selected": 5
+    },
+    {
+      "repository": "ArkCase/arkcase-ce",
+      "sha": "75895cbe09118f02addf4c00fd8e10b8ccddeaa8",
+      "selected": 8
+    },
+    {
+      "repository": "AtlasOfLivingAustralia/ala-install",
+      "sha": "aa2070a840f5debc3b78095c31b58004d04d2063",
+      "selected": 6
+    },
+    {
+      "repository": "CMSgov/bluebutton-web-deployment",
+      "sha": "ef2da5200c4d70c9db49e682ae28cd52ca92c995",
+      "selected": 0
+    },
+    {
+      "repository": "CentOS-PaaS-SIG/linchpin",
+      "sha": "0703f6bcb683afa7f543e9f3e8f4153bc3c9b36f",
+      "selected": 2
+    }
+  ],
+  "natural_counts": {
+    "unguarded-variable": 6,
+    "credential-log-exposure": 6,
+    "insecure-permissions": 6,
+    "missing-validate-certs": 6
+  },
+  "evaluation_complete": true,
+  "human_review": "pending",
+  "cases_sha256": "86b1c58ee0fed105f1715630722daae37a68e82a4678a425d6a74a0420c68f59"
+}

@@ -1,0 +1,29 @@
+{
+  "analyzable_repositories": 206,
+  "analyzable_repositories_with_zero_source_occurrences": 8,
+  "candidate_file": "static-source-candidates.csv.gz",
+  "candidate_file_sha256": "2b70672c1f89039386f6cfb4bb73460059f05014a6b7248e4865f951150c7d6b",
+  "frozen_git_blob_paths_checked": 25690,
+  "frozen_git_blob_paths_verified": 25690,
+  "human_labels_created": false,
+  "identity_scheme": "v007-human-static-source-v1",
+  "line_end_policy": "line_end equals detector-reported anchor line; it is not asserted as a syntactic object span",
+  "missing_frozen_paths": 0,
+  "namespaced_validation_occurrence_ids": 265434,
+  "object_identity_policy": {
+    "kind-prefixed semantic_subject": "object_kind is the prefix; object_id hashes repository, commit, path, kind, and subject value",
+    "untyped location subject": "object_kind=source_location; object_id hashes repository, commit, path, and reported line"
+  },
+  "original_occurrence_id_duplicate_groups": 844,
+  "original_occurrence_id_excess_rows": 1007,
+  "out_of_bounds_source_lines": 0,
+  "repositories_with_source_occurrences": 198,
+  "sampling_performed": false,
+  "schema_version": 1,
+  "snapshot_occurrence_matches": 265434,
+  "source_file": "study/runs/v007-full-repro-2026/aggregate/all-internal-source-occurrences.csv",
+  "source_rows": 265434,
+  "source_rules": 60,
+  "source_run": "v007-full-repro-2026",
+  "source_sha256": "7ea8943bf40a6b05f2e33c4140446757c45b6d218e81a75096591f046a81978b"
+}

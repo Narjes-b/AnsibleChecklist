@@ -1,0 +1,243 @@
+% AnsibleGuard Internship Report – Summer 2026
+% ENSI – University of Manouba
+% Author: Aymen JEDIDI
+% Supervisor: Dr. Marouene CHAIEB
+
+\documentclass[12pt,a4paper]{report}
+
+% Encoding and language
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+
+% Page layout
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+\setlength{\headheight}{15pt}
+
+% Headers and footers
+\usepackage{titlesec}
+\titleformat{\chapter}[frame]{\normalfont\huge\bfseries}{\chaptername\ \thechapter}{20pt}{\Huge}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+\fancyhead[R]{\thepage}
+\fancyhead[L]{\nouppercase{\leftmark}}
+
+% Mathematics
+\usepackage{amsmath, amssymb, amsthm, bm}
+
+% Images and figures
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{caption}
+
+% Tables
+\usepackage{array, multirow, booktabs, tabularx, longtable}
+\usepackage{rotating}
+\usepackage{afterpage}
+
+% Colors
+\usepackage[dvipsnames,table]{xcolor}
+\definecolor{ansblue}{RGB}{30,90,160}
+\definecolor{ansorange}{RGB}{220,100,30}
+\definecolor{ansgreen}{RGB}{40,140,70}
+\definecolor{ansred}{RGB}{180,40,40}
+\definecolor{ansgray}{RGB}{140,140,140}
+\definecolor{anslightblue}{RGB}{200,220,240}
+\definecolor{anslightgreen}{RGB}{200,235,210}
+\definecolor{anslightred}{RGB}{240,210,210}
+\definecolor{anslightyellow}{RGB}{255,245,200}
+\definecolor{ansnavy}{RGB}{22,45,73}
+\definecolor{ansteal}{RGB}{0,124,139}
+\definecolor{ansgold}{RGB}{222,156,49}
+\definecolor{anspaper}{RGB}{245,248,251}
+
+% TikZ and pgfplots for diagrams and charts
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, shapes.misc, arrows.meta, positioning,
+                calc, fit, decorations.pathreplacing, backgrounds, matrix}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{pgfplotstable}
+
+% References and hyperlinks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=ansblue,
+    citecolor=ansblue,
+    urlcolor=ansblue,
+    plainpages=false
+}
+\usepackage[footnote,nohyperlinks]{acronym}
+\usepackage{url}
+\usepackage{xurl}
+
+% Code listings
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{gray!10},
+  frame=single,
+  breaklines=true,
+  columns=flexible,
+  keepspaces=true,
+  showstringspaces=false,
+  commentstyle=\color{ansgray},
+  keywordstyle=\color{ansblue}\bfseries,
+  stringstyle=\color{ansgreen},
+  numberstyle=\tiny\color{ansgray},
+  numbers=left,
+  numbersep=5pt,
+}
+\lstdefinelanguage{YAML}{
+  keywords={true,false,yes,no,null},
+  keywordstyle=\color{ansblue}\bfseries,
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]",
+}
+
+% Subfiles (included chapters)
+\usepackage{subfiles}
+
+\newlength\figureheight
+\newlength\figurewidth
+
+% Misc
+\usepackage{pdfpages}
+\usepackage{microtype}
+\microtypesetup{expansion=false}
+\setcounter{secnumdepth}{6}
+
+% Custom commands
+% Safe inline identifiers: underscores and other code characters are rendered
+% literally, so rule names cannot accidentally enter mathematics mode.
+\newcommand{\code}[1]{\nolinkurl{#1}}
+\newcommand{\rulesep}{\vspace{0.3cm}\noindent\rule{\linewidth}{0.4pt}\vspace{0.3cm}}
+\newcommand{\precision}[1]{\textbf{#1\%}}
+
+% Global acronym definitions are available before chapter subfiles are read;
+% the front-matter environment below is only their printed catalogue.
+\acrodef{IaC}{Infrastructure as Code}
+\acrodef{CI}{Continuous Integration}
+\acrodef{CD}{Continuous Delivery}
+\acrodef{AST}{Abstract Syntax Tree}
+\acrodef{SARIF}{Static Analysis Results Interchange Format}
+\acrodef{YAML}{YAML Ain't Markup Language}
+\acrodef{FP}{False Positive}
+\acrodef{TP}{True Positive}
+\acrodef{CI95}{95\% Confidence Interval}
+\acrodef{PR}{Pull Request}
+\acrodef{FQCN}{Fully Qualified Collection Name}
+\acrodef{LLM}{Large Language Model}
+\acrodef{ENSI}{National School of Computer Science}
+\acrodef{CSV}{Comma-Separated Values}
+\acrodef{JSON}{JavaScript Object Notation}
+\acrodef{API}{Application Programming Interface}
+\acrodef{VM}{Virtual Machine}
+\acrodef{SSH}{Secure Shell}
+\acrodef{VCS}{Version Control System}
+\acrodef{DevOps}{Development and Operations}
+\acrodef{DSL}{Domain-Specific Language}
+
+% ---------------------------------------------------------------
+\begin{document}
+\pagenumbering{roman}
+
+% Cover page
+\subfile{pg-pcd-ENSI_ang}
+\clearpage
+
+% Supervisor signature
+\subfile{0-i-signature}
+\clearpage
+
+% Abstract
+\subfile{0-ii-abstract}
+\clearpage
+
+% Acknowledgments
+\subfile{0-iii-Remerciements}
+\clearpage
+
+% Table of contents
+\tableofcontents
+\clearpage
+
+% List of figures
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\clearpage
+
+% List of tables
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+\clearpage
+
+% List of acronyms
+\chapter*{List of Acronyms}
+\addcontentsline{toc}{chapter}{List of Acronyms}
+\vspace{1cm}
+\large
+\begin{acronym}[ANSIBLEGUARD]
+\acro{IaC}      {Infrastructure as Code}
+\acro{CI}       {Continuous Integration}
+\acro{CD}       {Continuous Delivery}
+\acro{AST}      {Abstract Syntax Tree}
+\acro{SARIF}    {Static Analysis Results Interchange Format}
+\acro{YAML}     {YAML Ain't Markup Language}
+\acro{FP}       {False Positive}
+\acro{TP}       {True Positive}
+\acro{CI95}     {95\% Confidence Interval}
+\acro{PR}       {Pull Request}
+\acro{FQCN}     {Fully Qualified Collection Name}
+\acro{LLM}      {Large Language Model}
+\acro{ENSI}     {National School of Computer Science}
+\acro{CSV}      {Comma-Separated Values}
+\acro{JSON}     {JavaScript Object Notation}
+\acro{API}      {Application Programming Interface}
+\acro{VM}       {Virtual Machine}
+\acro{SSH}      {Secure Shell}
+\acro{VCS}      {Version Control System}
+\acro{DevOps}   {Development and Operations}
+\acro{DSL}      {Domain-Specific Language}
+\end{acronym}
+\vspace{1cm}
+\normalsize
+\clearpage
+
+% ---------------------------------------------------------------
+% Main body — Arabic page numbering
+% ---------------------------------------------------------------
+\pagestyle{fancy}
+\cleardoublepage
+\pagenumbering{arabic}
+
+\subfile{0-introduction}
+\subfile{1-Literature_Review}
+\subfile{2-Methodology}
+\subfile{3-Implementation}
+\subfile{4-Results}
+\subfile{10-V007_Validation}
+\subfile{9-Discussion}
+\subfile{5-Conclusion}
+
+% Detailed reference material follows the complete research argument.
+\clearpage
+\appendix
+\subfile{6-Rule_Catalogue}
+\subfile{7-Operational_Reference}
+\subfile{8-Users_and_Output_Guide}
+
+% Consolidated scholarly and software references
+\renewcommand{\bibname}{References}
+\bibliographystyle{plain}
+\bibliography{references,urls}
+
+\end{document}

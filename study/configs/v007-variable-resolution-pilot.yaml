@@ -1,0 +1,33 @@
+run:
+  id: v007-variable-resolution-pilot
+  profile: technical-full
+  ansible_lint_scope: v005-selected
+  workers: 4
+  repository_timeout: 3600
+  resume: true
+  stop_on_error: false
+
+tool:
+  mode: current-worktree
+  version: 0.0.7
+  git_ref: HEAD
+  python: .venv/bin/python
+  # Diagnostic pilot configuration and cohort are generated in this worktree.
+  allow_dirty: true
+
+repositories:
+  manifest: study/manifests/github-207-variable-resolution-pilot.csv
+  file_manifests_dir: study/manifests/file-classification-v007-207
+  expected_count: 25
+
+output:
+  root: study/runs
+
+providers:
+  require_ansible_lint: false
+  require_gitleaks: true
+
+report:
+  formats: [svg]
+  top_rules: 25
+  top_repositories: 25

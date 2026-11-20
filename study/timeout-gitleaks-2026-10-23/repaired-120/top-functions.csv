@@ -1,0 +1,41 @@
+file,line,function,calls,self_seconds,cumulative_seconds
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,249,scan_with_gitleaks,1,0.001158263,75.872461738
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,46,timed_run,1,5.1646e-05,36.813593451
+/usr/lib/python3.14/subprocess.py,513,run,1,3.1821e-05,36.777292556
+/usr/lib/python3.14/subprocess.py,1177,communicate,1,1.5802000000000002e-05,36.776917178000005
+/usr/lib/python3.14/subprocess.py,2093,_communicate,1,0.000133156,36.776895454000005
+/usr/lib/python3.14/selectors.py,385,select,2,4.4603e-05,36.776515043
+~,0,<method 'poll' of 'select.poll' objects>,2,36.776462948,36.776462948
+/home/aymmzn/Documents/AnsibleChecklist/scripts/profile_frozen_gitleaks.py,53,timed_filter,1,0.015984855000000003,29.728410848000003
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,120,_filter_known_noise,1,0.853974259,29.701294318000002
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,148,<genexpr>,407985,12.236168269,12.236168269
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,144,<genexpr>,326392,9.545042766,9.545042766
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,222,_normalize_findings,1,0.255809188,9.008319095000001
+/usr/lib/python3.14/pathlib/__init__.py,476,relative_to,81598,0.22156899000000002,5.327605567
+<frozen _collections_abc>,1025,__contains__,81598,0.236207526,3.9621906940000002
+/usr/lib/python3.14/pathlib/__init__.py,932,resolve,81599,0.053790308,3.131935893
+<frozen _collections_abc>,1015,__iter__,571182,0.161389015,2.9266381380000004
+<frozen posixpath>,388,realpath,81599,0.9512689750000001,2.884647853
+/usr/lib/python3.14/pathlib/__init__.py,63,__getitem__,489584,0.427503412,2.7652491230000003
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,126,source_lines,35,8.8721e-05,2.441941006
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,99,_read_source_lines,35,0.06646128,2.4416933490000003
+~,0,<method 'lower' of 'str' objects>,324851,2.3432554970000004,2.3432554970000004
+/usr/lib/python3.14/pathlib/__init__.py,269,_from_parsed_parts,571182,0.28039547800000003,2.0864093930000003
+/usr/lib/python3.14/pathlib/__init__.py,157,with_segments,734421,0.47628481300000003,1.6587896080000002
+~,0,<method 'read' of '_io.TextIOWrapper' objects>,36,0.7641425700000001,1.518682963
+/usr/lib/python3.14/pathlib/__init__.py,780,read_text,35,0.00016468100000000002,1.458033602
+/usr/lib/python3.14/pathlib/__init__.py,276,_from_parsed_string,571182,0.16528161600000002,1.446449804
+/usr/lib/python3.14/pathlib/__init__.py,217,__eq__,652745,0.36348670800000005,1.426651608
+/usr/lib/python3.14/pathlib/__init__.py,198,_str_normcase,1387088,0.5932162950000001,1.3760816070000002
+/usr/lib/python3.14/pathlib/__init__.py,135,__init__,1060851,0.785299575,1.278186869
+/usr/lib/python3.14/pathlib/__init__.py,251,__str__,816033,0.47176968300000005,1.216766857
+~,0,<built-in method posix.lstat>,1142376,1.086083176,1.086083176
+~,0,<method 'splitlines' of 'str' objects>,35,0.9171984670000001,0.9171984670000001
+/home/aymmzn/Documents/AnsibleChecklist/src/ansibleguard/external/gitleaks.py,106,_source_context,81598,0.262199614,0.812184346
+<frozen codecs>,322,decode,36,0.00018263800000000002,0.7545403930000001
+~,0,<built-in method _codecs.utf_8_decode>,36,0.754357755,0.754357755
+~,0,<built-in method posix.fspath>,1142470,0.15106465700000002,0.6091230510000001
+~,0,<built-in method builtins.len>,2447993,0.401170607,0.594501586
+/usr/lib/python3.14/pathlib/__init__.py,261,_format_parsed_parts,816023,0.292375961,0.546775794
+/usr/lib/python3.14/pathlib/__init__.py,341,drive,408037,0.188468102,0.527193735
+/usr/lib/python3.14/pathlib/__init__.py,210,__hash__,81598,0.074161164,0.47142268400000004

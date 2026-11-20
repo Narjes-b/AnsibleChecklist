@@ -1,0 +1,53 @@
+\thispagestyle{empty}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+\noindent\large
+This report presents \textbf{AnsibleGuard}, a static-analysis system designed
+and implemented from scratch for Ansible Infrastructure as Code during a
+summer 2026 internship at the National School of Computer Science (ENSI),
+University of Manouba. The system combines tolerant YAML/Jinja parsing,
+artifact classification, rule-specific analysis, repository-level symbol and
+execution graphs, and specialist evidence from ansible-lint and GitLeaks. It
+supports full repositories, local changes, commits, and pull requests, and
+exports a versioned, schema-validated output contract for reproducible analysis.
+
+The current v0.0.7 study freezes 207 repositories. Its production run has 206
+analyzable outputs, 35 partial ansible-lint runs, and one persistent repository
+timeout; the 206 outputs contain 376,271 canonical occurrences. A paired
+role-contract correction suppresses 247 unsupported variable findings on the
+same analyzable population. A separate, corrected 207-repository threshold
+benchmark extracts 2,986,459 unique observations for 24 metrics and prepares
+16,971 review rows. The earlier 149-repository v0.0.6 study remains a
+controlled historical comparison. Internal rules and targeted profiles were
+designed and implemented in this project; ansible-lint and GitLeaks supply
+clearly attributed specialist evidence. One agent-labelled variable review
+supports calibration, but independent human labels and agreement are pending.
+The report therefore distinguishes measured workload and semantic improvements
+from unestablished population-wide precision and recall.
+
+\medskip
+\noindent\textbf{Keywords:} Infrastructure as Code, Ansible, Static Analysis,
+Semantic Analysis, Code Review, Reproducible Evaluation.
+
+\vspace{0.5cm}\noindent\rule{\textwidth}{0.4pt}\vspace{0.3cm}
+\chapter*{Résumé}
+
+\noindent\large
+Ce rapport présente \textbf{AnsibleGuard}, un système d'analyse statique conçu
+et développé depuis zéro pour le code d'infrastructure Ansible. Il associe
+l'analyse tolérante de YAML/Jinja, la classification des artefacts, un graphe
+d'exécution et de symboles, des règles internes, ainsi que les preuves fournies
+par ansible-lint et GitLeaks. L'étude actuelle v0.0.7 porte sur 207 dépôts
+figés. L'analyse de production a fourni 206 résultats exploitables et
+376 271 occurrences canoniques; un dépôt a dépassé le délai et 35 exécutions
+ansible-lint sont partielles. Une correction contrôlée des contrats d'arguments
+de rôle supprime 247 signalements de variables injustifiés. Un banc d'essai
+distinct couvre les 207 dépôts, 2 986 459 observations uniques et 24 métriques
+numériques. Les règles internes et les profils ciblés ont été créés dans ce
+projet. L'étiquetage humain indépendant reste nécessaire pour estimer la
+précision et le rappel.
+
+\medskip
+\noindent\textbf{Mots-clés :} Infrastructure as Code, Ansible, Analyse
+statique, Analyse sémantique, Revue de code, Évaluation reproductible.

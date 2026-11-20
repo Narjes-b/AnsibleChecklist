@@ -1,0 +1,14 @@
+{
+  "eligible_for_performance_scoring": false,
+  "checks": [
+    "Original generated output hashes verified",
+    "Probe implementation hash verified",
+    "145 unique file completions",
+    "67 structurally analyzed, 78 skipped by parser; CLI fallback untested",
+    "Zero caught detector errors"
+  ],
+  "derived_sha256": {
+    "detector-totals.csv": "68a678d511e84737e51e876f37c067fc34b027b3f4cbf0c7897aa6435fb5e1a7",
+    "file-timings.csv": "83379107cc0945b01b8a85fe37694654cd918c0e0b7058f11542150e8e62f01b"
+  }
+}

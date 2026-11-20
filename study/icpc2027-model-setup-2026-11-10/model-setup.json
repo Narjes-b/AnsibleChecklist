@@ -1,0 +1,71 @@
+{
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+    "size": 4683087561,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen2",
+      "families": [
+        "qwen2"
+      ],
+      "parameter_size": "7.6B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 32768,
+      "embedding_length": 3584
+    }
+  },
+  "model_digest_stable": true,
+  "ollama_version": "0.31.1",
+  "weights_sha256": "60e05f2100071479f596b964f89f510f057ce397ea22f2833a0cfe029bfc2463",
+  "weight_bytes": 4683074048,
+  "download_method": "Official registry; resumable IPv4 ranges after native parallel transfer stalls; digest verified before upload through the local Ollama blob API and final native pull",
+  "authorization": "User explicitly authorized completing the paused qwen2.5-coder:7b download; this is not authorization for additional models",
+  "runtime": {
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "context": 8192,
+    "placement_observation": "9% CPU / 91% GPU"
+  },
+  "initial_v4_acceptance": {
+    "matched": 3,
+    "cases": 4,
+    "result": "required runtime input was listed but assessment incorrectly said unsupported; runtime validator rejected it"
+  },
+  "v41_acceptance": {
+    "matched": 4,
+    "cases": 4,
+    "model_calls": 3,
+    "result": "passed"
+  },
+  "known_backend_insufficiency_constrains_generation": true,
+  "evaluation_limits": "Four controlled development contracts, including one no-call invalid anchor; not population accuracy, human-reviewed explanation quality, or comprehension evidence",
+  "focused_tests_passed": 224,
+  "prompt_version": "local-review-v4.1",
+  "implementation_sha256": {
+    "src/ansibleguard/report/llm_explain.py": "f564ee46ee60295fda05a882d681396cd0c3a4a1556293dce3542e105812836e",
+    "scripts/check_local_llm_acceptance.py": "94f10b38e216a7c4cc908f3340496c9ad269daed2a576f53d81a9c0786c26416",
+    "tests/test_llm_evidence.py": "e8d7aa9c2854452f56b3baae8ee27fc028aaf7359bbbcf8f7d81d363f0305b06"
+  },
+  "wheel": {
+    "path": "study/runs/icpc2027-build-v41-20261110/ansibleguard-0.0.7.1-py3-none-any.whl",
+    "sha256": "8d290530d7d42a5c6eb0d086dfce1a3628783f0d18491f001645767c1c000a10",
+    "build": "offline, no dependency downloads"
+  },
+  "end_to_end_demo": {
+    "path": "study/runs/icpc2027-demo-with-llm-20261110",
+    "explanation_stats": {
+      "attempted": 1,
+      "ok": 1,
+      "error": 0
+    },
+    "runtime_input_status": "ok",
+    "runtime_input_assessment": "insufficient-evidence",
+    "source_clean": true,
+    "command_exit_codes": [
+      0,
+      0
+    ],
+    "provider_exclusions": []
+  }
+}

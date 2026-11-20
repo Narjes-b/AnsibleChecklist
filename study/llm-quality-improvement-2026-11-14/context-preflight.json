@@ -1,0 +1,242 @@
+[
+  {
+    "case_id": "evaluation-missing-validate-certs-0",
+    "byte_token_ceiling_including_output": 5797,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-missing-validate-certs-1",
+    "byte_token_ceiling_including_output": 5760,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-missing-validate-certs-2",
+    "byte_token_ceiling_including_output": 5678,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-missing-validate-certs-3",
+    "byte_token_ceiling_including_output": 6395,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-missing-validate-certs-4",
+    "byte_token_ceiling_including_output": 5760,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-missing-validate-certs-5",
+    "byte_token_ceiling_including_output": 5678,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-insecure-permissions-0",
+    "byte_token_ceiling_including_output": 5998,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-insecure-permissions-1",
+    "byte_token_ceiling_including_output": 5965,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-insecure-permissions-2",
+    "byte_token_ceiling_including_output": 5844,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-insecure-permissions-3",
+    "byte_token_ceiling_including_output": 6002,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-insecure-permissions-4",
+    "byte_token_ceiling_including_output": 5969,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-insecure-permissions-5",
+    "byte_token_ceiling_including_output": 5848,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-credential-log-exposure-0",
+    "byte_token_ceiling_including_output": 6175,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-credential-log-exposure-1",
+    "byte_token_ceiling_including_output": 6256,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-credential-log-exposure-2",
+    "byte_token_ceiling_including_output": 6132,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-credential-log-exposure-3",
+    "byte_token_ceiling_including_output": 6189,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-credential-log-exposure-4",
+    "byte_token_ceiling_including_output": 6270,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-credential-log-exposure-5",
+    "byte_token_ceiling_including_output": 6146,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-0",
+    "byte_token_ceiling_including_output": 5679,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-1",
+    "byte_token_ceiling_including_output": 5889,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-2",
+    "byte_token_ceiling_including_output": 5679,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-3",
+    "byte_token_ceiling_including_output": 5679,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-4",
+    "byte_token_ceiling_including_output": 5889,
+    "fits": true
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-5",
+    "byte_token_ceiling_including_output": 5679,
+    "fits": true
+  },
+  {
+    "case_id": "real-unguarded-variable-0",
+    "byte_token_ceiling_including_output": 6778,
+    "fits": true
+  },
+  {
+    "case_id": "real-unguarded-variable-1",
+    "byte_token_ceiling_including_output": 6778,
+    "fits": true
+  },
+  {
+    "case_id": "real-credential-log-exposure-0",
+    "byte_token_ceiling_including_output": 7064,
+    "fits": true
+  },
+  {
+    "case_id": "real-credential-log-exposure-1",
+    "byte_token_ceiling_including_output": 8134,
+    "fits": true
+  },
+  {
+    "case_id": "real-credential-log-exposure-2",
+    "byte_token_ceiling_including_output": 8292,
+    "fits": false
+  },
+  {
+    "case_id": "real-insecure-permissions-0",
+    "byte_token_ceiling_including_output": 6320,
+    "fits": true
+  },
+  {
+    "case_id": "real-insecure-permissions-1",
+    "byte_token_ceiling_including_output": 6315,
+    "fits": true
+  },
+  {
+    "case_id": "real-unguarded-variable-2",
+    "byte_token_ceiling_including_output": 6641,
+    "fits": true
+  },
+  {
+    "case_id": "real-insecure-permissions-2",
+    "byte_token_ceiling_including_output": 6442,
+    "fits": true
+  },
+  {
+    "case_id": "real-insecure-permissions-3",
+    "byte_token_ceiling_including_output": 6058,
+    "fits": true
+  },
+  {
+    "case_id": "real-credential-log-exposure-3",
+    "byte_token_ceiling_including_output": 8531,
+    "fits": false
+  },
+  {
+    "case_id": "real-credential-log-exposure-4",
+    "byte_token_ceiling_including_output": 7312,
+    "fits": true
+  },
+  {
+    "case_id": "real-unguarded-variable-3",
+    "byte_token_ceiling_including_output": 6180,
+    "fits": true
+  },
+  {
+    "case_id": "real-unguarded-variable-4",
+    "byte_token_ceiling_including_output": 6180,
+    "fits": true
+  },
+  {
+    "case_id": "real-missing-validate-certs-0",
+    "byte_token_ceiling_including_output": 6923,
+    "fits": true
+  },
+  {
+    "case_id": "real-missing-validate-certs-1",
+    "byte_token_ceiling_including_output": 6128,
+    "fits": true
+  },
+  {
+    "case_id": "real-credential-log-exposure-5",
+    "byte_token_ceiling_including_output": 6365,
+    "fits": true
+  },
+  {
+    "case_id": "real-unguarded-variable-5",
+    "byte_token_ceiling_including_output": 5999,
+    "fits": true
+  },
+  {
+    "case_id": "real-insecure-permissions-4",
+    "byte_token_ceiling_including_output": 6341,
+    "fits": true
+  },
+  {
+    "case_id": "real-insecure-permissions-5",
+    "byte_token_ceiling_including_output": 6185,
+    "fits": true
+  },
+  {
+    "case_id": "real-missing-validate-certs-2",
+    "byte_token_ceiling_including_output": 6175,
+    "fits": true
+  },
+  {
+    "case_id": "real-missing-validate-certs-3",
+    "byte_token_ceiling_including_output": 6708,
+    "fits": true
+  },
+  {
+    "case_id": "real-missing-validate-certs-4",
+    "byte_token_ceiling_including_output": 7027,
+    "fits": true
+  },
+  {
+    "case_id": "real-missing-validate-certs-5",
+    "byte_token_ceiling_including_output": 6628,
+    "fits": true
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "purpose": "All-row conditional policy parity against archived adapter function, with cached source I/O; not original timing replay",
+  "eligible_for_performance_scoring": false,
+  "historical_commit": "ad1d60023d237b6e1cfa53466e81407e3f329229",
+  "historical_adapter_sha256": "3b28376d46e3e762e322098c2ce4519e7e1cf7a586121bcba2d24be9547d746c",
+  "native_report_sha256": "bdfd5a49a7b4e14eed2107b8ed0e1781406e05dd1f24e9da675b70f3b62b7987",
+  "repaired_adapter_sha256": "826c014f4479f5ff99eca918af04642c4734360112cb23ce13631fdf435646b3",
+  "native_rows": 81598,
+  "files": 35,
+  "retained": 80058,
+  "suppressed": 1540,
+  "all_group_outputs_and_suppression_evidence_match": true,
+  "seconds": 41.59685566400003,
+  "method": "Execute original archived filter function; substitute source helper with one-read-per-file context using original line/window arithmetic; compare each file group exactly with repaired function",
+  "limits": [
+    "Conditional on unchanged source-context bytes; does not rerun old repeated I/O",
+    "Native ordering across interleaved files separately tested",
+    "Not secret correctness or precision validation"
+  ]
+}

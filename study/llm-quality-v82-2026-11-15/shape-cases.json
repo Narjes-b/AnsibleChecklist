@@ -1,0 +1,90 @@
+{
+  "cases": [
+    [
+      "tls-args",
+      "missing-validate-certs",
+      "supported",
+      "- name: Fetch\n  ansible.builtin.uri:\n    url: https://example.invalid/a\n  args:\n    validate_certs: false\n",
+      null
+    ],
+    [
+      "tls-local-action",
+      "missing-validate-certs",
+      "unsupported",
+      "- name: Fetch\n  local_action:\n    module: ansible.builtin.get_url\n    url: https://example.invalid/a\n    dest: /tmp/a\n    validate_certs: true\n",
+      null
+    ],
+    [
+      "tls-runtime",
+      "missing-validate-certs",
+      "insufficient-evidence",
+      "- name: Fetch\n  ansible.builtin.uri:\n    url: https://example.invalid/a\n    validate_certs: \"{{ check_endpoint_certificate }}\"\n",
+      null
+    ],
+    [
+      "permission-decimal",
+      "insecure-permissions",
+      "supported",
+      "- name: Manage\n  ansible.builtin.file:\n    path: /srv/pipeline-data\n    mode: 2750\n",
+      null
+    ],
+    [
+      "permission-grouped",
+      "insecure-permissions",
+      "unsupported",
+      "- name: Manage\n  ansible.builtin.file:\n    path: /srv/release\n    state: directory\n    group: release\n    mode: \"2770\"\n",
+      null
+    ],
+    [
+      "permission-runtime",
+      "insecure-permissions",
+      "insufficient-evidence",
+      "- name: Render\n  ansible.builtin.template:\n    src: deployment.j2\n    dest: /srv/deployment\n    mode: \"{{ access_bits }}\"\n",
+      null
+    ],
+    [
+      "logging-inherited",
+      "credential-log-exposure",
+      "unsupported",
+      "- name: Parent\n  no_log: true\n  block:\n    - name: Inspect\n      ansible.builtin.debug:\n        msg: \"{{ service_api_key }}\"\n",
+      4
+    ],
+    [
+      "logging-override",
+      "credential-log-exposure",
+      "supported",
+      "- name: Parent\n  no_log: true\n  block:\n    - name: Inspect\n      no_log: false\n      ansible.builtin.debug:\n        msg: \"{{ service_token }}\"\n",
+      4
+    ],
+    [
+      "logging-opaque",
+      "credential-log-exposure",
+      "insufficient-evidence",
+      "- name: Custom\n  company.service:\n    password: \"{{ deployment_password }}\"\n",
+      null
+    ],
+    [
+      "variable-prior",
+      "unguarded-variable",
+      "unsupported",
+      "- name: Define\n  ansible.builtin.set_fact:\n    ApplicationPort: 8080\n- name: Show\n  ansible.builtin.debug:\n    msg: \"{{ ApplicationPort }}\"\n",
+      6
+    ],
+    [
+      "variable-conditional",
+      "unguarded-variable",
+      "insufficient-evidence",
+      "- name: Define\n  ansible.builtin.set_fact:\n    ApplicationPort: 8080\n  when: set_port\n- name: Show\n  ansible.builtin.debug:\n    msg: \"{{ ApplicationPort }}\"\n",
+      7
+    ],
+    [
+      "variable-external",
+      "unguarded-variable",
+      "insufficient-evidence",
+      "- name: Show\n  ansible.builtin.debug:\n    msg: \"{{ PossiblyProvided }}\"\n",
+      3
+    ]
+  ],
+  "sha256": "8f84edaf7e6f44238d1b0cf43bd0024e2f6334914d3b1c3b6f79a61308ff9567",
+  "status": "Authored fixtures, not independent human labels or held-out natural data"
+}

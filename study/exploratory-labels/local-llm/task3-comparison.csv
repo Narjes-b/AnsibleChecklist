@@ -1,0 +1,482 @@
+issue_id,rule_id,repository,path,line_start,original_code_snippet,existing_agent_label,existing_agent_actionability,existing_agent_explanation,teammate_agent_label,teammate_agent_explanation,local_model_status,local_model_warnings,local_model_what_is_wrong,local_model_why_it_is_wrong,local_model_why_in_context,local_model_consequences,local_model_recommended_fix,local_model_fixed_snippet,local_model_why_fix_works,local_model_trade_offs,local_model_confidence,local_model_limitations,labels_agree,technical_correctness,contextual_grounding,diagnostic_clarity,remediation_quality,uncertainty_calibration,actionability,unsupported_claims_or_errors,human_review_notes
+V007PILOT-VARIABLE_REFERENCE_REASONING-005,ansibleguard/unguarded-variable,mageops/ansible-infrastructure,roles/cs.deploy/tasks/07-relink-releases.yml,16,"    1 | - name: Link previous release
+    2 |   file:
+    3 |     state: link
+    4 |     force: yes
+    5 |     dest: ""{{ deploy_previous_release_dir }}""
+    6 |     src: ""{{ deploy_current_release_path }}""
+    7 |   become: yes
+    8 |   become_user: ""{{ deploy_app_user }}""
+    9 |   when: deploy_current_release_path is defined
+   10 | 
+   11 | - name: Link current release
+   12 |   file:
+   13 |     state: link
+   14 |     force: yes
+   15 |     dest: ""{{ deploy_current_release_dir }}""
+   16 |     src: ""{{ deploy_next_release_path }}""
+   17 |   become: yes
+   18 |   become_user: ""{{ deploy_app_user }}""
+   19 | 
+   20 | - name: List current release directories
+   21 |   find:
+   22 |     file_type: directory
+   23 |     follow: no
+   24 |     hidden: no
+   25 |     recurse: no
+   26 |     path: ""{{ deploy_releases_dir }}""
+   27 |   register: deploy_find_releases
+   28 | 
+   29 | # The fact `ansible_mount` contains only the root mount while we have tons of others.
+   30 | # Cleared fact cache, tried `setup` module, I think this is a bug.
+   31 | - name: Find current mounts
+   32 |   become: yes
+   33 |   become_user: root
+   34 |   command: ""findmnt --all --output=TARGET --raw --noheadings --notruncate""
+   35 |   changed_when: no
+   36 |   register: deploy_findmnt_cmd
+   37 | 
+   38 | - name: Set list directories to remove
+   39 |   set_fact:
+   40 |     deploy_release_to_remove: >-
+   41 |       {{
+   42 |         (
+   43 |           deploy_find_releases.files
+   44 |             | sort(attribute='ctime')
+   45 |             | map(attribute='path')
+   46 |             | list
+   47 |         )[:-deploy_keep_current_releases]
+   48 |           | reject('equalto', deploy_next_release_path)
+   49 |           | list
+   50 |       }}
+   51 |     deploy_release_mountpoints_to_unmount: >-
+   52 |       {{
+   53 |         deploy_findmnt_cmd.stdout_lines
+   54 |           | select('match', deploy_releases_dir | regex_escape ~ '.*')
+   55 |           | list
+   56 |       }}
+",negative,not-applicable,"deploy_next_release_path is assigned earlier in the same role (01-register-variables.yml:14) and is already relied upon unguarded by several other numbered task files (03, 04, 05, 91) in this role's execution sequence, indicating an established convention that guarantees it is defined before 07-relink-releases.yml runs.",negative,The role imports 01-register-variables.yml before its release tasks; that file sets deploy_next_release_path before 07-relink-releases.yml uses it. The defining task and use are under the same deploy_install_new_release condition.,ok,,The variable `deploy_next_release_path` is used without being defined or checked for existence.,"The variable `deploy_next_release_path` is referenced in the `src` parameter of the `file` module in task 16, but it is not defined or checked for existence anywhere in the provided code snippet.","The task that uses `deploy_next_release_path` is part of a sequence that involves linking releases and removing stale releases. If `deploy_next_release_path` is not defined, the task will fail with an error.","The task will fail with an error if `deploy_next_release_path` is not defined, causing the playbook to halt and potentially leaving the deployment in an inconsistent state.",Define or check for the existence of `deploy_next_release_path` before using it in the `src` parameter of the `file` module.,,"Defining or checking for the existence of `deploy_next_release_path` ensures that the variable is available when it is used, preventing the task from failing.","Assuming that `deploy_next_release_path` is defined elsewhere in the playbook or is set by a previous task. If it is not defined, additional steps would be required to set it.",high,,"Disagrees with both existing reviewers (both say negative). Model confidently asserts the variable is undefined; both independent reviewers judged it's not a real issue, most plausibly because the variable is defined elsewhere (group_vars/defaults) outside the single-file snippet.",2,4,4,3,1,4,"Violates its own system-prompt instruction not to assume a variable is undefined unless that is visible in the supplied context — the correct, cautious answer given a single-file excerpt is to flag this as unverifiable, not assert undefined-ness with confidence=high.",
+V007PILOT-VARIABLE_REFERENCE_REASONING-014,ansibleguard/unguarded-variable,osism/ansible-collection-services,roles/containerd/tasks/install-Debian-family.yml,32,"    1 | ---
+    2 | - name: Remove old architecture-dependent repository
+    3 |   become: true
+    4 |   ansible.builtin.apt_repository:
+    5 |     repo: ""deb [ arch=amd64 ] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable""
+    6 |     state: absent
+    7 |     filename: docker
+    8 |   when: containerd_configure_repository|bool
+    9 | 
+   10 | - name: Gather the apt package facts
+   11 |   ansible.builtin.package_facts:
+   12 |     manager: auto
+   13 | 
+   14 | - name: Check whether packages are installed that should not be installed
+   15 |   ansible.builtin.fail:
+   16 |     msg: ""{{ ansible_facts.packages[item] | length }} versions of {{ item }} are installed!""
+   17 |   when: ""item in ansible_facts.packages""
+   18 |   loop: ""{{ containerd_packages_fail }}""
+   19 | 
+   20 | - name: Install apt-transport-https package
+   21 |   become: true
+   22 |   ansible.builtin.apt:
+   23 |     name: apt-transport-https
+   24 |     state: present
+   25 |     lock_timeout: ""{{ apt_lock_timeout | default(300) }}""
+   26 |   when: containerd_configure_repository|bool
+   27 |   changed_when: false
+   28 | 
+   29 | - name: Add repository gpg key
+   30 |   become: true
+   31 |   ansible.builtin.get_url:
+   32 |     url: ""{{ docker_repository_key }}""
+   33 |     dest: /etc/apt/trusted.gpg.d/docker.asc
+   34 |     mode: 0644
+   35 |     owner: root
+   36 |     group: root
+   37 |   when:
+   38 |     - containerd_configure_repository|bool
+   39 | 
+   40 | - name: Add repository
+   41 |   become: true
+   42 |   ansible.builtin.apt_repository:
+   43 |     repo: ""{{ docker_repository }}""
+   44 |     state: present
+   45 |     filename: docker
+   46 |     update_cache: true
+   47 |     mode: 0644
+   48 |   when: containerd_configure_repository|bool
+   49 | 
+   50 | - name: Unlock containerd package
+   51 |   become: true
+   52 |   ansible.builtin.dpkg_selections:
+   53 |     name: ""{{ containerd_package_name }}""
+   54 |     selection: install
+   55 |",negative,not-applicable,"docker_repository_key is given a fallback value earlier in the role (tasks/main.yml:10-13, set_fact from the OS-specific __docker_repository_key vars file) before install-Debian-family.yml is reached, so by the time line 32 executes the variable is guaranteed to be defined whether or not the caller overrode it.",negative,"The role includes OS-specific vars, then sets docker_repository_key from that platform value only when the input is undefined; this occurs before the Debian install task uses it.",ok,,The variable `docker_repository_key` is used without being defined or imported.,"The variable `docker_repository_key` is referenced in line 32, but it is not defined anywhere in the provided code snippet or in any imported files.","The variable `docker_repository_key` is used in the `get_url` module to download a GPG key for the Docker repository. Without defining this variable, the playbook will fail when trying to execute this task.",The playbook will fail with an error indicating that the variable `docker_repository_key` is undefined. This will prevent the installation of the Docker repository and the subsequent installation of containerd.,Define the variable `docker_repository_key` with the appropriate value in the playbook or import it from another file where it is defined.,,"Defining the variable `docker_repository_key` will make it available to the playbook, allowing the `get_url` module to download the GPG key successfully.","Assuming that the variable `docker_repository_key` should be defined in the playbook or imported from another file. There are no trade-offs in this case, as the variable is necessary for the playbook to function correctly.",high,,Disagrees with both existing reviewers (both say negative). Same systematic pattern as -005/-007 — the third case of three in this eval set.,2,4,4,3,1,4,"Same systematic issue: asserts the variable is undefined purely because it isn't visible in this file, with confidence=high and no limitation noted, despite the system prompt's explicit instruction against this.",
+V007PILOT-VARIABLE_REFERENCE_REASONING-002,ansibleguard/overriding-facts,dell/dellemc-openmanage-ansible-modules,roles/idrac_reset/tasks/lcstatus_check.yml,1,"    1 | - name: Setting idrac_lc_status to default
+    2 |   ansible.builtin.set_fact:
+    3 |     idrac_lc_status:
+    4 |       LCStatus: """"
+    5 |     result_lc:
+    6 |       LCStatus: """"
+    7 | 
+    8 | - name: Add a delay
+    9 |   ansible.builtin.pause:
+   10 |     seconds: ""{{ idrac_reset_delay }}""
+   11 | 
+   12 | - name: Get lifecycle controller status from iDRAC
+   13 |   ansible.builtin.uri:
+   14 |     url: ""https://{{ hostname }}:{{ https_port }}/\
+   15 |       redfish/v1/Managers/iDRAC.Embedded.1/\
+   16 |       Oem/Dell/DellLCService/Actions/\
+   17 |       DellLCService.GetRemoteServicesAPIStatus""
+   18 |     user: ""{{ username | default(lookup('env', 'IDRAC_USERNAME')) }}""
+   19 |     password: ""{{ password |
+   20 |                 default(lookup('env', 'IDRAC_PASSWORD')) }}""
+   21 |     validate_certs: ""{{ validate_certs }}""
+   22 |     ca_path: ""{{ ca_path | default(omit) }}""
+   23 |     headers: ""{{ idrac_reset_uri_headers }}""
+   24 |     body_format: ""{{ idrac_reset_uri_body_format }}""
+   25 |     return_content: ""{{ idrac_reset_uri_return_content }}""
+   26 |     force_basic_auth: ""{{ idrac_reset_force_basic_auth }}""
+   27 |     timeout: ""{{ https_timeout }}""
+   28 |     method: ""POST""
+   29 |     body: ""{}""
+   30 |     status_code: 200
+   31 |   delegate_to: ""{{ idrac_reset_task_delegate }}""
+   32 |   register: result_lc
+   33 |   until:
+   34 |     - result_lc is defined
+   35 |     - result_lc.json is defined
+   36 |     - result_lc.json.LCStatus is defined
+   37 |     - result_lc.json.LCStatus == 'Ready'
+   38 |   retries: '{{ idrac_reset_retries }}'
+   39 |   delay: ""{{ idrac_reset_delay }}""
+   40 | 
+   41 | - name: Parse lifecycle controller status response
+   42 |   ansible.builtin.set_fact:
+   43 |     idrac_lc_status:
+   44 |       LCStatus: ""{{ result_lc.json.LCStatus }}""
+   45 |       RTStatus: ""{{ result_lc.json.RTStatus }}""
+   46 |       ServerStatus: ""{{ result_lc.json.ServerStatus }}""
+   47 |       Status: ""{{ result_lc.json.",negative,not-applicable,"idrac_lc_status is deliberately initialized empty (lines 1-6) and then overwritten at lines 41-47 with the real API result after the until-loop at lines 12-39 completes; the debug check at line 52 reads only the final value, so this is the intended data flow, not an unintended collision.",negative,"The initial result_lc fact is superseded by the following URI task register before its until checks and later reads; idrac_lc_status is separately populated from the response. The visible task order supports an intentional placeholder-to-result flow, not a harmful stale-value collision.",ok,,The variable `idrac_lc_status` is being overridden multiple times within the same playbook.,Overriding a variable multiple times can lead to unexpected behavior and make the playbook harder to understand and maintain.,The variable `idrac_lc_status` is first set to an empty dictionary in task 1. It is then overridden again in task 42 with the actual lifecycle controller status from the iDRAC response.,"The final value of `idrac_lc_status` will be the one set in task 42, but this may not be the intended behavior. It could lead to confusion and potential bugs if the playbook relies on the initial value of `idrac_lc_status`.","Avoid overriding the variable `idrac_lc_status` multiple times. Instead, use a different variable for the lifecycle controller status or ensure that the initial value is not needed.",,"By avoiding the override, the playbook will be clearer and less prone to errors. The final value of `idrac_lc_status` will be the one set in task 42, which is likely the intended behavior.",The trade-off is that the playbook may need to be refactored to avoid overriding the variable. This may require additional variables or changes to the logic of the playbook.,high,,Both existing reviewers say negative (not a real issue); the model's narrative leans toward treating the re-assignment as a potential problem without clearly concluding either way.,3,4,3,3,2,3,"None found; reasonably hedged relative to other cases (lower confidence language in places), though the output schema still reports confidence=high.",
+V007PILOT-VARIABLE_REFERENCE_REASONING-001,ansibleguard/missing-bool-filters,AtlasOfLivingAustralia/ala-install,ansible/roles/biocache-properties/tasks/main.yml,1,"    1 | - include_tasks: ../../common/tasks/setfacts.yml
+    2 |   tags:
+    3 |     - properties
+    4 |     - biocache-properties
+    5 |     - biocache-layers    
+    6 | 
+    7 | - name: ensure target directories exist
+    8 |   file: path={{item}} state=directory
+    9 |   with_items:
+   10 |     - ""{{data_dir}}/biocache/layers""
+   11 |     - ""{{data_dir}}/biocache/config""    
+   12 |   tags:
+   13 |     - properties
+   14 |     - biocache-properties
+   15 | 
+   16 | - name: copy biocache config properties template 
+   17 |   template: src={{item}} dest={{data_dir}}/biocache/config/{{item}} mode=0644 output_encoding=iso-8859-1
+   18 |   with_items:
+   19 |     - biocache-config.properties
+   20 |   tags:
+   21 |     - properties
+   22 |     - properties-file
+   23 |     - biocache-properties
+   24 | 
+   25 | - name: Download SDS layers
+   26 |   get_url: url={{ sds_layers_url | default('https://archives.ala.org.au/archives/layers/sds-layers.tgz') }} dest=""{{data_dir}}/biocache/layers/sds-layers.tgz"" force=yes
+   27 |   when: sds_enabled is defined and sds_enabled == ""true""
+   28 |   tags:
+   29 |     - properties
+   30 |     - biocache-properties
+   31 |     - biocache-layers   
+   32 | 
+   33 | - name: Extract SDS layers
+   34 |   unarchive: src=""{{data_dir}}/biocache/layers/sds-layers.tgz"" dest=""{{data_dir}}/biocache/layers/"" copy=no owner=root group=root extra_opts=--no-same-owner
+   35 |   when: sds_enabled is defined and sds_enabled == ""true""
+   36 |   tags:
+   37 |     - properties
+   38 |     - biocache-properties
+   39 |     - biocache-layers    
+   40 | 
+   41 | - name: copy biocache subgroups config
+   42 |   copy: src=subgroups.json dest={{data_dir}}/biocache/config/subgroups.json
+   43 |   tags:
+   44 |     - properties
+   45 |     - biocache-properties
+   46 | 
+   47 | - name: ensure target directories exist [data subdirectories etc.
+   48 |   file: path={{ item }} state=directory mode=0775
+   49 |   with_items:
+   50 |     - ""{{data_dir}}/biocache",positive,actionable,"Line 27/35 compare sds_enabled to the quoted string ""true"" instead of casting with | bool; if the role ever receives sds_enabled as a native YAML/extra-vars boolean the comparison silently evaluates False.",uncertain,"The exact repo shows visible inventory assignments as lowercase false and templates defaulting to the string false, but no enabled assignment or declared input-type contract. A boolean-typed true value would not match this string comparison; the repository evidence does not establish whether runtime inputs are intentionally textual.",error,connection error: HTTP Error 500: Internal Server Error,,,,,,,,,,,,,,,,,,,"0/4 reproducible success across repeated attempts on this exact case: one request returned an Ollama-side HTTP 500 (server log shows the task being cancelled mid-generation) and three repeats produced truncated/malformed JSON that degenerates into repeated whitespace padding mid-string instead of completing. The prompt itself (2.8KB) is smaller than several cases that succeeded cleanly, so this is not a context-length issue — it is a reproducible, case-specific model/server generation failure with no clear root cause identified. Documented as a hard failure rather than retried further."
+V007PILOT-VARIABLE_REFERENCE_REASONING-004,ansibleguard/role-variable-precedence-collision,ansible-lockdown/RHEL8-STIG,vars/main.yml,11,"    1 | ---
+    2 | 
+    3 | rhel8stig_min_ansible_version: 2.12.1
+    4 | 
+    5 | # RHEL 8 STIG requirements
+    6 | combined_crypto_policy_config: FIPS
+    7 | 
+    8 | rhel8stig_sysctl_reload: ""{{ not system_is_container }}""
+    9 | 
+   10 | # Allow automated discovery of UIDs
+   11 | discover_int_uid: true
+   12 | 
+   13 | # Used to control warning summary
+   14 | warn_control_list: """"
+   15 | warn_count: 0
+   16 | 
+   17 | company_title: 'MindPoint Group - A Tyto Athene Company'
+   18 | 
+   19 | file_managed_by_ansible: |-
+   20 |   # File managed by ansible as part of {{ benchmark }} benchmark
+   21 |   # As part of Ansible-lockdown
+   22 |   # Provided by {{ company_title }}",positive,actionable,"discover_int_uid is set to the same value (true) in both defaults/main.yml:720 and vars/main.yml:11; role vars/main.yml always outranks defaults and most other customization points, so the defaults entry is effectively dead and the control can't be toggled the normal way (e.g. via inventory).",positive,"discover_int_uid is declared both in role vars/main.yml and defaults/main.yml with the same value, and tasks/prelim.yml consumes it. The higher-precedence role var prevents ordinary inventory/default overrides, so the apparent role default is not an effective user-configurable setting.",ok,,The variable `discover_int_uid` is defined in `vars/main.yml` but not used anywhere in the role.,Unused variables can lead to confusion and potential maintenance issues.,The variable `discover_int_uid` is defined but not referenced in any tasks or templates within the role. This suggests it might be a leftover or an oversight.,"Unused variables can clutter the codebase, making it harder to understand and maintain. They might also be a sign of a larger issue if they were intended for use but were not.",Remove the unused variable `discover_int_uid` from `vars/main.yml`.,,"Removing unused variables simplifies the codebase, making it easier to understand and maintain.","This fix assumes that the variable was not intentionally left in place for future use. If it was, this change would need to be reconsidered.",high,,"Not comparable — the explanation addresses a different defect (an unused variable) than the rule being evaluated (role-variable-precedence-collision, i.e. the same variable set from two different precedence levels). This is a rule misdiagnosis, not a disagreement.",1,1,1,2,1,2,"The entire explanation is about the wrong problem. Whatever the model saw in the context, it did not engage with variable precedence collision at all.",
+V007PILOT-OBJECTIVE_CORRECTNESS-001,ansibleguard/invalid-task-attribute-type,redhat-openstack/infrared,plugins/tripleo-undercloud/tasks/prepare_uc_images_external.yml,1,"    1 | ---
+    2 | - block:
+    3 |     - name: download the script when it looks like a fetch url
+    4 |       get_url:
+    5 |           url: ""{{ script_url }}""
+    6 |           dest: ""{{ script_target }}""
+    7 |       become: true
+    8 |       retries: 3
+    9 |       delay: 3
+   10 |       when:
+   11 |           - script_url|regex_search('^https?://.*')
+   12 |     - name: copy script from host
+   13 |       copy:
+   14 |           src: ""{{ script_url }}""
+   15 |           dest: ""{{ script_target }}""
+   16 |           mode: ""0755""
+   17 |       when:
+   18 |           - not script_url|regex_search('^https?:/.*')
+   19 |     - name: execute the custom registry script
+   20 |       become: true
+   21 |       become_user: root
+   22 |       shell: |
+   23 |               chmod 755 {{ script_target }}
+   24 |               {{ script_target }} {{ script_args }} 2>&1 | tee -a ""{{ script_log_target }}""
+   25 |       environment:
+   26 |               IR_CALL_ENV: ""{{ conf|to_nice_json }}""
+   27 |       args:
+   28 |           warn: no
+   29 |       tags: skip_ansible_lint
+   30 | 
+   31 |     - name: fetch registries fact
+   32 |       become: true
+   33 |       become_user: root
+   34 |       shell: |
+   35 |           cat {{ working_dir }}/ir_registry_facts.json
+   36 |       register: registry_facts
+   37 |       tags: skip_ansible_lint
+   38 | 
+   39 |     - debug:
+   40 |          msg: ""registry script facts '''{{ registry_facts.stdout }}'''""
+   41 | 
+   42 |       # insecure_registry_hosts is the expected one
+   43 |       # insecure_registry_hosts is an array of strings
+   44 |       # with_dict looks required
+   45 |       # ignore_errors: until we drop py27 and old ansible support
+   46 |     - name: Set registry facts from the script
+   47 |       set_fact: {""{{ item.key }}"":""{{ item.value }}""}
+   48 |       with_dict: ""{{ registry_facts.stdout|from_json }}""
+   49 |       ignore_errors: ""{{ ansible_version.full is version('2.9', '<') }}""
+   50 |   vars:",uncertain,uncertain,"Reported anchor (line 1, '---') does not correspond to any identifiable invalid-type attribute in the visible task file; candidate attributes (templated ignore_errors, scalar tags, warn: no) are each valid Ansible forms. The anchor does not align with the evidence closely enough for a defensible binary decision.",positive,"At lines 50–55, task vars is a YAML sequence of mappings rather than the mapping Ansible expects; this is a concrete attribute-type mismatch.",ok,,"The `ignore_errors` attribute is used with a Jinja2 expression that evaluates to a boolean value, which is not allowed.","The `ignore_errors` attribute expects a boolean value directly, not an expression that evaluates to a boolean.","The expression `{{ ansible_version.full is version('2.9', '<') }}` evaluates to a boolean value, but `ignore_errors` requires a direct boolean value.","If the condition `ansible_version.full is version('2.9', '<')` evaluates to `True`, the task will ignore errors. If it evaluates to `False`, the task will not ignore errors, which might lead to unexpected behavior.",Remove the Jinja2 expression and use a direct boolean value for `ignore_errors`.,,Directly setting `ignore_errors` to `True` or `False` ensures that the task behaves as expected without any conditional logic.,"This fix assumes that the condition `ansible_version.full is version('2.9', '<')` is correctly evaluated and that the task should ignore errors in versions of Ansible less than 2.9.",high,,Sides with Reviewer B/C (positive) against Reviewer A (uncertain) — but on an incorrect technical basis.,1,4,3,1,1,1,"Factually wrong: claims ignore_errors 'requires a direct boolean value' and that a templated Jinja2 expression is 'not allowed'. Ansible explicitly supports ignore_errors: ""{{ some_condition }}"" as idiomatic usage. This is confidently stated, specific, well-grounded in the literal code — and incorrect. The recommended fix (hardcode a boolean) would remove working, intentional version-gating logic.",
+V007PILOT-OBJECTIVE_CORRECTNESS-004,ansibleguard/non-idempotent-command,ethpandaops/ansible-collection-general,roles/lighthouse/tasks/setup.yaml,73,"    1 | - name: Add lighthouse user
+    2 |   ansible.builtin.user:
+    3 |     name: ""{{ lighthouse_user }}""
+    4 |   register: lighthouse_user_meta
+    5 | 
+    6 | - name: Configure lighthouse beacon client
+    7 |   when: lighthouse_enabled
+    8 |   block:
+    9 |     - name: Create data dir
+   10 |       ansible.builtin.file:
+   11 |         path: ""{{ lighthouse_datadir }}""
+   12 |         state: directory
+   13 |         mode: ""0750""
+   14 |         owner: ""{{ lighthouse_user }}""
+   15 |         group: ""{{ lighthouse_user }}""
+   16 | 
+   17 |     - name: Set permissions
+   18 |       ansible.builtin.command: ""chown -R {{ lighthouse_user }}:{{ lighthouse_user }} {{ lighthouse_datadir }}"" # noqa no-free-form
+   19 |       failed_when: false
+   20 |       changed_when: false
+   21 | 
+   22 |     - name: Run lighthouse container
+   23 |       community.docker.docker_container:
+   24 |         name: ""{{ lighthouse_container_name }}""
+   25 |         image: ""{{ lighthouse_container_image }}""
+   26 |         image_name_mismatch: recreate
+   27 |         state: started
+   28 |         restart_policy: always
+   29 |         stop_timeout: ""{{ lighthouse_container_stop_timeout }}""
+   30 |         ports: ""{{ lighthouse_container_ports }}""
+   31 |         volumes: ""{{ lighthouse_container_volumes }}""
+   32 |         env: ""{{ lighthouse_container_env }}""
+   33 |         networks: ""{{ lighthouse_container_networks }}""
+   34 |         entrypoint: ""{{ lighthouse_container_entrypoint | default(omit) }}""
+   35 |         command: >-
+   36 |           {{
+   37 |             lighthouse_container_command +
+   38 |             lighthouse_container_command_extra_args +
+   39 |             (lighthouse_checkpoint_sync_enabled | ternary(lighthouse_container_command_checkpoint_args, [])) +
+   40 |             (lighthouse_mev_boost_enabled | ternary(lighthouse_mev_boost_beacon_command, []))
+   41 |           }}
+   42 |         user: ""{{ lighthouse_user_meta.uid }}""
+   43 |         pull: """,negative,not-applicable,"The anchored 'Set permissions for validator data dir' command is immediately followed by changed_when: false (and failed_when: false), so it is explicitly guarded and always reports unchanged.",negative,"The recursive chown can repeat, but it converges the directory to the requested owner/group and no harmful repeat effect is shown; changed_when false only hides reporting.",ok,,"The `chown` command is used to set ownership of files and directories, which can be non-idempotent if the ownership is already correct.","The `chown` command will always change the ownership of the directory if it is not already owned by the specified user and group, even if the ownership is already correct. This can lead to unnecessary changes and potential issues if the task is run multiple times.","The `chown` command is used to set ownership of the `lighthouse_datadir` and `lighthouse_validator_datadir` directories. If the ownership is already correct, the `chown` command will still change the ownership, which is non-idempotent.","The non-idempotence of the `chown` command can lead to unnecessary changes, increased logging, and potential issues if the task is run multiple times.","Use the `stat` module to check the current ownership of the directory before running the `chown` command. If the ownership is already correct, skip the `chown` command.",,"By checking the current ownership of the directory before running the `chown` command, we can ensure that the `chown` command is only run when necessary, making the task idempotent.","The trade-off is that we need to add an additional task to check the ownership of the directory. However, this is a small trade-off compared to the potential issues caused by the non-idempotence of the `chown` command.",high,,"Disagrees with BOTH existing reviewers (both say negative/not-a-real-issue); the model argues the chown non-idempotency concern is real. Genuinely substantive disagreement, correctly flagged here rather than resolved.",3,4,4,4,2,4,"None confirmed false, but worth independent verification: whether the task uses a raw chown shell invocation (genuinely non-idempotent) vs. the ansible.builtin.file module (idempotent) determines whether this claim is correct; the excerpt available doesn't settle it conclusively either way.",
+V007PILOT-VARIABLE_REFERENCE_REASONING-007,ansibleguard/unscoped-shell-variable,yunionio/ocboot,onecloud/roles/utils/ai-env/tasks/install-container-toolkit-Debian.yml,32,"    1 | - name: Install curl and gpg prerequisites (Debian)
+    2 |   apt:
+    3 |     name:
+    4 |       - curl
+    5 |       - gpg
+    6 |     state: present
+    7 |     update_cache: yes
+    8 |   become: true
+    9 | 
+   10 | - name: Add NVIDIA Container Toolkit GPG key (Debian)
+   11 |   shell: |
+   12 |     curl -fsSL https://mirrors.ustc.edu.cn/libnvidia-container/gpgkey | \
+   13 |       gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+   14 |   become: true
+   15 |   args:
+   16 |     executable: /bin/bash
+   17 | 
+   18 | - name: Add NVIDIA Container Toolkit apt repository (Debian)
+   19 |   shell: |
+   20 |     curl -s -L https://mirrors.ustc.edu.cn/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+   21 |       sed 's#deb https://nvidia.github.io#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://mirrors.ustc.edu.cn#g' | \
+   22 |       tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+   23 |   become: true
+   24 |   args:
+   25 |     executable: /bin/bash
+   26 | 
+   27 | - name: Update apt cache (Debian)
+   28 |   apt:
+   29 |     update_cache: yes
+   30 |   become: true
+   31 | 
+   32 | - name: Install NVIDIA Container Toolkit (Debian)
+   33 |   shell: |
+   34 |     export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.17.8-1
+   35 |     apt install -y \
+   36 |       nvidia-container-toolkit=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+   37 |       nvidia-container-toolkit-base=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+   38 |       libnvidia-container-tools=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+   39 |       libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION}
+   40 |   become: true
+   41 |   args:
+   42 |     executable: /bin/bash
+   43 |   environment:
+   44 |     DEBIAN_FRONTEND: noninteractive",negative,not-applicable,"NVIDIA_CONTAINER_TOOLKIT_VERSION is exported and consumed within the same multi-line bash script (lines 34-39) run under a single shell/bash invocation, so it is correctly scoped and never needs to cross task or process boundaries.",negative,NVIDIA_CONTAINER_TOOLKIT_VERSION is exported and expanded within the same shell task process; it is not an Ansible variable that needs task-level environment scope.,ok,,The variable `NVIDIA_CONTAINER_TOOLKIT_VERSION` is used in a shell command without being defined in the playbook.,"The variable `NVIDIA_CONTAINER_TOOLKIT_VERSION` is referenced in the `shell` task on line 35, but it is not defined anywhere in the playbook.","The variable is used to specify the version of the NVIDIA Container Toolkit packages to install, but it is not set before being used.","The playbook may fail to install the correct version of the NVIDIA Container Toolkit packages, leading to potential issues with container runtime functionality.",Define the variable `NVIDIA_CONTAINER_TOOLKIT_VERSION` before it is used in the `shell` task.,,Defining the variable before it is used ensures that the playbook has the necessary information to install the correct version of the NVIDIA Container Toolkit packages.,"This fix assumes that the version `1.17.8-1` is correct and should be installed. If a different version is needed, the variable should be updated accordingly.",high,,Disagrees with both existing reviewers (both say negative). Same pattern as -005/-014: confidently asserts undefined-ness from a partial-file view.,2,4,4,3,1,4,"Same systematic issue as -005 and -014 — treats 'not visible in this excerpt' as equivalent to 'undefined', which the system prompt explicitly warns against.",
+V007PILOT-MAINTAINABILITY_COMPLEXITY-011,ansibleguard/undocumented-complex-task,autobase-tech/autobase,automation/roles/cloud_resources/tasks/aws.yml,473,"  438 |           ping_port: ""{{ patroni_restapi_port | default('8008') }}""
+  439 |           ping_path: ""/{{ item }}""
+  440 |           interval: 5
+  441 |           timeout: 2
+  442 |           unhealthy_threshold: 2
+  443 |           healthy_threshold: 3
+  444 |         idle_timeout: 600
+  445 |         scheme: ""{{ 'internet-facing' if database_public_access | bool else 'internal' }}""
+  446 |         state: present
+  447 |       loop:
+  448 |         - ""primary""
+  449 |         - ""replica""
+  450 |         - ""sync""
+  451 |       loop_control:
+  452 |         label: ""{{ patroni_cluster_name }}-{{ item }}""
+  453 |       register: aws_elb_classic_lb
+  454 |       until: aws_elb_classic_lb is success
+  455 |       retries: 3
+  456 |       delay: 10
+  457 |       when: server_result.results | default([]) | length > 0 and
+  458 |         cloud_load_balancer | bool and aws_load_balancer_type | lower == 'clb' and
+  459 |         (item == 'primary' or
+  460 |         (item == 'replica' and server_count | int > 1) or
+  461 |         (item in ['sync', 'async'] and server_count | int > 1 and synchronous_mode | bool))
+  462 | 
+  463 |     # Network Load Balancer (NLB)
+  464 |     - name: Build NLB targets
+  465 |       ansible.builtin.set_fact:
+  466 |         nlb_targets: ""{{ (nlb_targets | default([])) + [{'Id': item, 'Port': target_port | int}] }}""
+  467 |       loop: ""{{ instance_ids | default([]) }}""
+  468 |       vars:
+  469 |         instance_ids: ""{{ (server_result | default({'results': []})) | json_query('results[].instances[].instance_id') }}""
+  470 |         target_port: ""{{ pgbouncer_listen_port | default('6432') if pgbouncer_install | bool else postgresql_port | default('5432') }}""
+  471 |       when: cloud_load_balancer | bool and aws_load_balancer_type | lower == 'nlb'
+  472 | 
+  473 |     - name: ""AWS: Create or modify NLB Target Group""
+  474 |       community.aws.elb_target_group:
+  475 |         access_key: ""{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID",positive,advisory,"Task has 14 module parameters, a loop with loop_control/register/until/retries, and a 3-way nested boolean when-clause, with no comment explaining the condition (unlike the pattern elsewhere in this file).",negative,"This is a declarative AWS target-group module task with an explicit NLB section comment, descriptive name, and individually named settings. The supplied context does not show undocumented control flow or a maintenance burden beyond ordinary module configuration.",ok,,"The task is complex and contains multiple nested loops and conditions, which can be difficult to maintain and understand.","The task involves creating or modifying an NLB Target Group, which requires setting up multiple variables and conditions. The use of nested loops and conditions makes the task difficult to follow and maintain.","The task is part of a larger playbook that manages AWS resources, and the complexity of the task is necessary to ensure that the NLB Target Group is correctly configured for the different types of instances (primary, replica, sync, async).","If the task is not maintained correctly, it could lead to errors in the NLB Target Group configuration, which could cause issues with the availability and performance of the application.","Refactor the task into smaller, more manageable tasks. This will make the task easier to understand and maintain. Additionally, consider adding comments to the task to explain the purpose of each step.",,"Refactoring the task into smaller, more manageable tasks will make it easier to understand and maintain. Additionally, adding comments to the task will help other developers understand the purpose of each step.","Refactoring the task may require additional time and effort, but it will improve the maintainability and readability of the code. There are no assumptions made in this response.",high,,"Sides with Reviewer A (positive); existing reviewers disagree with each other (A=positive, B/C=negative) — model does not resolve or even note the conflict.",3,4,4,4,1,4,"None found in the explanation text itself, but confidence=high on a case where the two existing reviewers actively disagree.",
+V007PILOT-MAINTAINABILITY_COMPLEXITY-016,ansibleguard/excessive-nesting,axivo/k3s-cluster,roles/cluster/tasks/configuration.yaml,70,"    1 | ---
+    2 | - name: Hardware Configuration
+    3 |   notify: Reboot
+    4 |   block:
+    5 |     - name: Raspberry Pi Configuration
+    6 |       when: cluster_vars.hardware.product | lower == 'raspberry pi'
+    7 |       block:
+    8 |         - name: Set service facts
+    9 |           ansible.builtin.service_facts:
+   10 | 
+   11 |         - name: Bluetooth Configuration
+   12 |           when: cluster_vars.service.bluetooth.enabled is falsy
+   13 |           block:
+   14 |             - name: Disable bluetooth service
+   15 |               ansible.builtin.systemd_service:
+   16 |                 name: bluetooth.service
+   17 |                 state: stopped
+   18 |                 enabled: false
+   19 |               when: ansible_facts.services['bluetooth.service'] is defined
+   20 | 
+   21 |             - name: Disable hciuart service
+   22 |               ansible.builtin.systemd_service:
+   23 |                 name: hciuart.service
+   24 |                 state: stopped
+   25 |                 enabled: false
+   26 |               when: ansible_facts.services['hciuart.service'] is defined
+   27 | 
+   28 |         - name: WiFi Configuration
+   29 |           when: cluster_vars.service.wifi.enabled is falsy
+   30 |           block:
+   31 |             - name: Disable wifi service
+   32 |               ansible.builtin.systemd_service:
+   33 |                 name: wpa_supplicant.service
+   34 |                 state: stopped
+   35 |                 enabled: false
+   36 |               when: ansible_facts.services['wpa_supplicant.service'] is defined
+   37 | 
+   38 |         - name: Create firmware purge configuration
+   39 |           ansible.builtin.copy:
+   40 |             content: |
+   41 |               DPkg::Post-Invoke {""/usr/bin/find /boot/firmware -type f -name '*.bak' -delete 2>/dev/null || true"";};
+   42 |             dest: /etc/apt/apt.conf.d/90rpi-firmware-purge
+   43 |             owner: root
+   44 |             group: root
+   45 |         ",positive,actionable,"Anchor sits five block levels deep (Hardware Configuration > USB Device Configuration > Device Trim > Device Rule Setup > block), each with its own when-condition.",negative,The anchored block groups two related device-rule tasks under one validation condition: construct the rule fact and write it. This shallow nesting makes the shared guard explicit rather than obscuring control flow.,ok,,"The task 'Hardware Configuration' contains nested blocks, which can lead to complex and hard-to-maintain code.","Nested blocks can make the playbook harder to read and understand, especially when the nesting level increases.","The 'Hardware Configuration' task contains multiple nested blocks, each with its own conditions and actions. This can make it difficult to follow the flow of the playbook and understand the logic behind each step.","Increased complexity can lead to bugs, errors, and maintenance issues. It can also make it harder for other developers to understand and modify the playbook.",Refactor the nested blocks into separate tasks or roles to reduce the level of nesting.,,"By breaking down the nested blocks into separate tasks or roles, the playbook will be easier to read and understand. This will make it easier to maintain and modify in the future.","Refactoring the playbook may require additional time and effort. However, the benefits of improved readability and maintainability will outweigh the costs in the long run.",high,,"Sides with Reviewer A (positive); existing reviewers disagree with each other (A=positive, B/C=negative).",3,1,2,2,1,2,"Explanation is generic boilerplate about nesting in general; never references the actual task names visible in the supplied context (Hardware Configuration / Raspberry Pi Configuration / Device Trim), despite the system prompt explicitly requiring concrete line content, not just the detector's message restated.",
+V007PILOT-MAINTAINABILITY_COMPLEXITY-005,ansibleguard/high-coupling,AtlasOfLivingAustralia/ala-install,ansible/profiles.yml,1,"    1 | - hosts: all
+    2 |   roles:
+    3 |     - common
+    4 |     - { role: java, when: is_primary | bool }
+    5 |     - {role: mongodb-org, dbPath: ""{{ profiles_dbPath }}""}
+    6 |     - { role: webserver, when: is_primary | bool }
+    7 |     - { role: nameindex, when: is_primary | bool }
+    8 |     - { role: ansible-elasticsearch, es_templates: false, es_instance_name: 'profiles-elasticsearch', es_data_dirs: ['/data/elasticsearch'], tags: ['elasticsearch'], when: install_elasticsearch | bool }
+    9 | #    cannot put is_primary condition on this role as it is used to create various mongo roles
+   10 |     - profile-service
+   11 |     - { role: profile-hub, when: is_primary | bool }",uncertain,uncertain,Play only lists roles with simple when-guards and one inline param passed from inventory vars; without the roles' internal variable contracts we cannot confirm genuine tight coupling versus ordinary composition.,uncertain,"The play lists many roles and a comment notes one role cannot use the primary-host condition because it creates Mongo roles. This suggests coordination, but the role interfaces and dependency/reference graph needed to judge harmful coupling are not supplied.",ok,,The playbook is highly coupled due to the use of conditional roles based on variables like `is_primary` and `install_elasticsearch`.,"High coupling makes the playbook harder to maintain and understand, as changes in one part of the playbook can affect multiple roles.",The playbook includes multiple conditional roles that depend on specific variables. This creates a web of dependencies that are difficult to manage.,"This can lead to issues such as unexpected behavior when variables change, increased complexity in testing, and difficulties in debugging.",Refactor the playbook to reduce coupling by separating roles into more independent components. Use role parameters and variables to control behavior rather than conditional includes.,,"By reducing coupling, the playbook becomes easier to maintain and understand. Changes in one part of the playbook will have less impact on other parts, making it easier to debug and test.","Refactoring may require more time and effort upfront, but it will lead to a more maintainable and scalable playbook in the long run.",high,,Reasonable — both existing reviewers called this 'uncertain'; the model's narrative treats it as a clear positive finding.,4,3,4,3,1,3,States confidence=high and limitations=None on a case both independent reviewers found ambiguous enough to mark uncertain; no hedge offered.,
+V007PILOT-MAINTAINABILITY_COMPLEXITY-012,ansibleguard/unused-handler,roots/trellis,xdebug-tunnel.yml,16,"    1 | ---
+    2 | - name: Test Connection and Determine Remote User
+    3 |   hosts: ""{{ xdebug_tunnel_inventory_host }}""
+    4 |   gather_facts: false
+    5 |   roles:
+    6 |     - { role: connection, tags: [connection, always] }
+    7 | 
+    8 | - name: Enable or Disable Xdebug and SSH Tunnel
+    9 |   hosts: ""{{ xdebug_tunnel_inventory_host }}""
+   10 |   become: yes
+   11 |   roles:
+   12 |     - { role: sshd, tags: [sshd] }
+   13 |     - { role: xdebug, tags: [xdebug] }
+   14 |     - { role: xdebug-tunnel, tags: [xdebug-tunnel] }
+   15 |   handlers:
+   16 |     - name: reload php-fpm
+   17 |       service:
+   18 |         name: php{{ php_version }}-fpm
+   19 |         state: reloaded",uncertain,uncertain,"Handler is only reachable via notify from the sshd/xdebug/xdebug-tunnel roles' task files, none of which are in the frozen bundle; cannot confirm the absence of a notify reference.",uncertain,"The play defines a reload php-fpm handler, but the supplied playbook excerpt contains no notify references. The three referenced roles' task trees may notify it, so this partial role graph cannot establish that the handler is unused.",ok,,The handler 'reload php-fpm' is defined but not used anywhere in the playbook.,"Unused handlers can lead to unnecessary complexity and potential performance overhead, as they consume resources even if they are not triggered.",The handler 'reload php-fpm' is defined in the playbook but not referenced in any tasks or blocks that could trigger it. This suggests it is either a leftover from a previous version of the playbook or an oversight.,"While the impact may be minimal in this specific case, unused handlers can clutter the playbook, make it harder to understand, and potentially lead to maintenance issues if they are accidentally triggered in the future.",Remove the unused handler 'reload php-fpm' from the playbook.,,"Removing unused handlers simplifies the playbook, improves readability, and reduces potential maintenance overhead.","There are no trade-offs in this case, as the handler is not being used. The assumption is that the handler was not intentionally left in the playbook and can be safely removed.",high,,Agrees with both existing reviewers' 'uncertain' call in substance (flags it as a real-but-minor issue) but states it with unwarranted certainty.,2,2,3,3,1,3,"Asserts the handler is unused 'anywhere in the playbook' — not verifiable from a single-file excerpt; the system prompt explicitly instructs against this exact kind of unverifiable claim, yet confidence=high, limitations=None.",

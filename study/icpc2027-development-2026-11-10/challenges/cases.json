@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "purpose": "Additional controlled development challenges after the v4.1 diagnosis; not independent natural evaluation or human labels",
+  "development": [
+    {
+      "case_id": "development-challenge-tls-play-false",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- hosts: localhost\n  tasks:\n    - name: Check artifact\n      ansible.builtin.uri:\n        url: https://example.invalid/status\n        validate_certs: false\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 6,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-challenge-tls-action-true",
+      "family": "missing-validate-certs",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Check artifact\n  action:\n    module: ansible.builtin.uri\n    url: https://example.invalid/status\n    validate_certs: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 5,
+        "rule_id": "missing-validate-certs",
+        "message": "This task explicitly disables TLS certificate verification."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-challenge-permissions-other-write",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage build output\n  ansible.builtin.file:\n    path: /srv/build-output\n    state: touch\n    group: deployers\n    mode: '0702'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 6,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-challenge-permissions-shared-setgid",
+      "family": "insecure-permissions",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Manage build output\n  ansible.builtin.file:\n    path: /srv/build-output\n    state: directory\n    group: deployers\n    mode: '2770'\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 6,
+        "rule_id": "insecure-permissions",
+        "message": "This task grants unsafe permission bits."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-challenge-logging-task-unprotected",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Logging wrapper\n  no_log: true\n  block:\n    - name: Show API setting\n      ansible.builtin.debug:\n        msg: \"{{ api_token }}\"\n      no_log: false\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 6,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "supported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-challenge-logging-task-protected",
+      "family": "credential-log-exposure",
+      "kind": "controlled",
+      "files": {
+        "tasks.yml": "- name: Logging wrapper\n  no_log: false\n  block:\n    - name: Show API setting\n      ansible.builtin.debug:\n        msg: \"{{ api_token }}\"\n      no_log: true\n"
+      },
+      "occurrence": {
+        "file": "tasks.yml",
+        "line": 6,
+        "rule_id": "credential-log-exposure",
+        "message": "This task displays a sensitive variable without effective no_log protection."
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-challenge-variable-local-role",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "roles/service/tasks/main.yml": "- name: Show service setting\n  ansible.builtin.debug:\n    msg: \"{{ ApiPort }}\"\n",
+        "roles/service/defaults/main.yml": "ApiPort: 8080\n"
+      },
+      "occurrence": {
+        "file": "roles/service/tasks/main.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "message": "Variable 'ApiPort' has no visible definition or runtime input contract.",
+        "semantic_subject": "variable:ApiPort"
+      },
+      "engineering_expectation": "unsupported",
+      "eligible_for_population_scoring": false
+    },
+    {
+      "case_id": "development-challenge-variable-unrelated-role",
+      "family": "unguarded-variable",
+      "kind": "controlled",
+      "files": {
+        "roles/service/tasks/main.yml": "- name: Show service setting\n  ansible.builtin.debug:\n    msg: \"{{ ApiPort }}\"\n",
+        "roles/unrelated/defaults/main.yml": "ApiPort: 9090\n"
+      },
+      "occurrence": {
+        "file": "roles/service/tasks/main.yml",
+        "line": 3,
+        "rule_id": "unguarded-variable",
+        "message": "Variable 'ApiPort' has no visible definition or runtime input contract.",
+        "semantic_subject": "variable:ApiPort"
+      },
+      "engineering_expectation": "insufficient-evidence",
+      "eligible_for_population_scoring": false
+    }
+  ],
+  "evaluation": [],
+  "human_review": "not human gold",
+  "created_for": "v4.2 development robustness check; do not tune using the separate 48-case evaluation panel",
+  "cases_sha256": "87fb95fe4ae41f7b738f964fe67c18daadcf4903cc8a62df983668dfb539b8b8"
+}

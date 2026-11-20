@@ -1,0 +1,22 @@
+{
+  "metric_id": "large_play_loc",
+  "pilot_band_counts": {
+    "B1_low": 10,
+    "B2_lower_middle": 20,
+    "B3_upper_middle": 18,
+    "B4_high": 18,
+    "B5_current_positive_tail": 9
+  },
+  "pilot_prediction_counts": {
+    "false": 38,
+    "true": 37
+  },
+  "pilot_projects": 61,
+  "pilot_rows": 75,
+  "pilot_sha256": "bba60f3a36c4d0cab73958347780f3986aad6be61a9fcb8236ba10b3a43364a7",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 662,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

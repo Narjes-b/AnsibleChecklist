@@ -1,0 +1,347 @@
+observation_id,metric_id,rule_id,unit,project,commit_sha,repository_size_quartile,path,document_type,line,name,value,current_threshold,comparator,eligible,current_prediction,threshold_multiplier,has_existing_abstraction,base_score,boolean_ops,jinja_filters,nesting_depth,has_preceding_comment,source_ordinal,play_loc,play_task_count,play_avg_task_size,playbook_loc,playbook_play_count,playbook_avg_play_size,playbook_task_count,playbook_avg_task_size,import_count,role_count,task_special_chars,play_special_chars,parent_play_name,sample_stratum,metric_band,stratum_population,inclusion_probability,sampling_weight,review_question,reviewer_1_label,reviewer_1_reason,context_start_line,context_end_line,source_total_lines,context_complete,context_strategy,source_context,reviewer_2_label,reviewer_2_reason,initial_agreement,adjudicated_label,adjudication_reason,ai_label,ai_reason,ai_prompt_version,ai_model_version
+472944ac332dd6e129e1184375bbd1fd94a6634fd2a7d8d569b917412c4e2ed7,large_task_loc,large-task,task,sgaunet/conf-linux,95a2f4f71c0a55dfe9b4d3e2b4e53e408bc83da3,Q2,src/roles/devops/tasks/main.yml,tasks,69,Install nfpm,5,15,>,true,false,1,false,,,,,false,11,,,,,,,,,,,,,,sgaunet/conf-linux|B2_lower_middle|current=false,B2_lower_middle,106,0.0094339623,106,Should this executable Ansible task be considered excessively large and in need of decomposition?,uncertain,"'Install nfpm' only dispatches to an external role via import_role with no leaf module body shown in this file, so there is no executable task content in scope to evaluate per rule 7.",1,201,201,true,complete-file,"     1: ---
+     2: 
+     3: - name: ""Install goreleaser""
+     4:   ansible.builtin.import_role:
+     5:     name: ""sgaunet.gh_role_installer""
+     6:     vars_from: ""goreleaser.yml""
+     7:   tags: goreleaser
+     8: 
+     9: - name: ""Install chglog""
+    10:   ansible.builtin.import_role:
+    11:     name: ""sgaunet.gh_role_installer""
+    12:     vars_from: ""chglog.yml""
+    13:   tags: chglog
+    14: 
+    15: - name: ""Install d2""
+    16:   ansible.builtin.import_role:
+    17:     name: ""sgaunet.gh_role_installer""
+    18:     vars_from: ""d2.yml""
+    19:   tags: d2
+    20: 
+    21: - name: ""Install jwt-cli""
+    22:   ansible.builtin.import_role:
+    23:     name: ""sgaunet.gh_role_installer""
+    24:     vars_from: ""jwt-cli.yml""
+    25:   tags: jwt-cli
+    26: 
+    27: - name: ""Install task""
+    28:   ansible.builtin.import_role:
+    29:     name: ""sgaunet.gh_role_installer""
+    30:     vars_from: ""task.yml""
+    31:   tags: task
+    32: 
+    33: - name: ""Install usql""
+    34:   ansible.builtin.import_role:
+    35:     name: ""sgaunet.gh_role_installer""
+    36:     vars_from: ""usql.yml""
+    37:   tags: usql
+    38: 
+    39: - name: ""Install venom""
+    40:   ansible.builtin.import_role:
+    41:     name: ""sgaunet.gh_role_installer""
+    42:     vars_from: ""venom.yml""
+    43:   tags: venom
+    44: 
+    45: - name: ""Install pre-commit""
+    46:   ansible.builtin.import_role:
+    47:     name: ""sgaunet.gh_role_installer""
+    48:     vars_from: ""pre-commit.yml""
+    49:   tags: pre-commit
+    50: 
+    51: - name: ""Install sqlc""
+    52:   ansible.builtin.import_role:
+    53:     name: ""sgaunet.gh_role_installer""
+    54:     vars_from: ""sqlc.yml""
+    55:   tags: sqlc
+    56: 
+    57: - name: ""Install k6""
+    58:   ansible.builtin.import_role:
+    59:     name: ""sgaunet.gh_role_installer""
+    60:     vars_from: ""k6.yml""
+    61:   tags: k6
+    62: 
+    63: - name: ""Install pet""
+    64:   ansible.builtin.import_role:
+    65:     name: ""sgaunet.gh_role_installer""
+    66:     vars_from: ""pet.yml""
+    67:   tags: pet
+    68: 
+    69: - name: ""Install nfpm""
+    70:   ansible.builtin.import_role:
+    71:     name: ""sgaunet.gh_role_installer""
+    72:     vars_from: ""nfpm.yml""
+    73:   tags: nfpm
+    74: 
+    75: - name: ""Install hadolint""
+    76:   ansible.builtin.import_role:
+    77:     name: ""sgaunet.gh_role_installer""
+    78:     vars_from: ""hadolint.yml""
+    79:   tags: hadolint
+    80: 
+    81: - name: ""Install act""
+    82:   ansible.builtin.import_role:
+    83:     name: ""sgaunet.gh_role_installer""
+    84:     vars_from: ""act.yml""
+    85:   tags: act
+    86: 
+    87: - name: ""Install pgweb""
+    88:   ansible.builtin.import_role:
+    89:     name: ""sgaunet.gh_role_installer""
+    90:     vars_from: ""pgweb.yml""
+    91:   tags: pgweb
+    92: ############################################
+    93: - name: ""Install tbls""
+    94:   ansible.builtin.include_role:
+    95:     name: sgaunet.gh_role_installer
+    96:     vars_from: tbls.yml
+    97:   tags: tbls
+    98: 
+    99: - name: ""Install dive""
+   100:   ansible.builtin.include_role:
+   101:     name: sgaunet.gh_role_installer
+   102:     vars_from: dive.yml
+   103:   tags: dive
+   104: 
+   105: - name: ""Install devpod""
+   106:   ansible.builtin.include_role:
+   107:     name: sgaunet.gh_role_installer
+   108:     vars_from: devpod.yml
+   109:   tags: devpod
+   110: 
+   111: - name: ""Install golangci-lint""
+   112:   ansible.builtin.include_role:
+   113:     name: sgaunet.gh_role_installer
+   114:     vars_from: golangci-lint.yml
+   115:   tags: golangci-lint
+   116: 
+   117: - name: ""Install devbox""
+   118:   ansible.builtin.include_role:
+   119:     name: sgaunet.gh_role_installer
+   120:     vars_from: devbox.yml
+   121:   tags: devbox
+   122: 
+   123: - name: ""Install gh""
+   124:   ansible.builtin.include_role:
+   125:     name: sgaunet.gh_role_installer
+   126:     vars_from: gh.yml
+   127: 
+   128: - name: ""Install glab""
+   129:   ansible.builtin.include_role:
+   130:     name: sgaunet.glab
+   131: 
+   132: - name: ""Install forge-cli""
+   133:   ansible.builtin.include_role:
+   134:     name: sgaunet.forgejo_role_installer
+   135:     vars_from: forgejo-cli.yml
+   136: 
+   137: - name: ""Install fgj""
+   138:   ansible.builtin.include_role:
+   139:     name: sgaunet.forgejo_role_installer
+   140:     vars_from: fgj.yml
+   141: 
+   142: - name: ""Install gitlab-token-expiration""
+   143:   ansible.builtin.include_role:
+   144:     name: sgaunet.gh_role_installer
+   145:     vars_from: gitlab-token-expiration.yml
+   146: 
+   147: - name: ""Install wait4x""
+   148:   ansible.builtin.include_role:
+   149:     name: sgaunet.gh_role_installer
+   150:     vars_from: wait4x.yml
+   151: 
+   152: - name: ""Install gitlab-mcp""
+   153:   ansible.builtin.include_role:
+   154:     name: sgaunet.gh_role_installer
+   155:     vars_from: gitlab-mcp.yml
+   156: 
+   157: - name: ""Install postgresql-mcp""
+   158:   ansible.builtin.include_role:
+   159:     name: sgaunet.gh_role_installer
+   160:     vars_from: postgresql-mcp.yml
+   161: 
+   162: 
+   163: - name: ""Install gitcommit""
+   164:   ansible.builtin.include_role:
+   165:     name: sgaunet.gh_role_installer
+   166:     vars_from: gitcommit.yml
+   167: 
+   168: - name: ""Install witr""
+   169:   ansible.builtin.include_role:
+   170:     name: sgaunet.gh_role_installer
+   171:     vars_from: witr.yml
+   172: 
+   173: - name: ""Install chezmoi""
+   174:   ansible.builtin.include_role:
+   175:     name: sgaunet.gh_role_installer
+   176:     vars_from: chezmoi.yml
+   177: 
+   178: - name: ""Install sops""
+   179:   ansible.builtin.include_role:
+   180:     name: sgaunet.gh_role_installer
+   181:     vars_from: sops.yml
+   182: 
+   183: - name: ""Install docker-agent""
+   184:   ansible.builtin.include_role:
+   185:     name: sgaunet.gh_role_installer
+   186:     vars_from: docker-agent.yml
+   187: 
+   188: - name: ""Install mise""
+   189:   ansible.builtin.include_role:
+   190:     name: sgaunet.gh_role_installer
+   191:     vars_from: mise.yml
+   192: 
+   193: - name: ""Install semver""
+   194:   ansible.builtin.include_role:
+   195:     name: sgaunet.gh_role_installer
+   196:     vars_from: semver.yml
+   197: 
+   198: - name: ""Install scaffold""
+   199:   ansible.builtin.include_role:
+   200:     name: sgaunet.gh_role_installer
+   201:     vars_from: scaffold.yml",negative,"""Install nfpm"" is a small, fully-visible ansible.builtin.import_role call with a single vars_from key - one cohesive delegated install action, not an oversized task.",,,,,,,
+96a014e1860c3e7088e478a9124d0686d2a076ef46480c5ea7c92707c8a5999a,large_task_loc,large-task,task,azimuth-cloud/ansible-collection-azimuth-ops,396972118edcecb213e69497f9f2c70e7abd0611,Q3,playbooks/download_images.yml,playbook,9,Discover k3s host and adopt it,8,15,>,true,false,1,false,,,,,false,0,,,,,,,,,,,,,,azimuth-cloud/ansible-collection-azimuth-ops|B3_upper_middle|current=false,B3_upper_middle,85,0.0117647059,85,Should this executable Ansible task be considered excessively large and in need of decomposition?,uncertain,"'Discover k3s host and adopt it' only calls include_role for an external collection role with no leaf task body visible in this excerpt, so the actual work being measured is not in scope per rule 7.",1,24,24,true,complete-file,"     1: ---
+     2: #####
+     3: # A minimal playbook to just download/convert/upload the community images
+     4: #####
+     5: # Get the state information for the seed and adopt it
+     6: - name: Set facts from the Terraform state of the seed node
+     7:   hosts: terraform_provision
+     8:   tasks:
+     9:     - name: Discover k3s host and adopt it
+    10:       ansible.builtin.include_role:
+    11:         name: azimuth_cloud.azimuth_ops.infra
+    12:       vars:
+    13:         infra_readonly: true
+    14:         infra_ansible_groups:
+    15:           - k3s
+    16:           - azimuth_deploy
+    17: 
+    18: # Download, convert, and upload community images
+    19: - name: Download, convert, and upload community images
+    20:   hosts: k3s
+    21:   tasks:
+    22:     - name: Download, convert, and upload community images
+    23:       ansible.builtin.include_role:
+    24:         name: azimuth_cloud.azimuth_ops.community_images",negative,"""Discover k3s host and adopt it"" is a small, fully-visible ansible.builtin.include_role call with two declarative vars configuring one role invocation - a cohesive single delegated action, not an oversized task on its own.",,,,,,,
+146eb56ec878f915ad813c2f38357d1d21af34fa18a861129e44777acf576c6f,large_task_loc,large-task,task,grycap/im,5e54aa6e02108a615abf2670abaa4aa1c56add02,Q1,contextualization/basic.yml,playbook,31,Bootstrap with python Debian/Ubuntu,7,15,>,true,false,1,false,,,,,false,4,,,,,,,,,,,,,,grycap/im|B3_upper_middle|current=false,B3_upper_middle,11,0.0909090909,11,Should this executable Ansible task be considered excessively large and in need of decomposition?,positive,"'Bootstrap with python Debian/Ubuntu' chains 'apt update && apt install python3.5; apt install python3' inside one raw string -- two independent package installs that each map to their own apt task, collapsed into one raw block per the rule 8 positive pattern.",1,121,121,true,complete-file,"     1: ---
+     2: - gather_facts: False
+     3:   tasks: 
+     4:   ############## To avoid some issues with cloud-init and unattended upgrades ###############
+     5:     - name: Avoid unattended upgrades
+     6:       raw: |
+     7:         sudo touch /var/lib/apt/periodic/upgrade-stamp; \
+     8:         sudo touch /var/lib/apt/periodic/update-stamp; \
+     9:         sudo touch /var/lib/apt/periodic/download-upgradeable-stamp;
+    10:       ignore_errors: yes
+    11:       changed_when: false
+    12: 
+    13:     - name: Wait for the VM to boot
+    14:       raw: systemctl is-system-running --wait
+    15:       ignore_errors: yes
+    16:       changed_when: false
+    17: 
+    18:     # Some OSs does not have python by default
+    19:     - name: Check Python2 is installed
+    20:       raw: python2 -c 'import sys; print(sys.version_info[1])'
+    21:       ignore_errors: yes
+    22:       register: python2_version
+    23:       changed_when: false
+    24: 
+    25:     - name: Check Python3 is installed
+    26:       raw: python3 -c 'import sys; print(sys.version_info[1])'
+    27:       ignore_errors: yes
+    28:       register: python3_version
+    29:       changed_when: false
+    30: 
+    31:     - name: Bootstrap with python Debian/Ubuntu
+    32:       raw: sudo apt update && sudo apt install -y python3.5; sudo apt install -y python3
+    33:       ignore_errors: yes
+    34:       register: python_install
+    35:       changed_when: python_install.stdout_lines|length > 1
+    36:       when: (python2_version is failed and python3_version is failed) or python3_version.stdout|int < 5
+    37: 
+    38:     - name: Link correct python version in Ubuntu 14
+    39:       raw: ls /usr/bin/python3.5 && sudo rm -f /usr/bin/python3 && sudo ln -s /usr/bin/python3.5 /usr/bin/python3
+    40:       when: python3_version is success and python3_version.stdout|int < 5
+    41:       ignore_errors: yes
+    42: 
+    43:     - name: Bootstrap with python RedHat/CentOS
+    44:       raw: sudo yum install -y python3
+    45:       ignore_errors: yes
+    46:       register: python_install
+    47:       changed_when: python_install.stdout_lines|length > 1
+    48:       when: python2_version is failed and python3_version is failed
+    49: 
+    50:     - name: RedHat/CentOS install python3-dnf
+    51:       command: sudo yum install -y python3 python3-dnf
+    52:       ignore_errors: yes
+    53: 
+    54:     - name: Bootstrap with python SUSE
+    55:       raw: sudo zypper -n install python3 python3-xml
+    56:       ignore_errors: yes
+    57:       register: python_install
+    58:       changed_when: python_install.stdout_lines|length > 1
+    59:       when: python2_version is failed and python3_version is failed
+    60: 
+    61:     - name: Link python 3 or 2 in case is needed
+    62:       raw: ls /usr/bin/python || { ls /usr/bin/python3 && ln -s /usr/bin/python3 /usr/bin/python; } || { ls /usr/bin/python2 && ln -s /usr/bin/python2 /usr/bin/python; }
+    63:       become: yes
+    64:       ignore_errors: yes
+    65: 
+    66:     # In case of redhat systems libselinux-python3 is needed
+    67:     - name: Install libselinux-python3 on RH systems
+    68:       raw: ls /usr/bin/python3 && yum -y install libselinux-python3
+    69:       become: yes
+    70:       ignore_errors: yes
+    71: 
+    72:     # In case of redhat systems libselinux-python is needed
+    73:     - name: Install libselinux-python on RH systems
+    74:       raw: ls /usr/bin/python2 && yum -y install libselinux-python
+    75: 
+    76:       become: yes
+    77:       ignore_errors: yes
+    78: 
+    79:     # Set the correct hostname
+    80:     - name: Set the hostname of the node
+    81:       hostname: name={{ IM_NODE_FQDN }}
+    82:       become: yes
+    83:       ignore_errors: yes
+    84: 
+    85:     # In case of redhat systems disable SELinux
+    86:     - name: Disable SELinux in REL systems
+    87:       selinux: state=disabled
+    88:       become: yes
+    89:       ignore_errors: yes
+    90: 
+    91:     # Add the authorized_key to the nodes to enable accessing without password
+    92:     # pk_file var must be added by the ctxt agent
+    93:     - name: Add the authorized_key to the nodes
+    94:       authorized_key: user={{ansible_user}} key=""{{ lookup('file', pk_file) }}""
+    95: 
+    96:     # Added to solve GCE issues removing the key
+    97:     - name: Add the authorized_key to the nodes again
+    98:       lineinfile: dest=""/home/{{ansible_user}}/.ssh/authorized_keys"" line=""{{ lookup('file', pk_file) }}2""
+    99:       ignore_errors: yes
+   100: 
+   101:     - name: Gather Facts
+   102:       setup:
+   103: 
+   104:     - name: Ubuntu apt update
+   105:       apt: update_cache=yes cache_valid_time=3600
+   106:       when: ansible_distribution == ""Ubuntu""
+   107:       ignore_errors: yes
+   108:       register: apt_update
+   109:       become: yes
+   110:       become_method: sudo
+   111:       async: 120
+   112:       poll: 1
+   113:   
+   114:     - name: Ubuntu force apt update (avoid apt lock)
+   115:       command: apt update
+   116:       when: ansible_distribution == ""Ubuntu"" and apt_update is failed
+   117:       ignore_errors: yes
+   118:       become: yes
+   119:       become_method: sudo
+   120:       async: 120
+   121:       poll: 1",negative,"""Bootstrap with python Debian/Ubuntu"" chains apt update and two python package installs in one raw command specifically because no Python (and therefore no apt module) is available yet on the target, so there is no natural Ansible-module alternative available at this bootstrap stage (rule 3).",,,,,,,

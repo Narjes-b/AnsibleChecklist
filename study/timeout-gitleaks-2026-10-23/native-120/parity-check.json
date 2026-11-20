@@ -1,0 +1,17 @@
+{
+  "eligible_for_performance_scoring": false,
+  "subset_sha256": "c12f0cc91050a60ae94b87aa86ec3c3eb3a6593b62735a54bb067a30bfad03ce",
+  "baseline_result_sha256": "145d165ecf575431aa1594082a727c68318f41a3c15a9379cfc415eed12211f5",
+  "selection": "First and last native finding in each of all 35 files, duplicate singleton omitted; development regression not accuracy sample",
+  "before": {
+    "rows": 69,
+    "files": 35,
+    "seconds": 5.104828105002525,
+    "implementation_sha256": "3b28376d46e3e762e322098c2ce4519e7e1cf7a586121bcba2d24be9547d746c"
+  },
+  "after_seconds": 2.692303105999599,
+  "after_implementation_sha256": "826c014f4479f5ff99eca918af04642c4734360112cb23ce13631fdf435646b3",
+  "kept": 67,
+  "suppressed": 2,
+  "exact_findings_and_suppression_evidence_and_order_match": true
+}

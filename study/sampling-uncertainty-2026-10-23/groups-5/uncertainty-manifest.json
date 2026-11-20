@@ -1,0 +1,71 @@
+{
+  "purpose": "synthetic design variance/normal-interval diagnostic; not measured accuracy",
+  "run_id": "v0071-rerun-2026-10-22",
+  "instrument": "required",
+  "design": {
+    "groups_per_stratum": 5,
+    "occurrences_per_group": 2,
+    "census_at": 30
+  },
+  "replications_per_scenario": 400,
+  "seed": "recovery-design-check-20261023-v1",
+  "scenarios": {
+    "constant-60": [
+      0.6,
+      0.0,
+      0.0
+    ],
+    "size-positive-60": [
+      0.6,
+      1.2,
+      0.8
+    ],
+    "size-negative-60": [
+      0.6,
+      1.2,
+      -0.8
+    ],
+    "heterogeneous-95": [
+      0.95,
+      1.2,
+      0.0
+    ],
+    "near-boundary-995": [
+      0.995,
+      0.8,
+      0.0
+    ],
+    "all-positive": [
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "numpy_version": "2.4.6",
+  "implementation_sha256": "611a13f4918240acc2ba809ed08bfdb9039e6751039c116f8de34641a9959bdf",
+  "dependency_sha256": {
+    "sample_partitioned_occurrences.py": "206e945c9d1c3532f16425a9d446265bf05ae5618dc98842a2fa5f144ffd42fb",
+    "simulate_partitioned_sampling.py": "4fb21e131f50d6302496bdd9bfca87027421b3facd99f4d5b6569f54af804b9d",
+    "audit_sampling_partitions.py": "694a14cd3e59649a9cc540fd58eda830d07a4adf71e6c094e19abeac771f6a5e"
+  },
+  "frame_manifest_sha256": "fc560b03d5f91febfbec7ecb29a5ecfa2d48a2565cc998386a99032f43af939e",
+  "occurrences_sha256": "71be3560cfb8194aa50d63a0ce323737e35ca9aaec0d01004d114b3bd995cecd",
+  "group_map_sha256": null,
+  "output_sha256": {
+    "uncertainty-summary.csv": "d97f9d906e8cef8cd30d79b3350ff1aeb124947e9eaeab68828ca969be097b13",
+    "uncertainty-draws.csv": "f8cd6bd2de185167c4ff76aedfd42071bd8e27948edc28d3f8abacc8853a50c8"
+  },
+  "eligible_for_performance_scoring": false,
+  "candidate_interval_accepted": false,
+  "interval_candidate": "unclipped normal Wald, z=NormalDist().inv_cdf(0.975)",
+  "limits": [
+    "Fixed finite planted binary populations, not human labels",
+    "Complete response; no reviewer error/nonresponse model",
+    "HT variance uses ideal independent-stratum two-stage SRSWOR law",
+    "Ratio variance is plug-in linearization, not an exact unbiased variance",
+    "Singleton non-census variance is unavailable, never imputed zero",
+    "Zero estimated variance is not proof a non-census population is constant",
+    "Coverage of this normal candidate is measured here, not guaranteed",
+    "No final population, estimator, interval or workload gate is accepted"
+  ]
+}

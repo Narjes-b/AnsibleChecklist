@@ -1,0 +1,47 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+ansibleguard-output/
+results/
+test-output/
+validation/
+study/cache/
+study/repositories/
+study/repositories-207/
+study/repositories-retired-149-2026-09-17/
+study/snapshots/
+study/evidence-local/
+study/snapshots-*/
+study/history/
+study/analysis/
+study/logs/
+study/results/v005/
+study/runs/
+study/comparisons/
+study/manifests/file-classification-v005/
+study/manifests/*-frozen.csv
+study/manifests/github-candidates-v2-discovered.csv
+study/manifests/github-candidates-v2-weak.csv
+study/manifests/github-ansible-pr-evidence-v2.csv
+study/validation-v4/labels.csv
+# Generated/local validation evidence and cloned PR fixtures. These may be
+# large and are checksummed by study scripts rather than committed as source.
+/report/
+study/**/report/
+study/pr-validation-v1/ansible-role-*/
+study/recall-v1/
+study/validation-v5/
+study/validation-v6/
+study/validation-v7/
+
+# Generated v0.0.5 diagnostic classification manifests
+study/manifests/file-classification-v005-diagnostic/
+
+# Local-only working material
+.claude/
+output/
+tmp/
+ansibleguard-editorial-*/
+ansibleguard-editorial-*.zip
+study/single-repo-scan-*/full-output/

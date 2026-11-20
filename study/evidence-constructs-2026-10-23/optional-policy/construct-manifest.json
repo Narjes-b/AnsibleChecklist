@@ -1,0 +1,55 @@
+{
+  "purpose": "structural context and lexical audit; no semantic certification",
+  "eligible_for_performance_scoring": false,
+  "selected_rows": 116,
+  "recorded_rows": 116,
+  "metadata_manifest_sha256": "a2316c6ad94cfa63458b4485e99f691fc83f11f73368bdd9d1f612de6e3bdbbc",
+  "status_counts": {
+    "file-only-no-enclosing-node": 57,
+    "constructs-located": 59
+  },
+  "lexical_subject_counts": {
+    "no-named-subject": 68,
+    "casefold-token-only": 19,
+    "placeholder-subject": 2,
+    "exact-token-located": 25,
+    "no-anchored-construct": 2
+  },
+  "task_candidates": 33,
+  "play_candidates": 1,
+  "truncated_units": 0,
+  "redacted_units": 12,
+  "subject_verified": 0,
+  "complete_rule_evidence": 0,
+  "labels_generated": 0,
+  "model_calls": 0,
+  "implementation_sha256": "80b6c4116d184d9c4d8cb87cf7014bd8784ef7ff9ebf8c50e73c64b6c4af933b",
+  "dependency_sha256": {
+    "src/ansibleguard/task_traversal.py": "6c69570fb768e508385ea8b0f4c4f013d09714fab6d9caeddd86e38523dc49e5",
+    "scripts/retrieve_sample_evidence.py": "aa079a5b9b2037c6dc213e06940e59f9301709da35d80531611bc12fa99e6328",
+    "scripts/v007_bundle_context_v2.py": "d782d4dd36ba3bc5825185a654bffb5c2e99ee7a844b591acf2b0ffa9d9f4c8f",
+    "scripts/v007_bundle_redact_v2.py": "622a61c23d3c9ccdb55f8e5d7b0418e30243ec2abdd36e2e8c01b7080de61437",
+    "scripts/v007_bundle_secret_scan.py": "e531754be6366c3f3a42dabdc71cc8a0adaf82dd7dae0462c89d104b43564bf0",
+    "scripts/v007_validation_pilot.py": "a73b8703c29c7d7e70874d95d95636fd3b1abec216ff2bf0295ab451e9ef59ef"
+  },
+  "source_stores": [
+    "/home/aymmzn/Documents/AnsibleChecklist/study/repositories",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/cache/v0071-rerun-2026-10-22/repositories"
+  ],
+  "git_version": "git version 2.56.0",
+  "python_version": "3.14.8",
+  "pyyaml_version": "6.0.1",
+  "jinja_version": "3.1.6",
+  "limits": {
+    "max_unit_display_lines": 600,
+    "window": 80,
+    "max_cached_files": 64,
+    "yaml_max_events": 100000,
+    "yaml_max_depth": 64
+  },
+  "local_packet_directory": "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/constructs-2026-10-23/optional-policy",
+  "output_sha256": {
+    "construct-ledger.csv": "33efcbe014b47fc5389ede02d38364b786dd458ac998cc6ca2ae5880b1f01a39",
+    "construct-cells.csv": "833b684a635fef5d67ed4f6ff50ac4b58f180c4a1b72be5d549b772f67db8beb"
+  }
+}

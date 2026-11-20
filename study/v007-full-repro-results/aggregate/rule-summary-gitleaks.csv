@@ -1,0 +1,9 @@
+rule_id,findings,share_percent,eligible_repositories,missing_repositories,repositories_affected,repository_prevalence_percent,median_per_repository,q1_per_repository,q3_per_repository,findings_per_1000_selected_loc
+gitleaks/generic-api-key,868,89.03,127,0,42,33.07,0,0,1,
+gitleaks/private-key,79,8.1,127,0,22,17.32,0,0,0,
+gitleaks/aws-access-token,10,1.03,127,0,1,0.79,0,0,0,
+gitleaks/curl-auth-user,8,0.82,127,0,1,0.79,0,0,0,
+gitleaks/jwt,4,0.41,127,0,3,2.36,0,0,0,
+gitleaks/slack-legacy-workspace-token,3,0.31,127,0,1,0.79,0,0,0,
+gitleaks/curl-auth-header,2,0.21,127,0,2,1.57,0,0,0,
+gitleaks/new-relic-user-api-key,1,0.1,127,0,1,0.79,0,0,0,

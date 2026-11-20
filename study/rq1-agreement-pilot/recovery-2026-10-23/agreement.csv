@@ -1,0 +1,9 @@
+group,items,semantic_agreement,semantic_kappa,semantic_ac1,actionability_agreement,actionability_kappa,actionability_ac1
+All families,350,0.6600,0.4695,0.5696,0.5943,0.4484,0.5251
+Maintainability/complexity,50,0.7200,0.5584,0.6476,0.7000,0.5342,0.6567
+Objective correctness,50,0.5000,0.2293,0.3798,0.4400,0.3157,0.3371
+Review/history,50,0.3000,0.0551,0.1005,0.3000,0.0691,0.1922
+Security,50,0.7800,0.5175,0.7406,0.5600,0.3689,0.4892
+Structure/reuse,50,0.7400,0.5377,0.6815,0.6200,0.3859,0.5678
+Style/policy,50,0.8200,0.6795,0.7788,0.7600,0.6326,0.7240
+Variable/reference reasoning,50,0.7600,0.5696,0.7054,0.7800,0.6264,0.7507

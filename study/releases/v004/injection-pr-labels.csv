@@ -1,0 +1,104 @@
+repo,rule_id,file,line,change_type,label,notes
+ansible-role-nginx,plaintext-sensitive-variable,defaults/main.yml,99,direct,TP,Controlled injection: nginx_ssl_secret_key plaintext
+ansible-role-nginx,plaintext-sensitive-variable,defaults/main.yml,100,direct,TP,Controlled injection: nginx_ssl_token plaintext
+ansible-role-nginx,non-idempotent-command,tasks/main.yml,1,indirect,TP,Pre-existing idempotency issue surfaced by file change
+ansible-role-nginx,non-idempotent-command,tasks/main.yml,55,direct,TP,Controlled injection: apt-get install without creates/changed_when
+ansible-role-nginx,non-idempotent-command,tasks/main.yml,59,direct,TP,Controlled injection: rm -rf without idempotency guard
+ansible-role-nginx,non-idempotent-command,tasks/main.yml,62,direct,TP,Controlled injection: shell task with ignore_errors
+ansible-role-nginx,non-idempotent-command,tasks/main.yml,67,direct,TP,Controlled injection: wget without idempotency guard
+ansible-role-nginx,non-idempotent-command,tasks/main.yml,69,indirect,TP,ansible-lint also confirms idempotency violation
+ansible-role-nginx,unhandled-failure-suppression,tasks/main.yml,62,direct,TP,Controlled injection: ignore_errors:true without result check
+ansible-role-nginx,ansible-lint-issue,tasks/main.yml,59,direct,TP,External tool confirmation: use command module
+ansible-role-nginx,ansible-lint-issue,tasks/main.yml,62,direct,TP,External tool confirmation: shell module misuse
+ansible-role-nginx,ansible-lint-issue,tasks/main.yml,67,direct,TP,External tool confirmation: shell module misuse
+ansible-role-nginx,ansible-lint-issue,tasks/main.yml,69,indirect,TP,External tool confirmation: shell module misuse
+ansible-role-nginx,large-playbook,tasks/main.yml,1,indirect,FP,Side effect: additions pushed file over size threshold; not intentional injection
+ansible-role-nginx,shell-module-migration,tasks/main.yml,55,direct,TP,Controlled injection: apt-get instead of apt module
+ansible-role-nginx,shell-module-migration,tasks/main.yml,59,direct,TP,Controlled injection: rm instead of file(state=absent)
+ansible-role-nginx,shell-module-migration,tasks/main.yml,67,direct,TP,Controlled injection: wget instead of get_url
+ansible-role-nginx,shell-module-migration,tasks/main.yml,69,indirect,TP,ansible-lint also confirms module migration
+ansible-role-nginx,unused-registered-variable,tasks/main.yml,62,direct,TP,Controlled injection: register:nginx_check never used
+ansible-role-nginx,unnamed-task,tasks/main.yml,59,direct,TP,Controlled injection: rm task has no name
+ansible-role-nginx,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,nginx_worker_timeout:30 NOT flagged (v0.0.4 int fix)
+ansible-role-nginx,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,nginx_max_connections:512 NOT flagged (v0.0.4 int fix)
+ansible-role-docker,plaintext-sensitive-variable,defaults/main.yml,69,direct,TP,Controlled injection: docker_api_secret plaintext
+ansible-role-docker,plaintext-sensitive-variable,defaults/main.yml,70,direct,TP,Controlled injection: docker_registry_token plaintext
+ansible-role-docker,non-idempotent-command,tasks/main.yml,125,direct,TP,Controlled injection: pip install without idempotency
+ansible-role-docker,non-idempotent-command,tasks/main.yml,129,direct,TP,Controlled injection: rm -rf without creates
+ansible-role-docker,non-idempotent-command,tasks/main.yml,133,direct,TP,Controlled injection: curl check without changed_when
+ansible-role-docker,non-idempotent-command,tasks/main.yml,137,direct,TP,Controlled injection: chmod 666 without idempotency
+ansible-role-docker,non-idempotent-command,tasks/main.yml,140,indirect,TP,ansible-lint confirms same line
+ansible-role-docker,read-only-command-change,tasks/main.yml,133,direct,TP,Controlled: curl read-only command without changed_when:false
+ansible-role-docker,fqcn-migration,tasks/main.yml,129,direct,TP,Missing FQCN for shell module
+ansible-role-docker,fqcn-migration,tasks/main.yml,133,direct,TP,Missing FQCN for shell module
+ansible-role-docker,fqcn-migration,tasks/main.yml,137,direct,TP,Missing FQCN for shell module
+ansible-role-docker,fqcn-migration,tasks/main.yml,140,indirect,TP,Missing FQCN for shell module
+ansible-role-docker,ansible-lint-issue,tasks/main.yml,129,direct,TP,External tool confirmation
+ansible-role-docker,ansible-lint-issue,tasks/main.yml,137,direct,TP,External tool confirmation
+ansible-role-docker,ansible-lint-issue,tasks/main.yml,140,indirect,TP,External tool confirmation
+ansible-role-docker,incomplete-task,tasks/main.yml,125,direct,TP,Controlled injection: TODO in task name
+ansible-role-docker,shell-module-migration,tasks/main.yml,125,direct,TP,Controlled injection: pip install instead of pip module
+ansible-role-docker,shell-module-migration,tasks/main.yml,129,direct,TP,Controlled injection: rm instead of file module
+ansible-role-docker,shell-module-migration,tasks/main.yml,137,direct,TP,Controlled injection: chmod instead of file module
+ansible-role-docker,unused-registered-variable,tasks/main.yml,133,direct,TP,Controlled injection: docker_sock_check never used
+ansible-role-docker,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,docker_connection_timeout:60 NOT flagged (v0.0.4 int fix)
+ansible-role-docker,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,docker_max_retries:3 NOT flagged (v0.0.4 int fix)
+ansible-role-mysql,credential-log-exposure,tasks/main.yml,29,direct,TP,Controlled injection: mysql_root_password without no_log:true
+ansible-role-mysql,plaintext-sensitive-variable,defaults/main.yml,158,direct,TP,Controlled injection: mysql_backup_secret_key plaintext
+ansible-role-mysql,plaintext-sensitive-variable,defaults/main.yml,159,direct,TP,Controlled injection: mysql_replication_password plaintext
+ansible-role-mysql,non-idempotent-command,tasks/main.yml,34,direct,TP,Controlled injection: mkdir -p without creates
+ansible-role-mysql,non-idempotent-command,tasks/main.yml,38,direct,TP,Controlled injection: TODO shell task
+ansible-role-mysql,non-idempotent-command,tasks/main.yml,41,indirect,TP,ansible-lint confirms same file
+ansible-role-mysql,unhandled-failure-suppression,tasks/main.yml,29,direct,TP,Controlled injection: ignore_errors without recovery
+ansible-role-mysql,unhandled-failure-suppression,tasks/main.yml,34,direct,TP,Controlled injection: shell with ignore_errors
+ansible-role-mysql,fqcn-migration,tasks/main.yml,34,direct,TP,Missing FQCN for shell module
+ansible-role-mysql,fqcn-migration,tasks/main.yml,38,direct,TP,Missing FQCN for shell module
+ansible-role-mysql,fqcn-migration,tasks/main.yml,41,indirect,TP,Missing FQCN for shell module
+ansible-role-mysql,ansible-lint-issue,tasks/main.yml,34,direct,TP,External tool confirmation
+ansible-role-mysql,ansible-lint-issue,tasks/main.yml,38,direct,TP,External tool confirmation
+ansible-role-mysql,shell-module-migration,tasks/main.yml,34,direct,TP,Controlled injection: mkdir instead of file module
+ansible-role-mysql,incomplete-task,tasks/main.yml,38,direct,TP,Controlled injection: TODO marker in task name
+ansible-role-mysql,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,mysql_connection_ttl:300 NOT flagged (v0.0.4 ttl suffix fix)
+ansible-role-mysql,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,mysql_max_allowed_packet:64 NOT flagged (v0.0.4 int fix)
+ansible-role-security,default-credentials,defaults/main.yml,32,direct,TP,Controlled injection: security_admin_password='admin'
+ansible-role-security,plaintext-sensitive-variable,defaults/main.yml,32,direct,TP,Controlled injection: security_admin_password plaintext
+ansible-role-security,plaintext-sensitive-variable,defaults/main.yml,33,direct,TP,Controlled injection: security_api_token plaintext
+ansible-role-security,non-idempotent-command,tasks/main.yml,1,indirect,TP,Pre-existing idempotency issue surfaced by file change
+ansible-role-security,non-idempotent-command,tasks/main.yml,24,direct,TP,Controlled injection: useradd without idempotency
+ansible-role-security,non-idempotent-command,tasks/main.yml,28,direct,TP,Controlled injection: chmod 600 without idempotency
+ansible-role-security,non-idempotent-command,tasks/main.yml,31,direct,TP,Controlled injection: shell ss command
+ansible-role-security,non-idempotent-command,tasks/main.yml,36,direct,TP,Controlled injection: rm -f without idempotency
+ansible-role-security,non-idempotent-command,tasks/main.yml,40,indirect,TP,ansible-lint confirms same file
+ansible-role-security,unhandled-failure-suppression,tasks/main.yml,36,direct,TP,Controlled injection: ignore_errors on rm
+ansible-role-security,unhandled-failure-suppression,tasks/main.yml,40,indirect,TP,ansible-lint confirms same finding
+ansible-role-security,missing-test-update,main.yml,1,indirect,TP,Correct: config changed without molecule test update
+ansible-role-security,untested-override-change,main.yml,1,indirect,TP,Correct: defaults changed without override test
+ansible-role-security,ansible-lint-issue,tasks/main.yml,28,direct,TP,External tool confirmation
+ansible-role-security,ansible-lint-issue,tasks/main.yml,31,direct,TP,External tool confirmation
+ansible-role-security,ansible-lint-issue,tasks/main.yml,36,direct,TP,External tool confirmation
+ansible-role-security,ansible-lint-issue,tasks/main.yml,40,indirect,TP,External tool confirmation
+ansible-role-security,shell-module-migration,tasks/main.yml,24,direct,TP,Controlled injection: useradd instead of user module
+ansible-role-security,shell-module-migration,tasks/main.yml,28,direct,TP,Controlled injection: chmod instead of file module
+ansible-role-security,shell-module-migration,tasks/main.yml,36,direct,TP,Controlled injection: rm instead of file module
+ansible-role-security,unused-registered-variable,tasks/main.yml,31,direct,TP,Controlled injection: listening_ports never used
+ansible-role-security,missing-release-note,main.yml,1,indirect,TP,Correct: config change without release-note file
+ansible-role-security,unnamed-task,tasks/main.yml,28,direct,TP,Controlled injection: chmod task has no name
+ansible-role-security,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,security_ssh_port_timeout:30 NOT flagged (v0.0.4 int fix)
+ansible-role-security,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,security_max_login_attempts:5 NOT flagged (v0.0.4 int fix)
+ansible-role-nodejs,plaintext-sensitive-variable,defaults/main.yml,34,direct,TP,Controlled injection: nodejs_npm_token plaintext
+ansible-role-nodejs,plaintext-sensitive-variable,defaults/main.yml,35,direct,TP,Controlled injection: nodejs_registry_password plaintext
+ansible-role-nodejs,non-idempotent-command,tasks/main.yml,46,direct,TP,Controlled injection: npm install -g without idempotency
+ansible-role-nodejs,non-idempotent-command,tasks/main.yml,50,direct,TP,Controlled injection: TODO task with shell
+ansible-role-nodejs,non-idempotent-command,tasks/main.yml,54,direct,TP,Controlled injection: npm config set without idempotency
+ansible-role-nodejs,non-idempotent-command,tasks/main.yml,58,direct,TP,Controlled injection: chmod -R without idempotency
+ansible-role-nodejs,non-idempotent-command,tasks/main.yml,61,indirect,TP,ansible-lint confirms same file
+ansible-role-nodejs,ansible-lint-issue,tasks/main.yml,50,direct,TP,External tool confirmation
+ansible-role-nodejs,ansible-lint-issue,tasks/main.yml,54,direct,TP,External tool confirmation
+ansible-role-nodejs,ansible-lint-issue,tasks/main.yml,58,direct,TP,External tool confirmation
+ansible-role-nodejs,ansible-lint-issue,tasks/main.yml,61,indirect,TP,External tool confirmation
+ansible-role-nodejs,shell-module-migration,tasks/main.yml,46,direct,TP,Controlled injection: npm install instead of npm module
+ansible-role-nodejs,incomplete-task,tasks/main.yml,50,direct,TP,Controlled injection: TODO in task name
+ansible-role-nodejs,shell-module-migration,tasks/main.yml,50,direct,TP,Controlled injection: touch instead of file module
+ansible-role-nodejs,shell-module-migration,tasks/main.yml,58,direct,TP,Controlled injection: chmod instead of file module
+ansible-role-nodejs,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,nodejs_connection_timeout:30 NOT flagged (v0.0.4 int fix)
+ansible-role-nodejs,NEGATIVE_CONTROL,defaults/main.yml,0,n/a,NC_PASS,nodejs_max_retry_count:3 NOT flagged (v0.0.4 int fix)

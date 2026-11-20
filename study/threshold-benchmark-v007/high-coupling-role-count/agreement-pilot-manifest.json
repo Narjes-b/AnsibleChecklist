@@ -1,0 +1,20 @@
+{
+  "metric_id": "high_coupling_role_count",
+  "pilot_band_counts": {
+    "B1_low": 36,
+    "B4_high": 22,
+    "B5_current_positive_tail": 17
+  },
+  "pilot_prediction_counts": {
+    "false": 36,
+    "true": 39
+  },
+  "pilot_projects": 64,
+  "pilot_rows": 75,
+  "pilot_sha256": "8513d20454d1c2904de30eff3ef1f9f74d5ff3fe157d2e3e5536cbff1ac8ec33",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 425,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

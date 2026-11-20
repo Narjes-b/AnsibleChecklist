@@ -1,0 +1,67 @@
+{
+  "before_after": [
+    {
+      "measure": "Accepted output",
+      "before": 47,
+      "after": 47,
+      "denominator": 48,
+      "before_percent": 97.92,
+      "after_percent": 97.92,
+      "percentage_point_change": 0.0
+    },
+    {
+      "measure": "Decision agrees with unchanged AI source reference",
+      "before": 44,
+      "after": 44,
+      "denominator": 48,
+      "before_percent": 91.67,
+      "after_percent": 91.67,
+      "percentage_point_change": 0.0
+    },
+    {
+      "measure": "Adequate complete explanation",
+      "before": 41,
+      "after": 44,
+      "denominator": 48,
+      "before_percent": 85.42,
+      "after_percent": 91.67,
+      "percentage_point_change": 6.25
+    },
+    {
+      "measure": "Adequate explanation plus supporting citations",
+      "before": 38,
+      "after": 44,
+      "denominator": 48,
+      "before_percent": 79.17,
+      "after_percent": 91.67,
+      "percentage_point_change": 12.5
+    }
+  ],
+  "single_AI_implementer_review": true,
+  "exposed_development_cases": true,
+  "all_scoped_states_backend_constrained": true,
+  "scoped_outcomes": 48,
+  "source_candidate_unchanged": true,
+  "summary_origin": "backend-authored",
+  "citation_origin": "backend-selected; ranges attached by backend",
+  "model_requested_edits": {
+    "eligible": 8,
+    "eligible_drafts": 8,
+    "eligible_behavior_passed": 8,
+    "ineligible_drafts": 0
+  },
+  "spontaneous_repairs": {
+    "cases": 12,
+    "accepted": 12,
+    "delivered_code_proposals": 0,
+    "repair_eligible_source_cases": 8,
+    "independent_human_validation": false
+  },
+  "tests": {
+    "passed": 1666,
+    "skipped": 2
+  },
+  "papers_modified": false,
+  "human_forms_modified": false,
+  "developer_study": "deferred"
+}

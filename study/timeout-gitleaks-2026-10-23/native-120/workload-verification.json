@@ -1,0 +1,12 @@
+{
+  "eligible_for_performance_scoring": false,
+  "source_native_report_sha256": "bdfd5a49a7b4e14eed2107b8ed0e1781406e05dd1f24e9da675b70f3b62b7987",
+  "native_report_bytes": 63828894,
+  "native_findings": 81598,
+  "distinct_files": 35,
+  "projected_baseline_file_read_bytes": 3377078730741,
+  "projection_is_measured_IO": false,
+  "projection_assumption": "One full read per finding if baseline postprocessing completed; excludes decode/split/join overhead",
+  "native_workload_sha256": "a66ade6d29ace4c1ef1e4665aa901a27dad8074c23b37417a38237208e1fb234",
+  "original_output_and_dependency_hashes_verified": true
+}

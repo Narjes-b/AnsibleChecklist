@@ -1,0 +1,17 @@
+{
+  "purpose": "diagnose existing authored-control rejections; no retries or model result replacement",
+  "results": [
+    {
+      "case_id": "repair-missing-validate-certs-1",
+      "returncode": 2,
+      "stdout": "[{\"type\": \"issue\", \"check_name\": \"yaml[indentation]\", \"categories\": [\"formatting\", \"yaml\"], \"url\": \"https://docs.ansible.com/projects/lint/rules/yaml/\", \"severity\": \"major\", \"description\": \"Wrong indentation: expected 4 but found 2\", \"fingerprint\": \"e7825fa97798f66de20794e3cd9475bad428335dffe1a506011d77a25e4bc0f8\", \"location\": {\"path\": \"tasks.yml\", \"lines\": {\"begin\": 8}}}]\n",
+      "stderr": "WARNING: PATH altered to include /home/aymmzn/Documents/AnsibleChecklist/.venv/bin, /home/aymmzn/Documents/AnsibleChecklist/.venv/bin :: This is usually a sign of broken local setup, which can cause unexpected behaviors.\nRead documentation for instructions on how to ignore specific rule violations.\n\n# Rule Violation Summary\n\n  1 yaml profile:basic tags:formatting,yaml\n\nFailed: 1 failure(s), 0 warning(s) in 1 files processed of 1 encountered. Last profile that met the validation criteria was 'min'.\n"
+    },
+    {
+      "case_id": "repair-credential-log-exposure-1",
+      "returncode": 2,
+      "stdout": "[{\"type\": \"issue\", \"check_name\": \"yaml[indentation]\", \"categories\": [\"formatting\", \"yaml\"], \"url\": \"https://docs.ansible.com/projects/lint/rules/yaml/\", \"severity\": \"major\", \"description\": \"Wrong indentation: expected 4 but found 2\", \"fingerprint\": \"58cbc165aee739212f6de10e01112840291cca9f8e8384f49a86a222e82a949b\", \"location\": {\"path\": \"tasks.yml\", \"lines\": {\"begin\": 6}}}]\n",
+      "stderr": "WARNING: PATH altered to include /home/aymmzn/Documents/AnsibleChecklist/.venv/bin, /home/aymmzn/Documents/AnsibleChecklist/.venv/bin :: This is usually a sign of broken local setup, which can cause unexpected behaviors.\nRead documentation for instructions on how to ignore specific rule violations.\n\n# Rule Violation Summary\n\n  1 yaml profile:basic tags:formatting,yaml\n\nFailed: 1 failure(s), 0 warning(s) in 1 files processed of 1 encountered. Last profile that met the validation criteria was 'min'.\n"
+    }
+  ]
+}

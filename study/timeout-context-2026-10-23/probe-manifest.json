@@ -1,0 +1,70 @@
+{
+  "purpose": "bounded offline classification/context/symbol triage; not full study rerun",
+  "project": "encapsulate-xyz/cosmos-ansible",
+  "commit_sha": "a49d30281d2d3c763ef0d50a7aaddc751a460863",
+  "source_method": "verified immutable Git blobs; no checkout/fetch",
+  "source_counts": {
+    "copied": 403,
+    "source-too-large": 14
+  },
+  "source_materialization_seconds": 1.9673351750097936,
+  "source_manifest_sha256": "c091a4c6cdadec2c82ab61c6814e1a0b01d5286ac19776c72a6db3013df150e6",
+  "worker_timeout_seconds": 75.0,
+  "memory_limit_mib": 2048,
+  "stack_period_seconds": 15,
+  "status": "completed",
+  "returncode": 0,
+  "worker_result": {
+    "status": "completed",
+    "stage": "symbol-index",
+    "eligible_for_performance_scoring": false,
+    "selected_files": 145,
+    "definitions": 1357,
+    "edges": 114,
+    "duration_seconds": 6.280579004000174,
+    "peak_rss_kib": 42908
+  },
+  "last_event": {
+    "stage": "symbol-index",
+    "state": "end",
+    "elapsed_seconds": 6.278126145989518,
+    "duration_seconds": 0.7579315659968415,
+    "definitions": 1357,
+    "edges": 114
+  },
+  "stack_dumps": 0,
+  "module_docs_disabled": true,
+  "providers_run": false,
+  "file_detectors_run": false,
+  "model_calls": 0,
+  "eligible_for_performance_scoring": false,
+  "local_directory": "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/timeout-context-2026-10-23",
+  "implementation_sha256": "9d71dae5f3e7c88205d5404c5856345308fe33dd15ba3a223b7b660cba5472bd",
+  "git_version": "git version 2.56.0",
+  "python_version": "3.14.8",
+  "dependency_sha256": {
+    "src/ansibleguard/analysis_context.py": "54a4711b524bd4b3663c43aef8e895f5410d61b42dcf5619c6d4feed5f601e9e",
+    "src/ansibleguard/symbol_index.py": "cdcade61901a4ba30c6a154312559e27061b5986d2e2d33338e91fab899998c9",
+    "src/ansibleguard/runtime.py": "b082c4ea35ccbdd6deed546c964c574d1a97efe5da4840683c81536019d850ca",
+    "src/ansibleguard/document.py": "ce9f61288a865b8febedc104343480ad7423531b01c6553f2af7c8703bfaf2bc",
+    "src/ansibleguard/file_manifest.py": "5db8da70336af2f3415495050483744dbf065d38166d1f15d843c02fb9a9e637",
+    "scripts/retrieve_sample_evidence.py": "aa079a5b9b2037c6dc213e06940e59f9301709da35d80531611bc12fa99e6328"
+  },
+  "local_log_sha256": {
+    "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "output_sha256": {
+    "top-functions.csv": "14644b0bbbbbfceffecc3be3482a4bc61500d2a8aef144a9fd2f4e7b78e79acb",
+    "stage-events.json": "c47a81edd0ef784662d637082bdc2bcdb8d4f9e07452508662133bdba4cd04a3"
+  },
+  "limits": [
+    "Current implementation, not archived analyzer commit",
+    "Fresh Git boundary, no original history/config",
+    "Source executable modes deliberately not applied",
+    "Skipped nonregular/oversize blobs remain explicit",
+    "Worker deadline excludes acquisition; Git commands have their own bounds",
+    "Module metadata/providers/file detectors remain untested",
+    "Original timeout attribution remains open"
+  ]
+}

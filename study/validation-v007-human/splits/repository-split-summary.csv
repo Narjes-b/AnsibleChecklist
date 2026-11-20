@@ -1,0 +1,3 @@
+split,repositories,mean_selected_loc,median_selected_loc,mean_selected_files,median_selected_files,mean_internal_static_occurrences,median_internal_static_occurrences,mean_internal_static_density_per_1000_loc,median_internal_static_density_per_1000_loc,size_q1_repositories,size_q2_repositories,size_q3_repositories,size_q4_repositories,density_q1_repositories,density_q2_repositories,density_q3_repositories,density_q4_repositories
+calibration,144,6567.48,3685.5,155.65,93.5,1312.7,677.5,192.9119,183.4552,36,35,36,37,36,36,36,36
+heldout,62,6321.19,3227.0,150.34,84.0,1232.34,721.0,199.7916,184.5662,16,16,16,14,16,15,16,15

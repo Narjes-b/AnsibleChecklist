@@ -1,0 +1,45 @@
+{
+  "artifacts": {
+    "benchmark_manifest": {
+      "path": "/home/aymmzn/Documents/AnsibleChecklist/study/threshold-benchmark-v007/benchmark-manifest.json",
+      "sha256": "264a80eba59326430b591ee416a4df8a7586d4db65dc8be618586fcf42ac06ae"
+    },
+    "condition_map": {
+      "path": "/home/aymmzn/Documents/AnsibleChecklist/study/validation-v007-human/threshold-human-condition-map.csv",
+      "sha256": "5b36248c9473df844961970d8008a1ecaa3e8cbe184988047dc358ba462f1fde"
+    },
+    "observations": {
+      "path": "/home/aymmzn/Documents/AnsibleChecklist/study/threshold-benchmark-v007/observations.csv.gz",
+      "rows": 2986459,
+      "sha256": "3f4b35e1e0fbe7751ac394b1ce9113329f2548a8a071a50f166ee99f3765edb8"
+    },
+    "repository_split": {
+      "path": "/home/aymmzn/Documents/AnsibleChecklist/study/validation-v007-human/splits/repository-split.csv",
+      "sha256": "c6f50da3bd52130cd0a32ab48e322dfa666419d12bccdb1e7a4796d885260f65"
+    },
+    "run_status": {
+      "path": "/home/aymmzn/Documents/AnsibleChecklist/study/runs/v007-full-repro-2026/tables/repository-execution-status.csv",
+      "sha256": "174b290d0e4c6c535a0eeea60ab8e3832ab5dee2c5b905d276c406b22e7103ab"
+    }
+  },
+  "counts": {
+    "calibration_repositories": 144,
+    "commit_mismatches": 0,
+    "frozen_split_repositories": 206,
+    "heldout_repositories": 62,
+    "human_condition_families": 13,
+    "metrics": 24,
+    "missing_run_status": 0,
+    "multi_commit_projects": 0,
+    "observations": 2986459,
+    "out_of_split_projects": [
+      "encapsulate-xyz/cosmos-ansible"
+    ],
+    "projects": 207
+  },
+  "created_at_utc": "2026-10-06T02:46:13.609682Z",
+  "failures": [],
+  "passed": true,
+  "schema_version": 1,
+  "scope": "source identity/schema audit only; metric values and predictions are not analyzed and historical reviewer-label files are not opened"
+}

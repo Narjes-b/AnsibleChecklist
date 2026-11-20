@@ -1,0 +1,6 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+complex_expression_score,complex-expression,q1;q2_median,0,199913,199913,1.00000000,197,197,1.00000000
+complex_expression_score,complex-expression,q3;p80,2,199913,61930,0.30978476,197,189,0.95939086
+complex_expression_score,complex-expression,p90,4,199913,22055,0.11032299,197,179,0.90862944
+complex_expression_score,complex-expression,tukey_upper_fence,5,199913,15433,0.07719858,197,171,0.86802030
+complex_expression_score,complex-expression,p95;current,6,199913,11124,0.05564421,197,166,0.84263959

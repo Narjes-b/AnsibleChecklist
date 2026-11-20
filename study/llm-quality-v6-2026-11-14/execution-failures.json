@@ -1,0 +1,97 @@
+[
+  {
+    "case_id": "real-unguarded-variable-1",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "evaluation-missing-validate-certs-5",
+    "mode": "scoped",
+    "reason": "limitations required when confidence is not high"
+  },
+  {
+    "case_id": "real-unguarded-variable-0",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-credential-log-exposure-5",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-missing-validate-certs-4",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-5",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-unguarded-variable-3",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-3",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-0",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "evaluation-unguarded-variable-2",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-unguarded-variable-5",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-credential-log-exposure-1",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-credential-log-exposure-0",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-credential-log-exposure-2",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-credential-log-exposure-3",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-unguarded-variable-4",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-credential-log-exposure-4",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-insecure-permissions-2",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  },
+  {
+    "case_id": "real-insecure-permissions-5",
+    "mode": "window",
+    "reason": "missing required decision evidence requires insufficient-evidence"
+  }
+]

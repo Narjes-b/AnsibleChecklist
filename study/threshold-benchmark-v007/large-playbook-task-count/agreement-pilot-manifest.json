@@ -1,0 +1,22 @@
+{
+  "metric_id": "large_playbook_task_count",
+  "pilot_band_counts": {
+    "B1_low": 18,
+    "B2_lower_middle": 17,
+    "B3_upper_middle": 16,
+    "B4_high": 16,
+    "B5_current_positive_tail": 8
+  },
+  "pilot_prediction_counts": {
+    "false": 34,
+    "true": 41
+  },
+  "pilot_projects": 60,
+  "pilot_rows": 75,
+  "pilot_sha256": "06b375102eb5e104871316b0a06ce7615b7ccde43f0c17a79b46a0fc6f373231",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 1194,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

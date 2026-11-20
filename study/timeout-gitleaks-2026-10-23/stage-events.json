@@ -1,0 +1,19 @@
+[
+  {
+    "stage": "adapter",
+    "state": "start",
+    "elapsed_seconds": 0.0002582580054877326
+  },
+  {
+    "stage": "native-provider",
+    "state": "start",
+    "elapsed_seconds": 0.0016546950064366683
+  },
+  {
+    "stage": "adapter",
+    "state": "end",
+    "elapsed_seconds": 30.045216790997074,
+    "status": "timeout",
+    "duration_seconds": 30.045118524998543
+  }
+]

@@ -1,0 +1,6 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: Bad task
+      name: Duplicate name at same level
+      debug: {msg: hi}

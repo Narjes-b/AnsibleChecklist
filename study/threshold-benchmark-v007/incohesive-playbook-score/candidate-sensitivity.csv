@@ -1,0 +1,4 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+cohesion_playbook_score,incohesive-playbook,current,0.4,2369,0,0.00000000,131,0,0.00000000
+cohesion_playbook_score,incohesive-playbook,tukey_lower_fence;p05;p10;p20;q1,0.5,2369,0,0.00000000,131,0,0.00000000
+cohesion_playbook_score,incohesive-playbook,q2_median;q3,1,2369,616,0.26002533,131,90,0.68702290

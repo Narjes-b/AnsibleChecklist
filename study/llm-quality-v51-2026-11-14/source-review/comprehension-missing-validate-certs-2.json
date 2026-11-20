@@ -1,0 +1,23 @@
+{
+  "case_id": "comprehension-missing-validate-certs-2",
+  "family": "missing-validate-certs",
+  "occurrence": {
+    "file": "tasks.yml",
+    "line": 1,
+    "rule_id": "missing-validate-certs",
+    "message": "This task explicitly disables TLS certificate verification."
+  },
+  "intent": null,
+  "snippets": [
+    {
+      "file": "tasks.yml",
+      "text": "    1 | - name: Fetch comprehension_2\n    2 |   ansible.builtin.get_url:\n    3 |     url: https://example.invalid/comprehension_2\n    4 |     dest: /tmp/comprehension_2\n    5 |     mode: '0644'\n    6 |     validate_certs: '{{ verify_tls }}'"
+    }
+  ],
+  "missing": [
+    "literal validate_certs value and applicable module/defaults contract"
+  ],
+  "files": {
+    "tasks.yml": "- name: Fetch comprehension_2\n  ansible.builtin.get_url:\n    url: https://example.invalid/comprehension_2\n    dest: /tmp/comprehension_2\n    mode: '0644'\n    validate_certs: '{{ verify_tls }}'\n"
+  }
+}

@@ -1,0 +1,12 @@
+stage,criterion,before,removed,pending,remaining,removed_percent
+1,unique_repository,173,0,0,173,0.0
+2,public,173,0,0,173,0.0
+3,not_disabled,173,0,0,173,0.0
+4,not_fork,173,0,0,173,0.0
+5,not_archived,173,0,0,173,0.0
+6,not_mirror,173,0,0,173,0.0
+7,last_commit_within_6_years,173,0,0,173,0.0
+8,more_than_50_total_prs,173,0,169,4,0.0
+9,confirmed_production_ansible,4,0,0,4,0.0
+10,at_least_1000_commits,4,1,0,3,25.0
+11,at_least_50_merged_ansible_prs,3,0,3,0,0.0

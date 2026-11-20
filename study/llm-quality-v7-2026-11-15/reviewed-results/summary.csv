@@ -1,0 +1,7 @@
+kind,mode,scheduled,available,decision,content,citation,strict
+all,window,48,44,19,13,10,9
+all,scoped,48,44,42,42,43,42
+controlled,window,24,23,10,7,5,4
+controlled,scoped,24,24,24,24,24,24
+real,window,24,21,9,6,5,5
+real,scoped,24,20,18,18,19,18

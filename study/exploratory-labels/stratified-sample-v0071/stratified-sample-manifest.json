@@ -1,0 +1,504 @@
+{
+  "target_total": 400,
+  "actual_total": 352,
+  "per_rule_cap": 22,
+  "context_window_lines": 14,
+  "total_occurrences_in_corpus": 246151,
+  "rules_in_corpus": 61,
+  "tier_boundaries_cumulative_share_percent": {
+    "A-dominant": "0-50",
+    "B-major": "50-80",
+    "C-moderate": "80-95",
+    "D-long-tail": "95-100"
+  },
+  "per_rule": [
+    {
+      "rule_id": "ansibleguard/missing-tags",
+      "count": 89594,
+      "cum_share_percent": 36.4,
+      "tier": "A-dominant",
+      "allocated": 22,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/unguarded-variable",
+      "count": 49202,
+      "cum_share_percent": 56.39,
+      "tier": "B-major",
+      "allocated": 22,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/variable-naming-convention",
+      "count": 20863,
+      "cum_share_percent": 64.86,
+      "tier": "B-major",
+      "allocated": 22,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/large-task",
+      "count": 11731,
+      "cum_share_percent": 69.63,
+      "tier": "B-major",
+      "allocated": 19,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/complex-expression",
+      "count": 10725,
+      "cum_share_percent": 73.99,
+      "tier": "B-major",
+      "allocated": 18,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/unnamed-task",
+      "count": 9301,
+      "cum_share_percent": 77.76,
+      "tier": "B-major",
+      "allocated": 17,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/long-statement",
+      "count": 7621,
+      "cum_share_percent": 80.86,
+      "tier": "C-moderate",
+      "allocated": 16,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/credentials-leaking-in-log",
+      "count": 6223,
+      "cum_share_percent": 83.39,
+      "tier": "C-moderate",
+      "allocated": 14,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/loop-legacy-syntax",
+      "count": 5502,
+      "cum_share_percent": 85.62,
+      "tier": "C-moderate",
+      "allocated": 13,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/long-task-name",
+      "count": 5159,
+      "cum_share_percent": 87.72,
+      "tier": "C-moderate",
+      "allocated": 13,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/large-playbook",
+      "count": 2870,
+      "cum_share_percent": 88.88,
+      "tier": "C-moderate",
+      "allocated": 10,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/role-readme-absent",
+      "count": 2760,
+      "cum_share_percent": 90.01,
+      "tier": "C-moderate",
+      "allocated": 9,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/complex-playbook",
+      "count": 2301,
+      "cum_share_percent": 90.94,
+      "tier": "C-moderate",
+      "allocated": 9,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/unnecessary-set-fact",
+      "count": 2010,
+      "cum_share_percent": 91.76,
+      "tier": "C-moderate",
+      "allocated": 8,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/silent-error-suppression",
+      "count": 1798,
+      "cum_share_percent": 92.49,
+      "tier": "C-moderate",
+      "allocated": 8,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/molecule-test-absent",
+      "count": 1559,
+      "cum_share_percent": 93.12,
+      "tier": "C-moderate",
+      "allocated": 7,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/unnamed-play",
+      "count": 1480,
+      "cum_share_percent": 93.72,
+      "tier": "C-moderate",
+      "allocated": 7,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/missing-abstraction",
+      "count": 1476,
+      "cum_share_percent": 94.32,
+      "tier": "C-moderate",
+      "allocated": 7,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/large-play",
+      "count": 1306,
+      "cum_share_percent": 94.85,
+      "tier": "C-moderate",
+      "allocated": 6,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/undocumented-complex-task",
+      "count": 1242,
+      "cum_share_percent": 95.36,
+      "tier": "D-long-tail",
+      "allocated": 6,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/non-idempotent-command",
+      "count": 1222,
+      "cum_share_percent": 95.85,
+      "tier": "D-long-tail",
+      "allocated": 6,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/duplicate-task-names",
+      "count": 1195,
+      "cum_share_percent": 96.34,
+      "tier": "D-long-tail",
+      "allocated": 6,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/unused-registered-variable",
+      "count": 1092,
+      "cum_share_percent": 96.78,
+      "tier": "D-long-tail",
+      "allocated": 6,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/read-only-command-change",
+      "count": 864,
+      "cum_share_percent": 97.13,
+      "tier": "D-long-tail",
+      "allocated": 5,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/redirected-module",
+      "count": 701,
+      "cum_share_percent": 97.42,
+      "tier": "D-long-tail",
+      "allocated": 5,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/galaxy-meta-incomplete",
+      "count": 647,
+      "cum_share_percent": 97.68,
+      "tier": "D-long-tail",
+      "allocated": 5,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/shell-instead-of-module",
+      "count": 598,
+      "cum_share_percent": 97.92,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/unnecessary-abstraction",
+      "count": 590,
+      "cum_share_percent": 98.16,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/duplicated-code",
+      "count": 561,
+      "cum_share_percent": 98.39,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/plaintext-sensitive-variable",
+      "count": 542,
+      "cum_share_percent": 98.61,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/missing-validate-certs",
+      "count": 474,
+      "cum_share_percent": 98.8,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/unpinned-ansible-dependency",
+      "count": 445,
+      "cum_share_percent": 98.99,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/high-coupling",
+      "count": 410,
+      "cum_share_percent": 99.15,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/insecure-permissions",
+      "count": 409,
+      "cum_share_percent": 99.32,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/become-scope-too-broad",
+      "count": 388,
+      "cum_share_percent": 99.48,
+      "tier": "D-long-tail",
+      "allocated": 4,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/deprecated-modules",
+      "count": 291,
+      "cum_share_percent": 99.59,
+      "tier": "D-long-tail",
+      "allocated": 3,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/default-credentials",
+      "count": 238,
+      "cum_share_percent": 99.69,
+      "tier": "D-long-tail",
+      "allocated": 3,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/variable-use-before-definition",
+      "count": 165,
+      "cum_share_percent": 99.76,
+      "tier": "D-long-tail",
+      "allocated": 2,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/commit-message-format",
+      "count": 98,
+      "cum_share_percent": 99.8,
+      "tier": "D-long-tail",
+      "allocated": 2,
+      "family": "Review/history"
+    },
+    {
+      "rule_id": "ansibleguard/unscoped-shell-variable",
+      "count": 77,
+      "cum_share_percent": 99.83,
+      "tier": "D-long-tail",
+      "allocated": 2,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/insufficient-modularization",
+      "count": 62,
+      "cum_share_percent": 99.85,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/excessive-nesting",
+      "count": 57,
+      "cum_share_percent": 99.88,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/inconsistent-naming-convention",
+      "count": 51,
+      "cum_share_percent": 99.9,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Style/policy"
+    },
+    {
+      "rule_id": "ansibleguard/invalid-task-attribute-type",
+      "count": 40,
+      "cum_share_percent": 99.91,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/role-variable-precedence-collision",
+      "count": 39,
+      "cum_share_percent": 99.93,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/unstructured-module",
+      "count": 28,
+      "cum_share_percent": 99.94,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/incomplete-task",
+      "count": 26,
+      "cum_share_percent": 99.95,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/overriding-facts",
+      "count": 23,
+      "cum_share_percent": 99.96,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/missing-bug-reference",
+      "count": 22,
+      "cum_share_percent": 99.97,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Review/history"
+    },
+    {
+      "rule_id": "ansibleguard/redundant-default-value",
+      "count": 22,
+      "cum_share_percent": 99.98,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/missing-bool-filters",
+      "count": 18,
+      "cum_share_percent": 99.99,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/unused-handler",
+      "count": 8,
+      "cum_share_percent": 99.99,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Maintainability/complexity"
+    },
+    {
+      "rule_id": "ansibleguard/unsafe-file-write",
+      "count": 7,
+      "cum_share_percent": 99.99,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/unexpected-task-location",
+      "count": 5,
+      "cum_share_percent": 99.99,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/invalid-numeric-value",
+      "count": 4,
+      "cum_share_percent": 100.0,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/shell-environment-export",
+      "count": 3,
+      "cum_share_percent": 100.0,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Variable/reference reasoning"
+    },
+    {
+      "rule_id": "ansibleguard/vault-inline-overload",
+      "count": 2,
+      "cum_share_percent": 100.0,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Security"
+    },
+    {
+      "rule_id": "ansibleguard/overriden-keys",
+      "count": 1,
+      "cum_share_percent": 100.0,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/missing-handler",
+      "count": 1,
+      "cum_share_percent": 100.0,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Objective correctness"
+    },
+    {
+      "rule_id": "ansibleguard/empty-abstraction",
+      "count": 1,
+      "cum_share_percent": 100.0,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Structure/reuse"
+    },
+    {
+      "rule_id": "ansibleguard/missing-file-extension",
+      "count": 1,
+      "cum_share_percent": 100.0,
+      "tier": "D-long-tail",
+      "allocated": 1,
+      "family": "Style/policy"
+    }
+  ]
+}

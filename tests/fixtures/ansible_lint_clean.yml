@@ -1,0 +1,8 @@
+---
+- name: Clean play
+  hosts: all
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present

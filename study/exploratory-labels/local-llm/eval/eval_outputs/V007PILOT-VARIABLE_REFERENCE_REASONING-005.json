@@ -1,0 +1,51 @@
+{
+  "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-005",
+  "source_location": {
+    "repository": "mageops/ansible-infrastructure",
+    "path": "roles/cs.deploy/tasks/07-relink-releases.yml",
+    "line_start": "16",
+    "line_end": "16",
+    "rule_id": "ansibleguard/unguarded-variable",
+    "review_family": "Variable/reference reasoning"
+  },
+  "context_supplied_to_model": {
+    "source_context": "    1 | - name: Link previous release\n    2 |   file:\n    3 |     state: link\n    4 |     force: yes\n    5 |     dest: \"{{ deploy_previous_release_dir }}\"\n    6 |     src: \"{{ deploy_current_release_path }}\"\n    7 |   become: yes\n    8 |   become_user: \"{{ deploy_app_user }}\"\n    9 |   when: deploy_current_release_path is defined\n   10 | \n   11 | - name: Link current release\n   12 |   file:\n   13 |     state: link\n   14 |     force: yes\n   15 |     dest: \"{{ deploy_current_release_dir }}\"\n   16 |     src: \"{{ deploy_next_release_path }}\"\n   17 |   become: yes\n   18 |   become_user: \"{{ deploy_app_user }}\"\n   19 | \n   20 | - name: List current release directories\n   21 |   find:\n   22 |     file_type: directory\n   23 |     follow: no\n   24 |     hidden: no\n   25 |     recurse: no\n   26 |     path: \"{{ deploy_releases_dir }}\"\n   27 |   register: deploy_find_releases\n   28 | \n   29 | # The fact `ansible_mount` contains only the root mount while we have tons of others.\n   30 | # Cleared fact cache, tried `setup` module, I think this is a bug.\n   31 | - name: Find current mounts\n   32 |   become: yes\n   33 |   become_user: root\n   34 |   command: \"findmnt --all --output=TARGET --raw --noheadings --notruncate\"\n   35 |   changed_when: no\n   36 |   register: deploy_findmnt_cmd\n   37 | \n   38 | - name: Set list directories to remove\n   39 |   set_fact:\n   40 |     deploy_release_to_remove: >-\n   41 |       {{\n   42 |         (\n   43 |           deploy_find_releases.files\n   44 |             | sort(attribute='ctime')\n   45 |             | map(attribute='path')\n   46 |             | list\n   47 |         )[:-deploy_keep_current_releases]\n   48 |           | reject('equalto', deploy_next_release_path)\n   49 |           | list\n   50 |       }}\n   51 |     deploy_release_mountpoints_to_unmount: >-\n   52 |       {{\n   53 |         deploy_findmnt_cmd.stdout_lines\n   54 |           | select('match', deploy_releases_dir | regex_escape ~ '.*')\n   55 |           | list\n   56 |       }}\n   57 | \n   58 | # We cannot remove dirs with mounts which may sometimes break deploy\n   59 | # if previous broken deploys managed to get stuff mounted; also we\n   60 | # have to do `unmount` then `absent` because of some weird ansible bug\n   61 | - name: Unmount any mountpoints in the release directories to be removed\n   62 |   become: yes\n   63 |   become_user: root\n   64 |   mount:\n   65 |     path: \"{{ item[1] }}\"\n   66 |     state: \"{{ item[2] }}\"\n   67 |   when: item[1].startswith(item[0])\n   68 |   with_nested:\n   69 |     - \"{{ deploy_release_to_remove }}\"\n   70 |     - \"{{ deploy_release_mountpoints_to_unmount }}\"\n   71 |     - ['unmounted', 'absent']\n   72 |   loop_control:\n   73 |     label: \"{{ item[2] | capitalize }} {{ item[1] }}\"\n   74 | \n   75 | \n   76 | # Retry release removal as some mounts take some time to finally\n   77 | # release the mountpoint directories (S3FS FTW!)\n   78 | - name: Remove stale releases\n   79 |   become: yes\n   80 |   become_user: root\n   81 |   file:\n   82 |     path: \"{{ item }}\"\n   83 |     state: absent\n   84 |   loop: \"{{ deploy_release_to_remove }}\"\n   85 |   register: deploy_remove_release_result\n   86 |   retries: 5\n   87 |   delay: 10\n   88 |   until: deploy_remove_release_result is not failed",
+    "detector_message": "Given the available frozen repository evidence, what is the strongest supported conclusion about the reported variable, reference, scope, precedence, or runtime-input condition?"
+  },
+  "original_detector_annotation": {
+    "my_label_semantic": "negative",
+    "my_label_actionability": "not-applicable",
+    "my_explanation": "deploy_next_release_path is assigned earlier in the same role (01-register-variables.yml:14) and is already relied upon unguarded by several other numbered task files (03, 04, 05, 91) in this role's execution sequence, indicating an established convention that guarantees it is defined before 07-relink-releases.yml runs.",
+    "teammate_label_semantic": "negative",
+    "teammate_explanation": "The role imports 01-register-variables.yml before its release tasks; that file sets deploy_next_release_path before 07-relink-releases.yml uses it. The defining task and use are under the same deploy_install_new_release condition.",
+    "note": "preserved exactly as found in the input file; never overwritten by this script"
+  },
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "inference_options": {
+      "temperature": 0.1,
+      "num_ctx": 8192
+    }
+  },
+  "prompt_version": "ansible-explain-v1.1",
+  "execution": {
+    "status": "ok",
+    "error": null,
+    "warnings": [],
+    "duration_seconds": 19.906,
+    "generated_at_utc": "2026-10-17T23:01:52.982877+00:00"
+  },
+  "raw_response": "{\n  \"what_is_wrong\": \"The variable `deploy_next_release_path` is used without being defined or checked for existence.\",\n  \"why_it_is_wrong\": \"The variable `deploy_next_release_path` is referenced in the `src` parameter of the `file` module in task 16, but it is not defined or checked for existence anywhere in the provided code snippet.\",\n  \"why_in_this_context\": \"The task that uses `deploy_next_release_path` is part of a sequence that involves linking releases and removing stale releases. If `deploy_next_release_path` is not defined, the task will fail with an error.\",\n  \"potential_consequences\": \"The task will fail with an error if `deploy_next_release_path` is not defined, causing the playbook to halt and potentially leaving the deployment in an inconsistent state.\",\n  \"recommended_fix\": \"Define or check for the existence of `deploy_next_release_path` before using it in the `src` parameter of the `file` module.\",\n  \"fixed_code_snippet\": null,\n  \"why_fix_works\": \"Defining or checking for the existence of `deploy_next_release_path` ensures that the variable is available when it is used, preventing the task from failing.\",\n  \"trade_offs_and_assumptions\": \"Assuming that `deploy_next_release_path` is defined elsewhere in the playbook or is set by a previous task. If it is not defined, additional steps would be required to set it.\",\n  \"confidence\": \"high\",\n  \"limitations\": null\n}",
+  "explanation": {
+    "what_is_wrong": "The variable `deploy_next_release_path` is used without being defined or checked for existence.",
+    "why_it_is_wrong": "The variable `deploy_next_release_path` is referenced in the `src` parameter of the `file` module in task 16, but it is not defined or checked for existence anywhere in the provided code snippet.",
+    "why_in_this_context": "The task that uses `deploy_next_release_path` is part of a sequence that involves linking releases and removing stale releases. If `deploy_next_release_path` is not defined, the task will fail with an error.",
+    "potential_consequences": "The task will fail with an error if `deploy_next_release_path` is not defined, causing the playbook to halt and potentially leaving the deployment in an inconsistent state.",
+    "recommended_fix": "Define or check for the existence of `deploy_next_release_path` before using it in the `src` parameter of the `file` module.",
+    "fixed_code_snippet": null,
+    "why_fix_works": "Defining or checking for the existence of `deploy_next_release_path` ensures that the variable is available when it is used, preventing the task from failing.",
+    "trade_offs_and_assumptions": "Assuming that `deploy_next_release_path` is defined elsewhere in the playbook or is set by a previous task. If it is not defined, additional steps would be required to set it.",
+    "confidence": "high",
+    "limitations": null
+  }
+}

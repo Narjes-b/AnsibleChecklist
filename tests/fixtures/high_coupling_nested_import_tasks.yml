@@ -1,0 +1,8 @@
+- name: Play
+  hosts: all
+  tasks:
+    - import_tasks: common.yml
+    - include_tasks: extra.yml
+    - name: real task
+      debug:
+        msg: hi

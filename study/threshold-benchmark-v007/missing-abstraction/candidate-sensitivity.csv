@@ -1,0 +1,9 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+missing_abstraction_leaf_tasks,missing-abstraction,q1,1,21457,6862,0.31980240,197,190,0.96446701
+missing_abstraction_leaf_tasks,missing-abstraction,q2_median,3,21457,6569,0.30614718,197,189,0.95939086
+missing_abstraction_leaf_tasks,missing-abstraction,q3,7,21457,2911,0.13566668,197,176,0.89340102
+missing_abstraction_leaf_tasks,missing-abstraction,p80,8,21457,2369,0.11040686,197,175,0.88832487
+missing_abstraction_leaf_tasks,missing-abstraction,current,10,21457,1648,0.07680477,197,163,0.82741117
+missing_abstraction_leaf_tasks,missing-abstraction,p90,13,21457,997,0.04646502,197,142,0.72081218
+missing_abstraction_leaf_tasks,missing-abstraction,tukey_upper_fence,16,21457,638,0.02973389,197,122,0.61928934
+missing_abstraction_leaf_tasks,missing-abstraction,p95,19,21457,420,0.01957403,197,102,0.51776650

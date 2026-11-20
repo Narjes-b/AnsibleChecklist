@@ -1,0 +1,16 @@
+- name: deploy_app
+  hosts: localhost
+  tasks:
+    - name: main_block
+      block:
+        - name: install_package
+          apt:
+            name: nginx
+            state: present
+      rescue:
+        - name: rollback_install
+          command: apt remove nginx
+      always:
+        - name: notify_result
+          debug:
+            msg: Deployment finished

@@ -1,0 +1,9 @@
+{
+  "status": "deferred-by-owner",
+  "target": 18,
+  "minimum": 12,
+  "closing_date": null,
+  "institutional_review_determination": null,
+  "consent_version": "1",
+  "eligibility": "Adult developers with prior Ansible authoring or review experience; not gold reviewers"
+}

@@ -1,0 +1,50 @@
+{
+  "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-011",
+  "source_location": {
+    "repository": "autobase-tech/autobase",
+    "path": "automation/roles/cloud_resources/tasks/aws.yml",
+    "line_start": "473",
+    "line_end": "473",
+    "rule_id": "ansibleguard/undocumented-complex-task",
+    "review_family": "Maintainability/complexity"
+  },
+  "context_supplied_to_model": {
+    "source_context": "",
+    "detector_message": "Does the frozen source unit genuinely exhibit the described maintainability/complexity condition independently of the detector cutoff?"
+  },
+  "original_detector_annotation": {
+    "my_label_semantic": "positive",
+    "my_label_actionability": "advisory",
+    "my_explanation": "Task has 14 module parameters, a loop with loop_control/register/until/retries, and a 3-way nested boolean when-clause, with no comment explaining the condition (unlike the pattern elsewhere in this file).",
+    "teammate_label_semantic": "negative",
+    "teammate_explanation": "This is a declarative AWS target-group module task with an explicit NLB section comment, descriptive name, and individually named settings. The supplied context does not show undocumented control flow or a maintenance burden beyond ordinary module configuration.",
+    "note": "preserved exactly as found in the input file; never overwritten by this script"
+  },
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "inference_options": {
+      "temperature": 0.1
+    }
+  },
+  "prompt_version": "ansible-explain-v1",
+  "execution": {
+    "status": "ok",
+    "error": null,
+    "warnings": [],
+    "duration_seconds": 6.336,
+    "generated_at_utc": "2026-10-17T23:49:14.081868+00:00"
+  },
+  "raw_response": "{\n  \"what_is_wrong\": \"The task is complex due to its multiple loops, conditional logic, and use of variables.\",\n  \"why_it_is_wrong\": \"Complex tasks can be harder to maintain and debug over time.\",\n  \"why_in_this_context\": \"The task involves creating or modifying NLB Target Groups with nested loops and conditions, which increases complexity.\",\n  \"potential_consequences\": \"Increased risk of bugs, longer development time, and higher maintenance costs.\",\n  \"recommended_fix\": \"Refactor the task into smaller, more manageable tasks. Consider breaking down the logic into reusable functions or roles.\",\n  \"fixed_code_snippet\": null,\n  \"why_fix_works\": \"Smaller, more focused tasks are easier to understand, test, and maintain.\",\n  \"trade_offs_and_assumptions\": \"Refactoring may require additional time upfront but will likely save time in the long run by reducing complexity.\",\n  \"confidence\": \"high\",\n  \"limitations\": null\n}",
+  "explanation": {
+    "what_is_wrong": "The task is complex due to its multiple loops, conditional logic, and use of variables.",
+    "why_it_is_wrong": "Complex tasks can be harder to maintain and debug over time.",
+    "why_in_this_context": "The task involves creating or modifying NLB Target Groups with nested loops and conditions, which increases complexity.",
+    "potential_consequences": "Increased risk of bugs, longer development time, and higher maintenance costs.",
+    "recommended_fix": "Refactor the task into smaller, more manageable tasks. Consider breaking down the logic into reusable functions or roles.",
+    "fixed_code_snippet": null,
+    "why_fix_works": "Smaller, more focused tasks are easier to understand, test, and maintain.",
+    "trade_offs_and_assumptions": "Refactoring may require additional time upfront but will likely save time in the long run by reducing complexity.",
+    "confidence": "high",
+    "limitations": null
+  }
+}

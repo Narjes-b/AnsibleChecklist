@@ -1,0 +1,19 @@
+{
+  "metric_id": "cohesion_playbook_score",
+  "pilot_band_counts": {
+    "B2_current_to_q1": 38,
+    "B3_q1_to_median": 37
+  },
+  "pilot_prediction_counts": {
+    "false": 75,
+    "true": 0
+  },
+  "pilot_projects": 64,
+  "pilot_rows": 75,
+  "pilot_sha256": "39b9b77a02c3660f3050108a97b1c0819f6d050e8bfead575c70faaf32ee1fc1",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 208,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

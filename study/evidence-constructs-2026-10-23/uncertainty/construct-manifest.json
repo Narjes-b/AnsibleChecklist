@@ -1,0 +1,53 @@
+{
+  "purpose": "structural context and lexical audit; no semantic certification",
+  "eligible_for_performance_scoring": false,
+  "selected_rows": 88,
+  "recorded_rows": 88,
+  "metadata_manifest_sha256": "7e8814a7f1f6205985f72bff28da5e8e941a24e14e1c2bd83cae1569f8b90798",
+  "status_counts": {
+    "constructs-located": 86,
+    "yaml-aliases-require-resolution": 2
+  },
+  "lexical_subject_counts": {
+    "casefold-token-only": 14,
+    "exact-token-located": 72,
+    "not-checked": 2
+  },
+  "task_candidates": 81,
+  "play_candidates": 20,
+  "truncated_units": 0,
+  "redacted_units": 9,
+  "subject_verified": 0,
+  "complete_rule_evidence": 0,
+  "labels_generated": 0,
+  "model_calls": 0,
+  "implementation_sha256": "80b6c4116d184d9c4d8cb87cf7014bd8784ef7ff9ebf8c50e73c64b6c4af933b",
+  "dependency_sha256": {
+    "src/ansibleguard/task_traversal.py": "6c69570fb768e508385ea8b0f4c4f013d09714fab6d9caeddd86e38523dc49e5",
+    "scripts/retrieve_sample_evidence.py": "aa079a5b9b2037c6dc213e06940e59f9301709da35d80531611bc12fa99e6328",
+    "scripts/v007_bundle_context_v2.py": "d782d4dd36ba3bc5825185a654bffb5c2e99ee7a844b591acf2b0ffa9d9f4c8f",
+    "scripts/v007_bundle_redact_v2.py": "622a61c23d3c9ccdb55f8e5d7b0418e30243ec2abdd36e2e8c01b7080de61437",
+    "scripts/v007_bundle_secret_scan.py": "e531754be6366c3f3a42dabdc71cc8a0adaf82dd7dae0462c89d104b43564bf0",
+    "scripts/v007_validation_pilot.py": "a73b8703c29c7d7e70874d95d95636fd3b1abec216ff2bf0295ab451e9ef59ef"
+  },
+  "source_stores": [
+    "/home/aymmzn/Documents/AnsibleChecklist/study/repositories",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/cache/v0071-rerun-2026-10-22/repositories"
+  ],
+  "git_version": "git version 2.56.0",
+  "python_version": "3.14.8",
+  "pyyaml_version": "6.0.1",
+  "jinja_version": "3.1.6",
+  "limits": {
+    "max_unit_display_lines": 600,
+    "window": 80,
+    "max_cached_files": 64,
+    "yaml_max_events": 100000,
+    "yaml_max_depth": 64
+  },
+  "local_packet_directory": "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/constructs-2026-10-23/uncertainty",
+  "output_sha256": {
+    "construct-ledger.csv": "5fc63ff41a0b8cfa79179922142f35c4c8a45db042d493200864a70136f1093a",
+    "construct-cells.csv": "fae4c1062d5218da40ec452e27046348195e79ab65a2ec31b739d5d86a4a5fde"
+  }
+}

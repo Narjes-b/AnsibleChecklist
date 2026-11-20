@@ -1,0 +1,156 @@
+[
+  {
+    "metric_id": "long_statement_chars",
+    "population": 1333350,
+    "sample_projects": 207,
+    "sample_rows": 977,
+    "slug": "long-statement"
+  },
+  {
+    "metric_id": "complex_expression_score",
+    "population": 199913,
+    "sample_projects": 197,
+    "sample_rows": 878,
+    "slug": "complex-expression"
+  },
+  {
+    "metric_id": "complex_expression_length_chars",
+    "population": 199913,
+    "sample_projects": 197,
+    "sample_rows": 1209,
+    "slug": "complex-expression-length"
+  },
+  {
+    "metric_id": "excessive_nesting_depth",
+    "population": 132295,
+    "sample_projects": 194,
+    "sample_rows": 405,
+    "slug": "excessive-nesting"
+  },
+  {
+    "metric_id": "long_task_name_chars",
+    "population": 128220,
+    "sample_projects": 193,
+    "sample_rows": 881,
+    "slug": "long-task-name"
+  },
+  {
+    "metric_id": "task_name_special_chars",
+    "population": 128220,
+    "sample_projects": 193,
+    "sample_rows": 364,
+    "slug": "task-name-special-characters"
+  },
+  {
+    "metric_id": "play_name_special_chars",
+    "population": 128220,
+    "sample_projects": 193,
+    "sample_rows": 251,
+    "slug": "play-name-special-characters"
+  },
+  {
+    "metric_id": "large_play_loc",
+    "population": 5479,
+    "sample_projects": 169,
+    "sample_rows": 662,
+    "slug": "large-play-loc"
+  },
+  {
+    "metric_id": "large_play_task_count",
+    "population": 5479,
+    "sample_projects": 169,
+    "sample_rows": 647,
+    "slug": "large-play-task-count"
+  },
+  {
+    "metric_id": "large_play_avg_task_size",
+    "population": 5479,
+    "sample_projects": 169,
+    "sample_rows": 642,
+    "slug": "large-play-average-task-size"
+  },
+  {
+    "metric_id": "large_playbook_loc",
+    "population": 21455,
+    "sample_projects": 197,
+    "sample_rows": 1107,
+    "slug": "large-playbook-loc"
+  },
+  {
+    "metric_id": "large_playbook_play_count",
+    "population": 21455,
+    "sample_projects": 197,
+    "sample_rows": 662,
+    "slug": "large-playbook-play-count"
+  },
+  {
+    "metric_id": "large_playbook_avg_play_size",
+    "population": 21455,
+    "sample_projects": 197,
+    "sample_rows": 665,
+    "slug": "large-playbook-average-play-size"
+  },
+  {
+    "metric_id": "large_playbook_task_count",
+    "population": 21455,
+    "sample_projects": 197,
+    "sample_rows": 1194,
+    "slug": "large-playbook-task-count"
+  },
+  {
+    "metric_id": "large_playbook_avg_task_size",
+    "population": 21455,
+    "sample_projects": 197,
+    "sample_rows": 873,
+    "slug": "large-playbook-average-task-size"
+  },
+  {
+    "metric_id": "high_coupling_import_count",
+    "population": 21115,
+    "sample_projects": 195,
+    "sample_rows": 386,
+    "slug": "high-coupling-import-count"
+  },
+  {
+    "metric_id": "high_coupling_role_count",
+    "population": 21115,
+    "sample_projects": 195,
+    "sample_rows": 425,
+    "slug": "high-coupling-role-count"
+  },
+  {
+    "metric_id": "undocumented_complex_boolean_ops",
+    "population": 132295,
+    "sample_projects": 194,
+    "sample_rows": 561,
+    "slug": "undocumented-complex-boolean-ops"
+  },
+  {
+    "metric_id": "undocumented_complex_jinja_filters",
+    "population": 132295,
+    "sample_projects": 194,
+    "sample_rows": 550,
+    "slug": "undocumented-complex-jinja-filters"
+  },
+  {
+    "metric_id": "undocumented_complex_nesting_depth",
+    "population": 132295,
+    "sample_projects": 194,
+    "sample_rows": 483,
+    "slug": "undocumented-complex-nesting"
+  },
+  {
+    "metric_id": "cohesion_playbook_score",
+    "population": 2369,
+    "sample_projects": 131,
+    "sample_rows": 208,
+    "slug": "incohesive-playbook-score"
+  },
+  {
+    "metric_id": "complex_playbook_budget",
+    "population": 21455,
+    "sample_projects": 197,
+    "sample_rows": 920,
+    "slug": "complex-playbook-budget"
+  }
+]

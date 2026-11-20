@@ -1,0 +1,1061 @@
+sample_id,rule_id,concept_id,review_family,tier,rule_total_occurrences,rule_cumulative_share_percent,repository,commit_sha,path,line,severity,message,occurrence_id,source_context,ai_semantic_label,ai_actionability_label,ai_context_sufficient,ai_requires_external_context,ai_external_context_type,ai_reason_code,ai_notes,ai_confidence,ai_model_identity,ai_review_protocol_version
+V007STRAT-UNGUARDED-VARIABLE-001,ansibleguard/unguarded-variable,unresolved-runtime-input,Variable/reference reasoning,B-major,49202,56.39,OpenConext/OpenConext-deploy,d7b35efed821c922222da7d457a4fd52e16b40a8,environments/template/group_vars/template.yml,59,note,Runtime input variable 'mysql_passwords' may be supplied by dynamic execution context that static analysis cannot prove.,b147acb3b5110f19bb9c450c6ef9cba88c6467d00fe9df95d7de1fc8bc614f98,"      45 | invite_welcome_version: ""0.0.2-SNAPSHOT""
+      46 | invite_mock_version: ""0.0.2-SNAPSHOT""
+      47 | 
+      48 | 
+      49 | statistics_version: ""1.1.7""
+      50 | 
+      51 | databases:
+      52 |   names:
+      53 |     - ""{{ engine_database_name }}""
+      54 |     - pdp-server
+      55 |     - aaserver
+      56 |     - shibboleth
+      57 |     - eb_logins
+      58 |   users:
+>>    59 |     - { name: ""{{ engine_database_user }}"", db_name: ""{{ engine_database_name }}"", password: ""{{ mysql_passwords.eb }}"" }
+      60 |     - { name: pdp-serverrw, db_name: pdp-server, password: ""{{ mysql_passwords.pdp_server }}"" }
+      61 |     - { name: aa-serverrw, db_name: aaserver, password: ""{{ mysql_passwords.aa_server }}"" }
+      62 |     - { name: shibrw, db_name: shibboleth, password: ""{{ mysql_passwords.shibboleth }}"" }
+      63 |     - { name: lifecyclerw, db_name: eb_logins, password: ""{{ mysql_passwords.lifecycle }}"" }
+      64 | 
+      65 | mongo_port: 27017
+      66 | 
+      67 | mongo:
+      68 |   users:
+      69 |     - { name: managerw, db_name: metadata, password: ""{{ mongo_passwords.manage }}"" }
+      70 |     - { name: oidcngrw, db_name: oidcng, password: ""{{ mongo_passwords.oidcng }}"" }
+      71 |     - { name: myconextrw, db_name: myconext, password: ""{{ mongo_passwords.myconext }}"" }
+      72 | 
+      73 | tls:",uncertain,uncertain,no,yes,vault/secrets file or environment-specific group_vars override not shown,template-group-vars-placeholder,"This is environments/template/group_vars/template.yml, a template meant to be copied per-environment; mysql_passwords.eb/.pdp_server/etc. are almost certainly supplied by a sibling vault or environment-specific override file, not visible here.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-002,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,dev-sec/ansible-collection-hardening,3102eddbd116c5f8c1581aca543d372dbc326764,roles/mysql_hardening/handlers/main.yml,4,note,"Input variable 'mysql_daemon' is consumed without a visible default, declared contract, or caller value.",261a1772b5ddb12bf5904ef4bb40119552fa1834f8b9a715b13f7cb8fa72be83,"       1 | ---
+       2 | - name: Restart mysql
+       3 |   ansible.builtin.service:
+>>     4 |     name: ""{{ mysql_daemon }}""
+       5 |     state: restarted
+       6 |   when: mysql_hardening_restart_mysql | bool",uncertain,uncertain,no,yes,role defaults/main.yml for dev-sec mysql_hardening (not shown),role-var-defaults-not-shown,"mysql_daemon is used in roles/mysql_hardening/handlers/main.yml; this is a role-scoped variable and dev-sec roles conventionally define such variables in defaults/main.yml, which isn't part of this snippet.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-003,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,ansible-lockdown/RHEL8-CIS,97a6a9aa80506900009129aa389759d6884d5ec5,defaults/main/audit.yml,100,note,"Input variable 'pre_audit_results' is consumed without a visible default, declared contract, or caller value.",6a64e2652251ba56a30c35a62071448bdab036ad054c4f7ce9ff3bef0c62f3a7,"      86 | 
+      87 | ## The following should not need changing
+      88 | 
+      89 | ### Audit binary settings ###
+      90 | audit_bin_version:
+      91 |   release: v0.5.0
+      92 |   AMD64_checksum: 'sha256:1371df12806586e4c6b122a22e1dbc2b9008160099eaf2816d139cc825ffc40a'
+      93 |   ARM64_checksum: 'sha256:d34fae1b2e33bbe2f461418891c88dd636f212a0a2d4bb0601111a8dfa09efa2'
+      94 | audit_bin_path: /usr/local/bin/
+      95 | audit_bin: ""{{ audit_bin_path }}goss""
+      96 | audit_format: json
+      97 | 
+      98 | audit_vars_path: ""{{ audit_conf_dir }}/vars/{{ ansible_facts['hostname'] }}.yml""
+      99 | audit_results: |
+>>   100 |   The{% if not audit_only %} pre remediation{% endif %} audit results are: {{ pre_audit_results }}
+     101 |   {% if not audit_only %}The post remediation audit results are: {{ post_audit_results }}{% endif %}
+     102 | 
+     103 |   Full breakdown can be found in {{ audit_log_dir }}",uncertain,uncertain,no,yes,"tasks file that likely set_facts pre_audit_results/post_audit_results (ansible-lockdown convention), not shown",defined-elsewhere-likely,"pre_audit_results is referenced inside the audit_results message template in defaults/main/audit.yml; ansible-lockdown CIS roles typically populate this via set_fact in a tasks file after running the audit, which is outside this window.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-004,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,defaults/main/audit.yml,100,note,"Input variable 'pre_audit_results' is consumed without a visible default, declared contract, or caller value.",6a64e2652251ba56a30c35a62071448bdab036ad054c4f7ce9ff3bef0c62f3a7,"      86 | 
+      87 | ## The following should not need changing
+      88 | 
+      89 | ### Audit binary settings ###
+      90 | audit_bin_version:
+      91 |   release: v0.5.0
+      92 |   AMD64_checksum: 'sha256:1371df12806586e4c6b122a22e1dbc2b9008160099eaf2816d139cc825ffc40a'
+      93 |   ARM64_checksum: 'sha256:d34fae1b2e33bbe2f461418891c88dd636f212a0a2d4bb0601111a8dfa09efa2'
+      94 | audit_bin_path: /usr/local/bin/
+      95 | audit_bin: ""{{ audit_bin_path }}goss""
+      96 | audit_format: json
+      97 | 
+      98 | audit_vars_path: ""{{ audit_conf_dir }}/vars/{{ ansible_facts['hostname'] }}.yml""
+      99 | audit_results: |
+>>   100 |   The{% if not audit_only %} pre remediation{% endif %} audit results are: {{ pre_audit_results }}
+     101 |   {% if not audit_only %}The post remediation audit results are: {{ post_audit_results }}{% endif %}
+     102 | 
+     103 |   Full breakdown can be found in {{ audit_log_dir }}",uncertain,uncertain,no,yes,"tasks file that likely set_facts pre_audit_results/post_audit_results (ansible-lockdown convention), not shown",defined-elsewhere-likely,Identical pattern to the RHEL8-CIS sibling: pre_audit_results is consumed in a defaults-file template string and is conventionally populated by a later audit task not shown here.,medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-005,ansibleguard/unguarded-variable,unresolved-runtime-input,Variable/reference reasoning,B-major,49202,56.39,vndmtrx/k8s-in-a-box,1031c616283a0badf1f94e3716cd8c7d91e0f972,ansible/k8s-kubelet/tasks/07-download-imagens-sistema.yml,77,note,Runtime input variable 'imagens_kubernetes' may be supplied by dynamic execution context that static analysis cannot prove.,f06d7ecb66250f1319136ebec5a0e59de431408d55c8fa8d0f72a1441d615045,"      63 |     imagens_kubernetes: ""{{ (node_images | combine(control_plane_images)) | dict2items }}""
+      64 |   when:
+      65 |     - inventory_hostname in groups['managers']
+      66 | 
+      67 | - name: Definir lista de imagens a carregar (para workers)
+      68 |   ansible.builtin.set_fact:
+      69 |     imagens_kubernetes: ""{{ node_images | dict2items }}""
+      70 |   when: imagens_kubernetes is not defined
+      71 | 
+      72 | - name: Verificar se as imagens do Kubernetes já existem localmente no runtime
+      73 |   ansible.builtin.command:
+      74 |     cmd: ""/usr/local/bin/crictl images -q {{ item.value }}""
+      75 |   register: crictl_image_check
+      76 |   changed_when: false
+>>    77 |   loop: ""{{ imagens_kubernetes }}""
+      78 |   loop_control:
+      79 |     label: ""{{ item.value }}""
+      80 | 
+      81 | - name: Copiar tarball da imagem do Host para a VM
+      82 |   ansible.builtin.copy:
+      83 |     src: ""{{ pasta_temporarios }}/imagens/{{ item.item.key }}-{{ item.item.value | split(':') | last }}.tar""
+      84 |     dest: ""/tmp/{{ item.item.key }}.tar""
+      85 |     mode: ""0644""
+      86 |   loop: ""{{ crictl_image_check.results }}""
+      87 |   loop_control:
+      88 |     label: ""{{ item.item.value }}""
+      89 |   when: item.stdout == """"
+      90 | 
+      91 | - name: Importar imagem no CRI-O usando skopeo",negative,not-actionable,yes,no,none,set-fact-covers-all-branches,"Line 63 sets imagens_kubernetes for manager hosts, and the task at lines 67-70 sets it again 'when: imagens_kubernetes is not defined' which covers the worker/fallback case; by line 77 every host path has already assigned the variable.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-006,ansibleguard/unguarded-variable,unresolved-runtime-input,Variable/reference reasoning,B-major,49202,56.39,redhat-cop/infra.aap_configuration,f84d6a61e4b18aa135d707fe539371587bc92931,playbooks/get_stats.yml,74,note,Runtime input variable 'temp_user_list' may be supplied by dynamic execution context that static analysis cannot prove.,1047ffe9ae95afb400e0ce6b6263b33c7878f6f656249e698dc0bd57d0f607e4,"      60 |           - ""{{ (r_users['json']['results'][0]['last_login'] | regex_search('[0-9]{4}-[0-9]{2}-[0-9]{2}', '\\0') | first) | to_datetime('%Y-%m-%d') }}""
+      61 |           - ""{{ (((r_users['json']['results'][0]['last_login'] | regex_search('[0-9]{4}-[0-9]{2}-[0-9]{2}', '\\0') | first) | to_datetime('%Y-%m-%d')) - (ansible_facts['date_time']['date'] | to_datetime('%Y-%m-%d'))).days }}""
+      62 | 
+      63 |     - name: Remove users who have never logged in (null)
+      64 |       ansible.builtin.set_fact:
+      65 |         temp_user_list: ""{{ (active_users | default([])) + [item['last_login']] }}""
+      66 |         active_users: []
+      67 |       when: item['last_login'] is regex('[0-9]{4}-[0-9]{2}-[0-9]{2}(.*)')
+      68 |       loop: ""{{ r_users['json']['results'] }}""
+      69 | 
+      70 |     - name: Debug removing users list
+      71 |       ansible.builtin.debug:
+      72 |         verbosity: 1
+      73 |         msg:
+>>    74 |           - ""{{ temp_user_list }}""
+      75 | 
+      76 |     - name: Find active users
+      77 |       ansible.builtin.set_fact:
+      78 |         active_users: ""{{ active_users + [item] }}""
+      79 |       # when: (((item | regex_search('[0-9]{4}-[0-9]{2}-[0-9]{2}', '\\0') | first) | to_datetime('%Y-%m-%d')) - ('2023-03-30' | to_datetime('%Y-%m-%d'))).days <= 30
+      80 |       when: ((((item | regex_search('[0-9]{4}-[0-9]{2}-[0-9]{2}', '\\0') | first) | to_datetime('%Y-%m-%d')) - (ansible_facts['date_time']['date'] | to_datetime('%Y-%m-%d'))).days) <= 30
+      81 |       loop: ""{{ temp_user_list }}""
+      82 | 
+      83 |     - name: Get subscription info
+      84 |       ansible.builtin.uri:
+      85 |         url: https://{{ aap_hostname }}/api/controller/v2/settings/all/?format=json
+      86 |         method: GET
+      87 |         force_basic_auth: true
+      88 |         user: ""{{ aap_username }}""",positive,actionable,yes,no,none,conditional-set-fact-in-loop-may-not-run,temp_user_list is only set_fact'd at line 65 inside a loop guarded by 'when: item['last_login'] is regex(...)' (line 67); if no looped item matches that regex the variable is never assigned before it's unconditionally used at line 74 and looped over at line 81.,medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-007,ansibleguard/unguarded-variable,missing-internal-variable,Variable/reference reasoning,B-major,49202,56.39,ictsc/ictsc-drove,05ebbc720b4b71d5dbe7d1a8da3d617807378cb5,Taskfile.yaml,29,warning,"Internal variable 'end' has no visible definition, runtime producer, default, or defined guard.",530f32f35a5f98719329faca2a4cb08466af115c83015e03925962bf74eeb637,"      15 | #   status / sources / generates / methods / preconditions
+      16 | #   deps
+      17 | #
+      18 | # 4.
+      19 | #   cmds
+      20 | 
+      21 | tasks:
+      22 |   check-binary:
+      23 |     desc: 指定されたバイナリがインストールされているか確認
+      24 |     internal: true
+      25 |     silent: true
+      26 |     cmds:
+      27 |       - |
+      28 |         if ! (type {{.BINARY}} >/dev/null 2>&1); then
+>>    29 |           echo ""下記公式ドキュメントを参考に{{if .ALT_NAME}}{{.ALT_NAME}}{{else}}{{.BINARY}}{{end}}をインストールした後、もう一度実行してください""
+      30 |           echo {{.INSTALL_DOC}}
+      31 |           exit 1
+      32 |         fi
+      33 | 
+      34 |   init:
+      35 |     desc: ワークスペースを初期化
+      36 |     cmds:
+      37 |       - cp .vscode/settings-sample.json .vscode/settings.json
+      38 |       - cd dev && if [ ! -e keys ]; then chmod +x keys.sh; ./keys.sh; fi
+      39 |       - task: init-env
+      40 |       - task: init-ansible
+      41 |       - task: init-terraform
+      42 | 
+      43 |   init-env:",negative,not-actionable,yes,no,none,go-template-keyword-misparsed-as-variable,"This is a Taskfile.yaml (go-task), not Ansible; '{{if .ALT_NAME}}...{{else}}...{{end}}' is Go template control-flow syntax, and 'end' is the block-closing keyword, not a variable reference at all.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-008,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,seapath/ansible,bc10619e516866d0e86af601fd7aa8738b55e645,playbooks/cluster_remove_machine.yaml,18,note,"Input variable 'machine_to_remove' is consumed without a visible default, declared contract, or caller value.",dbc003b8abb6b05c90f0628eec5183ed9321be64ca3b4d90a98e0930b099d018,"       4 | - name: Sanity check
+       5 |   hosts: localhost
+       6 |   pre_tasks:
+       7 |     - name: Exit playbook, if no machine was given
+       8 |       ansible.builtin.fail:
+       9 |         msg: ""machine_to_remove must be declared""
+      10 |       when: machine_to_remove is undefined
+      11 | 
+      12 | - name: Remove node from pacemaker and ceph
+      13 |   hosts: cluster_machines
+      14 |   become: true
+      15 |   tasks:
+      16 |     - name: Set fact with hostname of machine_to_remove
+      17 |       ansible.builtin.set_fact:
+>>    18 |         machine_to_remove_hostname: ""{{ hostvars[machine_to_remove]['hostname'] }}""
+      19 |     - name: Define first_node excluding machine_to_remove
+      20 |       ansible.builtin.set_fact:
+      21 |         first_node: ""{{ (groups['cluster_machines'] | difference([machine_to_remove]))[0] }}""
+      22 | 
+      23 |     - name: Remove machine from pacemaker-corosync cluster # noqa: run-once[task]
+      24 |       ansible.builtin.command: ""crm_node -R {{ machine_to_remove }} --force""
+      25 |       delegate_to: ""{{ first_node }}""
+      26 |       run_once: true
+      27 |       changed_when: true
+      28 | 
+      29 |     - name: Remove machine from ceph cluster # noqa: run-once[task]
+      30 |       ansible.builtin.command: ""ceph orch host rm {{ machine_to_remove_hostname }} --force --offline""
+      31 |       delegate_to: ""{{ first_node }}""
+      32 |       run_once: true",negative,not-actionable,yes,no,none,explicit-undefined-guard-present,"The playbook's first play (lines 7-10) explicitly fails with 'machine_to_remove must be declared' when machine_to_remove is undefined, documenting the required-extra-var contract before the hostvars[machine_to_remove] usage at line 18.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-009,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,silogen/cluster-bloom,6122fdec7e1e0feed6081e46be0e44cd45d08809,pkg/ansible/runtime/playbooks/print-config.yml,72,note,"Input variable 'GPU_STACK_FAMILY' is consumed without a visible default, declared contract, or caller value.",a275b8a848ecb538e2858aecd62b9df3a9c82396ebe6ebdff3d178d3a92eac1b,"      58 |       debug:
+      59 |         msg: |
+      60 |           🔒 SSL/TLS Configuration:
+      61 |             USE_CERT_MANAGER: {{ USE_CERT_MANAGER | default('NOT SET') }}
+      62 |             CERT_OPTION: {{ CERT_OPTION | default('NOT SET') }}
+      63 |             TLS_CERT: {{ TLS_CERT | default('NOT SET') }}
+      64 |             TLS_KEY: {{ TLS_KEY | default('NOT SET') }}
+      65 |             ADDITIONAL_TLS_SAN_URLS: {{ ADDITIONAL_TLS_SAN_URLS | default('NOT SET') }}
+      66 |             LETSENCRYPT_EMAIL: {{ LETSENCRYPT_EMAIL | default('NOT SET') }}
+      67 | 
+      68 |     - name: Print GPU Configuration
+      69 |       debug:
+      70 |         msg: |
+      71 |           🎮 GPU Configuration:
+>>    72 |             GPU_STACK_FAMILY: {{ gpu_stack_family_resolved | default(GPU_STACK_FAMILY) | default('instinct') }}
+      73 |             GPU_DRIVER_SKIP_INSTALL: {{ GPU_DRIVER_SKIP_INSTALL | default(false) }}
+      74 |             GPU_INSTALL_HOST_TOOLS: {{ GPU_INSTALL_HOST_TOOLS | default(true) }}
+      75 |             amdgpu driver package (no ROCm): {{ GPU_DRIVER_VERSION | default(gpu_driver_default_version) | default('NOT SET') }}.{{ GPU_DRIVER_BUILD | default(gpu_driver_default_build) | default('NOT SET') }}
+      76 |             GPU Operator: {{ gpu_operator_path | default('NOT SET') }}
+      77 |             GPU Operator config: {{ gpu_operator_config_path | default('NOT SET') }}
+      78 |             DeviceConfig ROCm driver: {{ gpu_deviceconfig_driver_version | default('NOT SET') }}
+      79 |           {% if gpu_stack_tech_preview | default(false) | bool %}
+      80 |             ⚠️  TECH PREVIEW: the {{ gpu_stack_family_resolved | default('radeon') }} Enterprise AI stack
+      81 |                 (GPU Operator) for this release is a tech preview, not production qualified.
+      82 |           {% endif %}
+      83 |             Driver policy synopsis:
+      84 |               Supported existing driver table:
+      85 |                 ROCm 7.0.2 -> driver 30.10.2 -> DKMS 6.14.14.30100200-2226257
+      86 |                 ROCm 7.1.1 -> driver 30.20.1 -> DKMS 6.16.6.30200100-2255209",negative,not-actionable,yes,no,none,chained-default-filters-provide-fallback,"Line 72 reads 'gpu_stack_family_resolved | default(GPU_STACK_FAMILY) | default('instinct')'; Jinja2's default() filter chain resolves to the literal 'instinct' even when GPU_STACK_FAMILY itself is undefined, so the value is fully guarded.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-010,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,ARTbio/GalaxyKickStart,d04bc40174594a2996a23a1c1b07155de4a694e4,roles/GKS-to-slurm_master_node/tasks/set_nfs_sharing.yml,14,note,"Input variable 'galaxy_persistent_directory' is consumed without a visible default, declared contract, or caller value.",a2ad53e4295c4119988102b3fdc5d641ff1ea3b96127359e31c0683717829be3,"       1 | - name: Install nfs packages
+       2 |   apt: pkg={{ item }} state='present'
+       3 |   with_items:
+       4 |     - nfs-kernel-server
+       5 |     - nfs-common
+       6 | 
+       7 | - name: Create nfs_export directory
+       8 |   file: path={{ nfs_export_galaxy_dir }} state=directory mode=0755 recurse=yes
+       9 | 
+      10 | - name: bind mount persitent directories in nfs_export/galaxy directory
+      11 |   mount: opts=bind fstype=none state=mounted name={{ item.dest }} src={{ item.src }}
+      12 |   with_items:
+      13 |     - { src: ""/home/galaxy"", dest: ""{{ nfs_export_galaxy_dir }}"" }
+>>    14 |     - { src: ""{{ galaxy_persistent_directory }}/home/galaxy/tool_dependencies"", dest: ""{{ nfs_export_galaxy_dir }}/tool_dependencies"" }
+      15 |     - { src: ""{{ galaxy_persistent_directory }}/home/galaxy/shed_tools"", dest: ""{{ nfs_export_galaxy_dir }}/shed_tools"" }
+      16 |     - { src: ""{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/tool-data"", dest: ""{{ nfs_export_galaxy_dir }}/galaxy/tool-data"" }
+      17 |     - { src: ""{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/config"", dest: ""{{ nfs_export_galaxy_dir }}/galaxy/config"" }
+      18 |     - { src: ""{{ galaxy_persistent_directory }}{{ galaxy_server_dir }}/database"", dest: ""{{ nfs_export_galaxy_dir }}/galaxy/database"" }
+      19 | 
+      20 | - name: export galaxy data for nfs sharing with slurm slave nodes
+      21 |   template: src=exports dest=/etc/exports
+      22 | #  notify:
+      23 | #    - restart nfs-kernel-server
+      24 | 
+      25 | - name: restart nfs-kernel-server
+      26 |   service: name=nfs-kernel-server state=restarted",uncertain,uncertain,no,yes,role defaults/vars or group_vars for galaxy_persistent_directory (not shown),role-var-defaults-not-shown,galaxy_persistent_directory is used across several mount 'src' paths in a role task file with no default filter; GalaxyKickStart roles commonly define such paths in defaults/main.yml or group_vars that aren't part of this snippet.,medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-011,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,redhat-cop/aap_configuration_extended,b58344f735518744459c0501cf8971c0541f0caa,playbooks/flatten_filetree_create_output.yaml,7,note,"Input variable 'filetree_create_output_dir' is consumed without a visible default, declared contract, or caller value.",b011f476494e6c395b7ab47e604a75d920fcdf21413215c945a012a23ca530cf,"       1 | ---
+       2 | - name: ""Flatten the filetree_create output into unique files per each object type""
+       3 |   hosts: localhost
+       4 |   connection: local
+       5 |   gather_facts: false
+       6 |   vars:
+>>     7 |     filetree_controller_settings: &filetree_create_output_dir ""{{ filetree_create_output_dir }}""
+       8 |     filetree_aap_organizations: *filetree_create_output_dir
+       9 |     filetree_controller_labels: *filetree_create_output_dir
+      10 |     filetree_aap_user_accounts: *filetree_create_output_dir
+      11 |     filetree_aap_teams: *filetree_create_output_dir
+      12 |     filetree_controller_credential_types: *filetree_create_output_dir
+      13 |     filetree_controller_credentials: *filetree_create_output_dir
+      14 |     filetree_controller_credential_input_sources: *filetree_create_output_dir
+      15 |     filetree_controller_notifications: *filetree_create_output_dir
+      16 |     filetree_controller_projects: *filetree_create_output_dir
+      17 |     filetree_controller_execution_environments: *filetree_create_output_dir
+      18 |     filetree_aap_applications: *filetree_create_output_dir
+      19 |     filetree_controller_inventories: *filetree_create_output_dir
+      20 |     filetree_controller_inventory_sources: *filetree_create_output_dir
+      21 |     filetree_controller_instance_groups: *filetree_create_output_dir",uncertain,uncertain,no,yes,caller-supplied extra-vars or parent playbook invocation (not shown),undeclared-cli-input-possible,filetree_create_output_dir is the first vars: entry of a localhost utility playbook with no vars_files or default filter; utility playbooks of this kind are frequently invoked with -e from a wrapper or parent playbook not visible here.,medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-012,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,IBM/ibm-spectrum-scale-install-infra,6e9fdebea0d9a7e66563ea3595d9eff160986d25,roles/afm_cos_install/tasks/install_dir_pkg.yml,7,note,"Input variable 'scale_install_directory_pkg_path' is consumed without a visible default, declared contract, or caller value.",82a986d757c1545ad5793c36818b017c997bae5cf2a86c55aa63184b06945666,"       1 | ---
+       2 | # Dir package installation method
+       3 | 
+       4 | - block:  ## run_once: true
+       5 |     - name: install | Stat directory installation package
+       6 |       stat:
+>>     7 |         path: ""{{ scale_install_directory_pkg_path }}""
+       8 |       register: scale_install_dirpkg
+       9 | 
+      10 |     - name: install | Check directory installation package
+      11 |       assert:
+      12 |         that: scale_install_dirpkg.stat.exists
+      13 |         msg: >-
+      14 |           Please set the variable 'scale_install_directory_pkg_path' to point to the
+      15 |           local installation package (accessible on Ansible control machine)!
+      16 |   run_once: true
+      17 |   delegate_to: localhost
+      18 | 
+      19 | - name: install| Creates default directory
+      20 |   file:
+      21 |     path: ""{{ scale_extracted_path }}""",uncertain,uncertain,no,yes,role defaults/vars for scale_install_directory_pkg_path (not shown),role-var-defaults-not-shown,"The stat task at line 7 uses scale_install_directory_pkg_path directly with no default; the later assert (lines 10-15) only produces a friendlier message if the path doesn't exist, it does not guard against the variable being undefined, and the role's defaults file isn't shown.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-013,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,sdwilsh/ansible-playbooks,40be40030f481071eceb674509623b21986a04b5,plays/codegen/argo-cd-applications.yml,9,note,"Input variable 'overlay' is consumed without a visible default, declared contract, or caller value.",914081be1c8c85d74569a4182b03f3e17d215d88a325a1d887917f52d9532f25,"       1 | ---
+       2 | - hosts: localhost
+       3 |   gather_facts: false
+       4 |   tasks:
+       5 |     # Setup
+       6 |     - ansible.builtin.set_fact:
+       7 |         root_dir: ""{{ playbook_dir }}/../..""
+       8 |     - ansible.builtin.set_fact:
+>>     9 |         component_dir: ""{{ root_dir }}/kustomization/components/codegen-argo-cd-applications-{{ overlay }}""
+      10 |         root_relative_dir: plays/codegen
+      11 |     - name: Determine namespaces for overlay
+      12 |       ansible.builtin.find:
+      13 |         excludes:
+      14 |           - argo-proj
+      15 |         file_type: directory
+      16 |         paths:
+      17 |           - ""{{ root_dir }}/kustomization/overlays/{{ overlay }}/""
+      18 |         recurse: false
+      19 |       register: overlays
+      20 |     - ansible.builtin.set_fact:
+      21 |         namespaces: ""{{ overlays.files | map(attribute='path') | map('basename') | sort }}""
+      22 |     - name: Delete existing codegen
+      23 |       ansible.builtin.file:",uncertain,uncertain,no,yes,caller-supplied extra-vars at invocation (no vars_files/defaults in this playbook),undeclared-cli-input-possible,"overlay is used at line 9 and line 17 with no default filter and no vars_files in this localhost playbook; it looks like a required extra-var for this codegen script, which static analysis can't confirm from the file alone.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-014,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,agross/ansible-home-network,c265b9d5da06639b97d06cf6df201b390c9865be,roles/anytype/tasks/main.yml,51,note,"Input variable 'systemd_units_autostart' is consumed without a visible default, declared contract, or caller value.",9595ad5231e4c52faf10d1b01d55b7dce5114bdeebff879af6fb162fdcee0897,"      37 | 
+      38 | - name: Install systemd units
+      39 |   ansible.builtin.import_tasks: systemd-install-units.yml
+      40 |   vars:
+      41 |     directory: ""{{ anytype_root }}/systemd""
+      42 |     local_units: templates/systemd
+      43 |     notify_: Restart anytype service
+      44 | 
+      45 | - name: Start service
+      46 |   ansible.builtin.systemd:
+      47 |     state: started
+      48 |     enabled: true
+      49 |     name: ""{{ item }}""
+      50 |     daemon_reload: true
+>>    51 |   loop: ""{{ systemd_units_autostart }}""
+      52 |   register: anytype_started",uncertain,uncertain,no,yes,"role defaults/vars or host_vars (home-network repo convention, not shown)",role-var-defaults-not-shown,systemd_units_autostart is looped over at line 51 in roles/anytype/tasks/main.yml with no default; this personal home-network repo typically supplies such per-role lists via host_vars/group_vars not included in this snippet.,medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-015,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,trailofbits/algo,20e22a8715c198b38c01c1ca62d0953b93587a74,deploy_client.yml,11,note,"Input variable 'client_ip' is consumed without a visible default, declared contract, or caller value.",4603e625838ba9da7e425a03a5307fc0d1578ee2992fd63734f748e314381e6d,"       1 | ---
+       2 | - name: Configure the client
+       3 |   hosts: localhost
+       4 |   become: false
+       5 |   vars_files:
+       6 |     - config.cfg
+       7 | 
+       8 |   tasks:
+       9 |     - name: Add the droplet to an inventory group
+      10 |       add_host:
+>>    11 |         name: ""{{ client_ip }}""
+      12 |         groups: client-host
+      13 |         ansible_ssh_user: ""{{ 'root' if client_ip == 'localhost' else ssh_user }}""
+      14 |         vpn_user: ""{{ vpn_user }}""
+      15 |         IP_subject_alt_name: ""{{ server_ip }}""
+      16 |         ansible_python_interpreter: ""{% if client_ip == 'localhost' %}{{ ansible_playbook_python }}{% else %}/usr/bin/python3{% endif %}""
+      17 | 
+      18 | - name: Configure the client and install required software
+      19 |   hosts: client-host
+      20 |   gather_facts: false
+      21 |   become: true
+      22 |   vars_files:
+      23 |     - config.cfg
+      24 |     - roles/strongswan/defaults/main.yml
+      25 |   roles:",uncertain,uncertain,no,yes,"vars_files (config.cfg) content not shown, highly likely defines client_ip",defined-in-unseen-vars-file,"The play explicitly loads 'vars_files: - config.cfg' (line 6) before using client_ip at line 11; config.cfg is not shown in this snippet but is the clear intended source of client_ip and other sibling vars (ssh_user, vpn_user, server_ip) referenced nearby.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-016,ansibleguard/unguarded-variable,undeclared-input-contract,Variable/reference reasoning,B-major,49202,56.39,cisagov/cyhy_amis,ca16f07787d5c6428fcc591767c420cbd7b2993e,ansible/playbook.yml,9,note,"Input variable 'host' is consumed without a visible default, declared contract, or caller value.",9c2e0941c96a46217b31d9b93c3870eca453696d286210e8d66a654bd4747deb,"       1 | ---
+       2 | - name: Setup the inventory and wait for a bastion to become available
+       3 |   hosts: localhost
+       4 |   gather_facts: true
+       5 |   check_mode: false
+       6 |   tasks:
+       7 |     - name: Add public ip addresses to an dynamic inventory
+       8 |       ansible.builtin.add_host:
+>>     9 |         name: ""{{ host }}""
+      10 |         groups: ""{{ host_groups.split(',') }}""
+      11 | 
+      12 |     - name: Wait for the non-bastion instance to become available
+      13 |       ansible.builtin.wait_for:
+      14 |         port: 22
+      15 |         host: ""{{ host }}""
+      16 |         search_regex: OpenSSH
+      17 |       delegate_to: ""{{ bastion_host }}""
+      18 |       when: bastion_host is defined
+      19 | 
+      20 |     - name: Wait for the bastion instance to become available
+      21 |       ansible.builtin.wait_for:
+      22 |         port: 22
+      23 |         host: ""{{ host }}""",uncertain,uncertain,no,yes,extra-vars passed by an invoking wrapper script (not shown),undeclared-cli-input-possible,host (and host_groups) are used at lines 9-10 with no default and no vars_files in this localhost play; this cyhy_amis bastion-setup playbook is almost certainly invoked with -e host=... by an external wrapper not shown here.,medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-017,ansibleguard/unguarded-variable,unresolved-runtime-input,Variable/reference reasoning,B-major,49202,56.39,splunk/splunk-ansible,d9b8ab79f265a3cdf87fbc33e0431191b777daf0,execute_adhoc_plays.yml,19,note,Runtime input variable 'config' may be supplied by dynamic execution context that static analysis cannot prove.,1d001a5c839184c2a36d6f5aeb41e72ee98e56afe16f6df6240270cffb13f7e1,"       5 |     dest: ""{{ '/opt/container_artifact/' + playbook|basename }}""
+       6 |     force: yes
+       7 |     mode: 0666
+       8 |   ignore_errors: yes
+       9 |   register: downloaded_plays
+      10 |   when:
+      11 |     - playbook is match(""^(http|https|file)://.*"")
+      12 | 
+      13 | - name: Execute playbooks
+      14 |   include_tasks: ""{{ lookup('first_found', play_locations) }}""
+      15 |   vars:
+      16 |     play_locations:
+      17 |       - ""{{ playbook }}""
+      18 |       - ""{% if downloaded_plays.dest is defined %}{{ downloaded_plays.dest }}{% endif %}""
+>>    19 |       - ""{{ config.defaults_dir + '/' + playbook|basename }}""",uncertain,uncertain,no,yes,"other role/task that builds the 'config' dict from environment variables (splunk-ansible convention), not shown",defined-elsewhere-likely,config.defaults_dir is referenced at line 19 with no visible assignment in this file; splunk-ansible builds a large 'config' dict from container environment variables in other roles/tasks that aren't part of this window.,medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-018,ansibleguard/unguarded-variable,missing-internal-variable,Variable/reference reasoning,B-major,49202,56.39,ergho/homelab-ops,973ea65aca62d259f296153f5f989cc2013f2294,.taskfiles/volsync/Taskfile.yaml,20,warning,"Internal variable 'eq' has no visible definition, runtime producer, default, or defined guard.",7697bf914334543b362f72eb4a55ee8f97684b1a867db50eac56bf3803dbf9d4,"       6 | #   1. Fluxtomization, HelmRelease, PVC, ReplicationSource all have the same name (e.g. plex)
+       7 | #   2. ReplicationSource and ReplicationDestination are a Restic repository
+       8 | #   3. Each application only has one PVC that is being replicated
+       9 | 
+      10 | vars:
+      11 |   VOLSYNC_RESOURCES_DIR: '{{.ROOT_DIR}}/.taskfiles/volsync/resources'
+      12 | 
+      13 | tasks:
+      14 | 
+      15 |   state-*:
+      16 |     desc: Suspend or resume Volsync
+      17 |     cmds:
+      18 |       - flux --namespace flux-system {{.STATE}} kustomization volsync
+      19 |       - flux --namespace volsync {{.STATE}} helmrelease volsync
+>>    20 |       - kubectl --namespace volsync scale deployment volsync --replicas {{if eq .STATE ""suspend""}}0{{else}}1{{end}}
+      21 |     vars:
+      22 |       STATE: '{{index .MATCH 0}}'
+      23 |     preconditions:
+      24 |       - '[[ ""{{.STATE}}"" == ""suspend"" || ""{{.STATE}}"" == ""resume"" ]]'
+      25 |       - which flux kubectl
+      26 | 
+      27 |   unlock:
+      28 |     desc: Unlock all restic source repos
+      29 |     cmds:
+      30 |       - for: { var: SOURCES, split: ""\n"" }
+      31 |         cmd: kubectl --namespace {{splitList "","" .ITEM | first}} patch --field-manager=flux-client-side-apply replicationsources {{splitList "","" .ITEM | last}} --type merge --patch ""{\""spec\"":{\""restic\"":{\""unlock\"":\""{{now | unixEpoch}}\""}}}""
+      32 |     vars:
+      33 |       SOURCES:
+      34 |         sh: kubectl get replicationsources --all-namespaces --no-headers --output=jsonpath='{range .items[*]}{.metadata.namespace},{.metadata.name}{""\n""}{end}'",negative,not-actionable,yes,no,none,go-template-function-misparsed-as-variable,"This is a Taskfile.yaml (go-task); '{{if eq .STATE ""suspend""}}0{{else}}1{{end}}' uses Go template's built-in 'eq' comparison function, not an undefined variable named 'eq'.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-019,ansibleguard/unguarded-variable,unresolved-runtime-input,Variable/reference reasoning,B-major,49202,56.39,mageops/ansible-infrastructure,5c612ace8b03fdd369ce0dcdd5e74b638a35f6a8,group_vars/all.yml,428,note,Runtime input variable 'aws_preferred_availability_zone' may be supplied by dynamic execution context that static analysis cannot prove.,1ae38ccf5ab7d3b5a7d11c3ddcd509028303df5b5ac6274c899d882982095ed0,"     414 | aws_extra_app_node_instance_type: ""{{ aws_app_node_instance_type_forced | default(aws_app_node_instance_type, true) }}""
+     415 | aws_persistent_node_instance_type: t3a.micro
+     416 | 
+     417 | # EC2 Elastic IPs
+     418 | aws_varnish_node_elastic_ip:
+     419 | aws_persistent_node_elastic_ip:
+     420 | 
+     421 | # EC2 instance EBS volume sizes in GB
+     422 | aws_app_node_ebs_volume_size: 11
+     423 | aws_persistent_node_ebs_volume_size: 11
+     424 | aws_varnish_node_ebs_volume_size: 11
+     425 | aws_extra_app_node_ebs_volume_size: ""{{ aws_app_node_ebs_volume_size }}""
+     426 | 
+     427 | aws_app_asg_availability_zones:
+>>   428 |   - ""{{ aws_preferred_availability_zone }}""
+     429 | 
+     430 | # Extra contents to prepend to script which is executed
+     431 | # on the instance being launched.
+     432 | aws_app_node_launch_script_extra: ''
+     433 | aws_app_node_webnodedown_hook_name: WebNodeGoingDown
+     434 | 
+     435 | aws_varnish_node_launch_script_extra: ''
+     436 | 
+     437 | 
+     438 | # ---------------------------------------------
+     439 | # --------  AWS Elastic Load Balancer  --------
+     440 | # ---------------------------------------------
+     441 | 
+     442 | # Create Elastic Load Balancer?",uncertain,uncertain,no,yes,environment-specific group_vars override not shown,template-group-vars-placeholder,"aws_preferred_availability_zone is used at line 428 of group_vars/all.yml with no default, immediately after several intentionally-blank placeholder values (aws_varnish_node_elastic_ip, aws_persistent_node_elastic_ip); this looks like a base file meant to be overridden per-environment elsewhere.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-020,ansibleguard/unguarded-variable,unresolved-runtime-input,Variable/reference reasoning,B-major,49202,56.39,TylerHendrickson/home-ops,d6e1beb5d968761d85c24d7b9c1036c418ed6a1c,ansible/playbooks/cluster-kube-vip.yaml,23,note,Runtime input variable 'k3s_server_pod_manifests_dir' may be supplied by dynamic execution context that static analysis cannot prove.,8e1a4c948156d57679801f5dde2ce4915e16415f2adb950823a8609a0dda0259,"       9 |     - name: Pausing for 5 seconds...
+      10 |       ansible.builtin.pause:
+      11 |         seconds: 5
+      12 |   tasks:
+      13 |     - name: Ensure Kubernetes is running
+      14 |       ansible.builtin.include_role:
+      15 |         name: xanmanning.k3s
+      16 |         public: true
+      17 |       vars:
+      18 |         k3s_state: started
+      19 | 
+      20 |     - name: Upgrade kube-vip
+      21 |       ansible.builtin.template:
+      22 |         src: templates/kube-vip-static-pod.yaml.j2
+>>    23 |         dest: ""{{ k3s_server_pod_manifests_dir }}/kube-vip-static-pod.yaml""
+      24 |         mode: preserve",uncertain,uncertain,no,yes,"xanmanning.k3s role defaults defining the server manifest directory, not shown",role-var-defaults-not-shown,"k3s_server_pod_manifests_dir is used as a template dest at line 23 right after including the xanmanning.k3s role (line 14); that role conventionally defines such path variables in its own defaults, which aren't part of this snippet.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-021,ansibleguard/unguarded-variable,unresolved-runtime-input,Variable/reference reasoning,B-major,49202,56.39,ansible-collections/ibm_zos_core,f0cc9ddc4402424c1f91d920ca9455d4133c9d21,roles/gather_diagnostics/tasks/zos_managed.yml,336,note,Runtime input variable 'gather_diagnostics_zos_facts_fallback' may be supplied by dynamic execution context that static analysis cannot prove.,610cf0520c68f03915f9c5356379793f8247221ed215c88da2c2f4ff1b0ae9fb,"     322 |     gather_diagnostics_managed_etc_sshd_config is defined and
+     323 |     gather_diagnostics_managed_etc_sshd_config.rc is defined
+     324 |   no_log: ""{{ not gather_diagnostics_save_managed_node_log }}""
+     325 | 
+     326 | - name: ""Z/OS | Consolidate all results into one variable""
+     327 |   ansible.builtin.set_fact:
+     328 |     gather_diagnostics_managed_results:
+     329 |       zoau_version: ""{{ gather_diagnostics_managed_zoaversion.stdout | default('N/A') }}""
+     330 |       zoau_version_stderr: ""{{ gather_diagnostics_managed_zoaversion.stderr | default('N/A') }}""
+     331 |       python_version: ""{{ gather_diagnostics_managed_python_version.stdout | default('N/A') }}""
+     332 |       python_version_stderr: ""{{ gather_diagnostics_managed_python_version.stderr | default('N/A') }}""
+     333 |       locale: ""{{ gather_diagnostics_managed_locale.stdout_lines | default('N/A') }}""
+     334 |       environment: ""{{ gather_diagnostics_managed_env.stdout_lines | default('N/A') }}""
+     335 |       zos_facts: ""{{ gather_diagnostics_zos_facts.ansible_facts | default('N/A') }}""
+>>   336 |       zos_facts_fallback: ""{{ gather_diagnostics_zos_facts_fallback.stdout_lines | default('N/A') }}""
+     337 |       pip_list: ""{{ gather_diagnostics_managed_pip_list.stdout_lines | default('N/A') }}""
+     338 |       user_limits: ""{{ gather_diagnostics_managed_ulimit.stdout_lines | default('N/A') }}""
+     339 |       omvs_segment: ""{{ gather_diagnostics_managed_omvs_segment.stdout_lines | default('N/A') }}""
+     340 |       df_zoau_path: ""{{ gather_diagnostics_managed_df_zoau.stdout_lines | default('N/A') }}""
+     341 |       zoau_bin_attributes: ""{{ gather_diagnostics_managed_bin_apf_bits.stdout_lines | default('N/A') }}""
+     342 |       df_python_path: ""{{ gather_diagnostics_managed_df_python.stdout_lines | default('N/A') }}""
+     343 |       operator_d_a_l: ""{{ gather_diagnostics_managed_operator_output.content | default('N/A', true) }}""
+     344 |       operator_d_omvs_limits: ""{{ gather_diagnostics_managed_omvs_limits.content | default('N/A', true) }}""
+     345 |       operator_d_omvs_options: ""{{ gather_diagnostics_managed_omvs_options.content | default('N/A', true) }}""
+     346 |       ssh_rc_content: ""{{ gather_diagnostics_managed_ssh_rc.stdout_lines | default('N/A', true) }}""
+     347 |       etc_ssh_rc_content: ""{{ gather_diagnostics_managed_etc_ssh_rc.stdout_lines | default('N/A', true) }}""
+     348 |       etc_ssh_config_content: ""{{ gather_diagnostics_managed_etc_ssh_config.stdout_lines | default('N/A', true) }}""
+     349 |       etc_sshd_config_content: ""{{ gather_diagnostics_managed_etc_sshd_config.stdout_lines | default('N/A', true) }}""
+     350 |   no_log: ""{{ not gather_diagnostics_save_managed_node_log }}""",uncertain,uncertain,no,yes,"earlier task in the same file that registers gather_diagnostics_zos_facts_fallback, outside the shown window",register-task-outside-window,"Line 336 already applies '| default(""N/A"")' to gather_diagnostics_zos_facts_fallback.stdout_lines, matching the pattern of every sibling line in this consolidation block (e.g. gather_diagnostics_managed_zoaversion, gather_diagnostics_managed_pip_list); those are registered by earlier tasks in the same file that this window doesn't include.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNGUARDED-VARIABLE-022,ansibleguard/unguarded-variable,missing-internal-variable,Variable/reference reasoning,B-major,49202,56.39,ansible/vscode-ansible,a63dab35a4c1c530142bc1f29fb7c03bacb46578,Taskfile.base.yml,52,warning,"Internal variable 'OS' has no visible definition, runtime producer, default, or defined guard.",ebde3fd879b1dbac1e13a508a140c0e8f9d8be401b3d39cb6382a847794b8232,"      38 |       - ""{{ .TASKFILE_DIR }}/resources/contentCreator/createDevfile/devfile-template.txt""
+      39 |       - ""{{ .TASKFILE_DIR }}/resources/contentCreator/createDevcontainer/.devcontainer/**/*.*""
+      40 |     dir: ""{{ .TASKFILE_DIR }}""
+      41 |     sources:
+      42 |       - pyproject.toml
+      43 |       - uv.lock
+      44 |       - tools/uv.sh
+      45 |       - .config/mise.toml
+      46 |     run: once
+      47 |     interactive: true
+      48 |   setup:
+      49 |     desc: Setup build toolchain and install missing dependencies
+      50 |     env:
+      51 |       # used inside test-setup.sh
+>>    52 |       OS: ""{{OS}}""
+      53 |       ARCH: ""{{ARCH}}""
+      54 |     deps:
+      55 |       - pnpm
+      56 |       - uv
+      57 |     dir: ""{{ .TASKFILE_DIR }}""
+      58 |     cmds:
+      59 |       - task: setup:linux
+      60 |       - task: precheck
+      61 |     sources:
+      62 |       - ./tools/precheck.sh
+      63 |       - pyproject.toml
+      64 |       - tools/test-setup.sh
+      65 |     run: once
+      66 |     interactive: true",negative,not-actionable,yes,no,none,taskfile-builtin-variable-misflagged,"This is a Taskfile.base.yml (go-task); OS and ARCH are go-task's own built-in special variables exposing the runtime operating system and architecture, not user-defined variables requiring a declared contract.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-001,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,ansible/ansible-ai-connect-operator,6650e94d45aea6aa3afbc388f306577ead8a5170,roles/chatbot/tasks/read_chatbot_configuration_secret.yml,108,note,set_fact variable 'chatbot_config' is never used.,b903e5bbe34fe61f67c7da985cef418798d960907067068ab14fb3b9e54c3e59,"      94 |   when:
+      95 |     - _chatbot_config_resource[""resources""][0][""data""].aap_gateway_url is defined
+      96 |     - _chatbot_config_resource[""resources""][0][""data""].aap_gateway_url | length
+      97 | 
+      98 | - name: Set AAP Controller URL
+      99 |   ansible.builtin.set_fact:
+     100 |     _aap_controller_url: '{{ _chatbot_config_resource[""resources""][0][""data""].aap_controller_url | b64decode }}'
+     101 |   no_log: ""{{ no_log }}""
+     102 |   when:
+     103 |     - _chatbot_config_resource[""resources""][0][""data""].aap_controller_url is defined
+     104 |     - _chatbot_config_resource[""resources""][0][""data""].aap_controller_url | length
+     105 | 
+     106 | - name: Set Chatbot Configuration
+     107 |   ansible.builtin.set_fact:
+>>   108 |     chatbot_config: '{{ _chatbot_config_resource }}'
+     109 |   no_log: ""{{ no_log }}""",uncertain,uncertain,no,yes,sibling task files within the same role that may consume the chatbot_config fact,cross-file-fact-usage-possible,"chatbot_config is set_fact'd from _chatbot_config_resource at the very end of the shown window (read_chatbot_configuration_secret.yml); set_fact values persist as facts for the rest of the play, and other task files in this role (not shown) may read chatbot_config later.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-002,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,zephyros-dev/media-server,f80b182bd1ff8489b67e9342f391ae682ddda0fc,roles/common/tasks/main.yaml,13,note,set_fact variable 'nvidia_installed' is never used.,0c468d1abfb5d4098fc3e57f5f5e6cc1ef4e94e3b86b5a28cac8528edbb73937,"       1 | - name: Gather host facts
+       2 |   tags: always
+       3 |   block:
+       4 |     - name: Check if nvidia is installed
+       5 |       block:
+       6 |         - name: Run nvidia-smi
+       7 |           changed_when: false
+       8 |           ansible.builtin.command:
+       9 |             cmd: /usr/bin/nvidia-smi
+      10 |           register: nvidia_smi
+      11 |         - name: Set nvidia installed fact
+      12 |           ansible.builtin.set_fact:
+>>    13 |             nvidia_installed: true
+      14 |       rescue:
+      15 |         - name: Nvidia is not installed
+      16 |           ansible.builtin.set_fact:
+      17 |             nvidia_installed: false
+      18 |     # https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html
+      19 |     - name: Get current timezone identifier
+      20 |       changed_when: false
+      21 |       check_mode: true
+      22 |       become: true
+      23 |       community.general.timezone:
+      24 |         name: UTC
+      25 |       register: tz_output
+      26 | 
+      27 | - name: Generate facts",uncertain,uncertain,no,yes,other roles/tasks in the play that may consume the nvidia_installed fact,cross-file-fact-usage-possible,"This 'Gather host facts' block in roles/common/tasks/main.yaml sets nvidia_installed in both the try (true) and rescue (false) branches, a classic common-facts pattern meant to feed later GPU-related roles/tasks that aren't shown in this window.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-003,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,AtlasOfLivingAustralia/ala-install,aa2070a840f5debc3b78095c31b58004d04d2063,ansible/image-service.yml,6,note,set_fact variable 'datadog_db_password' is never used.,3ca75734d85c17d380dd75a0a639f2cc026033bbaab14f65ce8ee96484249388,"       1 | - hosts: image-service
+       2 |   vars:
+       3 |     use_postgis: false
+       4 |   pre_tasks:
+       5 |     - set_fact:
+>>     6 |         datadog_db_password : ""{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}""
+       7 |       when: datadog_monitoring is defined
+       8 |   roles:
+       9 |     - java
+      10 |     - common
+      11 |     - { role: ansible-elasticsearch, es_templates: false, es_instance_name: 'images', tags: ['elasticsearch'] }
+      12 |     - { role: db-backup, db: postgres, db_name: ""images"", db_user: ""postgres"" }
+      13 |     - { role: postgresql, when: db_remote | bool == False }
+      14 |     - { role: pg_instance, extensions: [""citext"", ""pgcrypto""], db_name: ""{{ image_service_db_name }}"", db_user: ""{{ image_service_db_username }}"", db_password: ""{{ image_service_db_password }}"", db_role_attr_flags: ""NOSUPERUSER"" }
+      15 |     - webserver
+      16 |     - i18n
+      17 |     - image-service
+      18 |     - { role: datadog_sql_user, become: yes, become_user: postgres, when: datadog_monitoring is defined }
+      19 |     - { role: datadog.datadog, when: datadog_monitoring is defined }
+      20 | ",uncertain,uncertain,no,yes,roles/datadog_sql_user and roles/datadog.datadog task files that may consume this fact internally,cross-file-fact-usage-possible,"Although this appears to be the whole playbook file and datadog_db_password is never templated here, it is set_fact'd as a global fact and the playbook immediately runs 'datadog_sql_user' and 'datadog.datadog' roles under the same 'when: datadog_monitoring is defined' guard; those roles' own task files (not shown) plausibly reference it.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-004,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,anokfireball/homelab-as-code,d8fe576217e433a746fff052b772c949ee6f1e50,ansible/cluster/roles/k8s_cluster/tasks/join.yaml,50,note,set_fact variable 'kubeadm_join_command_controlplane' is never used.,77ccb5a47fab7112d6c8b46b8561819197743da62f891c6ada82c681729aad26,"      36 |     - name: generate certificate key
+      37 |       command: kubeadm certs certificate-key
+      38 |       register: certificate_key
+      39 |       changed_when: true
+      40 | 
+      41 |     - name: reload certificates
+      42 |       command: >
+      43 |         kubeadm init phase upload-certs
+      44 |         --certificate-key {{ certificate_key.stdout_lines | last }}
+      45 |         --upload-certs
+      46 |       changed_when: true
+      47 | 
+      48 |     - name: construct the kubeadm join command for control plane nodes
+      49 |       set_fact:
+>>    50 |         kubeadm_join_command_controlplane: >
+      51 |           kubeadm join {{ vip }}:6443
+      52 |             --token {{ kubeadm_token.stdout }}
+      53 |             --discovery-token-ca-cert-hash sha256:{{ ca_cert_hash.stdout }}
+      54 |             --control-plane
+      55 |             --certificate-key {{ certificate_key.stdout_lines | last }}
+      56 | 
+      57 |     - name: construct the kubeadm join command for worker nodes
+      58 |       set_fact:
+      59 |         kubeadm_join_command_worker: >
+      60 |           kubeadm join {{ vip }}:6443
+      61 |             --token {{ kubeadm_token.stdout }}
+      62 |             --discovery-token-ca-cert-hash sha256:{{ ca_cert_hash.stdout }}
+      63 | 
+      64 | # https://github.com/kube-vip/kube-vip/issues/684",uncertain,uncertain,no,yes,"rest of join.yaml beyond the shown window, or other plays reading this fact via hostvars for an HA join pattern",cross-file-fact-usage-possible,"kubeadm_join_command_controlplane is a standard HA-kubeadm pattern where the join command is generated once and then read via hostvars[<first master>] by other control-plane nodes later in the play/file, which isn't included in this window.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-005,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,ArkCase/arkcase-ce,75895cbe09118f02addf4c00fd8e10b8ccddeaa8,vagrant/provisioning/roles/alfresco-ee/tasks/main.yml,45,note,set_fact variable 'alfresco_zip_path' is never used.,8fb98b7e0f134af36ed5b2f79175beb4633dd43dbbceb0c23a00cbbdc1248891,"      31 | 
+      32 | - name: retrieve Alfresco EE AGS distribution zip file
+      33 |   become: yes
+      34 |   become_user: alfresco
+      35 |   command: sshpass -e sftp -o StrictHostKeyChecking\=no -o UserKnownHostsFile\=/dev/null {{ sftp_alfresco_ee_user }}@{{ sftp_service_base_url }}:{{ sftp_alfresco_ee_folder }}/alfresco-governance-services-enterprise-{{ alfresco_governance_services_version }}.zip
+      36 |   args:
+      37 |     chdir: ""{{ root_folder }}/install/alfresco""
+      38 |   environment:
+      39 |     SSHPASS: ""{{ sftp_alfresco_ee_password }}""
+      40 |   when: governance_services_download.stat.exists == false
+      41 |   register: alfresco_governance_services_download
+      42 | 
+      43 | - name: set path to Alfresco distribution
+      44 |   set_fact:
+>>    45 |     alfresco_zip_path: ""{{ root_folder }}/install/alfresco/alfresco-content-services-distribution-{{ alfresco_ee_version}}.zip""
+      46 |     alfresco_zip_parent_folder: """"
+      47 |     alfresco_rma_zip_path: ""{{ root_folder }}/install/alfresco/alfresco-governance-services-enterprise-{{ alfresco_governance_services_version }}.zip""
+      48 |     alfresco_rma_repo_amp: ""{{ root_folder }}/install/alfresco/alfresco-governance-services-enterprise-repo-{{ alfresco_governance_services_version }}.amp""
+      49 |     alfresco_rma_share_amp: ""{{ root_folder }}/install/alfresco/alfresco-governance-services-enterprise-share-{{ alfresco_governance_services_version }}.amp""
+      50 |     alfresco_java_home: ""/usr/lib/jvm/java-11-openjdk""",uncertain,uncertain,no,yes,"rest of tasks/main.yml beyond the shown window, where the zip path facts are likely consumed",truncated-window-likely-used-later,"alfresco_zip_path is set alongside four sibling path facts (alfresco_rma_zip_path, alfresco_java_home, etc.) in the same set_fact block; this window ends right after the assignment, and later install steps in the same file almost certainly reference these.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-006,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,oravirt/ansible-oracle,9bffeb3b188b575ead0b794bf240f7563187ee82,roles/orahost_meta/tasks/aggregate_sgas.yml,4,note,set_fact variable 'oracle_databases_sga_sum' is never used.,dcec281496c297470fa60c36d4daee23c8ea4a2aebf7e72ad037293fb62f7620,"       1 | ---
+       2 | - name: aggregate_sgas | Sum up SGAs
+       3 |   ansible.builtin.set_fact:
+>>     4 |     oracle_databases_sga_sum: |
+       5 |       {{ (oracle_databases_sga_sum | default(0) | int) + (__orahost_oracle_database_sga.value | human_to_bytes | int) }}
+       6 | 
+       7 | - name: aggregate_sgas | Calc max SGA
+       8 |   ansible.builtin.set_fact:
+       9 |     oracle_databases_sga_max: |
+      10 |       {{ [(oracle_databases_sga_max | default(0) | int), (__orahost_oracle_database_sga.value | human_to_bytes | int)] | max }}""",uncertain,uncertain,no,yes,parent task file that loops over this file and consumes the final aggregated oracle_databases_sga_sum fact,accumulator-consumed-by-caller,"oracle_databases_sga_sum is a running-total accumulator that reads and increments itself via '| default(0)'; this file is the whole aggregate_sgas.yml, implying it's included once per database by a parent task, which likely consumes the final total after the loop.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-007,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,nextcloud/ansible-collection-nextcloud-admin,4f61f963e6ed9c0a66c5be71afb2f7442479ccdd,roles/install_nextcloud/tasks/setup_env.yml,45,note,set_fact variable 'ansible_become_method' is never used.,131c766bce843c565742175a76df4d3e9e636044bfc517f5f6683a59f0be4cbb,"      31 | - name: setup_env | Check if sudo is installed (only on Debian)
+      32 |   ansible.builtin.command: ""dpkg -l sudo""
+      33 |   changed_when: false
+      34 |   register: nc_sudo_installed_result
+      35 |   failed_when: false
+      36 |   when: ansible_distribution == ""Debian""
+      37 | 
+      38 | - name: setup_env | Deterime become_method or becom_flags
+      39 |   when:
+      40 |     - nc_sudo_installed_result.rc is defined
+      41 |     - nc_sudo_installed_result.rc != 0
+      42 |   block:
+      43 |     - name: setup_env | Rolling back to su
+      44 |       ansible.builtin.set_fact:
+>>    45 |         ansible_become_method: ""su""
+      46 |     - name: setup_env | Force su to use /bin/sh as shell
+      47 |       ansible.builtin.set_fact:
+      48 |         ansible_become_flags: '-s /bin/sh'
+      49 | 
+      50 | - name: setup_env | Generate database user password
+      51 |   ansible.builtin.set_fact:
+      52 |     nextcloud_db_pwd: ""{{ lookup('ansible.builtin.password', 'nextcloud_instances/' + nextcloud_instance_name + '/db_admin.pwd') }}""
+      53 |   when: nextcloud_db_pwd is not defined
+      54 | 
+      55 | - name: setup_env | Generate database root password
+      56 |   ansible.builtin.set_fact:
+      57 |     nextcloud_mysql_root_pwd: ""{{ lookup('ansible.builtin.password', 'nextcloud_instances/' + nextcloud_instance_name + '/db_root.pwd') }}""
+      58 |   when:
+      59 |     - nextcloud_db_backend in [""mysql"", ""mariadb""]",negative,not-actionable,yes,no,none,ansible-reserved-connection-variable-implicitly-used,"ansible_become_method is a reserved Ansible connection variable, not an ordinary fact; setting it via set_fact at line 45 changes the become mechanism (e.g. to 'su') for all subsequent privileged tasks in the play even though it's never textually referenced with '{{ }}' anywhere.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNNECESSARY-SET-FACT-008,ansibleguard/unnecessary-set-fact,unnecessary-set-fact,Variable/reference reasoning,C-moderate,2010,91.76,easzlab/kubeasz,fcb46a47a7fcd3bbc97498ea4aefdd564e16b383,roles/docker/tasks/main.yml,20,note,set_fact variable 'DOCKER_VER' is never used.,05948b9d6c00fb1284364a0707fdc54c1370f32a06eadf4ff3e5c69050a5013e,"       6 |   shell: ""{{ base_dir }}/bin/docker-bin/dockerd --version|cut -d' ' -f3""
+       7 |   register: docker_ver
+       8 |   connection: local
+       9 |   run_once: true
+      10 |   tags: upgrade_docker, download_docker
+      11 | 
+      12 | - name: debug info
+      13 |   debug: var=""docker_ver""
+      14 |   connection: local
+      15 |   run_once: true
+      16 |   tags: upgrade_docker, download_docker
+      17 | 
+      18 | - name: 转换docker版本信息为浮点数
+      19 |   set_fact:
+>>    20 |     DOCKER_VER: ""{{ docker_ver.stdout.split('.')[0]|int + docker_ver.stdout.split('.')[1]|int/100 }}""
+      21 |   connection: local
+      22 |   run_once: true
+      23 |   tags: upgrade_docker, download_docker
+      24 | 
+      25 | - name: 已安装提示
+      26 |   debug:
+      27 |     msg: ""docker 服务已安装""
+      28 |   when: ""'NoFound' not in docker_svc.stdout"" 
+      29 | 
+      30 | - block:
+      31 |     - name: 准备docker相关目录
+      32 |       file: name={{ item }} state=directory
+      33 |       with_items:
+      34 |       - ""{{ bin_dir }}/docker-bin""",uncertain,uncertain,no,yes,"rest of roles/docker/tasks/main.yml beyond the shown window, likely used in version-conditional install tasks",truncated-window-likely-used-later,"DOCKER_VER is computed as a float from docker_ver.stdout specifically so it can be compared numerically; this window ends right after the assignment at line 20, and the version-gated docker install logic that would use it is outside the shown range.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNUSED-REGISTERED-VARIABLE-001,ansibleguard/unused-registered-variable,unused-registered-variable,Variable/reference reasoning,D-long-tail,1092,96.78,yunionio/ocboot,b781237b81676ff5718525da798292e207124e01,onecloud/roles/common/tasks/utils/unified_cgroup_hierarchy.yml,11,note,Registered result 'grub_update' is never referenced in this file.,b463173d62de33ee32f19808bf093bd952d4f314ecbf70e898945be261219ebf,"       1 | - name: Check if systemd.unified_cgroup_hierarchy=0 is in /proc/cmdline
+       2 |   shell: ""grep 'systemd.unified_cgroup_hierarchy=0' /proc/cmdline""
+       3 |   register: unified_cgroup_hierarchy
+       4 |   ignore_errors: true
+       5 |   failed_when: false
+       6 | 
+       7 | - debug: var=unified_cgroup_hierarchy.rc
+       8 | - debug: var=unified_cgroup_hierarchy.stdout
+       9 | 
+      10 | - block:
+>>    11 |   - name: Append systemd.unified_cgroup_hierarchy=0 to GRUB_CMDLINE_LINUX
+      12 |     shell: |
+      13 |       GRUB_FILE=""/etc/default/grub""
+      14 |       SEARCH_PATTERN=""^GRUB_CMDLINE_LINUX=""
+      15 |       APPEND_TEXT=""systemd.unified_cgroup_hierarchy=0 ""
+      16 | 
+      17 |       if ! grep -q ""systemd.unified_cgroup_hierarchy=0"" ""$GRUB_FILE""; then
+      18 |           sed -i.bak.$(date +%Y%m%d-%H%M%S) ""/$SEARCH_PATTERN/s/\""/& $APPEND_TEXT/"" ""$GRUB_FILE""
+      19 |       fi
+      20 |     args:
+      21 |       executable: /bin/bash
+      22 |     register: grub_update
+      23 | 
+      24 |   - name: Update GRUB
+      25 |     command: update-grub",positive,actionable,yes,no,none,register-result-never-referenced-dead-code,"grub_update registers the result of the GRUB_CMDLINE sed/grep script, but the only following task ('Update GRUB') unconditionally runs update-grub without checking grub_update.changed or .rc; the file appears complete and nothing consumes this result.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNUSED-REGISTERED-VARIABLE-002,ansibleguard/unused-registered-variable,unused-registered-variable,Variable/reference reasoning,D-long-tail,1092,96.78,openstack-k8s-operators/edpm-ansible,9d5d672bb0787dc3e8b8ccc829bb101c28e4ee26,roles/edpm_frr/tasks/configure.yml,61,note,Registered result '_frr_config_result' is never referenced in this file.,b55169daad88c8da139b69b561bc7fd35f678e3157e2757cb2c767f82cb5d00c,"      47 |       ansible.builtin.fail:
+      48 |         msg: |
+      49 |           Failed to map at least one interface from {{ edpm_frr_bgp_uplinks }} to {{ iface_map }}.
+      50 |           Please check value of Ansible variable edpm_frr_bgp_uplinks.
+      51 |       when: check_edpm_frr_bgp_uplinks_mapped is failed
+      52 | 
+      53 | - name: Gather facts if they don't exist
+      54 |   when: ""'system' not in ansible_facts""
+      55 |   ansible.builtin.setup:
+      56 |     gather_subset:
+      57 |       - ""!all""
+      58 |       - ""!min""
+      59 |       - ""system""
+      60 | 
+>>    61 | - name: Configure FRR
+      62 |   ansible.builtin.template:
+      63 |     src: config/frr.conf.j2
+      64 |     dest: ""{{ edpm_frr_config_basedir }}/etc/frr/frr.conf""
+      65 |     mode: '0644'
+      66 |     selevel: s0
+      67 |     setype: container_file_t
+      68 |   register: _frr_config_result
+      69 | 
+      70 | - name: Configure FRR daemons
+      71 |   ansible.builtin.template:
+      72 |     src: config/daemons.j2
+      73 |     dest: ""{{ edpm_frr_config_basedir }}/etc/frr/daemons""
+      74 |     mode: '0644'
+      75 |     selevel: s0",uncertain,uncertain,no,yes,"rest of configure.yml beyond the shown window, where _frr_config_result may be checked (e.g. a changed/handler check)",truncated-window-likely-used-later,"_frr_config_result is registered from the 'Configure FRR' template task; the window cuts off shortly after at a sibling 'Configure FRR daemons' task, so a later check or notify referencing _frr_config_result could exist further in the file.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNUSED-REGISTERED-VARIABLE-003,ansibleguard/unused-registered-variable,unused-registered-variable,Variable/reference reasoning,D-long-tail,1092,96.78,bluebanquise/bluebanquise,fcc5b8776f3b1bde7ca4fba65b8cb2e77617f7b0,collections/infrastructure/roles/beegfs/tasks/main.yml,291,note,Registered result 'beegfs_md2' is never referenced in this file.,c0dc2ad0a4ff216bbb59819514a1455ca832c0fa4c91b481a25f03e0c3339ec3,"     277 |         dest: /etc/cib_constraints.xml
+     278 |         owner: root
+     279 |         group: root
+     280 |         mode: '0644'
+     281 |     - name: command <|> Start the HA cluster
+     282 |       ansible.builtin.command: ""/usr/sbin/pcs cluster start""
+     283 |       changed_when: false
+     284 |       run_once: true
+     285 |     - name: command <|> Ignore quorum policy
+     286 |       ansible.builtin.command: ""/usr/sbin/pcs property set no-quorum-policy=ignore""
+     287 |       register: beegfs_cmd
+     288 |       changed_when: beegfs_cmd.rc == 0
+     289 |       failed_when: beegfs_cmd.rc != 0
+     290 |       run_once: true
+>>   291 |     - name: command <|> Disable stonith
+     292 |       ansible.builtin.command: ""/usr/sbin/pcs property set stonith-enabled=false""
+     293 |       register: beegfs_md2
+     294 |       changed_when: beegfs_cmd2.rc == 0
+     295 |       failed_when: beegfs_cmd2.rc != 0
+     296 |       run_once: true
+     297 |     - name: command <|> Import CIB resources
+     298 |       ansible.builtin.command: ""/usr/sbin/cibadmin --replace --scope resources --xml-file /etc/cib_resources.xml""
+     299 |       register: beegfs_cmd3
+     300 |       changed_when: beegfs_cmd3.rc == 0
+     301 |       failed_when: beegfs_cmd3.rc != 0
+     302 |       run_once: true
+     303 |     - name: command <|> Import CIB constraints
+     304 |       ansible.builtin.command: ""/usr/sbin/cibadmin --replace --scope constraints --xml-file /etc/cib_constraints.xml""
+     305 |       register: beegfs_cmd3",positive,actionable,yes,no,none,registered-var-unused-due-to-typo-mismatch-with-conditions,"The 'Disable stonith' task registers beegfs_md2 (line 293), but its own changed_when/failed_when at lines 294-295 reference 'beegfs_cmd2' instead -- a clear naming mismatch, so beegfs_md2 itself is genuinely never read anywhere.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNUSED-REGISTERED-VARIABLE-004,ansibleguard/unused-registered-variable,unused-registered-variable,Variable/reference reasoning,D-long-tail,1092,96.78,CMSgov/bluebutton-web-deployment,ef2da5200c4d70c9db49e682ae28cd52ca92c995,roles/app_install/tasks/main.yml,44,note,Registered result 'git_history' is never referenced in this file.,bdcf380cdb5fb2392df1ba4305b8769cc38d8738effa7e63e1aaa4936a718a5d,"      30 |     group: ""{{ app_group }}""
+      31 |     dest: ""/var/virtualenv""
+      32 |     state: directory
+      33 |     recurse: yes
+      34 | 
+      35 | - name: ""install from git: {{ project_repo }} branch:{{ git_branch }}""
+      36 |   become_user: ""{{ remote_admin_account }}""
+      37 |   become: yes
+      38 |   git:
+      39 |     repo: ""{{ project_repo }}""
+      40 |     dest: ""{{ install_root }}/{{ project_name }}""
+      41 |     force: yes
+      42 |     clone: yes
+      43 | 
+>>    44 | - name: ""update from git: {{ project_repo }} branch:{{ git_branch }}""
+      45 |   become_user: ""{{ remote_admin_account }}""
+      46 |   become: yes
+      47 |   git:
+      48 |     repo: ""{{ project_repo }}""
+      49 |     dest: ""{{ install_root }}/{{ project_name }}""
+      50 |     version: ""{{ git_branch }}""
+      51 |   register: git_history
+      52 | 
+      53 | - name: ""clone bluebutton-css to hhs_oauth_server app base directory""
+      54 |   become_user: ""{{ remote_admin_account }}""
+      55 |   become: yes
+      56 |   git:
+      57 |     repo: ""{{ css_repo }}""
+      58 |     dest: ""{{ install_root }}/{{ project_name }}/{{ css_dir }}""",uncertain,uncertain,no,yes,"rest of app_install/tasks/main.yml beyond the shown window, possibly checking git_history.changed",truncated-window-likely-used-later,"git_history is registered from the 'update from git' task at line 51; the window ends shortly after with an unrelated clone task, so a later conditional build step keyed off git_history.changed could exist further in the file.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNUSED-REGISTERED-VARIABLE-005,ansibleguard/unused-registered-variable,unused-registered-variable,Variable/reference reasoning,D-long-tail,1092,96.78,oravirt/ansible-oracle,9bffeb3b188b575ead0b794bf240f7563187ee82,playbooks/os_update_reboot.yml,6,note,Registered result 'updatestate' is never referenced in this file.,35c8c778dfdf686640a4c85ecc087f46c1d37f377968848ac08e9754845c4541,"       1 | ---
+       2 | # This Playbook is used in Cloud Environments after the
+       3 | # deployment of the VM.
+       4 | # Use it as the 1st playbook for deployment of ansible-oracle
+       5 | #
+>>     6 | - name: yum update and reboot
+       7 |   hosts: ""{{ hostgroup | default('all') }}""
+       8 |   become: true
+       9 |   gather_facts: false
+      10 |   tasks:
+      11 |     - name: Wait 300 seconds for Connection
+      12 |       ansible.builtin.wait_for_connection:
+      13 |         timeout: 300
+      14 | 
+      15 |     - name: yum update yum packages 1st
+      16 |       ansible.builtin.package:
+      17 |         # noqa package-latest
+      18 |         name: yum*
+      19 |         state: latest
+      20 |       register: yumyumstate",unreviewable,uncertain,no,yes,rest of os_update_reboot.yml beyond the shown window; the flagged variable name does not appear in the given snippet at all,flagged-variable-absent-from-snippet,"The message claims a registered result named 'updatestate' is unused, but the only register visible in this snippet is 'yumyumstate' (line 20) for a different task; nothing named 'updatestate' appears anywhere in the provided source_context, so the claim can't be evaluated against what's shown.",low,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNUSED-REGISTERED-VARIABLE-006,ansibleguard/unused-registered-variable,unused-registered-variable,Variable/reference reasoning,D-long-tail,1092,96.78,redhatci/ansible-collection-redhatci-ocp,4b12e633ee5215ec02c302032fffb3d5f3e37425,roles/chart_verifier/tasks/tests.yml,54,note,Registered result 'url_stats' is never referenced in this file.,b6684c34fd7abad9cf1caef4d56ecc5844a9c40b0932ab3c7e715f1780cadd8b,"      40 |       run_once: true
+      41 | 
+      42 |     - name: ""Chart file cannot be downloaded""
+      43 |       ansible.builtin.fail:
+      44 |         msg: ""chart_file cannot be downloaded - {{ chart.chart_file }}""
+      45 |       when:
+      46 |         - file_response.status | int != 200
+      47 | 
+      48 |     - name: ""Download chart file""
+      49 |       ansible.builtin.get_url:
+      50 |         url: ""{{ chart.chart_file }}""
+      51 |         dest: ""{{ work_chart_dir }}/""
+      52 |         mode: ""0644""
+      53 | 
+>>    54 |     - name: ""Check if chart.values_file exist""
+      55 |       ansible.builtin.uri:
+      56 |         url: ""{{ item }}""
+      57 |         return_content: true
+      58 |       loop: ""{{ chart.values_file }}""
+      59 |       register: url_stats
+      60 |       when:
+      61 |         - chart.values_file is defined
+      62 | 
+      63 |     - name: ""Fail if any of the values file is missing""
+      64 |       ansible.builtin.fail:
+      65 |         msg: ""File {{ item.item }} does not exist.""
+      66 |       loop: ""{{ file_stats.results }}""
+      67 |       when:
+      68 |         - chart.values_file is defined",positive,actionable,yes,no,none,registered-var-unused-likely-mismatched-with-file_stats-reference,"url_stats is registered from the 'Check if chart.values_file exist' uri loop (line 59), but the very next task's failed-file check loops over 'file_stats.results' instead (line 66), a different and undefined-looking name here, so url_stats itself is never read.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-VARIABLE-USE-BEFORE-DEFINITION-001,ansibleguard/variable-use-before-definition,variable-use-before-definition,Variable/reference reasoning,D-long-tail,165,99.76,ConnectBox/connectbox-pi,e69eabdecfa2e39b2751acdb928bfafb2f8f28f6,ansible/roles/bootstrap/tasks/main.yml,56,warning,Variable 'connectbox_os' is used before the later task 'change the connectbox_os name if we are running on a PI' defines it.,912ec9463936ee335c720fda432ad3173b5520fadf0de1ab6f5d7dab2dce7529,"      42 | 
+      43 | - name: Display the Codename
+      44 |   debug:
+      45 |     msg: ""The version your running is {{ OS_Version }} for Codename:"" 
+      46 | 
+      47 | - debug:
+      48 |     msg: ""Ansible Group Variables Family {{ ansible_os_family|lower }}""
+      49 | 
+      50 | - debug:
+      51 |     msg: ""Ansible Group Variables Distribution {{ ansible_distribution|lower }}""
+      52 | 
+      53 | - debug:
+      54 |     msg: ""Ansible Group Variables Target Specific {{ ansible_lsb['id']|lower }}""
+      55 | 
+>>    56 | - debug:
+      57 |     msg: ""connectbox_os {{ connectbox_os }}""
+      58 | 
+      59 | - debug:
+      60 |     msg: ""ansible_kernel {{ ansible_kernel }}""
+      61 | 
+      62 | - debug:
+      63 |     msg: ""ansible_facts['os_family']: {{ ansible_facts['os_family'] }} ""
+      64 | 
+      65 | - debug:
+      66 |     msg: ""ansible_interfaces {{ ansible_interfaces }} ""
+      67 | 
+      68 | - debug:
+      69 |     msg: ""machine_type['stdout_lines']: {{ machine_type['stdout_lines'] }} ""
+      70 | ",positive,advisory,yes,no,none,debug-output-precedes-defining-task,"The debug task at lines 56-57 prints '{{ connectbox_os }}' with no prior assignment visible anywhere before it in this file, matching the detector's claim that the actual defining task ('change the connectbox_os name...') runs later; the debug will print an undefined/empty value.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-VARIABLE-USE-BEFORE-DEFINITION-002,ansibleguard/variable-use-before-definition,variable-use-before-definition,Variable/reference reasoning,D-long-tail,165,99.76,saltyorg/Saltbox,d79860d04bec733a1acb03691538a2f205bb23ac,roles/backup/tasks/variables.yml,11,warning,Variable 'backup' is used before the later task 'Merge changes back' defines it.,ef6b3d3d6f3cac2b4b0ff6a79970b045023efd562b504fcf5d908029ca5ead8b,"       1 | #########################################################################
+       2 | # Title:         Saltbox: Backup | Variables                            #
+       3 | # Author(s):     desimaniac                                             #
+       4 | # URL:           https://github.com/saltyorg/Saltbox                    #
+       5 | # --                                                                    #
+       6 | #########################################################################
+       7 | #                   GNU General Public License v3.0                     #
+       8 | #########################################################################
+       9 | ---
+      10 | # Remove trailing forward slashes from backup paths
+>>    11 | - name: Remove trailing forward slashes from backup paths
+      12 |   ansible.builtin.set_fact:
+      13 |     local_tmp: { destination: ""{{ (backup.local.destination | default('', true)) | regex_replace('\\/$', '') }}"" }
+      14 |     rclone_tmp: { destination: ""{{ (backup.rclone.destination | default('', true)) | regex_replace('\\/$', '') }}"" }
+      15 |     rsync_tmp: { destination: ""{{ (backup.rsync.destination | default('', true)) | regex_replace('\\/$', '') }}"" }
+      16 | 
+      17 | - name: Merge changes back
+      18 |   ansible.builtin.set_fact:
+      19 |     backup:
+      20 |       local: ""{{ backup.local | combine(local_tmp) }}""
+      21 |       rclone: ""{{ backup.rclone | combine(rclone_tmp) }}""
+      22 |       rsync: ""{{ backup.rsync | combine(rsync_tmp) }}""
+      23 |       cron:
+      24 |         cron_time: ""{{ backup.cron.cron_time }}""
+      25 |       restore_service:",negative,not-actionable,yes,yes,role defaults/main.yml likely pre-defines the 'backup' dict; not shown,self-referential-combine-implies-preexisting-definition,"The 'Merge changes back' task (lines 17-21) sets backup using 'backup.local | combine(local_tmp)' etc. -- a self-referential combine that requires backup.local/.rclone/.rsync to already exist beforehand, proving this task doesn't 'define' backup from scratch; it's defined earlier, most likely in the role's defaults/main.yml.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNSCOPED-SHELL-VARIABLE-001,ansibleguard/unscoped-shell-variable,unscoped-shell-variable,Variable/reference reasoning,D-long-tail,77,99.83,FreiFunkMuenster/Ansible-Freifunk-Gateway,b04e8f81b2b010eaccd13a63271c7ce7eb6fb4b3,statistics_graphite/tasks/main.yml,52,warning,Shell variable(s) GRAPHITE_ROOT are not declared in the task/play environment mapping.,b1e0e33bd81b88c4edc71107a83d8bc505cb755a286b37b452ffd5d3423f0550,"      38 |   template:
+      39 |     src: graphite.ini
+      40 |     dest: /etc/uwsgi/apps-available/graphite.ini
+      41 |   notify:
+      42 |    - restart uwsgi
+      43 | 
+      44 | - name: Enable graphite.ini
+      45 |   file:
+      46 |     src: /etc/uwsgi/apps-available/graphite.ini
+      47 |     dest: /etc/uwsgi/apps-enabled/graphite.ini
+      48 |     state: link
+      49 |   notify:
+      50 |    - restart uwsgi
+      51 | 
+>>    52 | - name: Create database for graphite-web
+      53 |   shell: ""graphite-manage syncdb --noinput""
+      54 |   args:
+      55 |     creates: ""/var/lib/graphite/graphite.db""
+      56 |   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+      57 | 
+      58 | - name: Create database for graphite-web
+      59 |   shell: ""PYTHONPATH=$GRAPHITE_ROOT/webapp django-admin migrate --settings=graphite.settings --run-syncdb""
+      60 |   args:
+      61 |     creates: ""/var/lib/graphite/graphite.db""
+      62 |   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '18.04'
+      63 | 
+      64 | - name: Ensure directories are owned by www-data
+      65 |   file:
+      66 |     path: ""{{item}}""",uncertain,uncertain,no,yes,"play/block-level environment: mapping or a prior task exporting GRAPHITE_ROOT (e.g. via /etc/environment), not shown",env-var-source-not-shown,"The shell task at line 59 reads $GRAPHITE_ROOT with no task-level environment: mapping visible, but a play-level environment: block or an earlier provisioning step that exports it system-wide could exist outside this window.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-UNSCOPED-SHELL-VARIABLE-002,ansibleguard/unscoped-shell-variable,unscoped-shell-variable,Variable/reference reasoning,D-long-tail,77,99.83,SkynetLabs/ansible-playbooks,2340b81e8ef10cd387c8669c4bd14dab1c328130,playbooks/tasks/portal-dirs-sync-get-ssh-auth-sock.yml,11,warning,Shell variable(s) SSH_AUTH_SOCK are not declared in the task/play environment mapping.,99778e33bcf2ffa4947a7939fb78731474f501e1b596e8a904c254e3098e0709,"       1 | ---
+       2 | 
+       3 | # Set SSH authentication socket fact on delegated host
+       4 | 
+       5 | # Note: Registered results are not delegated to 'delegate_to' hosts, they are
+       6 | # kept as facts on the current host, so we must throttle setting registered
+       7 | # result so it is set on correct delegated host (the fact is used later on the
+       8 | # delegated host).
+       9 | 
+      10 | - block:
+>>    11 |     - name: Get SSH auth socket on remote machine (so we can forward it to rsync container)
+      12 |       command: echo ""$SSH_AUTH_SOCK""
+      13 |       register: ssh_auth_sock_result
+      14 |       delegate_to: ""{{ item.dest_host }}""
+      15 | 
+      16 |     - name: Set SSH authentication socket on delegated host
+      17 |       set_fact:
+      18 |         ssh_auth_sock: ""{{ hostvars[inventory_hostname].ssh_auth_sock_result.stdout }}""
+      19 |       delegate_to: ""{{ item.dest_host }}""
+      20 |       delegate_facts: True
+      21 |   throttle: 1",negative,not-actionable,yes,no,none,ssh-agent-forwarding-env-var-not-ansible-scoped,"The task's own comment says this reads SSH_AUTH_SOCK specifically 'so we can forward it to rsync container'; SSH_AUTH_SOCK is set ambiently by sshd when agent forwarding is enabled for the connection, not something that belongs in an Ansible environment: mapping.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-ROLE-VARIABLE-PRECEDENCE-COLLISION-001,ansibleguard/role-variable-precedence-collision,role-variable-precedence-collision,Variable/reference reasoning,D-long-tail,39,99.93,dfroberg/cluster,7bc521db65db986a2deef35ea955704bb0621dbd,provision/ansible_new/kubernetes/roles/k3s.kubernetes/vars/main/etcd-snapshots.yml,3,warning,Role variable 'k3s_etcd_s3' is defined in both defaults/main and vars/main; the higher-precedence vars value silently prevents normal overrides.,0d9865ee75211dfa67f28b7584d6d429b73a282e9264ed003eee3b1042585848,"       1 | ---
+       2 | # -- enable exporting etcd backups to s3
+>>     3 | k3s_etcd_s3: ""true""
+       4 | # -- snapshot bucket name
+       5 | k3s_etcd_s3_bucket: k3s
+       6 | # -- snapshot schedule
+       7 | k3s_etcd_snapshot_schedule_cron: ""0 */6 * * *""
+       8 | # -- snapshot retention
+       9 | k3s_etcd_snapshot_retention: 28",uncertain,uncertain,no,yes,"defaults/main/*.yml file content (not shown), needed to confirm the duplicate definition claim",defaults-file-not-shown,"This snippet only shows vars/main/etcd-snapshots.yml defining k3s_etcd_s3: ""true""; the claim that defaults/main also defines the same key can't be checked because that file isn't part of the source_context.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-OVERRIDING-FACTS-001,ansibleguard/overriding-facts,overriding-facts,Variable/reference reasoning,D-long-tail,23,99.96,zephyros-dev/media-server,f80b182bd1ff8489b67e9342f391ae682ddda0fc,roles/common/tasks/main.yaml,1,warning,A set_fact variable is reassigned with a different value (count=1),7506f2598f51adc06045eceaa5ab9f0d38d00db61d213d33e71a50013dd6a05c,">>     1 | - name: Gather host facts
+       2 |   tags: always
+       3 |   block:
+       4 |     - name: Check if nvidia is installed
+       5 |       block:
+       6 |         - name: Run nvidia-smi
+       7 |           changed_when: false
+       8 |           ansible.builtin.command:
+       9 |             cmd: /usr/bin/nvidia-smi
+      10 |           register: nvidia_smi
+      11 |         - name: Set nvidia installed fact
+      12 |           ansible.builtin.set_fact:
+      13 |             nvidia_installed: true
+      14 |       rescue:
+      15 |         - name: Nvidia is not installed",negative,not-actionable,yes,no,none,block-rescue-mutually-exclusive-not-true-reassignment,"nvidia_installed is set to true inside the block (line 13) and false inside the rescue (line 17 in the sibling file view); block/rescue are mutually exclusive -- only one branch ever executes per run, so this is not a genuine same-run reassignment with a different value.",high,claude-sonnet-5,stratified-v0071-352
+V007STRAT-REDUNDANT-DEFAULT-VALUE-001,ansibleguard/redundant-default-value,redundant-default-value,Variable/reference reasoning,D-long-tail,22,99.98,ansible/zuul-config,82f3415452ef899524f4257b3cdae20b13692c87,roles/run_awx_tests/tasks/main.yml,35,note,'build_dev' repeats the same value already supplied by role defaults.,01e1962306ee269bc64792717f580ccbf61e3a9344efc12850919d8b7b56ac69,"      21 |   ignore_errors: yes
+      22 | 
+      23 | - name: Determine where Dockerfile is
+      24 |   stat:
+      25 |     path: ""{{ source_dir }}/tools/ansible/roles/dockerfile/templates/Dockerfile.j2""
+      26 |   register: new_dockerfile_location
+      27 | 
+      28 | - name: Use new dockerfile role
+      29 |   when: new_dockerfile_location.stat.exists
+      30 |   block:
+      31 |     - include_role:
+      32 |         name: ""{{ job_source_dir }}/tools/ansible/roles/dockerfile""
+      33 |       vars:
+      34 |         dockerfile_dest: ""{{ source_dir }}""
+>>    35 |         build_dev: yes
+      36 | 
+      37 | # Delete this in near future.
+      38 | - name: Use old dockerfile role
+      39 |   when: not new_dockerfile_location.stat.exists
+      40 |   block:
+      41 |     - include_role:
+      42 |         name: ""{{ job_source_dir }}/installer/roles/dockerfile""
+      43 |       vars:
+      44 |         dockerfile_dest: ""{{ source_dir }}""
+      45 |         build_dev: yes
+      46 | 
+      47 | - set_fact:
+      48 |     command_to_run: |
+      49 |       docker build \",uncertain,uncertain,no,yes,"the dockerfile role's defaults/main.yml (not shown), needed to confirm the default value matches 'yes'",role-defaults-not-shown,"build_dev: yes is passed as an include_role var in both the new and old dockerfile-role blocks (lines 35 and 45); whether this duplicates the role's own default can't be confirmed without that role's defaults/main.yml, which isn't in this snippet.",medium,claude-sonnet-5,stratified-v0071-352
+V007STRAT-MISSING-BOOL-FILTERS-001,ansibleguard/missing-bool-filters,missing-bool-filters,Variable/reference reasoning,D-long-tail,18,99.99,ceph/ceph-ansible,6148fd9a7eff6195ccdf8702ca0f48a7022e6019,roles/ceph-dashboard/tasks/configure_dashboard.yml,1,warning,when: condition compares against quoted 'true'/'false' (count=1),b98b35bc6e9d159b0385cb204bf22ae3fc800aa3fbece4033a8ee280df9039c7,">>     1 | ---
+       2 | - name: Import ceph-facts role
+       3 |   ansible.builtin.import_role:
+       4 |     name: ceph-facts
+       5 |     tasks_from: container_binary.yml
+       6 |   delegate_to: ""{{ groups[mon_group_name][0] }}""
+       7 |   delegate_facts: true
+       8 | 
+       9 | - name: Set_fact container_exec_cmd
+      10 |   ansible.builtin.set_fact:
+      11 |     container_exec_cmd: ""{{ container_binary }} exec ceph-mon-{{ hostvars[groups[mon_group_name][0]]['ansible_facts']['hostname'] }}""
+      12 |   when: containerized_deployment | bool
+      13 | 
+      14 | - name: Set_fact container_run_cmd
+      15 |   ansible.builtin.set_fact:",uncertain,uncertain,no,yes,rest of configure_dashboard.yml; the actual quoted true/false comparison isn't visible in this window,flagged-line-mismatch-actual-comparison-not-shown,"The flagged line (1) is just the YAML document marker '---', and the only boolean condition visible in this window ('when: containerized_deployment | bool' at line 12) already uses the correct bool filter rather than a quoted string comparison; the actual offending condition must be elsewhere in the file.",low,claude-sonnet-5,stratified-v0071-352
+V007STRAT-SHELL-ENVIRONMENT-EXPORT-001,ansibleguard/shell-environment-export,shell-environment-export,Variable/reference reasoning,D-long-tail,3,100.0,gdcc/dataverse-ansible,ae29ce65dd4cddd5187c2bc00aefd319b6bb4484,tasks/dataverse-build.yml,29,warning,Shell export does not provide durable Ansible variable scoping; use the task environment mapping.,91db755b5f6565ecea102a2329ca0e986b92c5dfccb22bf65d4f72ab10ad903e,"      15 | 
+      16 | - set_fact:
+      17 |     jacoco_arg=''
+      18 | 
+      19 | - set_fact:
+      20 |     jacoco_arg='-Djacoco.skip.instrument=false'
+      21 |   when: dataverse.jacoco.enabled == true
+      22 | 
+      23 | - name: add branch name, branch_commit to BuildNumber.properties
+      24 |   lineinfile:
+      25 |     path: ""{{ dataverse.srcdir }}/src/main/java/BuildNumber.properties""
+      26 |     line: ""build.number={{ dataverse_branch }}-{{ commit }}""
+      27 |     create: yes
+      28 | 
+>>    29 | - name: build warfile without tests and default maven. tail /tmp/dataverse/mvn.out for gory details.
+      30 |   shell: ""export JAVA_HOME={{ java_home }} && mvn -T 2C clean package -Dmaven.test.skip=true > mvn.out""
+      31 |   args:
+      32 |     chdir: ""{{ dataverse.srcdir }}""
+      33 |   when: dataverse.unittests.enabled == false and
+      34 |         maven.version == 'default'
+      35 |   become: true
+      36 |   become_user: '{{ dataverse.payara.user }}'
+      37 | 
+      38 | - name: build warfile without tests and custom maven. tail /home/dataverse/dataverse/mvn.out for gory details.
+      39 |   shell: ""source /etc/profile.d/maven.sh && mvn -T 2C clean package -Dmaven.test.skip=true > mvn.out""
+      40 |   args:
+      41 |     chdir: ""{{ dataverse.srcdir }}""
+      42 |   when: dataverse.unittests.enabled == false and
+      43 |         maven.version != 'default'",positive,advisory,yes,no,none,shell-export-scoped-to-same-command-works-but-non-idiomatic,"Line 30 uses 'export JAVA_HOME={{ java_home }} && mvn ...' inside one shell invocation, which does work for that single command since export and mvn share the same shell process, but it is indeed non-durable/non-idiomatic compared to using the task's environment: mapping, matching the detector's observation.",high,claude-sonnet-5,stratified-v0071-352

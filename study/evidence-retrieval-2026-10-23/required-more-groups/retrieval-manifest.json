@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "purpose": "base source retrieval; rule-specific evidence still incomplete",
+  "run_id": "v0071-rerun-2026-10-22",
+  "instrument": "required",
+  "eligible_for_performance_scoring": false,
+  "selected_rows": 1266,
+  "recorded_rows": 1266,
+  "status_counts": {
+    "source-retrieved": 1230,
+    "unavailable": 36
+  },
+  "failure_counts": {
+    "commit-unavailable": 36
+  },
+  "truncated_packets": 1,
+  "subject_verified": 0,
+  "complete_rule_evidence": 0,
+  "labels_generated": 0,
+  "model_calls": 0,
+  "draw_manifest_sha256": "02c752c2250af4b2101fff7f6a7623edd2070efcfe7872dac98f0a07d6d85543",
+  "implementation_sha256": "cad80cce3b3ad2d8a2e7e7ff35135cc097a7bfaa0044018e3f50e61598187880",
+  "redaction_sha256": {
+    "v007_validation_pilot.py": "a73b8703c29c7d7e70874d95d95636fd3b1abec216ff2bf0295ab451e9ef59ef",
+    "v007_bundle_context_v2.py": "d782d4dd36ba3bc5825185a654bffb5c2e99ee7a844b591acf2b0ffa9d9f4c8f",
+    "v007_bundle_redact_v2.py": "622a61c23d3c9ccdb55f8e5d7b0418e30243ec2abdd36e2e8c01b7080de61437",
+    "v007_bundle_secret_scan.py": "e531754be6366c3f3a42dabdc71cc8a0adaf82dd7dae0462c89d104b43564bf0"
+  },
+  "git_version": "git version 2.56.0",
+  "python_version": "3.14.8",
+  "source_method": "immutable Git objects; replacements and lazy fetching disabled",
+  "limits": {
+    "max_bytes": 1048576,
+    "max_lines": 1500,
+    "window": 80,
+    "git_timeout": 10
+  },
+  "local_packet_directory": "study/evidence-local/retrieval-2026-10-23/required-more-groups",
+  "output_sha256": {
+    "retrieval-ledger.csv": "be19b4e6b6d7f7d73a4e89c89d50fa75bb37c93a96e993f9198733938af52ecb"
+  },
+  "limits_to_interpretation": [
+    "Line bounds do not verify semantic subjects",
+    "Redaction can remove decisive evidence",
+    "Windows are explicit truncation",
+    "Rule-specific and cross-file evidence not built",
+    "Residual-secret scan is a heuristic; packets are local artifacts"
+  ]
+}

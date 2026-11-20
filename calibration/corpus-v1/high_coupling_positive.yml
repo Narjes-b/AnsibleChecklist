@@ -1,0 +1,13 @@
+- name: Coupled play
+  hosts: all
+  tasks:
+    - name: Perform functional work in the coupled play
+      ansible.builtin.debug:
+        msg: "This play mixes functional work with excessive task-file dependencies"
+      tags:
+        - calibration
+    - ansible.builtin.include_tasks: one.yml
+    - ansible.builtin.include_tasks: two.yml
+    - ansible.builtin.include_tasks: three.yml
+    - ansible.builtin.include_tasks: four.yml
+    - ansible.builtin.include_tasks: five.yml

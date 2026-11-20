@@ -1,0 +1,13 @@
+file,file_class,ansible_artifact_kind,parse_status,document_type,structural_status,gitleaks_status,ansible_lint_status,errors,warnings,notes,total,raw_findings,canonical_occurrences,ansibleguard_findings,ansible_lint_findings,gitleaks_findings,new_pr_findings,new_pr_actionable_findings,new_pr_optional_findings,new_pr_findings_by_category,pr_comparison_status
+tasks/ssh.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,1,8,6,15,15,15,15,0,0,,,,,not-compared
+tasks/autoupdate-RedHat.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,3,5,8,8,8,8,0,0,,,,,not-compared
+defaults/main.yml,unclassified,vars,parsed,vars,skipped,completed,partial,0,2,0,2,2,2,2,0,0,,,,,not-compared
+handlers/main.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,1,3,4,4,4,4,0,0,,,,,not-compared
+tasks/autoupdate-Debian.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,1,2,3,3,3,3,0,0,,,,,not-compared
+tasks/main.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,0,9,9,9,3,9,0,0,,,,,not-compared
+tasks/fail2ban.yml,unclassified,tasks,parsed,tasks,analyzed,completed,partial,0,0,5,5,5,5,5,0,0,,,,,not-compared
+.,unclassified,review-metadata,not-applicable,review-metadata,not-applicable,completed,partial,0,0,1,1,1,1,1,0,0,,,,,not-compared
+main.yml,unclassified,unclassified,not-applicable,not-applicable,not-applicable,not-applicable,not-applicable,0,0,1,1,1,1,1,0,0,,,,,not-compared
+meta/main.yml,unclassified,metadata,parsed,metadata,skipped,completed,partial,0,0,0,0,0,0,0,0,0,,,,,not-compared
+vars/Debian.yml,unclassified,vars,parsed,vars,skipped,completed,partial,0,0,0,0,0,0,0,0,0,,,,,not-compared
+vars/RedHat.yml,unclassified,vars,parsed,vars,skipped,completed,partial,0,0,0,0,0,0,0,0,0,,,,,not-compared

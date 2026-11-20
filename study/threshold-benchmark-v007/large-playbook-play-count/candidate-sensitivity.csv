@@ -1,0 +1,4 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+large_playbook_play_count,large-playbook,q1;q2_median;q3;tukey_upper_fence;p80,0,21455,5904,0.27518061,197,190,0.96446701
+large_playbook_play_count,large-playbook,p90;p95,1,21455,3409,0.15889070,197,186,0.94416244
+large_playbook_play_count,large-playbook,current,4,21455,3104,0.14467490,197,184,0.93401015

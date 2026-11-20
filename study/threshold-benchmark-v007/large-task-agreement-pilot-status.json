@@ -1,0 +1,49 @@
+{
+  "agreements": 66,
+  "cohens_kappa": 0.6367061356297092,
+  "confusion_matrix": {
+    "negative": {
+      "negative": 56,
+      "positive": 0,
+      "uncertain": 1
+    },
+    "positive": {
+      "negative": 5,
+      "positive": 8,
+      "uncertain": 0
+    },
+    "uncertain": {
+      "negative": 3,
+      "positive": 0,
+      "uncertain": 2
+    }
+  },
+  "disagreements": 9,
+  "first_column": "reviewer_1_label",
+  "gwet_ac1": 0.856558465706848,
+  "label_prevalence": {
+    "negative": {
+      "reviewer_1": 0.76,
+      "reviewer_2": 0.8533333333333334
+    },
+    "positive": {
+      "reviewer_1": 0.17333333333333334,
+      "reviewer_2": 0.10666666666666667
+    },
+    "uncertain": {
+      "reviewer_1": 0.06666666666666667,
+      "reviewer_2": 0.04
+    }
+  },
+  "label_specific_agreement": {
+    "negative": 0.9256198347107438,
+    "positive": 0.7619047619047619,
+    "uncertain": 0.5
+  },
+  "minimum_paired": 50,
+  "paired_items": 75,
+  "raw_agreement": 0.88,
+  "second_column": "reviewer_2_label",
+  "status": "refine-codebook-and-run-new-pilot",
+  "target": 0.8
+}

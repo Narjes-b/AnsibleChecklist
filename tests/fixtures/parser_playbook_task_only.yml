@@ -1,0 +1,6 @@
+- name: task1
+  debug:
+    msg: hi
+- name: task2
+  debug:
+    msg: hi

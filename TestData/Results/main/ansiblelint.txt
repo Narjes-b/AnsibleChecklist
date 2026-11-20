@@ -1,12 +1,22 @@
-AnsibleLint analysis for playbook /Users/narjes/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:
+AnsibleLint analysis for playbook /home/aymmzn/Documents/AnsibleChecklist/TestData/tasks/main.yml:
 
 
-- ⚠️ name[template] - Jinja templates should only be at the end of 'name' at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (include_tasks). at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ var-naming[pattern] - Variables names should match ^[a-z_][a-z0-9_]*$ regex. (GPG_key) at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ var-naming[pattern] - Variables names should match ^[a-z_][a-z0-9_]*$ regex. (GPG_key) (vars: GPG_key) at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ no-changed-when - Commands should not change things if nothing needs doing. at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (raw). at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
-- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/Research/Contrib_AnsibleSmells/data/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_stat`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ name[template] - Jinja templates should only be at the end of 'name' at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_stat`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_get_url`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ var-naming[pattern] - Variables names should match ^[a-z_][a-z0-9_]*$ regex. (GPG_key) at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (include_tasks). at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ var-naming[pattern] - Variables names should match ^[a-z_][a-z0-9_]*$ regex. (GPG_key) (vars: GPG_key) at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `community.windows.win_unzip`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action-core] - Use FQCN for builtin module actions (raw). at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ no-changed-when - Commands should not change things if nothing needs doing. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_path`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_stat`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_get_url`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `community.windows.win_unzip`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ yaml[truthy] - Truthy value should be one of [false, true] at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_copy`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?
+- ⚠️ fqcn[action] - Use FQCN for module actions, such `ansible.windows.win_file`. at ~/Documents/AnsibleChecklist/TestData/tasks/main.yml:?

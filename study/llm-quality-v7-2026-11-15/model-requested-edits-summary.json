@@ -1,0 +1,133 @@
+{
+  "rows": [
+    {
+      "case_id": "repair-missing-validate-certs-0",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-missing-validate-certs-1",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-missing-validate-certs-2",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-missing-validate-certs-3",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-missing-validate-certs-4",
+      "eligible": false,
+      "model_called": false,
+      "proposal_ready": false,
+      "mechanical": null,
+      "behavior_passed": false,
+      "reason": "complete leaf evidence and verified supported condition required",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-missing-validate-certs-5",
+      "eligible": false,
+      "model_called": false,
+      "proposal_ready": false,
+      "mechanical": null,
+      "behavior_passed": false,
+      "reason": "complete leaf evidence and verified supported condition required",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-credential-log-exposure-0",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-credential-log-exposure-1",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-credential-log-exposure-2",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-credential-log-exposure-3",
+      "eligible": true,
+      "model_called": true,
+      "proposal_ready": true,
+      "mechanical": "passed",
+      "behavior_passed": true,
+      "reason": "",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-credential-log-exposure-4",
+      "eligible": false,
+      "model_called": false,
+      "proposal_ready": false,
+      "mechanical": null,
+      "behavior_passed": false,
+      "reason": "complete leaf evidence and verified supported condition required",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    },
+    {
+      "case_id": "repair-credential-log-exposure-5",
+      "eligible": false,
+      "model_called": false,
+      "proposal_ready": false,
+      "mechanical": null,
+      "behavior_passed": false,
+      "reason": "complete leaf evidence and verified supported condition required",
+      "origin": "LLM-generated explicit-request edit; not autonomous repair triage"
+    }
+  ],
+  "eligible": 8,
+  "eligible_drafts": 8,
+  "eligible_behavior_passed": 8,
+  "ineligible_drafts": 0,
+  "source_applied": false,
+  "independent_human_validation": false,
+  "task_change": "Caller explicitly selects the transformation; model is not asked to discover whether repair is actionable.",
+  "not_a_spontaneous_fix_rate": true,
+  "AI_semantic_review": "pending inspection of raw generated tasks and behavior"
+}

@@ -1,0 +1,40 @@
+{
+  "artifacts": {
+    "LABELING_CODEBOOK.md": "86df751c644c5a8e177dc6435d2255c1c6ce2b95f911e634b5989b0e68bcf3e9",
+    "RESULTS.md": "bfcb8436241aa59451ee098dea365a6377a37da1ca9fb3417c4820c4a338ad69",
+    "agreement-pilot-manifest.json": "fa2c83ee23e86aae5a72a63a0ed084bc814d7a7807e84e1d8900a09b8c9b46e3",
+    "agreement-pilot.csv": "9de6d1a506936e0c5f7d028b0debce8c90424ca289241008cf7651700470f667",
+    "candidate-sensitivity.csv": "39c122937fe5e4eb1744620b145364706ef4497a952135de4b491adf8457ed42",
+    "review-sample.csv": "6edb63d6063a6bb58cb8f8b463fe45764a5287864b86e994504e4963149639be"
+  },
+  "distribution": {
+    "comparator": ">",
+    "current_threshold": "10",
+    "iqr": "6",
+    "lower_whisker": "0",
+    "maximum": "289",
+    "mean": "5.8308",
+    "median": "3",
+    "metric_id": "missing_abstraction_leaf_tasks",
+    "minimum": "0",
+    "observations": "21457",
+    "outlier_count": "1439",
+    "q1": "1",
+    "q3": "7",
+    "repositories": "197",
+    "repository_median": "3",
+    "repository_median_q1": "3",
+    "repository_median_q3": "5",
+    "rule_id": "missing-abstraction",
+    "unit": "file",
+    "upper_whisker": "16"
+  },
+  "metric_id": "missing_abstraction_leaf_tasks",
+  "population_observations": 21457,
+  "review_sample_sha256": "6edb63d6063a6bb58cb8f8b463fe45764a5287864b86e994504e4963149639be",
+  "sample_projects": 197,
+  "sample_rows": 1077,
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "working_labels_are_mutable": true
+}

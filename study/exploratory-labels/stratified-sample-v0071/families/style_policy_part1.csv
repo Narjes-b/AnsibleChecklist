@@ -1,0 +1,991 @@
+sample_id,rule_id,concept_id,review_family,tier,rule_total_occurrences,rule_cumulative_share_percent,repository,commit_sha,path,line,severity,message,occurrence_id,source_context
+V007STRAT-MISSING-TAGS-001,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,ansible-collections/google.cloud,a3181bdde4222a131850fd9c9fdebfeca8bd7021,roles/gcloud/tasks/main.yml,2,note,"Task 'Gcloud | Load Distro and OS specific variables': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",1471abf547546d885c732bcd6b7e0af79e02fcb072d351c1cd4fb512ae5b3e23,"       1 | ---
+>>     2 | - name: Gcloud | Load Distro and OS specific variables
+       3 |   ansible.builtin.include_vars: ""{{ lookup('first_found', params) }}""
+       4 |   vars:
+       5 |     params:
+       6 |       files:
+       7 |         - os/{{ ansible_distribution | lower }}.yml
+       8 |         - os/{{ ansible_os_family | lower }}.yml
+       9 |         - main.yml
+      10 |       paths:
+      11 |         - vars
+      12 | 
+      13 | - name: Gcloud | Install the google-cloud-sdk from {{ gcloud_install_type }}
+      14 |   ansible.builtin.include_tasks: ""{{ gcloud_install_type }}/main.yml"""
+V007STRAT-MISSING-TAGS-002,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,stackhpc/ansible-slurm-appliance,f49fc24f6818ea960a28aa2e41910532c86214f9,ansible/adhoc/backup-keytabs.yml,10,note,"Task 'Unnamed task': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",fc6ea4bff8bd1d247965bb7838b4c9ca1b95cd9831d39ed83ea2c06796ee596c,"       1 | ---
+       2 | # Use ONE of the following tags on this playbook:
+       3 | #   - retrieve: copies keytabs out of the state volume to the environment
+       4 | #   - deploy: copies keytabs from the environment to the state volume
+       5 | 
+       6 | - hosts: freeipa_client
+       7 |   become: true
+       8 |   gather_facts: false
+       9 |   tasks:
+>>    10 |     - ansible.builtin.import_role:
+      11 |         name: freeipa
+      12 |         tasks_from: backup-keytabs.yml"
+V007STRAT-MISSING-TAGS-003,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,mfin/homelab,c4f80928f95da7b50a06a739968665e5547113f4,ansible/k3s/playbooks/roles/download/tasks/main.yaml,3,note,"Task 'Download k3s binary x64': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",8f71ea3f4a1614d0c5c55f78bf803a2c8d8a081485340c5ce6dac72b861a6890,"       1 | ---
+       2 | 
+>>     3 | - name: Download k3s binary x64
+       4 |   ansible.builtin.get_url:
+       5 |     url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s
+       6 |     checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/sha256sum-amd64.txt
+       7 |     dest: /usr/local/bin/k3s
+       8 |     owner: root
+       9 |     group: root
+      10 |     mode: 0755
+      11 |   when: ansible_facts.architecture == ""x86_64""
+      12 | 
+      13 | - name: Download k3s binary arm64
+      14 |   ansible.builtin.get_url:
+      15 |     url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s-arm64
+      16 |     checksum: sha256:https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/sha256sum-arm64.txt
+      17 |     dest: /usr/local/bin/k3s"
+V007STRAT-MISSING-TAGS-004,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,axivo/k3s-cluster,f0e3a56f57f0e13f9f8624af2bb370c7eb92063f,reset.yaml,10,note,"Task 'Remove archived journal files': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",99bfc58af98ab92882d6648831128d4f242a9db8f2fa041d34ddbd1601b43fd9,"       1 | ---
+       2 | - name: Cluster Reset
+       3 |   hosts: cluster
+       4 |   become: true
+       5 |   gather_facts: true
+       6 |   serial:
+       7 |     - 3
+       8 |     - 5
+       9 |   post_tasks:
+>>    10 |     - name: Remove archived journal files
+      11 |       ansible.builtin.command:
+      12 |         cmd: journalctl --rotate --vacuum-time=1s
+      13 |       changed_when: false
+      14 |   tasks:
+      15 |     - name: Get packages information
+      16 |       ansible.builtin.package_facts:
+      17 |       tags: always
+      18 | 
+      19 |     - name: Reset cluster
+      20 |       ansible.builtin.include_role:
+      21 |         name: '{{ reset }}'
+      22 |         tasks_from: reset
+      23 |       loop:
+      24 |         - cluster"
+V007STRAT-MISSING-TAGS-005,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,ansible-collections/community.vmware,f8fde60167ae8f6d252d46691913f7a451e2d723,tools/prepare_release.yml,8,note,"Task 'Get the next release version': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",9b6bed075b56bb5d6b1f2fa87dac1d4e10d37ea7584dd140ad27c7ed86ecc000,"       1 | - name: Prepare release
+       2 |   hosts: localhost
+       3 |   gather_facts: false
+       4 |   tasks:
+       5 |     - name: Generate version
+       6 |       when: version is not defined
+       7 |       block:
+>>     8 |         - name: Get the next release version
+       9 |           ansible.builtin.shell: git tag --sort=-creatordate --merged|head -n1|perl -pe 's/(\d+\.)(\d+)\.\d+/""$1"" . ($2+1) . "".0""/e'
+      10 |           register: result
+      11 | 
+      12 |         - name: Set the release version
+      13 |           ansible.builtin.set_fact:
+      14 |             version: ""{{ result.stdout }}""
+      15 | 
+      16 |     - name: Create release branch
+      17 |       ansible.builtin.shell: git checkout -b ""prepare_{{ version }}_release""
+      18 | 
+      19 |     - name: Update galaxy.yml
+      20 |       ansible.builtin.lineinfile:
+      21 |         path: ""{{ playbook_dir }}/../galaxy.yml""
+      22 |         regexp: ""^version: """
+V007STRAT-MISSING-TAGS-006,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,dev-sec/ansible-collection-hardening,3102eddbd116c5f8c1581aca543d372dbc326764,roles/mysql_hardening/handlers/main.yml,2,note,"Task 'Restart mysql': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",e9c2a17b5fbfffd96900611ed06551cc61572d1e26f78417b6961d3f77a24e12,"       1 | ---
+>>     2 | - name: Restart mysql
+       3 |   ansible.builtin.service:
+       4 |     name: ""{{ mysql_daemon }}""
+       5 |     state: restarted
+       6 |   when: mysql_hardening_restart_mysql | bool"
+V007STRAT-MISSING-TAGS-007,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,sdwilsh/ansible-playbooks,40be40030f481071eceb674509623b21986a04b5,kustomization/components/argo-cd/patches/set_priorityClassName.yml,3,note,"Task 'Unnamed task': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",11f1dcf0a68244b0d43bb67ca93e8fba0437943b0dcd27a4a5e60ac0dff40ede,"       1 | ---
+       2 | # This works for DaemonSet, Deployment, and StatefulSet.
+>>     3 | - op: add # Add ensures that we do not override something that is otherwise set.
+       4 |   path: /spec/template/spec/priorityClassName
+       5 |   value: critical-application-infra"
+V007STRAT-MISSING-TAGS-008,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,manala/ansible-roles,1ae6394d7b780665788234418ace2a060903f5f1,roles/accounts/tasks/groups.yaml,3,note,"Task 'Groups > Groups configuration': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",bddfcf988f32e63c71fa368dce2d32a25544e3e5848884f2574803cc638d2397,"       1 | ---
+       2 | 
+>>     3 | - name: Groups > Groups configuration
+       4 |   ansible.builtin.group:
+       5 |     name: ""{{ (item) if (item is string) else (item.group) }}""
+       6 |     system: ""{{ item.system | default(omit) }}""
+       7 |     state: ""{{ item.state | default('present') }}""
+       8 |     gid: ""{{ item.gid | default(omit) }}""
+       9 |   loop: ""{{
+      10 |     manala_accounts_groups
+      11 |       | flatten
+      12 |       | manala.roles.staten
+      13 |   }}"""
+V007STRAT-MISSING-TAGS-009,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,FreiFunkMuenster/Ansible-Freifunk-Gateway,b04e8f81b2b010eaccd13a63271c7ce7eb6fb4b3,backbone_gre_intern/handlers/main.yml,2,note,"Task 'restart networking': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",f0f8e5c87cdbd96ad9d9a9495825410fa1ddd39b41d849cc6483d8ab5cc21c29,"       1 | ---
+>>     2 | - name: restart networking
+       3 |   shell: systemctl restart networking; if systemctl -q is-active isc-dhcp-server; then systemctl restart isc-dhcp-server; fi; if systemctl -q is-active kea-dhcp4.service; then systemctl restart kea-dhcp4.service; fi; if systemctl -q is-active tunneldigger; then systemctl restart tunneldigger; fi"
+V007STRAT-MISSING-TAGS-010,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,jlu5/ansible-dn42,7849481eec35fe085a7b45d187ed909f356cb8f1,anycast-dns.yml,5,note,"Task 'Update cached copy of dn42 registry': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",ce667beaaf8eb792308fdb5e446c12c2fc3778b17179ab1f668397309ef33d93,"       1 | - name: Generate DNS zones
+       2 |   hosts: anycast_auth_dns
+       3 |   become: false
+       4 |   tasks:
+>>     5 |     - name: Update cached copy of dn42 registry
+       6 |       local_action: shell cd dn42-registry && git pull
+       7 |       run_once: true
+       8 |     - name: Generate DNS zones
+       9 |       local_action: command scripts/make-dns-records.py
+      10 |       run_once: true
+      11 |     - name: Generate PDNS config from registry
+      12 |       local_action: command scripts/registry-to-pdns.py ./dn42-registry
+      13 |       run_once: true
+      14 | 
+      15 | - name: Configure authoritative DNS
+      16 |   hosts: anycast_auth_dns
+      17 |   become: yes
+      18 |   roles:
+      19 |     - role: config-loopback"
+V007STRAT-MISSING-TAGS-011,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,hyphacoop/cosmos-ansible,8a3a2afdc232bf3cf08e9b19cdb3055e008b0c29,deprovision-monitoring.yml,67,note,"Task 'assemble alertmanager config': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",95a18a11c0dda2bf402a73cb33ce874bf6ff8757cbb487c847b9a152aa14d65a,"      53 |             - reload alertmanager
+      54 |           tags:
+      55 |             - alerting
+      56 | 
+      57 |         - name: Restart alertmanager to clear stale in-memory alerts
+      58 |           systemd:
+      59 |             name: alertmanager
+      60 |             state: restarted
+      61 |           run_once: true
+      62 |           tags:
+      63 |             - alerting
+      64 |             - monitoring
+      65 | 
+      66 |   handlers:
+>>    67 |     - name: assemble alertmanager config
+      68 |       delegate_to: ""{{ grafana_ssh_url }}""
+      69 |       assemble:
+      70 |         src: /opt/alertmanager/fragments
+      71 |         dest: /opt/alertmanager/alertmanager.yml
+      72 |         regexp: '\.yml$'
+      73 |         owner: prometheus
+      74 |         group: prometheus
+      75 |         mode: 0644
+      76 |       listen: assemble alertmanager config
+      77 | 
+      78 |     - name: reload prometheus
+      79 |       delegate_to: ""{{ grafana_ssh_url }}""
+      80 |       systemd:
+      81 |         name: prometheus"
+V007STRAT-MISSING-TAGS-012,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,Princeton-CDH/cdh-ansible,8fc536c88cbc18d048418263ecc64a9b1c339922,playbooks/db_setup.yml,28,note,"Task 'Update django local settings': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",2b260bdbc797160ef71e814e44a08a5ac48ca21f0fe3cabb23451e187db0a0bf,"      14 | #
+      15 | - hosts: geniza_qa, cdhweb_qa, prosody_qa, shxco_qa, geniza_prod, cdhweb_prod, prosody_prod, shxco_prod
+      16 |   connection: ssh
+      17 |   remote_user: pulsys
+      18 |   become: true
+      19 |   vars:
+      20 |     # update currently deployed config,
+      21 |     # instead of getting path from app version and git hash
+      22 |     deploy: ""{{ install_root }}/current""
+      23 |   tasks:
+      24 |     - name: Run postgresql setup tasks (ensure access, create db and user)
+      25 |       ansible.builtin.include_role:
+      26 |         name: postgresql
+      27 |       tags: setup
+>>    28 |     - name: Update django local settings
+      29 |       # need to use import to get variables and path for template
+      30 |       # use app_config tag to only run local settings task
+      31 |       ansible.builtin.import_role:
+      32 |         name: django
+      33 | "
+V007STRAT-MISSING-TAGS-013,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,progmaticltd/homebox,bb816d7fe90960a6425124c2725184d9c9bec02b,playbooks/check-version.yml,14,note,"Task 'Run the common tasks': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",7a06f8da490badc951e51cc35b52309177ce9f54d4deea5820645d077b7a5755,"       1 | ---
+       2 | 
+       3 | - name: Run the self-check tasks for each role
+       4 |   hosts: homebox
+       5 |   vars:
+       6 |     debug: '{{ system.debug }}'
+       7 |     backup_directory: '{{ playbook_dir }}/../backup/{{ network.domain }}/'
+       8 |     hide_secrets: '{{ not system.devel }}'
+       9 |   vars_files:
+      10 |     - '{{ playbook_dir }}/../config/defaults/common-security.yml'
+      11 |     - '{{ playbook_dir }}/../config/defaults/version-{{ version | default(""small"") }}.yml'
+      12 |     - '{{ playbook_dir }}/../config/system.yml'
+      13 |   tasks:
+>>    14 |     - name: Run the common tasks
+      15 |       include_role:
+      16 |         name: common-init
+      17 |         tasks_from: install/main.yml
+      18 |     - name: Run the checking tasks for each role
+      19 |       include_role:
+      20 |         name: '{{ role }}'
+      21 |         tasks_from: check/main.yml
+      22 |       loop: '{{ roles_list }}'
+      23 |       loop_control:
+      24 |         loop_var: role
+      25 |       tags: always"
+V007STRAT-MISSING-TAGS-014,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,freeipa/ansible-freeipa,5ba9b59d5b614abdb0af70fc9f2d336e5479e833,playbooks/automember/automember-default-group-not-set.yml,6,note,"Task 'Ensure automember default group is not set': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",5c9af78dc2f82ce8acbbc9f37157452f9adc6f2bddacc7e1a6592338b66250ff,"       1 | ---
+       2 | - name: Automember default group not set
+       3 |   hosts: ipaserver
+       4 |   become: true
+       5 |   tasks:
+>>     6 |   - name: Ensure automember default group is not set
+       7 |     ipaautomember:
+       8 |       ipaadmin_password: SomeADMINpassword
+       9 |       automember_type: group
+      10 |       default_group: """""
+V007STRAT-MISSING-TAGS-015,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,snyssen/infra-snyssen.be,5f8652b4132407221a55c65660ac204d57cee3c5,playbooks/backup-integrity.ansible.yml,8,note,"Task 'Run integrity check command': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",61bf01850fd76898dcba62ddb9e253956c6631d87b71b0eaf5d6209e62aad2b0,"       1 | - name: Backup Integrity Check
+       2 |   hosts: apps
+       3 |   vars_prompt:
+       4 |     - name: backup_backend
+       5 |       prompt: Backup Backend
+       6 |       private: false
+       7 |   tasks:
+>>     8 |     - name: Run integrity check command
+       9 |       become: true
+      10 |       ansible.builtin.shell: |-
+      11 |         /root/scripts/autorestic_log_wrapper.sh autorestic --ci exec -b {{ backup_backend }} -- check
+      12 |       register: returned_value
+      13 |       when: true
+      14 |       changed_when: true
+      15 |     - name: Showing stdoud
+      16 |       ansible.builtin.debug:
+      17 |         var: returned_value.stdout_lines"
+V007STRAT-MISSING-TAGS-016,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,konstruktoid/ansible-role-docker-rootless,45f43781b7245948eb760a11b5e6648f3106e5ab,handlers/main.yml,2,note,"Task 'Restart rootless docker': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",268692fbffb7d0a98db2e7816ecd06197a5a5384be6ae37caa7a147eecea4dd3,"       1 | ---
+>>     2 | - name: Restart rootless docker
+       3 |   become: true
+       4 |   become_user: ""{{ docker_user }}""
+       5 |   ansible.builtin.systemd_service:
+       6 |     name: docker.service
+       7 |     state: restarted
+       8 |     scope: user
+       9 |     daemon_reload: true
+      10 |   when:
+      11 |     - docker_service_restart
+      12 |     - ansible_facts.virtualization_type not in [""container"", ""docker"", ""podman""]"
+V007STRAT-MISSING-TAGS-017,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,oliversalzburg/ansible-workstation,635ab67d1fdf72ea4de69556c8dd428626699df5,provision/ansible/apt-upgrade.yml,7,note,"Task 'Update and upgrade apt packages': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",8e28a93f19b29c974e6e062fcf9f8107327c152f198e874e19521d276174b416,"       1 | #!/usr/bin/env ansible-playbook
+       2 | 
+       3 | ---
+       4 | - name: APT upgrade
+       5 |   hosts: all
+       6 |   pre_tasks:
+>>     7 |     - name: Update and upgrade apt packages
+       8 |       become: true
+       9 |       register: result
+      10 |       retries: 3
+      11 |       delay: 3
+      12 |       until: result is not failed
+      13 |       ansible.builtin.apt:
+      14 |         upgrade: true
+      15 |         update_cache: true
+      16 |         cache_valid_time: 86400"
+V007STRAT-MISSING-TAGS-018,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,clusterinthecloud/ansible,a378fceff7cd03dbd36da1fc4bd5a4ed09270c60,compute.yml,7,note,"Task 'Disable SELinux': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",8c62b949df4d2f05db4044c4b2095adea3f8f0377e44f88f4defbeb25fd26626,"       1 | ---
+       2 | 
+       3 | - name: Disable SELinux
+       4 |   hosts: compute
+       5 |   become: true
+       6 |   tasks:
+>>     7 |     - name: Disable SELinux
+       8 |       ansible.posix.selinux:
+       9 |         state: permissive
+      10 |         policy: targeted
+      11 | 
+      12 | - name: Configure system
+      13 |   hosts: compute
+      14 |   become: true
+      15 |   roles:
+      16 |     - citc_user
+      17 |     - filesystem
+      18 |     - ssh
+      19 |     - ntp
+      20 |     - sssd
+      21 |     - lmod"
+V007STRAT-MISSING-TAGS-019,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,redhat-cop/infra.aap_configuration,f84d6a61e4b18aa135d707fe539371587bc92931,playbooks/configure_aap.yml,15,note,"Task 'Call dispatch role': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",6a1ec55813dd215493ab0b63280fef6c5ee961845df09ed754f692958fe6b54c,"       1 | ---
+       2 | - name: Playbook to configure ansible controller post installation
+       3 |   hosts: localhost
+       4 |   connection: local
+       5 |   gather_facts: false
+       6 |   tasks:
+       7 |     - name: Include vars from configs directory
+       8 |       ansible.builtin.include_vars:
+       9 |         dir: ""{{ aap_configs_dir | default((lookup('env', 'AAP_CONFIGS_DIR') == '') | ternary('./configs', lookup('env', 'AAP_CONFIGS_DIR'))) }}""
+      10 |         ignore_unknown_extensions: true
+      11 |         extensions: [yml]
+      12 |       tags:
+      13 |         - always
+      14 | 
+>>    15 |     - name: Call dispatch role
+      16 |       ansible.builtin.include_role:
+      17 |         name: infra.aap_configuration.dispatch
+      18 | ..."
+V007STRAT-MISSING-TAGS-020,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,handlers/main.yml,5,note,"Task 'Remount tmp filesystem': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",5786dd5789899afe01b80079e72c1311c5d2a8db42c325a54ff95747f8da9da7,"       1 | ---
+       2 | 
+       3 | # handlers file for RHEL9-CIS
+       4 | 
+>>     5 | - name: ""Remount tmp filesystem""
+       6 |   ansible.builtin.import_tasks:
+       7 |     file: remount_tmp.yml
+       8 |   listen: ""Remount /tmp""
+       9 | 
+      10 | - name: ""Adding options for /dev/shm""
+      11 |   vars:
+      12 |     mount_point: '/dev/shm'
+      13 |   ansible.posix.mount:
+      14 |     path: ""{{ mount_point }}""
+      15 |     src: ""{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}""
+      16 |     state: present
+      17 |     fstype: ""{{ prelim_mount_point_fs_and_options[mount_point]['fs_type'] }}""
+      18 |     opts: ""{{ prelim_mount_point_fs_and_options[mount_point]['options'] | unique | join(',') }}""
+      19 |   listen: ""Remount /dev/shm"""
+V007STRAT-MISSING-TAGS-021,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,cfpb/aurora,03e01e4bd080040159dd089175179ef3c6baa3e3,deploy/audit_resources.yml,6,note,"Task 'Make directory for stats': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",751a59f5428b8a70358b81f95cbc1c5d8e6ca911f4bc24e88b455269e9a542d7,"       1 | ---
+       2 | - hosts: all
+       3 |   become: no
+       4 | 
+       5 |   tasks:
+>>     6 |     - name: Make directory for stats
+       7 |       file:
+       8 |         state: directory
+       9 |         path: /tmp/resource_allocation
+      10 |         mode: 0755
+      11 |       delegate_to: admin_terminal
+      12 | 
+      13 |     - name: Get number of processors
+      14 |       shell: ""nproc""
+      15 |       register: num_proc
+      16 | 
+      17 |     - name: Get memory
+      18 |       shell: ""vmstat -s | awk -F' ' '{print $1}' | head -1""
+      19 |       register: total_mem
+      20 | "
+V007STRAT-MISSING-TAGS-022,ansibleguard/missing-tags,missing-tags,Style/policy,A-dominant,89594,36.4,electrocucaracha/krd,fe54e6752bc86b7c23056a15ea70f34d2be5cb33,config/default.yml,10,note,"Task 'controller01': Optional style policy: task has no explicit or inherited tags, so it cannot be selected directly with --tags/--skip-tags.",fddc4fd903225880d73c96762f011e2798c77610281ccfcf7c28e31508332e36,"       1 | ---
+       2 | # SPDX-license-identifier: Apache-2.0
+       3 | ##############################################################################
+       4 | # Copyright (c) 2018
+       5 | # All rights reserved. This program and the accompanying materials
+       6 | # are made available under the terms of the Apache License, Version 2.0
+       7 | # which accompanies this distribution, and is available at
+       8 | # http://www.apache.org/licenses/LICENSE-2.0
+       9 | ##############################################################################
+>>    10 | - name: ""controller01""
+      11 |   os:
+      12 |     name: ubuntu
+      13 |     release: jammy
+      14 |   networks:
+      15 |     - name: public-net
+      16 |       ip: ""10.10.16.3""
+      17 |   memory: 8192
+      18 |   cpus: 2
+      19 |   roles:
+      20 |     - kube_control_plane
+      21 |     - etcd
+      22 | - name: ""controller02""
+      23 |   os:
+      24 |     name: ubuntu"
+V007STRAT-VARIABLE-NAMING-CONVENTION-001,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,rcbops/rpc-openstack,f8fdb2ee2a7c66b3490c55513312e4fa3ff241b4,playbooks/vars/openstack-service-config.yml,16,note,Variable 'openstack_vm_flavors' is not prefixed with the role name (expected a 'playbooks_' role prefix).,45ea9caf67f9918981c7ae3a3ef097f43ae308ca60e8d6981d1f38a8a2ea97ad,"       2 | # Copyright 2017, Rackspace US, Inc.
+       3 | #
+       4 | # Licensed under the Apache License, Version 2.0 (the ""License"");
+       5 | # you may not use this file except in compliance with the License.
+       6 | # You may obtain a copy of the License at
+       7 | #
+       8 | #     http://www.apache.org/licenses/LICENSE-2.0
+       9 | #
+      10 | # Unless required by applicable law or agreed to in writing, software
+      11 | # distributed under the License is distributed on an ""AS IS"" BASIS,
+      12 | # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      13 | # See the License for the specific language governing permissions and
+      14 | # limitations under the License.
+      15 | 
+>>    16 | openstack_vm_flavors:
+      17 |   - name: m1.micro
+      18 |     ram: 256
+      19 |     vcpus: 1
+      20 |     disk: 1
+      21 |     swap: 0
+      22 |     ephemeral: 0
+      23 |   - name: m1.tiny
+      24 |     ram: 512
+      25 |     vcpus: 1
+      26 |     disk: 1
+      27 |     swap: 0
+      28 |     ephemeral: 0
+      29 |   - name: m1.mini
+      30 |     ram: 1024"
+V007STRAT-VARIABLE-NAMING-CONVENTION-002,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,CMSgov/bluebutton-web-deployment,ef2da5200c4d70c9db49e682ae28cd52ca92c995,vars/all_var.yml,1,note,Variable 'slsx_signout_endpoint' is not prefixed with the role name (expected a 'bluebutton_web_deployment_' role prefix).,0104fdc941268135e87fc1a775f8cafc10dddab3210c2766d8a04f2270f136bb,">>     1 | ---
+       2 | 
+       3 |   ### Environment:
+       4 |   env: ""{{ env_env }}""
+       5 | 
+       6 |   ### DJANGO_SECRET_KEY:
+       7 |   # 50 character Random Key
+       8 |   # http://www.miniwebtool.com/django-secret-key-generator/
+       9 |   django_secret_key: ""{{ env_django_secret_key }}""
+      10 | 
+      11 |   # a unix path-friendly name (IE, no spaces or special characters)
+      12 |   project_name: ""{{ common_project_name }}""
+      13 | 
+      14 |   # Virtual Environment location
+      15 |   venv_full: ""{{ venv }}{{ common_project_dir }}"""
+V007STRAT-VARIABLE-NAMING-CONVENTION-003,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,vrk-kpa/api-catalog,e81b1cb5a261a290a78eafae67f853efc8f5f7a3,ansible/roles/ckan-extension/vars/main.yml,3,note,Variable 'ckanext_sync_path' is not prefixed with the role name (expected a 'ckan_extension_' role prefix).,be586549b764d06fe7baa0922f5b99e377244117a9e0ae58343246f0cabc99e7,"       1 | ---
+       2 | 
+>>     3 | ckanext_sync_path: ""{{ server_path }}/ckanext"""
+V007STRAT-VARIABLE-NAMING-CONVENTION-004,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,Princeton-CDH/cdh-ansible,8fc536c88cbc18d048418263ecc64a9b1c339922,roles/build_dependencies/defaults/main.yml,3,note,Variable 'common_dependencies' is not prefixed with the role name (expected a 'build_dependencies_' role prefix).,fbf0607c76f3d5e2db11fec79419a13c670e2a1d03e6983b96cd9a4255fd7b4c,"       1 | ---
+       2 | # defaults for build_dependencies
+>>     3 | common_dependencies:
+       4 |   - acl
+       5 |   - build-essential
+       6 |   - curl
+       7 |   - git
+       8 |   - libssl-dev
+       9 |   - nfs-common
+      10 |   - nfs-kernel-server   # required for idmapd
+      11 |   - python3
+      12 |   - python3-pip
+      13 |   - python3-setuptools
+      14 |   - snapd
+      15 |   - unzip
+      16 |   - zip
+      17 |   - wget"
+V007STRAT-VARIABLE-NAMING-CONVENTION-005,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,ARGOeu/argo-ansible,67536b4b1a06a44ec061f9cd7facf8930eeb4b12,roles/accounting/defaults/main.yml,32,note,Variable 'has_oidc_client' is not prefixed with the role name (expected a 'accounting_' role prefix).,f3562f2d7060a4101767469d0c71ee3603913528b641e46940a7871688c3dcaa,"      18 | #
+      19 | #quarkus_oidc:
+      20 | #  client_id: example-system
+      21 | #  credentials_secret: 1234
+      22 | #  auth_server_url: https://login-example.com/auth/realms/
+      23 | #
+      24 | #keycloak_server:
+      25 | #  url: https://login-example.com/auth
+      26 | #  realm: example
+      27 | #  client_id: example-system-public
+      28 | #
+      29 | #quarkus:
+      30 | #  mongodb_uri: mongodb://localhost:27017""
+      31 | 
+>>    32 | has_oidc_client: false
+      33 | 
+      34 | oidc_client_version: 2.2.0
+      35 | 
+      36 | oidc_client_directory: /var/www/oidc-client"
+V007STRAT-VARIABLE-NAMING-CONVENTION-006,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,wonderbird/ansible-all-my-things,4993019d9dfb175eef6cb40fce4ea56138e6a374,playbooks/vars/aws_defaults.yml,5,note,Variable 'aws_default_region' is not prefixed with the role name (expected a 'playbooks_' role prefix).,7f9ddc67298b935a8147c54d80adf4fb876396c0f230d202b697379ac236e66a,"       1 | ---
+       2 | # AWS provider defaults — loaded at create/destroy time via include_vars
+       3 | # Uses AWS_DEFAULT_REGION environment variable as single source of truth
+       4 | 
+>>     5 | aws_default_region: ""{{ lookup('env', 'AWS_DEFAULT_REGION') | default('eu-north-1') }}"""
+V007STRAT-VARIABLE-NAMING-CONVENTION-007,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,spantaleev/matrix-docker-ansible-deploy,8309e7932dd995f83fb022d646fe4b1c4f2a9d98,roles/custom/matrix-base/defaults/main.yml,39,note,Variable 'matrix_domain' is not prefixed with the role name (expected a 'matrix_base_' role prefix).,f31bc42dc4a467b62369dbb33a60fdd8c62b70968379bc4bdfe8d5c79f4ac3a0,"      25 | # SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
+      26 | # SPDX-FileCopyrightText: 2024 László Várady
+      27 | #
+      28 | # SPDX-License-Identifier: AGPL-3.0-or-later
+      29 | 
+      30 | ---
+      31 | 
+      32 | # The bare domain name which represents your Matrix identity.
+      33 | # Matrix user IDs for your server will be of the form (`@alice:example.com`).
+      34 | #
+      35 | # Note: this playbook does not touch the server referenced here.
+      36 | # Installation happens on another server (""matrix.example.com"", see `matrix_server_fqn_matrix`).
+      37 | #
+      38 | # Example value: example.com
+>>    39 | matrix_domain: ~
+      40 | 
+      41 | # The optional Matrix admin MXID, used in bridges' configs to set bridge admin user
+      42 | # Example value: ""@alice:{{ matrix_domain }}""
+      43 | matrix_admin: ''
+      44 | 
+      45 | # Global var to enable/disable encryption across all bridges with encryption support
+      46 | matrix_bridges_encryption_enabled: false
+      47 | 
+      48 | # Global var to make encryption default/optional across all bridges with encryption support
+      49 | matrix_bridges_encryption_default: ""{{ matrix_bridges_encryption_enabled }}""
+      50 | 
+      51 | # Global var for enabling msc4190 (On supported bridges)
+      52 | matrix_bridges_msc4190_enabled: ""{{ matrix_authentication_service_enabled and matrix_bridges_encryption_enabled }}""
+      53 | "
+V007STRAT-VARIABLE-NAMING-CONVENTION-008,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,UtrechtUniversity/researchcloud-items,f91ab7491e5e17a8847fd87a844af98c18849653,playbooks/roles/alphafold3/defaults/main.yml,2,note,Variable 'alphafold_default_group_name' is not prefixed with the role name (expected a 'alphafold3_' role prefix).,bf711a175fc2b16bf091313df60d9fdd8db72ae9276640fea77fd284fbbc59e6,"       1 | ---
+>>     2 | alphafold_default_group_name: docker"
+V007STRAT-VARIABLE-NAMING-CONVENTION-009,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,cisagov/ansible-role-clamav,5bf13d0855b37b229347cbd4c355d408ae87df4f,defaults/main.yml,18,note,Variable 'clamav_package_version' is not prefixed with the role name (expected a 'ansible_role_clamav_' role prefix).,ee86856f7dccb59b8e39ab9bd93bf70e1dd008f8c79bffafc9a08aba3966aeac,"       4 | #
+       5 | # A Nonetype value means that the key will be removed from the file.
+       6 | #
+       7 | # Example:
+       8 | #
+       9 | # clamav_freshclam_configuration:
+      10 | #   DatabaseMirror: ['db.local.clamav.net', 'database.clamav.net']
+      11 | #   Bytecode: 'true'
+      12 | #   PrivateMirror:
+      13 | # clamav_clamd_configuration:
+      14 | #   LogFile: /var/log/clamav/clamav.log
+      15 | 
+      16 | # Available packages are listed here:
+      17 | # https://www.clamav.net/downloads/
+>>    18 | clamav_package_version: 1.5.1
+      19 | clamav_install_from_package_manager: true
+      20 | 
+      21 | clamav_freshclam_configuration: {}
+      22 | clamav_clamd_configuration: {}
+      23 | 
+      24 | # Whether or not we create a backup of the configuration file before
+      25 | # replacing
+      26 | clamav_configuration_backup: false
+      27 | # Whether to pre-install the ClamAV signature database or not
+      28 | clamav_preinstall_signatures: false
+      29 | clamav_scan_copy: false
+      30 | clamav_scan_exclude_directories:
+      31 |   - ^/dev/
+      32 |   - ^/proc/"
+V007STRAT-VARIABLE-NAMING-CONVENTION-010,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,ConnectBox/connectbox-pi,e69eabdecfa2e39b2751acdb928bfafb2f8f28f6,ansible/roles/ansible-postgresql/defaults/main.yml,3,note,Variable 'postgresql_backup_local_dir' is not prefixed with the role name (expected a 'ansible_postgresql_' role prefix).,dc3c361e1530bfebf90816d66fb1a2b86c0a6f7c2b0aed2d60a2d0f1edf36cff,"       1 | ---
+       2 | 
+>>     3 | postgresql_backup_local_dir: ~postgres/backup
+       4 | postgresql_backup_active_dir: ""{{ postgresql_backup_local_dir }}/active""
+       5 | postgresql_backup_mail_recipient: postgres
+       6 | postgresql_backup_rotate: true
+       7 | postgresql_user_name: postgres
+       8 | postgresql_user_password: mypassword
+       9 | 
+      10 | postgresql_archive_wal_rsync_args: '--ignore-existing -ptg --info=skip1'"
+V007STRAT-VARIABLE-NAMING-CONVENTION-011,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,theforeman/foreman-ansible-modules,6c08783ce38b1dd35fc28e2754b2d11ebf508d95,roles/content_rhel/defaults/main.yml,2,note,Variable 'foreman_content_rhel_enable_rhel7' is not prefixed with the role name (expected a 'content_rhel_' role prefix).,94dbb7e4bf931e7ba59ddfc572b6d35a49ad1855bca12c7113d826becf333986,"       1 | ---
+>>     2 | foreman_content_rhel_enable_rhel7: true
+       3 | foreman_content_rhel_enable_rhel8: true
+       4 | foreman_content_rhel_sync_now: true
+       5 | foreman_content_rhel_wait_for_syncs: true
+       6 | foreman_content_rhel_rhel8_releasever: 8"
+V007STRAT-VARIABLE-NAMING-CONVENTION-012,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,braucktoon/home-services-ansible-automation,47b8b32d5d23ac4f319eb42ada558173ddae47c1,roles/heimdall/vars/main.yml,2,note,Variable 'container_name' is not prefixed with the role name (expected a 'heimdall_' role prefix).,ae4140422de014678490904665fe78a433fc7a89ce3875d2570a3e1b9c672c0d,"       1 | ---
+>>     2 | container_name: heimdall"
+V007STRAT-VARIABLE-NAMING-CONVENTION-013,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,packit/deployment,0c6bf4b0fead603fc6872739b20a73c6858dcb83,roles/deploy/defaults/main.yml,2,note,Variable 'validate_certs' is not prefixed with the role name (expected a 'deploy_' role prefix).,58e223830b6f55f26d20277e816135522fb5f5e0b2cd343178c818a90736c9b7,"       1 | ---
+>>     2 | validate_certs: true
+       3 | service: ""{{ lookup('env', 'SERVICE') | default('packit', True) }}""
+       4 | deployment: ""{{ lookup('env', 'DEPLOYMENT') }}""
+       5 | tenant: packit # MP+ tenant
+       6 | with_tokman: true
+       7 | with_fedmsg: true
+       8 | kv_database: ""redict""
+       9 | with_kv_database: true
+      10 | with_redis_commander: false
+      11 | with_flower: false
+      12 | with_dashboard: true
+      13 | with_beat: true
+      14 | with_pushgateway: true
+      15 | with_repository_cache: true
+      16 | repository_cache_storage: 4Gi"
+V007STRAT-VARIABLE-NAMING-CONVENTION-014,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,openfoodfoundation/ofn-install,5e26b29ee7c0eb6ffff54e502b570b4b92e0b7d9,community/coopdevs.certbot_nginx/defaults/main.yml,2,note,Variable 'letsencrypt_staging' is not prefixed with the role name (expected a 'coopdevs_certbot_nginx_' role prefix).,7591d74d7c90648e7632eae1866e21f913a34735abc012f36479db98702d527a,"       1 | ---
+>>     2 | letsencrypt_staging: false"
+V007STRAT-VARIABLE-NAMING-CONVENTION-015,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,ls1intum/artemis-ansible-collection,02e584e629e7eda53301159bc2790e45a14f444c,roles/artemis/defaults/main.yml,2,note,Variable 'ansible_managed' is not prefixed with the role name (expected a 'artemis_' role prefix).,35b26f6f61e1b8bc515a646e55b0b63bddd8f8b26dea3b8e41d389db9ad211c3,"       1 | ---
+>>     2 | ansible_managed: ""Ansible managed: Do not make changes here - they will be overwritten.""
+       3 | 
+       4 | artemis_version: # Set to version or local path to war file for non-docker installation and docker tag for docker version
+       5 | is_testserver: false
+       6 | is_multinode_install: false
+       7 | 
+       8 | artemis_server_url: https://artemis.tum.de
+       9 | artemis_server_port: 8080
+      10 | 
+      11 | use_docker: false
+      12 | artemis_node_count: 1
+      13 | 
+      14 | download_artemis_application: false # Set to true to update the artemis app version
+      15 | setup_system: false # Set to true to perform the overall system setup (users, systemd, ...)
+      16 | restart_artemis: false # Set to true to restart artemis. Needed if download_artemis_application is set."
+V007STRAT-VARIABLE-NAMING-CONVENTION-016,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,dev-sec/ansible-collection-hardening,3102eddbd116c5f8c1581aca543d372dbc326764,roles/mysql_hardening/defaults/main.yml,5,note,Variable 'mysql_daemon_enabled' is not prefixed with the role name (expected a 'mysql_hardening_' role prefix).,8f55bc92e5ba4a61f6220e49bf74327dbf32fd2924912f1d0ef92d60bf284ffd,"       1 | ---
+       2 | # switcher to enable/disable role
+       3 | mysql_hardening_enabled: true
+       4 | 
+>>     5 | mysql_daemon_enabled: true
+       6 | 
+       7 | mysql_hardening_restart_mysql: true
+       8 | 
+       9 | # You have to change this to your own strong enough mysql root password
+      10 | mysql_root_password: ""-----====>SetR00tPa$$wordH3r3!!!<====-----""
+      11 | # There .my.cnf with mysql root credentials will be installed
+      12 | mysql_user_home: ""{{ ansible_env.HOME }}""
+      13 | 
+      14 | # ensure the following parameters are set properly
+      15 | mysql_remove_remote_root: true
+      16 | mysql_remove_anonymous_users: true
+      17 | mysql_remove_test_database: true
+      18 | 
+      19 | # @see http://dev.mysql.com/doc/refman/5.7/en/server-options.html#option_mysqld_skip-show-database"
+V007STRAT-VARIABLE-NAMING-CONVENTION-017,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,compscidr/iac,350e7b8162778ad7beab8e2da8be53ea24a1127a,ansible/roles/dev/vars/main.yml,5,note,Variable 'php_memory_limit' is not prefixed with the role name (expected a 'dev_' role prefix).,91faae59fb1d892bd44b753e9877728b11ba6b7b2d4e4446ef2882a570233702,"       1 | ---
+       2 | # The following php_* vars are the documented interface of the external
+       3 | # geerlingguy.php role (imported via import_role below) and configure it
+       4 | # directly, so they intentionally do not carry a dev_ prefix.
+>>     5 | php_memory_limit: ""128M"" # noqa: var-naming[no-role-prefix]
+       6 | php_max_execution_time: ""90"" # noqa: var-naming[no-role-prefix]
+       7 | php_upload_max_filesize: ""256M"" # noqa: var-naming[no-role-prefix]
+       8 | php_default_version_debian: ""8.3"" # noqa: var-naming[no-role-prefix]
+       9 | php_packages: # noqa: var-naming[no-role-prefix]
+      10 |   - ""php{{ php_default_version_debian }}""
+      11 |   - ""php{{ php_default_version_debian }}-cli""
+      12 |   - ""php{{ php_default_version_debian }}-common""
+      13 |   - ""php{{ php_default_version_debian }}-curl""
+      14 |   - ""php{{ php_default_version_debian }}-dev""
+      15 |   - ""php{{ php_default_version_debian }}-gd""
+      16 |   - ""php{{ php_default_version_debian }}-mbstring""
+      17 |   - ""php{{ php_default_version_debian }}-sqlite3""
+      18 |   - ""php{{ php_default_version_debian }}-xml""
+      19 |   - ""php{{ php_default_version_debian }}-intl"""
+V007STRAT-VARIABLE-NAMING-CONVENTION-018,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,gdcc/dataverse-ansible,ae29ce65dd4cddd5187c2bc00aefd319b6bb4484,defaults/main.yml,5,note,Variable 'dataverse_branch' is not prefixed with the role name (expected a 'dataverse_ansible_' role prefix).,4fa5c45c550ae764a47211fac7391a32475bfb62566e48c23cb96e006bcce34d,"       1 | ---
+       2 | # dataverse/defaults/main.yml
+       3 | 
+       4 | # un-nested so we can pass them at the CLI
+>>     5 | dataverse_branch: release
+       6 | dataverse_repo: https://github.com/IQSS/dataverse.git
+       7 | # To use a dvinstall.zip from a different location than IQSS:
+       8 | # dataverse_installer_url: https://example.com/path/to/dvinstall.zip
+       9 | 
+      10 | # set this to true for troubleshooting
+      11 | any_errors_fatal: false
+      12 | 
+      13 | apache:
+      14 |   enabled: true
+      15 |   public_fqdn: 
+      16 |   ssl:
+      17 |     enabled: false
+      18 |     remote_cert: false
+      19 |     port: 443"
+V007STRAT-VARIABLE-NAMING-CONVENTION-019,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,eyulf/homelab,5cef75d48f9df9a47c8b9fe37f3c20ce7a4d2b91,ansible/roles/common/defaults/main.yml,2,note,Variable 'debian_version' is not prefixed with the role name (expected a 'common_' role prefix).,5a755bbd59f1b5068f2f3ab05f9e24bf645f825618b65e00ad72e675ea69923f,"       1 | ---
+>>     2 | debian_version: buster
+       3 | 
+       4 | main_packages_list:
+       5 |   - htop
+       6 |   - lsof
+       7 |   - net-tools
+       8 |   - screen
+       9 |   - strace
+      10 |   - telnet
+      11 |   - vim
+      12 |   - gpg
+      13 |   - rsync
+      14 |   - arping
+      15 |   - dnsutils
+      16 |   - apt-transport-https"
+V007STRAT-VARIABLE-NAMING-CONVENTION-020,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,IDR/deployment,77f7a7e438a41ca775e85b629c0f84cc636ffad7,ansible/vars/openstack-vars.yml,3,note,Variable 'idr_deployment_cloud' is not prefixed with the role name (expected a 'ansible_' role prefix).,974116e83032132e36b1b2479e537ee98621641d4010b31af7d614f8d6373e54,"       1 | # Default variables for provisoining OpenStack resources
+       2 | 
+>>     3 | idr_deployment_cloud: idr
+       4 | idr_environment_idr: idr
+       5 | # REQUIRED: List of public SSH keys
+       6 | idr_keypair_keys:
+       7 | # Change these to match the image and flavours in your OpenStack cloud
+       8 | vm_image: Rocky Linux 9
+       9 | vm_flavour: m1.large
+      10 | vm_flavour_large: m1.xlarge
+      11 | vm_flavour_medium: m1.medium
+      12 | 
+      13 | # Copy these volumes for the production IDR
+      14 | # The default is to initialise new volumes
+      15 | idr_volume_database_db_src: ""{{ omit }}""
+      16 | idr_volume_omero_data_src: ""{{ omit }}""
+      17 | idr_volume_proxy_nginxcache_src: ""{{ omit }}"""
+V007STRAT-VARIABLE-NAMING-CONVENTION-021,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,chrisshaiman/lamware,09f919635087b38354bce34c9bc48e7c6517b463,ansible/roles/cape-guests/defaults/main.yml,7,note,Variable 'cape_guest_image_dir' is not prefixed with the role name (expected a 'cape_guests_' role prefix).,30e736e4b668eee0321d2e19283007941c4d30afbc089d513c7ceaf6b3768d63,"       1 | ---
+       2 | # roles/cape-guests/defaults/main.yml
+       3 | # Default values for Cape guest VM configuration.
+       4 | # Override in ansible/vars/main.yml or via --extra-vars.
+       5 | 
+       6 | # Directory where guest qcow2 images are stored on the bare metal host.
+>>     7 | cape_guest_image_dir: /var/lib/libvirt/images
+       8 | 
+       9 | # Default guest VM resources.
+      10 | # 4 vCPUs + 8 GB RAM matches a realistic Windows 11 workstation.
+      11 | # Malware checks CPU count and RAM size to detect sandboxes —
+      12 | # low values (1-2 vCPUs, 2-4 GB) are a detection signal.
+      13 | cape_guest_memory_kb: 8388608   # 8192 MB
+      14 | cape_guest_vcpus: 4"
+V007STRAT-VARIABLE-NAMING-CONVENTION-022,ansibleguard/variable-naming-convention,variable-naming-convention,Style/policy,B-major,20863,64.86,aristanetworks/avd,05092c872036e7e90e1b4986cbfb2b36798c5a4d,ansible_collections/arista/avd/roles/build_output_folders/defaults/main.yml,5,note,Variable 'root_dir' is not prefixed with the role name (expected a 'build_output_folders_' role prefix).,30ec3b669fd034d2e34325569ee8008e4a076085004d987be86a875498ceba96,"       1 | ---
+       2 | # defaults file for build_directories
+       3 | 
+       4 | # Root directory where to build output structure
+>>     5 | root_dir: ""{{ inventory_dir }}""
+       6 | 
+       7 | # AVD configurations output
+       8 | # Main output directory
+       9 | output_dir_name: ""intended""
+      10 | output_dir: ""{{ root_dir }}/{{ output_dir_name }}""
+      11 | 
+      12 | # Output for structured YAML files:
+      13 | structured_dir_name: ""structured_configs""
+      14 | structured_dir: ""{{ output_dir }}/{{ structured_dir_name }}""
+      15 | 
+      16 | # Output for structured YAML files for CVP:
+      17 | structured_cvp_dir_name: ""cvp""
+      18 | structured_cvp_dir: ""{{ structured_dir }}/{{ structured_cvp_dir_name }}""
+      19 | "
+V007STRAT-UNNAMED-TASK-001,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,delphix/appliance-build,e6237bbdcc7f3b49d7e053f1dad8800c0b30e4cc,live-build/misc/ansible-roles/appliance-build.dct-common/tasks/main.yml,18,note,A task has no name:,d81984840fc8906c24f3843233a4c17f47fe4179b23ed7ca2dfc3485b35ddc46,"       4 | # Licensed under the Apache License, Version 2.0 (the ""License"");
+       5 | # you may not use this file except in compliance with the License.
+       6 | # You may obtain a copy of the License at
+       7 | #
+       8 | #     http://www.apache.org/licenses/LICENSE-2.0
+       9 | #
+      10 | # Unless required by applicable law or agreed to in writing, software
+      11 | # distributed under the License is distributed on an ""AS IS"" BASIS,
+      12 | # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      13 | # See the License for the specific language governing permissions and
+      14 | # limitations under the License.
+      15 | #
+      16 | 
+      17 | ---
+>>    18 | - apt:
+      19 |     name: delphix-dct
+      20 |     state: present"
+V007STRAT-UNNAMED-TASK-002,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,snowdrop/k8s-infra,0a9fe0fb57bd9759833bb9974d5022d945b2647c,ansible/ansible_collections/snowdrop/godaddy/roles/dns/tasks/main.yml,3,note,A task has no name:,5b982f163b4af649dd16517b3f144d4a98a9fa9f23afbf96f75dadaabdb35753,"       1 | ---
+       2 | # tasks file for dns
+>>     3 | - include_tasks: create.yml
+       4 |   when: ""state is defined and state == 'present'""
+       5 | 
+       6 | - include_tasks: remove.yml
+       7 |   when: ""state is defined and state == 'absent'""
+       8 | ..."
+V007STRAT-UNNAMED-TASK-003,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,ceph/ceph-ansible,6148fd9a7eff6195ccdf8702ca0f48a7022e6019,infrastructure-playbooks/untested-by-ci/make-osd-partitions.yml,67,note,A task has no name:,28821910a6a6a639cda07c4624499948e013af42e1cc6ad00b937d7632bcbb86,"      53 | 
+      54 |   - name: Erase all previous partitions(dangerous!!!)
+      55 |     ansible.builtin.shell: sgdisk --zap-all -- /dev/{{item.device_name}}
+      56 |     with_items: ""{{ devices }}""
+      57 | 
+      58 |   - name: Make osd partitions
+      59 |     ansible.builtin.shell: >
+      60 |            sgdisk --new={{item.1.index}}:0:+{{item.1.size}} ""--change-name={{item.1.index}}:ceph {{item.1.type}}""
+      61 |            ""--typecode={{item.1.index}}:{% if item.1.type=='data' %}{{data_typecode}}{% else %}{{journal_typecode}}{% endif %}""
+      62 |            --mbrtogpt -- /dev/{{item.0.device_name}}
+      63 |     with_subelements:
+      64 |     - ""{{ devices }}""
+      65 |     - partitions
+      66 | 
+>>    67 |   - set_fact:
+      68 |       owner: 167
+      69 |       group: 167
+      70 |     when: ansible_facts['os_family'] == ""RedHat""
+      71 |   
+      72 |   - set_fact:
+      73 |       owner: 64045
+      74 |       group: 64045
+      75 |     when: ansible_facts['os_family'] == ""Debian""
+      76 | 
+      77 |   - name: Change partitions ownership
+      78 |     ansible.builtin.file:
+      79 |       path: ""/dev/{{item.0.device_name}}{{item.1.index}}""
+      80 |       owner: ""{{ owner | default('root')}}""
+      81 |       group: ""{{ group | default('disk')}}"""
+V007STRAT-UNNAMED-TASK-004,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,AtlasOfLivingAustralia/ala-install,aa2070a840f5debc3b78095c31b58004d04d2063,ansible/docker-swarm-main.yml,2,note,A task has no name:,752eb86d7f6d40930ca46cb0d73ac4d0937910a0d8da7dc55ac5a0c49477516d,"       1 | ---
+>>     2 | - import_playbook: docker-swarm.yml
+       3 | - import_playbook: docker-common.yml
+       4 | - import_playbook: auth-docker.yml
+       5 | - import_playbook: cassandra-docker.yml
+       6 | - import_playbook: namematching-service-docker.yml
+       7 | - import_playbook: sensitive-data-service-docker.yml
+       8 | - import_playbook: solrcloud-docker.yml
+       9 | - import_playbook: collectory-docker.yml
+      10 | - import_playbook: bie-hub-docker.yml
+      11 | - import_playbook: bie-index-docker.yml
+      12 | - import_playbook: species-list-docker.yml
+      13 | - import_playbook: biocache-hub-standalone-docker.yml
+      14 | - import_playbook: biocache-service-clusterdb-docker.yml"
+V007STRAT-UNNAMED-TASK-005,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,CMSgov/bluebutton-web-deployment,ef2da5200c4d70c9db49e682ae28cd52ca92c995,roles/app_install/tasks/main.yml,94,note,A task has no name:,9c1715a7689d5d0bcc58ea96d225c1fde5a643028b7f49f73f7f44d8c4fa8e8b,"      80 |     group: ""{{ app_group }}""
+      81 |     mode: 0755
+      82 | 
+      83 | - name: ""install requirements""
+      84 |   become_user: ""{{ remote_admin_account }}""
+      85 |   become: yes
+      86 |   shell: |
+      87 |     source {{ app_py_virtual_env }}/bin/activate
+      88 |     python3.12 -m pip install --upgrade pip setuptools wheel
+      89 |     TMPDIR=/pip-tmp pip3.12 install -r requirements/requirements.txt --require-hashes --no-deps --prefer-binary
+      90 |   args:
+      91 |     chdir: ""{{ app_pyapp_home }}/{{ common_project_name }}""
+      92 |   register: out
+      93 | 
+>>    94 | - debug: var=out.stdout_lines
+      95 | 
+      96 | - name: ""remove pip tmp directory""
+      97 |   become_user: ""{{ remote_admin_account }}""
+      98 |   become: yes
+      99 |   ansible.builtin.file:
+     100 |     path: /pip-tmp
+     101 |     state: absent
+     102 | 
+     103 | # Use task directly rather than importing from deprecated location
+     104 | - name: ""Create a back-end app certstore""
+     105 |   become_user: ""{{ remote_admin_account }}""
+     106 |   become: yes
+     107 |   file:
+     108 |     dest: ""{{ app_pyapp_home }}/certstore"""
+V007STRAT-UNNAMED-TASK-006,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,oravirt/ansible-oracle,9bffeb3b188b575ead0b794bf240f7563187ee82,playbooks/os_update_reboot.yml,22,note,A task has no name:,cbd15399f22dd0cd53dc1b4b237ed3c46f36c5fbb10b6f13e91b0fb4057cd8ae,"       8 |   become: true
+       9 |   gather_facts: false
+      10 |   tasks:
+      11 |     - name: Wait 300 seconds for Connection
+      12 |       ansible.builtin.wait_for_connection:
+      13 |         timeout: 300
+      14 | 
+      15 |     - name: yum update yum packages 1st
+      16 |       ansible.builtin.package:
+      17 |         # noqa package-latest
+      18 |         name: yum*
+      19 |         state: latest
+      20 |       register: yumyumstate
+      21 | 
+>>    22 |     - ansible.builtin.debug:
+      23 |         msg: ""{{ yumyumstate.results }}""
+      24 |     # noqa name[missing]
+      25 | 
+      26 |     - name: Kernel Update with later Reboot
+      27 |       ansible.builtin.package:
+      28 |         # noqa package-latest
+      29 |         name: kernel-uek
+      30 |         state: latest
+      31 |       register: kernelstate
+      32 | 
+      33 |     - ansible.builtin.debug:  # noqa name[missing]
+      34 |         msg: ""{{ kernelstate.results }}""
+      35 | 
+      36 | "
+V007STRAT-UNNAMED-TASK-007,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,gdcc/dataverse-ansible,ae29ce65dd4cddd5187c2bc00aefd319b6bb4484,tasks/custom_sampledata.yml,12,note,A task has no name:,5d8cef6336b5451c62a39252e268d207c5b797c3a36163e9f41173418dd6f11f,"       1 | ---
+       2 | 
+       3 | - name: begin custom sampledata task
+       4 |   debug:
+       5 |     msg: '##### CUSTOM SAMPLEDATA #####'
+       6 | 
+       7 | - name: does the sampledata directory exist?
+       8 |   stat:
+       9 |     path: ""{{ dataverse.custom_sampledata.custom_sampledir }}""
+      10 |   register: sampledir_exists
+      11 | 
+>>    12 | - ansible.builtin.import_tasks: dataverse-sampledata-examples.yml
+      13 |   when: sampledir_exists.stat.exists == false
+      14 | 
+      15 | - ansible.builtin.import_tasks: dataverse-apitoken.yml
+      16 |     
+      17 | - name: publish root dataverse
+      18 |   shell: 'curl -s --insecure -u {{ api_token }}: -X POST -H ""In-Progress: false"" --data-binary @- http://localhost:8080/dvn/api/data-deposit/v1.1/swordv2/edit/dataverse/root'
+      19 |   ignore_errors: yes
+      20 | 
+      21 | - name: get dv-root.json
+      22 |   get_url:
+      23 |     url: '{{ dataverse_raw_repo }}/develop/scripts/api/data/dv-root.json'
+      24 |     dest: ""{{ playbook_dir }}/""
+      25 | 
+      26 | - name: grant authusers add-on-root"
+V007STRAT-UNNAMED-TASK-008,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,redhatci/ansible-collection-redhatci-ocp,4b12e633ee5215ec02c302032fffb3d5f3e37425,roles/microshift_generate_iso/tasks/install.yml,2,note,A task has no name:,1b056d28f5ce36b14577e3199c1c302c16acf83ecee94f5c82e58a80f490fdea,"       1 | ---
+>>     2 | - ansible.builtin.include_tasks: install_packages.yml  # noqa name[missing]
+       3 | - ansible.builtin.include_tasks: create_dirs.yml  # noqa name[missing]
+       4 | - ansible.builtin.include_tasks: register_source.yml  # noqa name[missing]
+       5 | - ansible.builtin.include_tasks: creating_rhel_edge_image.yml  # noqa name[missing]
+       6 | - ansible.builtin.include_tasks: creating_iso.yml  # noqa name[missing]
+       7 | ..."
+V007STRAT-UNNAMED-TASK-009,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,kubernetes-sigs/kubespray,9ee6f9b27981b251d77302fd6cf631f330e0ec39,roles/container-engine/docker/tasks/main.yml,158,note,A task has no name:,de6ff24371e543accf862cf5b8557e98cbf77c75a1b34db99e6e6ccff7ea23b9,"     144 |   changed_when: false
+     145 |   with_items:
+     146 |     - ""{{ containerd_package }}""
+     147 |     - docker-ce
+     148 |     - docker-ce-cli
+     149 | 
+     150 | - name: Ensure docker started, remove our config if docker start failed and try again
+     151 |   block:
+     152 |     - name: Ensure service is started if docker packages are already present
+     153 |       service:
+     154 |         name: docker
+     155 |         state: started
+     156 |       when: docker_task_result is not changed
+     157 |   rescue:
+>>   158 |     - debug:  # noqa name[missing]
+     159 |         msg: ""Docker start failed. Try to remove our config""
+     160 |     - name: Remove kubespray generated config
+     161 |       file:
+     162 |         path: ""{{ item }}""
+     163 |         state: absent
+     164 |       with_items:
+     165 |         - /etc/systemd/system/docker.service.d/http-proxy.conf
+     166 |         - /etc/systemd/system/docker.service.d/docker-options.conf
+     167 |         - /etc/systemd/system/docker.service.d/docker-dns.conf
+     168 |         - /etc/systemd/system/docker.service.d/docker-orphan-cleanup.conf
+     169 |       notify: Restart docker
+     170 | 
+     171 | - name: Flush handlers so we can wait for docker to come up
+     172 |   meta: flush_handlers"
+V007STRAT-UNNAMED-TASK-010,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,vrk-kpa/api-catalog,e81b1cb5a261a290a78eafae67f853efc8f5f7a3,ansible/roles/ckan-extension/tasks/main.yml,43,note,A task has no name:,12f6cca6a9c76591d9e563b2ba4660cd24bf196a06fad8f6d01b1ec583ffca0d,"      29 |   when: deployment_environment_id == ""vagrant""
+      30 | 
+      31 | #
+      32 | 
+      33 | # Two conventions in extension requirements files
+      34 | 
+      35 | - name: Register extension requirements.txt
+      36 |   stat: path=""{{ ckanext_sync_path }}/{{ ckanext }}/requirements.txt""
+      37 |   register: requirements
+      38 | 
+      39 | - name: Install extension requirements
+      40 |   pip: requirements=""{{ ckanext_sync_path }}/{{ ckanext }}/requirements.txt"" virtualenv={{ virtualenv}} chdir=""{{ ckanext_sync_path }}/{{ ckanext }}""
+      41 |   when: requirements.stat.exists
+      42 | 
+>>    43 | - block:
+      44 |     - name: Register extension dev-requirements.txt
+      45 |       stat: path=""{{ ckanext_sync_path }}/{{ ckanext }}/dev-requirements.txt""
+      46 |       register: devrequirements
+      47 | 
+      48 |     - name: Install extension dev requirements
+      49 |       pip: requirements=""{{ ckanext_sync_path }}/{{ ckanext }}/dev-requirements.txt"" virtualenv={{ virtualenv}}
+      50 |       when: devrequirements.stat.exists
+      51 |   when: deployment_environment_id == ""vagrant""
+      52 | 
+      53 | - name: Link extension sources
+      54 |   pip:
+      55 |     virtualenv: ""{{ virtualenv }}""
+      56 |     name: ""{{ ckanext_sync_path }}/{{ ckanext }}""
+      57 |     editable: yes"
+V007STRAT-UNNAMED-TASK-011,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,anokfireball/homelab-as-code,d8fe576217e433a746fff052b772c949ee6f1e50,ansible/cluster/roles/k8s_cluster/tasks/join.yaml,72,note,A task has no name:,a61ab10f8a6ed521e88f2775af9584e6d99f9b66a6c55540a956bde37e4d9687,"      58 |       set_fact:
+      59 |         kubeadm_join_command_worker: >
+      60 |           kubeadm join {{ vip }}:6443
+      61 |             --token {{ kubeadm_token.stdout }}
+      62 |             --discovery-token-ca-cert-hash sha256:{{ ca_cert_hash.stdout }}
+      63 | 
+      64 | # https://github.com/kube-vip/kube-vip/issues/684
+      65 | - name: fetch super-admin.conf from initial control plane node
+      66 |   fetch:
+      67 |     src: /etc/kubernetes/super-admin.conf
+      68 |     dest: /tmp/super-admin.conf
+      69 |     flat: true
+      70 |   when: inventory_hostname == ""controlplane1""
+      71 | 
+>>    72 | - when: ""'controlplane' in group_names""
+      73 |   block:
+      74 |     - name: distribute super-admin.conf to all control plane nodes
+      75 |       copy:
+      76 |         src: /tmp/super-admin.conf
+      77 |         dest: /etc/kubernetes/super-admin.conf
+      78 |       when: inventory_hostname != ""controlplane1""
+      79 | 
+      80 |     - name: kubeadm join
+      81 |       command: ""{{ hostvars['controlplane1'].kubeadm_join_command_controlplane }}""
+      82 |       when: inventory_hostname != ""controlplane1"" and k8s_join
+      83 |       changed_when: true
+      84 | 
+      85 | - when: ""'worker' in group_names""
+      86 |   block:"
+V007STRAT-UNNAMED-TASK-012,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,ergho/homelab-ops,973ea65aca62d259f296153f5f989cc2013f2294,ansible/playbooks/main.yaml,1,note,A task has no name:,5e1ac61cc556464604a2027bb7a3fc060e40390150faf40e8a2164ef756e4085,">>     1 | - import_playbook: timezone.yaml
+       2 | - import_playbook: users.yaml
+       3 | - import_playbook: sshd.yaml
+       4 | - import_playbook: hardening.yaml
+       5 | - import_playbook: container-runtime.yaml
+       6 | - import_playbook: kubernetes-install.yaml
+       7 | - import_playbook: kubernetes-cluster.yaml
+       8 |   #- import_playbook: node-exporter.yaml"
+V007STRAT-UNNAMED-TASK-013,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,ansible/ansible-zuul-jobs,acb7ddbcd03b090e8db140d379e656559a37cf63,playbooks/ansible-cloud/aws/pre.yaml,16,note,A task has no name:,1e7bc67d4009ba8ef52b0bd9b31562d86385096e8fc471d9cef376985977b45c,"       2 | - hosts: controller
+       3 |   tasks:
+       4 |     - name: Install binary dependencies
+       5 |       include_role:
+       6 |         name: bindep
+       7 |       vars:
+       8 |         bindep_dir: ""{{ zuul.project.src_dir }}""
+       9 | 
+      10 |     - name: Fetch the aws_session file from the controller
+      11 |       fetch:
+      12 |         flat: true
+      13 |         src: ""/tmp/aws_session.json""
+      14 |         dest: '{{ zuul.executor.work_root }}/'
+      15 | 
+>>    16 |     - import_role:
+      17 |         name: ansible-test-provider
+      18 |       vars:
+      19 |         ansible_test_provider_name: aws
+      20 |         # The location of a copy of ansible-2.10
+      21 |         ansible_test_provider_root_dir: ""~/{{ zuul.projects['github.com/ansible/ansible'].src_dir }}""
+      22 |         ansible_test_provider_passwords_secret_dir: '{{ zuul.executor.work_root }}'"
+V007STRAT-UNNAMED-TASK-014,ansibleguard/unnamed-task,unnamed-task,Style/policy,B-major,9301,77.76,vexxhost/atmosphere,dd1b09a6888b7f350a4f24d1f1baea2612586953,playbooks/ceph.yml,35,note,A task has no name:,83805920ca34a305417d48ad315c686431451693dcb24d0061560d664bcbc758,"      21 |           The ""atmosphere_ceph_enabled"" variable is no longer supported.
+      22 |           Please use the ""atmosphere_storage"" variable to configure storage
+      23 |           backends instead. Refer to the storage configuration documentation
+      24 |           for migration instructions.
+      25 |       when: atmosphere_ceph_enabled is defined
+      26 |   roles:
+      27 |     - role: defaults
+      28 |   post_tasks:
+      29 |     - name: Set a fact with the ""atmosphere_images"" for other plays
+      30 |       ansible.builtin.set_fact:
+      31 |         atmosphere_images: ""{{ atmosphere_images }}""
+      32 |       tags:
+      33 |         - always
+      34 | 
+>>    35 | - import_playbook: vexxhost.ceph.site
+      36 |   vars:
+      37 |     containerd_pause_image: ""{{ atmosphere_images['pause'] }}""
+      38 | 
+      39 | - hosts: ""{{ target | default('all') }}""
+      40 |   gather_facts: false
+      41 |   tasks:
+      42 |     - name: Ensure RBD kernel module is loaded
+      43 |       become: true
+      44 |       community.general.modprobe:
+      45 |         name: rbd
+      46 |         persistent: present"

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "generated_on": "2026-10-23",
+  "source_run_id": "v0071-rerun-2026-10-22",
+  "source_tool_commit": "ad1d60023d237b6e1cfa53466e81407e3f329229",
+  "source_archive": {
+    "name": "v0071-rerun-2026-10-22-results.tar.gz",
+    "recorded_sha256": "b89d10f7c37f7093a66162323b68f6e34ae5c76599360d759607003347fc8c66",
+    "archive_checksum_recomputed": false
+  },
+  "input_sha256": {
+    "all-ansible-lint-occurrences.csv": "8df733bbff524f2a9be0de4d575f3f89ec035945d276102d105ffe64b375259d",
+    "all-internal-source-occurrences.csv": "71be3560cfb8194aa50d63a0ce323737e35ca9aaec0d01004d114b3bd995cecd",
+    "repository-summary.csv": "42c1aced1402af454ff401da3d990f407abcd8e1ee0b2e9bc366526dae1f0070"
+  },
+  "implementation": {
+    "path": "scripts/compare_with_ansible_lint.py",
+    "sha256": "dc2b2635aa91030652472e396254e1aac267b37a9bc963b69a23a114c1f27fbb"
+  },
+  "corrected_output": {
+    "path": "rule-pairs-corrected-2026-10-23.csv",
+    "sha256": "d89bde94509b10e016cb18e92ecd496827cf9885d4293551e69e492f9ad5ca6c"
+  },
+  "complete_repositories": 171,
+  "pairs": 9,
+  "changes": [
+    {
+      "ansibleguard_rule": "non-idempotent-command",
+      "field": "ansible_lint_only",
+      "historical": "3188",
+      "corrected": "3187"
+    },
+    {
+      "ansibleguard_rule": "unnamed-task",
+      "field": "ansible_lint_only",
+      "historical": "751",
+      "corrected": "736"
+    }
+  ],
+  "validation": {
+    "focused_pytest_passed": 16,
+    "all_pairs_reconcile": true
+  },
+  "limits": [
+    "Related rule predicates are not necessarily equivalent",
+    "Same-line matching is a heuristic",
+    "Overlap is not precision or recall"
+  ]
+}

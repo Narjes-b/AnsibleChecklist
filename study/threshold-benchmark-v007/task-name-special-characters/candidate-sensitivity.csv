@@ -1,0 +1,3 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+task_name_special_chars,inconsistent-naming-convention,q1;q2_median;q3;tukey_upper_fence;p80;p90;p95,0,128220,2955,0.02304633,193,120,0.62176166
+task_name_special_chars,inconsistent-naming-convention,current,3,128220,52,0.00040555,193,21,0.10880829

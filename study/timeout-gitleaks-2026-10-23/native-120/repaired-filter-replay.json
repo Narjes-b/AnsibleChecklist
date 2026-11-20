@@ -1,0 +1,18 @@
+{
+  "purpose": "Replay same complete redacted native report through repaired filter; not tool accuracy",
+  "eligible_for_performance_scoring": false,
+  "native_report_sha256": "bdfd5a49a7b4e14eed2107b8ed0e1781406e05dd1f24e9da675b70f3b62b7987",
+  "implementation_sha256": "826c014f4479f5ff99eca918af04642c4734360112cb23ce13631fdf435646b3",
+  "native_findings": 81598,
+  "retained": 80058,
+  "suppressed": 1540,
+  "suppression_reasons": {
+    "public-key-or-verification-material": 1540
+  },
+  "filter_seconds": 21.564185341994744,
+  "source_read_calls": 35,
+  "distinct_files": 35,
+  "source_bytes_read": 469203180,
+  "file_read_ledger_sha256": "c3ac2e7fa267d3305d5a3d8debcb31764cd56498047f3403178ee3557eb45180",
+  "limit": "Complete old filter did not finish; exact behavioral parity established on fixed 69-row/all-file subset and policy regressions, not every native row"
+}

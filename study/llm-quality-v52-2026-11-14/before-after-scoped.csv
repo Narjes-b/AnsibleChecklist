@@ -1,0 +1,5 @@
+metric,before_count,after_count,denominator,before_percent,after_percent,percentage_point_change
+Accepted outputs,45,47,48,93.75,97.92,4.17
+Decision agrees with unchanged AI reference,41,44,48,85.42,91.67,6.25
+Adequate complete explanation,29,41,48,60.42,85.42,25.0
+Adequate explanation plus supporting citations,21,38,48,43.75,79.17,35.42

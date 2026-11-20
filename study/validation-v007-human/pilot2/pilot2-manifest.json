@@ -1,0 +1,103 @@
+{
+  "bundle_problems": 0,
+  "dropped_after_selection": [
+    [
+      "9664a24511eafc78b96da6d1bff40b9bcd722d64839cc80d2f2adb57f6e2255e",
+      "git show f49fc24f6818ea960a28aa2e41910532c86214f9:ansible/extras.yml failed in /home/aymmzn/Documents/AnsibleChecklist/s"
+    ],
+    [
+      "f7036d71841e3ea9af50472f1b87776a2730a9992c312ab71973b011d3ed60dc",
+      "git show -s --format=%B f49fc24f6818ea960a28aa2e41910532c86214f9 failed in /home/aymmzn/Documents/AnsibleChecklist/study"
+    ],
+    [
+      "7fb9a561c2f9f84d6a6234f52eb87f8e00f8c17369163bd480c2fbc709bf261b",
+      "git show 131734f2c007d0009a7fc218849f4ede66c7c899:roles/nexus/tasks/declare-script.yml failed in /home/aymmzn/Documents/"
+    ],
+    [
+      "bf37465189b8efaab391265875cc01b21e9018ed82e81d394483e7e5d8c7f1e9",
+      "git show f49fc24f6818ea960a28aa2e41910532c86214f9:ansible/roles/lustre/defaults/main.yml failed in /home/aymmzn/Document"
+    ]
+  ],
+  "exclusions": {
+    "merge commit": 42,
+    "non-Ansible YAML": 340,
+    "pilot-1 item": 275,
+    "sibling of an earlier candidate": 40160,
+    "vendored third-party content": 2192
+  },
+  "identity": "v007-pilot2-v1",
+  "items": 171,
+  "per_family": {
+    "maintainability_complexity": 24,
+    "objective_correctness": 25,
+    "review_history": 24,
+    "security": 24,
+    "structure_reuse": 24,
+    "style_policy": 25,
+    "variable_reference_reasoning": 25
+  },
+  "per_rule": {
+    "ansibleguard/become-scope-too-broad": 4,
+    "ansibleguard/commit-message-format": 20,
+    "ansibleguard/complex-expression": 3,
+    "ansibleguard/complex-playbook": 2,
+    "ansibleguard/credentials-leaking-in-log": 4,
+    "ansibleguard/default-credentials": 4,
+    "ansibleguard/deprecated-modules": 2,
+    "ansibleguard/duplicate-task-names": 4,
+    "ansibleguard/duplicated-code": 5,
+    "ansibleguard/excessive-nesting": 2,
+    "ansibleguard/high-coupling": 2,
+    "ansibleguard/incomplete-task": 2,
+    "ansibleguard/inconsistent-naming-convention": 4,
+    "ansibleguard/insecure-permissions": 4,
+    "ansibleguard/insufficient-modularization": 5,
+    "ansibleguard/invalid-numeric-value": 1,
+    "ansibleguard/invalid-task-attribute-type": 4,
+    "ansibleguard/large-play": 2,
+    "ansibleguard/large-playbook": 2,
+    "ansibleguard/large-task": 2,
+    "ansibleguard/long-statement": 4,
+    "ansibleguard/long-task-name": 4,
+    "ansibleguard/loop-legacy-syntax": 3,
+    "ansibleguard/missing-abstraction": 5,
+    "ansibleguard/missing-bool-filters": 1,
+    "ansibleguard/missing-file-extension": 1,
+    "ansibleguard/missing-handler": 1,
+    "ansibleguard/missing-release-note": 1,
+    "ansibleguard/missing-test-update": 2,
+    "ansibleguard/missing-validate-certs": 3,
+    "ansibleguard/non-idempotent-command": 3,
+    "ansibleguard/overriden-keys": 1,
+    "ansibleguard/overriding-facts": 3,
+    "ansibleguard/plaintext-sensitive-variable": 3,
+    "ansibleguard/read-only-command-change": 3,
+    "ansibleguard/redirected-module": 3,
+    "ansibleguard/redundant-default-value": 1,
+    "ansibleguard/role-variable-precedence-collision": 2,
+    "ansibleguard/shell-environment-export": 1,
+    "ansibleguard/shell-instead-of-module": 2,
+    "ansibleguard/silent-error-suppression": 3,
+    "ansibleguard/undocumented-complex-task": 2,
+    "ansibleguard/unexpected-task-location": 1,
+    "ansibleguard/unguarded-variable": 5,
+    "ansibleguard/unnamed-play": 4,
+    "ansibleguard/unnamed-task": 4,
+    "ansibleguard/unnecessary-abstraction": 5,
+    "ansibleguard/unpinned-ansible-dependency": 3,
+    "ansibleguard/unsafe-file-write": 2,
+    "ansibleguard/unscoped-shell-variable": 4,
+    "ansibleguard/unstructured-module": 3,
+    "ansibleguard/untested-override-change": 1,
+    "ansibleguard/unused-handler": 1,
+    "ansibleguard/unused-registered-variable": 4,
+    "ansibleguard/variable-use-before-definition": 4
+  },
+  "pilot1_overlap_candidates_excluded": 275,
+  "run_dir": "study/runs/v0071-full-2026",
+  "seed": "v007-pilot2-20261016",
+  "sha256": {
+    "pilot2-master.csv": "14bf94af9589963afd5df4a1e888ddc5e838c8a5ce624b19e643e4c7cc49fd9b",
+    "pilot2.csv": "59dd18315cfbe7c4424af576676d8ccfbc7f0437e4552969d58a9360ff927847"
+  }
+}

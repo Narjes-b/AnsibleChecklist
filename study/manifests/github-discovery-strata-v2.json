@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "criterion": "explicit Ansible topic or Ansible Galaxy source",
+  "use": "primary enrichment stratum; weak rows remain preserved for sensitivity analysis",
+  "all_candidates": 667044,
+  "strong_candidates": 27341,
+  "weak_candidates": 639703,
+  "unclassified_candidates": 0,
+  "strong_metadata_eligible": 17630,
+  "weak_metadata_eligible": 188041,
+  "strong_retained_percent": 4.1
+}

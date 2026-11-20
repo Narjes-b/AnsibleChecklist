@@ -1,0 +1,10 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: set a fact
+      set_fact:
+        feature_enabled: true
+    - name: use the fact in a native Ansible expression
+      debug:
+        msg: enabled
+      when: feature_enabled | bool

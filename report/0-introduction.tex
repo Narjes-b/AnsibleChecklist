@@ -1,0 +1,104 @@
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{Context and Problem}
+Infrastructure as Code makes deployment logic reviewable and repeatable, but
+Ansible repositories mix YAML structure, Jinja expressions, inventory values,
+role conventions, dynamic includes, runtime facts, and external collections.
+A location-only linter therefore cannot always distinguish a defect from a
+value defined on another valid execution path. Conversely, a failed provider
+must not be interpreted as evidence that a repository is clean.
+
+Existing tools cover important parts of this problem. ansible-lint checks
+Ansible syntax and established best practices; GitLeaks searches text and
+history for secret patterns. Neither is replaced by this work. The missing
+piece is a repository-level semantic and evidence layer that preserves each
+provider's result, reasons about Ansible-specific scope, and emits a stable
+contract suitable for comparisons and research analysis.
+
+\section{Objectives and Research Questions}
+The internship objective was to create that layer from first principles and
+evaluate it without overstating what the collected data proves. Four research
+questions guide the report:
+\begin{description}
+  \item[RQ1 -- Coverage.] Which review-checklist concerns and Ansible quality
+    mechanisms can be automated, approximated, or must remain manual?
+  \item[RQ2 -- Reliability.] Can frozen repositories be scanned while
+    preserving partial provider runs and parser failures as diagnostics?
+  \item[RQ3 -- Evolution.] Which semantic changes are visible in controlled
+    paired runs, including the v0.0.7 role-contract correction?
+  \item[RQ4 -- Variable semantics.] Why does \code{unguarded-variable} fire,
+    and which cases are unresolved, uncertain, ordered conflicts, or protected
+    by definitions and guards?
+\end{description}
+
+\section{Contributions}
+This work contributes:
+\begin{enumerate}
+  \item a traceable mapping of 38 review criteria: 15 fully automated, 18
+    partially represented, and 5 outside static-analysis scope;
+  \item a Python pipeline with tolerant YAML/Jinja parsing, artifact
+    classification, internal rules, and repository symbol/execution graphs;
+  \item isolated integration of ansible-lint and GitLeaks, including explicit
+    completed, partial, unavailable, and failed provider outcomes;
+  \item canonical occurrence and provider-evidence models, a packaged
+    output-v3 JSON Schema, and full/local/commit/PR workflows;
+  \item a reproducible 149-repository historical evaluation, a current
+    207-repository diagnostic run, a paired role-contract comparison, and a
+    complete numerical-threshold benchmark with a frozen review protocol.
+\end{enumerate}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw=ansblue,rounded corners=3pt,fill=anspaper,
+    text width=3.55cm,minimum height=1.35cm,align=center,font=\small},
+  arrow/.style={-{Latex[length=2.2mm]},thick,ansblue},
+  node distance=1.0cm and .45cm]
+  \node[box] (design) {\textbf{Design}\\38 checklist criteria\\76 analysis concepts};
+  \node[box,right=of design] (system) {\textbf{Implementation}\\parsing, semantic analysis\\and provider evidence};
+  \node[box,right=of system] (study) {\textbf{Evaluation}\\frozen repositories\\paired runs and review};
+  \draw[arrow] (design)--(system);
+  \draw[arrow] (system)--(study);
+  \node[font=\footnotesize,text=ansgray,align=center,
+    below=5mm of system] {Observed occurrences are detector evidence; independent human labels are a separate validation step.};
+\end{tikzpicture}
+\caption{The report's design, implementation, and evaluation path. The numbers describe different units and must not be combined.}
+\label{fig:report_roadmap}
+\end{figure}
+
+\section{Scope and Claim Boundary}
+The reported numbers describe the frozen study population and recorded commit
+SHAs. Canonical occurrences are static-analysis evidence, not automatically
+human-confirmed defects. \code{CONFIRMED} is a detector status, not a manual
+true-positive label. Because a complete, independently adjudicated label set
+and a seeded-defect corpus are absent, this report does not claim general
+precision or recall. The single-agent diagnostic ratios in
+Chapter~\ref{chap:v007} are explicitly limited to their sampled units.
+
+\section{Evidence Hierarchy and Version Policy}
+The report follows one evidence hierarchy. Implementation facts are supported
+by source code, schemas and automated tests. Execution facts are supported by
+logs, health records and frozen outputs. Distribution claims are supported by
+the frozen v0.0.6 and v0.0.7 aggregations with their distinct populations.
+Mechanism explanations additionally require source sampling. Human accuracy
+claims require an independent labelled
+benchmark and therefore remain future work.
+
+The current empirical focus is v0.0.7. The v0.0.6 run remains a fully
+documented historical study, with v0.0.5 retained only for its paired
+same-population comparison. Different repository and metric populations are
+labelled and are never combined into one accuracy estimate.
+
+\section{Report Structure}
+Chapter~\ref{chap:literature} reviews the research and tool landscape.
+Chapter~\ref{chap:methodology} defines the construction and evaluation method.
+Chapter~\ref{chap:implementation} documents the implementation and verification
+strategy. Chapter~\ref{chap:results} preserves the v0.0.6 study and controlled
+v0.0.5 comparator. Chapter~\ref{chap:v007} presents current execution,
+variable-resolution review, and threshold-benchmark evidence.
+Chapter~\ref{chap:discussion} interprets that evidence and its validity limits.
+Chapter~\ref{chap:conclusion} answers the research questions and defines the
+next validation work. Appendices~\ref{chap:rules}--\ref{chap:users_outputs}
+retain the complete rule catalogue, operational and reproducibility details,
+and the field-level output guide.

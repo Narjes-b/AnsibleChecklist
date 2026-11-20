@@ -1,0 +1,12 @@
+category,internal_all,internal_required,ansible_lint,gitleaks,review_range_not_comparable
+compatibility,4660,4660,21437,0,0
+correctness,37718,1462,10149,0,0
+dependencies,400,400,0,0,0
+documentation,4162,1098,0,0,141
+lint,0,0,23898,0,0
+maintainability,26972,26972,479,0,0
+reliability,2045,2045,24,0,0
+security,6799,6369,2688,1155,0
+structure,1367,1367,0,0,0
+style,116151,19857,23620,0,0
+testing,1449,0,0,0,18

@@ -1,0 +1,22 @@
+{
+  "metric_id": "long_task_name_chars",
+  "pilot_band_counts": {
+    "B1_low": 15,
+    "B2_lower_middle": 15,
+    "B3_upper_middle": 15,
+    "B4_high": 15,
+    "B5_current_positive_tail": 15
+  },
+  "pilot_prediction_counts": {
+    "false": 60,
+    "true": 15
+  },
+  "pilot_projects": 60,
+  "pilot_rows": 75,
+  "pilot_sha256": "55191da81aa69fa97ec96872132f87d7f6fa4706f2b52da98ffc755f0c63b6a8",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 881,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

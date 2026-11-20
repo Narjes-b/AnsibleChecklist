@@ -1,0 +1,18 @@
+{
+  "window": 9,
+  "scoped": 42,
+  "window_available": 44,
+  "scoped_available": 44,
+  "window_decision": 19,
+  "scoped_decision": 42,
+  "controlled_window": 4,
+  "controlled_scoped": 24,
+  "real_window": 5,
+  "real_scoped": 18,
+  "requested": 8,
+  "behavior": 8,
+  "blocked": 4,
+  "spontaneous": 0,
+  "tests": 1676,
+  "skips": 2
+}

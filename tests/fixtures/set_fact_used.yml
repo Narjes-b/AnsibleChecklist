@@ -1,0 +1,9 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: t1
+      set_fact:
+        used_var: foo
+    - name: t2
+      debug:
+        msg: "{{ used_var }}"

@@ -1,0 +1,482 @@
+{
+  "evaluation-missing-validate-certs-1/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "evaluation-missing-validate-certs-5/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "real-missing-validate-certs-0/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "real-missing-validate-certs-4/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "evaluation-unguarded-variable-1/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "real-unguarded-variable-0/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "real-unguarded-variable-1/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "evaluation-credential-log-exposure-0/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend fact summary and free model reasoning agree with the unchanged AI source judgment; decisive parameter/reference/definition lines are cited."
+  },
+  "real-insecure-permissions-3/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "no",
+    "notes": "Correctly keeps actual permissions unknown and acknowledges preserved existing mode; citation only points to path, not a mode/complete absence argument."
+  },
+  "real-insecure-permissions-4/scoped": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Reasoning misreads unquoted decimal 2750 as octal 2750 and denies violation despite correct backend summary showing octal 5276/world-write."
+  },
+  "real-credential-log-exposure-5/scoped": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Structured abstention is appropriate but reasoning invents use of no_log, absent from this task; citation identifies the actual sensitive module call."
+  },
+  "evaluation-credential-log-exposure-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported decision contradicts explicitly false no_log and the narrative risk; citation omits effective control."
+  },
+  "evaluation-missing-validate-certs-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Summary says TLS disabled despite literal true and contrary reasoning; cites module rather than setting."
+  },
+  "evaluation-missing-validate-certs-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Definite disabled-TLS summary contradicts unknown runtime setting and unsupported decision; wrong setting line."
+  },
+  "evaluation-unguarded-variable-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Denies prior unconditional set_fact definition; cites only use, not the supplied definition."
+  },
+  "real-credential-log-exposure-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Decisive unsupported is not justified without module redaction contract; warning message is repeated as if established."
+  },
+  "real-insecure-permissions-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported and presumed umask/default mode are unjustified for unknown existing permissions; task-name citation is insufficient."
+  },
+  "real-insecure-permissions-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Wrong decision and interpretation of decimal mode, confusing group and other write."
+  },
+  "real-missing-validate-certs-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported decision contradicts explicit no and narrative; asserted MITM outcome exceeds supplied context."
+  },
+  "real-missing-validate-certs-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported decision, claimed false parameter outside supplied window, and speculative MITM consequence; module-only citation."
+  },
+  "real-unguarded-variable-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported decision and definite absence across playbook/includes are not justified by supplied runtime input contracts."
+  },
+  "real-unguarded-variable-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported decision and definite absence across playbook/includes are not justified by supplied runtime input contracts."
+  },
+  "evaluation-credential-log-exposure-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-credential-log-exposure-3/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-credential-log-exposure-5/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-insecure-permissions-0/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-insecure-permissions-1/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-insecure-permissions-4/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-insecure-permissions-5/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-missing-validate-certs-0/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-missing-validate-certs-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-missing-validate-certs-4/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-unguarded-variable-0/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-unguarded-variable-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-unguarded-variable-3/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-unguarded-variable-4/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "evaluation-unguarded-variable-5/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "real-missing-validate-certs-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "real-missing-validate-certs-5/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "real-unguarded-variable-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "real-unguarded-variable-3/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "real-unguarded-variable-5/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "real-credential-log-exposure-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary plus model reasoning are grounded and agree with the unchanged AI source reference; citations identify decisive settings, input expressions or visible definition/use."
+  },
+  "real-credential-log-exposure-0/scoped": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Conservative abstention differs from original AI static-risk supported reference; its summary is cautious rather than claiming a proven leak. The command citation identifies the input-bearing source unit. The command block header at line 22 does not itself show the API-key reference at line 24, so the strict citation judgment is no."
+  },
+  "real-credential-log-exposure-1/scoped": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Appropriate structured abstention but reasoning says no_log is used, despite no explicit effective control being supplied; citations do identify sensitive script/password values."
+  },
+  "evaluation-credential-log-exposure-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported conflicts with unknown runtime protection; repeats an unprotected-display accusation; omits dynamic control citation."
+  },
+  "evaluation-credential-log-exposure-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts literal effective false and sensitive display; citation is only task name."
+  },
+  "evaluation-credential-log-exposure-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unknown inherited runtime control does not justify definite unprotected output or unsupported; task-name citation is insufficient."
+  },
+  "evaluation-insecure-permissions-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported contradicts literal unsafe bits and its own summary."
+  },
+  "evaluation-insecure-permissions-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Summary accuses unsafe bits although reasoning acknowledges 0644 is not inherently insecure; path-only citation."
+  },
+  "evaluation-insecure-permissions-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Summary asserts unsafe bits and reasoning falsely says 2775 allows writes by others; unchanged reference is unsupported."
+  },
+  "evaluation-insecure-permissions-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Definite unsafe-permissions summary and unsupported decision contradict admitted unknown desired_mode."
+  },
+  "evaluation-missing-validate-certs-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts explicit false and narrative; URL citation does not establish the flag."
+  },
+  "evaluation-missing-validate-certs-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Invents verify_tls evaluating to false; unknown runtime value is not literal disabled validation."
+  },
+  "evaluation-missing-validate-certs-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Summary says disabled although source true and reasoning enabled; module citation is not decisive."
+  },
+  "evaluation-unguarded-variable-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported does not represent admitted missing external input contract."
+  },
+  "evaluation-unguarded-variable-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unrelated defaults and unknown scope cannot justify decisive unsupported."
+  },
+  "evaluation-unguarded-variable-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported does not represent admitted missing external input contract."
+  },
+  "evaluation-unguarded-variable-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Wrongly says prior set_fact is not visible at subsequent debug use; citation only use."
+  },
+  "evaluation-unguarded-variable-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unrelated defaults and unknown scope cannot justify decisive unsupported."
+  },
+  "real-credential-log-exposure-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts the unchanged supported static-risk reference; repeats detector accusation with task-name-only citation."
+  },
+  "real-credential-log-exposure-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Decisive unsupported not justified without module redaction contract; module-only citation omits sensitive arguments."
+  },
+  "real-credential-log-exposure-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Decisive unsupported not justified without module redaction contract; task-name citation omits sensitive arguments."
+  },
+  "real-missing-validate-certs-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported contradicts explicit false and narrative; asserts deployment MITM consequence for an unknown URL scheme."
+  },
+  "real-missing-validate-certs-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts full source false; supplied window lacks that flag and cites module only."
+  },
+  "real-unguarded-variable-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported and definite absence from included tasks exceed incomplete runtime/scope evidence."
+  },
+  "real-unguarded-variable-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Uses unsupported despite stating insufficient evidence about runtime inputs."
+  },
+  "real-unguarded-variable-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Uses unsupported despite stating insufficient evidence about runtime inputs."
+  },
+  "evaluation-insecure-permissions-3/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary and free reasoning are factual and agree with unchanged AI reference; cites actual mode/TLS flag/reference."
+  },
+  "real-missing-validate-certs-3/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary and free reasoning are factual and agree with unchanged AI reference; cites actual mode/TLS flag/reference."
+  },
+  "real-unguarded-variable-4/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary and free reasoning are factual and agree with unchanged AI reference; cites actual mode/TLS flag/reference."
+  },
+  "real-credential-log-exposure-3/scoped": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Source binding is now the correct JDBC task, with credential-body citations, but reasoning falsely says no_log is used; conservative decision also differs from old supported static-risk reference."
+  },
+  "real-credential-log-exposure-4/scoped": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Cautious output avoids claiming proven exposure, but its abstention differs from unchanged supported static-risk source reference; body/password citations are relevant."
+  },
+  "evaluation-insecure-permissions-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported decision contradicts actual world-write bits and narrative."
+  },
+  "real-credential-log-exposure-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts unchanged static-risk reference; task-name-only citation omits password-bearing source body."
+  },
+  "real-credential-log-exposure-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts unchanged static-risk reference and narrative; task-name-only citation."
+  },
+  "real-missing-validate-certs-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported contradicts literal false and narrative; asserted MITM consequences exceed known URL/deployment context."
+  },
+  "real-unguarded-variable-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported does not represent its own admitted insufficient runtime evidence."
+  },
+  "evaluation-credential-log-exposure-1/scoped": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Execution service restarted with an unknown in-flight outcome; not retried, and retained as unsuccessful."
+  },
+  "evaluation-credential-log-exposure-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Wrongly asserts displayed output lacks protection despite literal no_log true; citation omits true control."
+  },
+  "evaluation-insecure-permissions-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Correct source facts and reasoning with decisive mode/expression/TLS-setting citations; no unsupported deployment consequence."
+  },
+  "real-insecure-permissions-0/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Correct source facts and reasoning with decisive mode/expression/TLS-setting citations; no unsupported deployment consequence."
+  },
+  "real-insecure-permissions-1/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Correct source facts and reasoning with decisive mode/expression/TLS-setting citations; no unsupported deployment consequence."
+  },
+  "real-missing-validate-certs-1/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Correct source facts and reasoning with decisive mode/expression/TLS-setting citations; no unsupported deployment consequence."
+  },
+  "real-insecure-permissions-2/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "no",
+    "notes": "Correctly preserves uncertainty about actual permissions and existing file mode; path-only citation does not establish mode absence."
+  },
+  "evaluation-insecure-permissions-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported and unsafe-bits summary contradict admitted unknown desired_mode."
+  },
+  "real-insecure-permissions-0/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "yes",
+    "notes": "Unsupported contradicts world-write source; reasoning also conflates sticky bit and setgid."
+  },
+  "real-insecure-permissions-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Wrong source subject/citation: preceding directory rather than copied file; unsupported decision is wrong."
+  },
+  "real-insecure-permissions-2/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported and unqualified default-permissions assumption do not reflect missing actual modes; task-name-only citation."
+  },
+  "real-missing-validate-certs-1/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts literal false; asserts TLS MITM consequences for http URL and cites URL rather than false setting."
+  },
+  "evaluation-credential-log-exposure-4/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Backend summary recognizes inherited protection; model reasoning notes no_log true without denying its output-censoring effect or claiming registered values are erased; cites ancestor and displayed reference."
+  },
+  "evaluation-missing-validate-certs-3/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "yes",
+    "notes": "Correct literal configuration summary and reasoning; does not claim the guarded task executes; cites flag."
+  },
+  "real-insecure-permissions-5/scoped": {
+    "content_adequate": "yes",
+    "decisive_citation_support": "no",
+    "notes": "Appropriately leaves actual permissions unknown and acknowledges existing destination mode; path-only citation does not establish mode absence."
+  },
+  "evaluation-credential-log-exposure-4/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Falsely states inherited block no_log does not apply to child tasks; cites task name rather than control."
+  },
+  "evaluation-missing-validate-certs-3/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported contradicts visible false and narrative; cites mode instead of validate_certs."
+  },
+  "real-insecure-permissions-5/window": {
+    "content_adequate": "no",
+    "decisive_citation_support": "no",
+    "notes": "Unsupported and default-permissions assumption are unjustified for unknown actual bits; module-only citation."
+  }
+}

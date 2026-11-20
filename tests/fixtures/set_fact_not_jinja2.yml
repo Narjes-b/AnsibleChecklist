@@ -1,0 +1,9 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: set a fact
+      set_fact:
+        my_var: hello
+    - name: mention the fact name only as prose
+      debug:
+        msg: The variable my_var is not actually used as a template

@@ -1,0 +1,2 @@
+mapping_status,ansibleguard_only,ansible_lint_only,gitleaks_only,mapped_overlap,note
+not-modelled,,,,,No explicit equivalence mapping is defined; overlap is not estimable.

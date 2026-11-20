@@ -1,0 +1,524 @@
+\chapter{Research Methodology and System Design}
+\label{chap:methodology}
+
+This chapter documents the original construction method and frozen
+149-repository v0.0.6 protocol. The subsequent 207-repository v0.0.7 protocol,
+including different provider and metric denominators, is specified alongside
+its results in Chapter~\ref{chap:v007}. References here to the ``primary''
+artifact refer to the original v0.0.6 experiment, not the newest study.
+
+\section{Methodological Position}
+This work adopts the six-activity Design Science Research Methodology (DSRM) of
+Peffers et al.~\cite{peffers2007dsrm} as its primary reference methodology.
+DSRM is appropriate because the central research contribution is an artifact:
+a new static-analysis system designed to solve an identified engineering and
+evidence problem. Goal--Question--Metric (GQM)~\cite{basili1992gqm} provides the
+measurement layer, connecting the research objective to explicit questions
+and reproducible metrics. The empirical component is a frozen
+multi-repository observational study; it evaluates artifact behaviour without
+turning static findings into unverified human-defect labels.
+
+The unit of execution is a repository fixed at a recorded commit SHA. The unit
+of source selection is a classified manifest row. The unit of provider output
+is a raw finding. The principal unit of analysis is a canonical occurrence.
+Keeping these units separate prevents repository counts, files, raw provider
+records and canonical evidence from being mixed in one denominator.
+
+\subsection{Research Design at a Glance}
+The methodological choices are deliberately hierarchical rather than a list of
+unrelated methods. Table~\ref{tab:research_design_glance} states the role of
+each element.
+
+\begin{table}[H]
+\centering
+\caption{Research design and the role of each methodological element.}
+\label{tab:research_design_glance}
+\small
+\begin{tabular}{p{3.2cm}p{4.0cm}p{7.0cm}}
+\toprule
+Layer & Choice & Function in this project \\
+\midrule
+Research paradigm & Design science & Creates and evaluates AnsibleGuard as an
+artifact that addresses a demonstrated review-evidence problem. \\
+Primary process & Peffers' DSRM & Organises problem identification, objectives,
+design, demonstration, evaluation, and communication. \\
+Measurement framework & GQM & Converts the research goal into RQ1--RQ4,
+metrics, evidence sources, and claim boundaries. \\
+Engineering process & Iterative, evidence-driven development & Uses focused
+fixtures, real failures, regression tests, and versioned contracts to refine
+the artifact between releases. \\
+Empirical method & Repository mining with a frozen observational corpus &
+Evaluates v0.0.6 on 149 immutable revisions without changing the projects. \\
+Change-attribution method & Paired controlled comparison & Compares v0.0.5 and
+v0.0.6 on identical repositories, files and LOC to remove population drift. \\
+Primary artifact & AnsibleGuard v0.0.6 & The system whose coverage, execution
+health, outputs, and behaviour are evaluated. \\
+Primary unit of analysis & Canonical occurrence & A source-linked evidence unit
+after cross-provider normalisation, with provenance retained. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+DSRM is the methodology of the research; it is not a claim that the software
+was implemented in six linear passes. The implementation itself was iterative.
+GQM is not a second competing methodology: it is the measurement instrument
+inside DSRM evaluation. Likewise, the 149-repository scan is not the complete
+methodology; it is one empirical evaluation within Activity~5. This separation
+keeps the report reproducible and prevents a development workflow from being
+misreported as a research method.
+
+\subsection{Instantiation of the Six DSRM Activities}
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+ d/.style={draw=ansblue,rounded corners,fill=anslightblue,text width=28mm,
+ minimum height=12mm,align=center,font=\small\bfseries},
+ a/.style={-{Latex[length=2mm]},thick,ansblue},node distance=6mm]
+\node[d] (p) {1. Problem identification};
+\node[d,right=of p] (o) {2. Objectives of a solution};
+\node[d,right=of o] (b) {3. Design and development};
+\node[d,right=of b] (demo) {4. Demonstration};
+\node[d,below=of demo] (eval) {5. Evaluation};
+\node[d,left=of eval] (comm) {6. Communication};
+\draw[a] (p)--(o); \draw[a] (o)--(b); \draw[a] (b)--(demo);
+\draw[a] (demo)--(eval); \draw[a] (eval)--(comm);
+\draw[a,dashed] (eval) to[bend left=25] (b);
+\end{tikzpicture}}
+\caption{DSRM instantiated for the AnsibleGuard project. The dashed feedback
+edge represents evidence-driven detector and semantic-engine refinement.}
+\label{fig:dsrm_instantiation}
+\end{figure}
+
+\begin{description}
+  \item[Problem identification.] Ansible review evidence is fragmented across
+  structural checks, runtime-sensitive variables, external linters, secrets,
+  Git review metadata and incompatible outputs. Failures can be confused with
+  clean results, and raw totals can be mistaken for defects.
+  \item[Objectives.] Create one auditable system that covers the review
+  checklist where automation is defensible, preserves provider health and
+  provenance, models repository-level semantics, supports PR/commit/local
+  analysis, and exports a stable validated contract.
+  \item[Design and development.] Build the parser boundary, artifact model,
+  detector catalogue, symbol/execution graph, provider adapters,
+  canonicalisation/comparison engine, profiles and output-v3 package.
+  \item[Demonstration.] Execute focused fixtures, real repositories, pull
+  requests and the frozen 149-repository population at immutable SHAs.
+  \item[Evaluation.] Apply unit/integration/contract/package gates, provider
+  health checks, arithmetic reconciliation, paired same-population comparison,
+  distribution analysis and manual mechanism sampling.
+  \item[Communication.] Publish source, schemas, manifests, commands, study
+  summaries, limitations, this report and the supervisor presentation.
+\end{description}
+
+The evaluation addresses four research questions:
+\begin{description}
+  \item[RQ1 -- Coverage.] Which checklist concerns and Ansible quality
+    mechanisms are operationalised?
+  \item[RQ2 -- Execution reliability.] Can every frozen repository be analysed
+    without converting provider or parser failures into clean results?
+  \item[RQ3 -- Behavioural change.] On an identical population, how do raw
+    findings, canonical occurrences, and semantic states change by version?
+  \item[RQ4 -- Diagnostic mechanisms.] Which runtime-variable mechanisms
+    dominate the remaining \code{unguarded-variable} cases?
+\end{description}
+
+\subsection{Goal--Question--Metric Traceability}
+\begin{longtable}{p{1.2cm}p{4.5cm}p{8.2cm}}
+\toprule RQ & Evaluation goal & Metrics and evidence \\ \midrule\endhead
+RQ1 & Determine implemented and bounded review coverage. & Checklist mapping
+(15 Yes, 18 Partial, 5 No), 76-concept catalogue, categories, profiles,
+provider ownership and non-automatable boundaries. \\
+RQ2 & Determine whether execution evidence remains trustworthy. & Repository
+completion; selected files/LOC; provider completed/partial/failed/unavailable;
+diagnostics by stage/status; schema validation and arithmetic invariants. \\
+RQ3 & Explain artifact evolution without population drift. & Same 149 SHAs,
+27,709 files and 1,178,908 LOC; v0.0.5/v0.0.6 raw, canonical, uncertain and
+non-uncertain counts; mechanism-linked code/test evidence. \\
+RQ4 & Identify remaining variable-provenance limitations. & Unguarded-variable
+status totals; unresolved repository concentration; definition/guard/runtime/
+order/uncertainty mechanisms; targeted source samples. \\
+\bottomrule
+\end{longtable}
+
+Metrics are accepted only when their population, source, transformation and
+interpretation are stated. Counts are descriptive. A ratio is not called
+precision unless its denominator is an independently labelled set of reported
+occurrences; recall additionally requires known relevant defects.
+
+Precision and recall are outside the confirmed results because no complete,
+independently adjudicated v0.0.6 label set exists. A future protocol is
+specified in Section~\ref{sec:future_eval}; it is not reported as completed.
+
+\subsection{Requirements-to-Evidence Traceability}
+The artifact was not considered successful merely because it executed. The
+following acceptance requirements connect the original problem to an
+implementation mechanism and to observable evaluation evidence.
+
+\begin{longtable}{@{}p{0.8cm}p{3.1cm}p{4.8cm}p{5.0cm}@{}}
+\caption{Artifact requirements and acceptance evidence.}
+\label{tab:requirements_traceability}\\
+\toprule ID & Requirement & Realisation & Acceptance evidence \\
+\midrule\endfirsthead
+\toprule ID & Requirement & Realisation & Acceptance evidence \\
+\midrule\endhead
+R1 & Tolerant source ingestion & YAML/Jinja boundary, artifact classification,
+and coordinate preservation & Parser fixtures; invalid/encrypted files remain
+diagnostics; selected-file and LOC reconciliation. \\
+R2 & Review-scope coverage & Checklist mapping, 76 concepts, 12 catalogue
+categories, and explicit manual boundaries & Audited 15 Yes, 18 Partial, 5 No
+mapping and complete rule catalogue. \\
+R3 & Repository semantics without global leakage & Static execution graph,
+persistent-definition propagation, ordered facts, lexical locals, and scoped
+guards & Cross-file include/import tests plus disconnected-file and Jinja
+\code{for}/\code{endfor} counterexamples. \\
+R4 & Specialist-tool collaboration & Isolated adapters for ansible-lint and
+GitLeaks with project-root planning & Provider fixtures; nested-root collapse;
+independent configured roots remain distinct. \\
+R5 & No false clean result on execution failure & Provider health and parser
+failures are diagnostics independent from smells & 149/149 repository
+completion with 21 partial ansible-lint runs and 200 visible diagnostics. \\
+R6 & Auditable evidence & Canonical occurrences retain every contributing
+provider and source coordinate & Raw/canonical reconciliation, provider
+evidence arrays, fingerprints, and source-coordinate sampling. \\
+R7 & Safe change attribution & File-aware occurrence identity and explicit
+legacy comparison path & Tests reject cross-file generic location matches;
+paired runs require identical population identity. \\
+R8 & Portable, validated outputs & Shared runtime validator and packaged
+canonical output-v3 schema copied into scan directories & Schema/contract tests
+and wheel-install validation outside the checkout. \\
+R9 & Fit-for-purpose use & Profiles and local, commit, PR, and repository modes
+& Profile inventory, command workflows, and user/output decision mapping. \\
+R10 & Reproducible evaluation & Frozen SHAs, manifests, configurations,
+provider versions, summaries, and validation gates & Same 149 repositories,
+27,709 files, and 1,178,908 LOC in the paired comparator. \\
+\bottomrule
+\end{longtable}
+
+\section{Artifact Construction from First Principles}
+AnsibleGuard was developed as a new Python package rather than a wrapper around
+one linter. Construction proceeded by: (1) translating 38 review criteria into
+automatable, partial, and non-automatable concerns; (2) defining stable rule,
+category, severity, status, and evidence contracts; (3) implementing tolerant
+YAML/Jinja parsing and artifact classification; (4) adding repository symbol
+and execution graphs; (5) integrating ansible-lint and GitLeaks as specialist
+providers; (6) canonicalising overlapping evidence; and (7) verifying the
+package, schema, comparisons, and frozen-corpus behaviour.
+
+The audited checklist coverage is 15 \emph{Yes}, 18 \emph{Partial}, and 5
+\emph{No}. These values describe functional scope, not accuracy.
+
+\section{Repository Population Selection and Freezing}
+\label{sec:repository_selection}
+The 149 repositories were not selected by convenience and were not ranked by
+stars. Selection Protocol v2 defines the target population as public,
+non-fork, non-archived, non-disabled, non-mirror Ansible repositories whose
+latest commit was within six years of the frozen cutoff, with at least 1,000
+commits, more than 50 pull requests, at least one confirmed production Ansible
+file, and at least 50 merged pull requests changing production Ansible.
+Therefore, the study represents mature, active, public repositories suitable
+for both snapshot and PR analysis; it does not represent every Ansible project.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+ b/.style={draw=ansblue,rounded corners,fill=anslightblue,minimum height=10mm,
+ text width=25mm,align=center,font=\scriptsize\bfseries},
+ a/.style={-{Latex[length=2mm]},thick,ansblue},node distance=5mm]
+\node[b] (discover) {Inclusive GitHub + Galaxy discovery};
+\node[b,right=of discover] (dedup) {Canonical repository deduplication};
+\node[b,right=of dedup] (cheap) {Metadata, recency, status and commit gates};
+\node[b,right=of cheap] (clone) {Clone and freeze immutable SHA};
+\node[b,right=of clone] (class) {Classify every YAML candidate};
+\node[b,below=of class] (prs) {Inspect merged PR changed paths};
+\node[b,left=of prs] (final) {Apply production-Ansible and PR gates};
+\node[b,left=of final] (manifest) {Write final frozen manifest};
+\node[b,left=of manifest] (scan) {Scan the 149 eligible revisions};
+\draw[a] (discover)--(dedup); \draw[a] (dedup)--(cheap);
+\draw[a] (cheap)--(clone); \draw[a] (clone)--(class);
+\draw[a] (class)--(prs); \draw[a] (prs)--(final);
+\draw[a] (final)--(manifest); \draw[a] (manifest)--(scan);
+\end{tikzpicture}}
+\caption{Repository discovery, screening, freezing, and study inclusion.}
+\label{fig:repository_selection}
+\end{figure}
+
+Discovery is intentionally inclusive. GitHub queries include forks in the raw
+ledger so the later fork gate can report attrition; Galaxy role and collection
+registries contribute source repositories; canonical owner/repository
+identities are deduplicated. The complete 2026-08-05 GitHub discovery contains
+667,044 ledger rows. Strong topic/Galaxy evidence is enriched before weak
+metadata-only evidence for cost control, but both strata remain recorded.
+
+Each gate is tri-state (true, false, or not evaluated), and no candidate row is
+deleted. The sequential gate order is: uniqueness; public visibility; not
+disabled; not forked; not archived; not mirrored; recent activity; at least
+1,000 commits; more than 50 total PRs; confirmed production Ansible; and at
+least 50 merged Ansible-changing PRs. Stars remain descriptive only. Applying
+the inexpensive commit gate before PR-file inspection avoids costly API work
+for ineligible candidates without changing the rule itself.
+
+Repositories passing early gates are cloned. The default branch is resolved to
+an immutable SHA and verified with the local Git history. Every YAML candidate
+then receives a row-level classification and reason. Production playbooks,
+tasks, handlers, defaults, vars, inventory and metadata are separated from CI,
+tests, documentation examples, fixtures, generated/vendor content, historical
+Ansible, invalid YAML, encrypted vault files and unclear YAML. The manifest
+hash, frozen SHA and classifier outcome are retained with the scan.
+
+Finally, merged PRs are checked using exact changed paths and rename/removal
+evidence. A PR qualifies only when it changes production Ansible; YAML in CI,
+Molecule, tests, documentation, examples or release notes does not qualify by
+extension alone. The resulting final-frozen manifest supplies exactly the 149
+repository paths and SHAs used by every paired run. This prevents population
+drift between v0.0.5 and v0.0.6.
+
+\subsection{Exact Eligibility Rules for the 149-Repository Population}
+Repository selection rules and source-analysis rules serve different purposes.
+The former define which projects may enter the study; they do not indicate
+whether a repository is ``good'' or ``bad.'' A candidate enters the final
+population only when every mandatory gate in
+Table~\ref{tab:corpus_gates} is true. Unknown values remain
+\code{not-evaluated} until enrichment and cannot silently pass.
+
+\begin{longtable}{@{}p{0.8cm}p{4.0cm}p{4.8cm}p{4.0cm}@{}}
+\caption{Sequential Selection Protocol v2 eligibility gates.}
+\label{tab:corpus_gates}\\
+\toprule Step & Gate & Operational rule & Purpose \\
+\midrule\endfirsthead
+\toprule Step & Gate & Operational rule & Purpose \\
+\midrule\endhead
+1 & Unique repository & One canonical owner/name identity after source
+deduplication & Prevent duplicate sampling across discovery channels. \\
+2 & Public & Repository is publicly accessible & Permit reproducible inspection
+and redistribution of metadata. \\
+3 & Not disabled & GitHub disabled flag is false & Exclude inaccessible or
+administratively disabled projects. \\
+4 & Not a fork & Fork flag is false & Preserve repository independence and
+avoid duplicate upstream histories. \\
+5 & Not archived & Archived flag is false & Retain actively maintained targets. \\
+6 & Not a mirror & Mirror URL is absent & Avoid duplicated development history. \\
+7 & Recent activity & Latest commit falls within six years of the frozen cutoff
+& Bound inactive-project bias while retaining mature infrastructure projects. \\
+8 & Development history & At least 1,000 commits & Select projects with enough
+history for mature snapshot and review analysis. \\
+9 & Review activity & More than 50 total pull requests & Ensure an observable
+review process. \\
+10 & Production Ansible & Repository classification confirms production
+Ansible artifacts & Exclude projects where YAML exists only in CI, tests,
+examples, fixtures, or unrelated configuration. \\
+11 & Ansible review history & At least 50 merged PRs change classified
+production Ansible paths & Ensure sufficient Ansible-specific review history. \\
+\bottomrule
+\end{longtable}
+
+Stars, popularity bands, repository size, and descriptive project type are
+retained for analysis but are not eligibility gates. The final attrition step
+reduced 265 PR-audited candidates to 149 after the requirement of at least 50
+merged production-Ansible-changing PRs; every exclusion remains recorded in
+the ledger rather than being deleted.
+
+\section{Evidence-Preserving Pipeline}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+ box/.style={draw=ansblue,rounded corners,fill=anslightblue,
+ minimum height=10mm,text width=25mm,align=center,font=\small\bfseries},
+ arr/.style={-{Latex[length=2.5mm]},thick,ansblue},node distance=6mm and 7mm]
+\node[box] (d) {Repository discovery};
+\node[box,right=of d] (p) {YAML/Jinja parsing};
+\node[box,right=of p] (c) {Artifact classification};
+\node[box,right=of c] (g) {Execution graph};
+\node[box,below=of g] (r) {Rules and providers};
+\node[box,left=of r] (k) {Canonical merge};
+\node[box,left=of k] (v) {Output-v3 validation};
+\node[box,left=of v] (s) {Reports and summaries};
+\draw[arr] (d)--(p); \draw[arr] (p)--(c); \draw[arr] (c)--(g);
+\draw[arr] (g)--(r); \draw[arr] (r)--(k); \draw[arr] (k)--(v);
+\draw[arr] (v)--(s);
+\end{tikzpicture}
+\caption{Analysis pipeline. Failures remain diagnostics and never become
+zero-finding results.}
+\label{fig:method_pipeline}
+\end{figure}
+
+Files are selected from a manifest and parsed with tolerant YAML handling.
+Jinja expressions are extracted separately. Each file is classified as a
+playbook, tasks, handler, defaults, vars, metadata, inventory, group variables,
+host variables, or import-only artifact. Rules run only on compatible classes.
+Parse failures retain their source and diagnostic type.
+
+\subsection{End-to-End Execution of the Frozen Study}
+The exact operational sequence is shown in
+Table~\ref{tab:study_execution_pipeline}. It begins before scanning and ends
+only after aggregate and contract validation.
+
+\begin{longtable}{@{}p{0.7cm}p{3.3cm}p{4.9cm}p{4.9cm}@{}}
+\caption{Numbered pipeline used for the 149-repository v0.0.6 study.}
+\label{tab:study_execution_pipeline}\\
+\toprule No. & Name & Input and transformation & Persisted evidence \\
+\midrule\endfirsthead
+\toprule No. & Name & Input and transformation & Persisted evidence \\
+\midrule\endhead
+1 & Discover & Inclusive GitHub topic/search and Galaxy source discovery;
+canonical deduplication & Complete candidate ledger and discovery provenance. \\
+2 & Screen & Apply cheap metadata, status, recency, commit, and PR gates in
+sequence & Tri-state gate columns, attrition summaries, exclusion reasons. \\
+3 & Freeze & Clone eligible candidates, resolve default branch, record and
+verify immutable commit SHA & Repository path, URL, SHA, commit date. \\
+4 & Classify & Inspect every YAML candidate and separate production artifacts
+from CI, tests, documentation, examples, vendor files, invalid YAML, and
+encrypted content & Row-level file
+manifest, artifact type, selection reason, LOC. \\
+5 & Audit PRs & Inspect exact changed paths of merged PRs against the production
+classification & Qualifying PR count, scan progress, final eligibility. \\
+6 & Plan analysis & Load the final manifest and \code{technical-full} profile;
+resolve artifact compatibility and ansible-lint project roots & Population
+identity, profile/configuration, execution plan. \\
+7 & Native analysis & Parse selected files, construct repository symbol and
+execution graphs, and run compatible AnsibleGuard rules & Native raw findings,
+source regions, status and uncertainty evidence. \\
+8 & External providers & Run isolated ansible-lint roots and GitLeaks, retaining
+partial/error/unavailable states & Raw provider findings, versions, health, and
+diagnostics. \\
+9 & Canonicalise & Normalise concepts, merge overlapping evidence, compute
+file-aware fingerprints, preserve all contributors & Canonical occurrence
+array plus provider-evidence arrays. \\
+10 & Validate/export & Enforce output-v3 schema and runtime types, copy the
+canonical schema, write reports and per-repository summaries & JSON, CSV,
+SARIF/text/Markdown projections, schema and metadata. \\
+11 & Reconcile & Aggregate 149 outputs, check counts, locations, population
+identity, completion, provider health, and paired-version invariants &
+All-repository summary and validation evidence used in Chapter~\ref{chap:results}. \\
+\bottomrule
+\end{longtable}
+
+\section{Execution and Variable Semantics}
+Let $F$ be the selected file set and $E_s\subseteq F\times F$ the statically
+resolved \code{include_tasks}/\code{import_tasks} edges. A persistent runtime
+definition created in $f_i$ is visible in $f_j$ only if a directed path exists
+through $E_s$ and program order permits the definition to precede the use.
+There is no repository-wide union of facts, so disconnected files do not
+inherit definitions. Dynamic include paths contribute named uncertainty.
+
+For a variable use $u(v)$, the detector evaluates
+\[
+S(u,v)=\langle D_{static},D_{runtime},G_{guard},U_{external},O_{order}\rangle,
+\]
+recording static definitions, persistent runtime producers, dominating guards,
+external/dynamic uncertainty, and ordering evidence. A state is
+\code{UNRESOLVED} only when no definition, guard, producer, or uncertainty
+source is visible. A use before a later producer is \code{ORDERED_CONFLICT}.
+Jinja \code{for} variables are scoped to the matching \code{for}/\code{endfor}
+region.
+
+\section{Rule and Provider Responsibilities}
+The catalogue contains 76 concepts across correctness, reliability,
+maintainability, style, compatibility, security, documentation, testing,
+structure, dependencies, and delegated lint concerns. Native AnsibleGuard rules
+own semantic and repository-level predicates. ansible-lint owns established
+Ansible conventions such as FQCN, naming, YAML style, and module practices.
+GitLeaks supplies candidate-secret pattern evidence.
+
+Provider health is orthogonal to source quality. \code{completed},
+\code{partial}, and \code{tool-error} are diagnostics. Missing executables,
+timeouts, and crashes are never source smells and never imply a clean scan.
+Nested unconfigured ansible-lint roots collapse to prevent double linting;
+independently configured roots remain separate.
+
+\section{Canonical Occurrences and Output v3}
+Provider findings are normalised into occurrences containing rule/concept,
+category, severity, semantic status, artifact, file/line, message, confidence,
+uncertainty reasons, fingerprint, and contributing provider evidence.
+Canonicalisation merges overlap without erasing provenance. Severity is the
+maximum contributor under \code{note < warning < error}.
+
+Generic location-only findings cannot match across files as semantic renames.
+Comparison requires file-aware identity or stronger semantic evidence. Output
+v3 is a versioned envelope checked by a shared validator. The canonical JSON
+Schema is packaged in the wheel and copied into each scan output. Legacy lists
+remain supported only through an explicit compatibility path.
+
+\section{Frozen-Corpus Study Protocol}
+\label{sec:study_design_m}
+The population comprises 149 repositories at recorded SHAs. The manifest
+universe contains 64,876 YAML files and 4,254,017 lines; selection yields
+27,709 Ansible files and 1,178,908 lines. v0.0.5 and v0.0.6 are compared only
+when repository, commit, files, and LOC are equal, eliminating population drift
+as an explanation.
+
+Each repository records completion, files/LOC, raw provider findings, canonical
+occurrences, statuses, severities, categories, concepts, artifacts, and
+diagnostics. Aggregate arithmetic is reconciled with per-repository outputs.
+Coordinates are checked against existing files and line ranges. Suspicious
+concentrations are sampled by mechanism rather than inferred from totals.
+
+\subsection{Operational Measures and Computation Rules}
+Let $R$ be the frozen repository set, $F_m$ the manifest YAML files, $F_s$ the
+selected Ansible files, $L_s$ the selected LOC, $H_p$ the repositories on which
+provider $p$ completed, $N_{raw}$ the raw provider findings, and $N_c$ the
+canonical occurrences. The principal descriptive measures are:
+\begin{align}
+\text{selection rate} &= \frac{|F_s|}{|F_m|}\times100, \\
+\text{provider completion}_p &= \frac{|H_p|}{|R|}\times100, \\
+\text{canonicalisation reduction} &=
+  \frac{N_{raw}-N_c}{N_{raw}}\times100, \\
+\text{canonical density} &= \frac{N_c}{L_s}\times1000, \\
+\text{status share}_s &= \frac{N_{c,s}}{N_c}\times100.
+\end{align}
+For v0.0.6 these yield a 42.71\% file-selection rate, a 6.22\%
+raw-to-canonical reduction, and 261.22 canonical occurrences per selected
+KLOC. Provider completion is always reported together with partial,
+tool-error, and unavailable states. Density is a review-workload normaliser,
+not a defect prevalence estimate.
+
+\begin{longtable}{@{}p{3.2cm}p{4.1cm}p{2.9cm}p{3.8cm}@{}}
+\caption{Data collection and interpretation plan.}
+\label{tab:data_collection_plan}\\
+\toprule Measure & Authoritative source & Aggregation & Permitted interpretation \\
+\midrule\endfirsthead
+\toprule Measure & Authoritative source & Aggregation & Permitted interpretation \\
+\midrule\endhead
+Repository identity & Frozen manifest and resolved Git SHA & Exact equality,
+then count & Evaluation population and repeatability. \\
+Files and LOC & Row-level selection manifest & Sum only selected rows & Analysis
+denominator; never inferred from finding files. \\
+Raw findings & Per-provider result arrays & Sum before canonicalisation &
+Provider workload, including overlap. \\
+Canonical occurrences & Validated output-v3 occurrence arrays & Sum after
+canonicalisation & Auditable evidence workload, not human-confirmed defects. \\
+Semantic status & Occurrence \code{status} & Count by enumerated state & Degree
+and kind of semantic evidence or uncertainty. \\
+Provider health & Provider evidence and diagnostics & Count repositories by
+state & Execution completeness independent of source quality. \\
+Version delta & Paired summaries with population invariant & Subtract only
+after identity checks & Behavioural change attributable to artifact version. \\
+Mechanism sample & Occurrence, source context, and detector trace & Group by
+mechanism and inspect exemplars & Hypothesis generation and targeted diagnosis,
+not population precision. \\
+\bottomrule
+\end{longtable}
+
+\section{Verification Ladder}
+Evidence is accepted after focused regression tests, full pytest, documentation
+staleness checks, Python compilation, diff validation, wheel installation
+outside the checkout, schema tests, available remote-equivalence and benchmark
+gates, paired frozen-corpus comparison, and manual mechanism sampling.
+
+\section{Validity and Claim Boundaries}
+The design establishes reproducible static evidence and explicit execution
+health on the frozen population. It does not establish ecosystem prevalence,
+universal recall, or a human true-positive label for every occurrence.
+\code{CONFIRMED} means a detector predicate was satisfied without a specialised
+uncertainty state; it is not manual adjudication.
+
+\section{Future Labelled Evaluation}
+\label{sec:future_eval}
+A future precision study should freeze version and corpus, publish guidance for
+true-positive, false-positive, and borderline labels per rule, draw a
+reproducible stratified sample, obtain two
+independent human labels, report Cohen's $\kappa$, adjudicate disagreements,
+and publish weighted Wilson intervals. Recall requires a separate mutation or
+expert-curated benchmark. Until those artifacts exist, this report uses
+descriptive and diagnostic terminology rather than precision claims.

@@ -1,0 +1,11 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: install nginx
+      apt:
+        name: nginx
+        state: present
+    - name: install curl
+      apt:
+        name: curl
+        state: present

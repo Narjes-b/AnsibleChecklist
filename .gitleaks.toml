@@ -1,0 +1,48 @@
+# E1: Ansible-specific GitLeaks patterns for AnsibleGuard repositories.
+# E2: SOPS-encrypted files are excluded globally — their values are ciphertext.
+
+title = "AnsibleGuard GitLeaks Configuration"
+
+[extend]
+# Extend the default ruleset shipped with GitLeaks.
+useDefault = true
+
+[[rules]]
+id = "ansible-vault-password"
+description = "Ansible Vault password file or VAULT_PASSWORD variable"
+regex = '''(?i)vault[_\-]?password[\s]*[=:>]+[\s]*['"]?[^\s'"#]{8,}'''
+tags = ["ansible", "vault", "secret"]
+
+[[rules]]
+id = "awx-api-token"
+description = "AWX / Ansible Tower personal access token"
+regex = '''(?i)(?:awx|tower)[_\-]?(?:api[_\-]?)?token[\s]*[=:>]+[\s]*['"]?[A-Za-z0-9_\-]{20,}'''
+tags = ["ansible", "awx", "token"]
+
+[[rules]]
+id = "ansible-become-password"
+description = "Ansible become (privilege escalation) password literal"
+regex = '''(?i)ansible[_\-]become[_\-]pass(?:word)?[\s]*[=:>]+[\s]*['"]?[^\s'"#]{4,}'''
+tags = ["ansible", "become", "secret"]
+
+[[rules]]
+id = "ansible-connection-password"
+description = "Ansible SSH / connection password literal"
+regex = '''(?i)ansible[_\-](?:ssh[_\-])?pass(?:word)?[\s]*[=:>]+[\s]*['"]?[^\s'"#]{4,}'''
+tags = ["ansible", "ssh", "secret"]
+
+# E2: Exclude SOPS-encrypted files — their values are AES-256-GCM ciphertext,
+# not plaintext secrets. GitLeaks would otherwise generate noise on the ENC[...]
+# blobs or on the sops: metadata block that contains only key references.
+[allowlist]
+description = "Global allowlist — SOPS files and test fixtures"
+paths = [
+    '''.*\.sops\.ya?ml$''',
+    '''.*\.sops\.json$''',
+    '''tests/fixtures/''',
+    '''tests/data/''',
+]
+regexes = [
+    # SOPS AES-256-GCM ciphertext blobs are never plaintext secrets.
+    '''ENC\[AES256_GCM,''',
+]

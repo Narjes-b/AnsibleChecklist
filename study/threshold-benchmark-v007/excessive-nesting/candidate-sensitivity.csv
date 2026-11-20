@@ -1,0 +1,4 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+excessive_nesting_depth,excessive-nesting,q1;q2_median;q3;tukey_upper_fence;p80,0,132295,26352,0.19919120,194,154,0.79381443
+excessive_nesting_depth,excessive-nesting,p90;p95,1,132295,2681,0.02026532,194,71,0.36597938
+excessive_nesting_depth,excessive-nesting,current,3,132295,57,0.00043086,194,5,0.02577320

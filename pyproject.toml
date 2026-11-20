@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ansibleguard"
+version = "0.0.7.1"
+description = "IaC smell detector for Ansible playbooks"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0,<7",
+    "ruamel.yaml==0.19.1",
+    "regex>=2024.11,<2027",
+    "pandas>=2.2,<4",
+    "spacy>=3.8,<4",
+    "nltk>=3.9,<4",
+    "ansiblemetrics==0.4.2",
+    "ansible-lint==26.4.0",
+    "ansible-compat>=26.3,<27",
+    "requests>=2.32,<3",
+    "jinja2>=3.1,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10",
+    "jsonschema>=4.23,<5",
+    "wheel>=0.45,<1",
+]
+cache = [
+    "redis>=5,<7",
+]
+server = [
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+    "redis>=5,<7",
+]
+
+[project.scripts]
+ansibleguard = "ansibleguard.cli:main"
+ansibleguard-pr-annotations = "ansibleguard.report.pr_annotations:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ansibleguard = ["thresholds.csv", "report/schemas/*.json"]

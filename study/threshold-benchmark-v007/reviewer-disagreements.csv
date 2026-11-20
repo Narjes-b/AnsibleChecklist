@@ -1,0 +1,851 @@
+observation_id,metric_id,rule_id,unit,project,commit_sha,repository_size_quartile,path,document_type,line,name,value,current_threshold,comparator,eligible,current_prediction,threshold_multiplier,has_existing_abstraction,base_score,boolean_ops,jinja_filters,nesting_depth,has_preceding_comment,source_ordinal,play_loc,play_task_count,play_avg_task_size,playbook_loc,playbook_play_count,playbook_avg_play_size,playbook_task_count,playbook_avg_task_size,import_count,role_count,task_special_chars,play_special_chars,parent_play_name,sample_stratum,metric_band,stratum_population,inclusion_probability,sampling_weight,review_question,reviewer_1_label,reviewer_1_reason,context_start_line,context_end_line,source_total_lines,context_complete,context_strategy,source_context,reviewer_2_label,reviewer_2_reason,initial_agreement,adjudicated_label,adjudication_reason,ai_label,ai_reason,ai_prompt_version,ai_model_version
+84de650a889d69091c0979d9642bfb15b54c27c9ce0bbfddad02bb1926249232,large_task_loc,large-task,task,ergho/homelab-ops,973ea65aca62d259f296153f5f989cc2013f2294,Q2,ansible/roles/sshd/tasks/setup-RedHat.yaml,tasks,25,delete ssh host keys,5,15,>,true,false,1,false,,,,,false,3,,,,,,,,,,,,,,ergho/homelab-ops|B2_lower_middle|current=false,B2_lower_middle,42,0.0238095238,42,Should this executable Ansible task be considered excessively large and in need of decomposition?,positive,"The 'remove moduli with value below...' shell task chains a filter-to-file command, a conditional file-existence test, and a conditional mv into one semicolon-joined shell string (awk > moduli.safe; [ -r ... ] && mv ...), combining separable filter and install-the-result responsibilities that are hard to verify because the checked path (.safe) and the moved path (.new) do not even match.",1,60,60,true,complete-file,"     1: ---
+     2: - name: Red Hat | Configure openssh server
+     3:   become: true
+     4:   vars:
+     5:     - sshd_subsystem: ""/usr/libexec/openssh/sftp-server""
+     6:   block:
+     7:     - name: Red Hat | Install Packages
+     8:       package:
+     9:         name: ""{{ item }}""
+    10:         state: present
+    11:       loop: ""{{ packages_install }}""
+    12: 
+    13:     - name: ""check if ssh_host_ecdsa_key exists""
+    14:       register: ecdsa_key
+    15:       stat:
+    16:         path: ""/etc/ssh/ssh_host_ecdsa_key""
+    17: 
+    18:     - block:
+    19:         - name: ""mark ssh host keys for deletion""
+    20:           find:
+    21:             paths: /etc/ssh
+    22:             patterns: ssh_host_*
+    23:           register: files_to_delete
+    24: 
+    25:         - name: ""delete ssh host keys""
+    26:           file:
+    27:             path: ""{{ item.path }}""
+    28:             state: absent
+    29:           with_items: ""{{ files_to_delete.files }}""
+    30: 
+    31:         - name: ""generate ed25519 host key""
+    32:           command: 'ssh-keygen -t ed25519 -q -N """" -f /etc/ssh/ssh_host_ed25519_key'
+    33: 
+    34:         - name: ""generate rsa4096 host key""
+    35:           command: 'ssh-keygen -t rsa -b 4096 -q -N """" -f /etc/ssh/ssh_host_rsa_key'
+    36: 
+    37:       when: ecdsa_key.stat.exists
+    38: 
+    39:     - name: ""check if {{ sshd_moduli_file }} contains primes below {{ sshd_moduli_minimum }}""
+    40:       shell: ""awk '$5 < {{ sshd_moduli_minimum }}'  {{ sshd_moduli_file }}""
+    41:       changed_when: false
+    42:       check_mode: false
+    43:       register: sshd_register_moduli
+    44: 
+    45:     - name: ""remove moduli with value below {{ sshd_moduli_minimum }}""
+    46:       shell:
+    47:         ""awk '$5 >= {{ sshd_moduli_minimum }}' /etc/ssh/moduli > /etc/ssh/moduli.safe;
+    48:         [ -r  {{ sshd_moduli_file }}.safe -a -s {{ sshd_moduli_file }}.safe ] && mv
+    49:         {{ sshd_moduli_file }}.new {{ sshd_moduli_file }} || true""
+    50:       when: sshd_register_moduli.stdout
+    51: 
+    52:     - name: ""configure sshd_config""
+    53:       template:
+    54:         src: ""{{ sshd_config_file }}.j2""
+    55:         dest: ""/etc/ssh/{{ sshd_config_file }}""
+    56:         owner: root
+    57:         group: root
+    58:         mode: 0600
+    59:       notify:
+    60:         - restart sshd",negative,"The named construct is a become+vars+block wrapper (not itself an executable leaf task per rule 4), and each nested leaf (package loop, ecdsa stat check, key regeneration block, moduli edit, sshd_config template) is already a narrowly scoped single action.",,,,,,,
+26462006d4fd3bec4c854d7ea503fefff3aa3ef34c881864d340450ca83c658d,large_task_loc,large-task,task,nextcloud/ansible-collection-nextcloud-admin,4f61f963e6ed9c0a66c5be71afb2f7442479ccdd,Q1,roles/install_nextcloud/tasks/main.yml,tasks,128,Main | Patch from the app 'user_saml' the file SAMLController.php,23,15,>,true,true,1,false,,,,,false,26,,,,,,,,,,,,,,nextcloud/ansible-collection-nextcloud-admin|B5_current_positive_tail|current=true,B5_current_positive_tail,8,0.1250000000,8,Should this executable Ansible task be considered excessively large and in need of decomposition?,uncertain,"The file is almost entirely a dispatcher of include_tasks/blocks selecting OS- and config-specific sub-files (web server, DB backend, TLS method, apps), so the substantive logic that would need judging lives in the included files that are not present in this excerpt.",1,149,149,true,complete-file,"     1: ---
+     2: # tasks file for nextcloud
+     3: 
+     4: - name: Load os specific variables
+     5:   ansible.builtin.include_tasks: setup_env.yml
+     6:   tags:
+     7:     - install_apps
+     8: 
+     9: - name: Install PHP packages
+    10:   ansible.builtin.include_tasks: php_install.yml
+    11:   when: nextcloud_install_php
+    12:   tags:
+    13:     - install_apps
+    14: 
+    15: - name: Install web server packages
+    16:   when: nextcloud_install_websrv
+    17:   ansible.builtin.include_tasks: websrv_install.yml
+    18: 
+    19: - name: Install certificates
+    20:   when: nextcloud_install_tls
+    21:   block:
+    22:     - name: Verify permission for installed TLS certificates
+    23:       ansible.builtin.include_tasks: tls_installed.yml
+    24:       when: nextcloud_tls_cert_method == ""installed""
+    25: 
+    26:     - name: Install given signed certificates
+    27:       ansible.builtin.include_tasks: tls_signed.yml
+    28:       when: nextcloud_tls_cert_method == ""signed""
+    29: 
+    30:     - name: Configure self signed TLS certificates
+    31:       ansible.builtin.include_tasks: tls_selfsigned.yml
+    32:       when: nextcloud_tls_cert_method == ""self-signed""
+    33: 
+    34: - name: Configure web server
+    35:   when: nextcloud_install_websrv
+    36:   block:
+    37:     - name: Configure Nginx web server.
+    38:       ansible.builtin.include_tasks: http_nginx.yml
+    39:       when: nextcloud_websrv in [""nginx""]
+    40: 
+    41:     - name: Configure Apache web server
+    42:       ansible.builtin.include_tasks: http_apache.yml
+    43:       when: nextcloud_websrv in [""apache2""]
+    44: 
+    45: - name: Configure Redis server
+    46:   ansible.builtin.include_tasks: redis_server.yml
+    47:   when: (nextcloud_install_redis_server | bool)
+    48: 
+    49: - name: Configure DB
+    50:   when: nextcloud_install_db
+    51:   block:
+    52:     - name: Configure mysql/mariadb database
+    53:       ansible.builtin.include_tasks: db_mysql.yml
+    54:       when: nextcloud_db_backend in [""mysql"", ""mariadb""]
+    55: 
+    56:     - name: Configure PostgreSQL database
+    57:       ansible.builtin.include_tasks: db_postgresql.yml
+    58:       when: nextcloud_db_backend in [""pgsql""]
+    59: 
+    60: - name: Check Nextcloud installed
+    61:   ansible.builtin.stat:
+    62:     path: ""{{ nextcloud_webroot }}/index.php""
+    63:   register: nc_nextcloud_installed
+    64: 
+    65: - name: Downloading Nextcloud
+    66:   ansible.builtin.include_tasks: nc_download.yml
+    67:   when: not nc_nextcloud_installed.stat.exists
+    68: 
+    69: - name: Check Nextcloud configuration exists.
+    70:   ansible.builtin.stat:
+    71:     path: ""{{ nextcloud_webroot }}/config/config.php""
+    72:   register: nc_nextcloud_conf
+    73: 
+    74: - name: Check Nextcloud is configured
+    75:   ansible.builtin.command: grep -q ""{{ nextcloud_trusted_domain | first }}"" {{ nextcloud_webroot }}/config/config.php
+    76:   failed_when: false
+    77:   changed_when: false
+    78:   register: nc_nextcloud_configured
+    79:   when: nc_nextcloud_conf.stat.exists
+    80: 
+    81: - name: Nextcloud installation
+    82:   ansible.builtin.include_tasks: nc_installation.yml
+    83:   when: |
+    84:     (not nc_nextcloud_conf.stat.exists) or
+    85:     (nc_nextcloud_configured.rc is defined and nc_nextcloud_configured.rc != 0)
+    86: 
+    87: - name: Install Nextcloud Apps
+    88:   when:
+    89:     - nextcloud_apps is defined
+    90:     - nextcloud_apps is mapping
+    91:   tags:
+    92:     - install_apps
+    93:     - patch_user_saml_app
+    94:   block:
+    95:     - name: Lists the number of apps available in the instance
+    96:       nextcloud.admin.run_occ:
+    97:         command: app:list --output=json_pretty --no-warnings
+    98:         nextcloud_path: ""{{ nextcloud_webroot }}""
+    99:       become: true
+   100:       changed_when: false
+   101:       check_mode: false
+   102:       register: nc_apps_list
+   103: 
+   104:     - name: Convert list to yaml
+   105:       ansible.builtin.set_fact:
+   106:         nc_available_apps: ""{{ nc_apps_list.stdout | from_json }}""
+   107: 
+   108:     - name: Install apps
+   109:       ansible.builtin.include_tasks: nc_apps.yml
+   110:       # do if the app is not enabled and ( (archive path is not """") or (app is disabled) )
+   111:       when:
+   112:         - item.key not in nc_available_apps.enabled
+   113:         - ansible_run_tags is not search('patch_user_saml_app')
+   114:       with_dict: ""{{ nextcloud_apps }}""
+   115: 
+   116: 
+   117: - name: Add indices
+   118:   nextcloud.admin.run_occ:
+   119:     nextcloud_path: ""{{ nextcloud_webroot }}""
+   120:     command: db:add-missing-indices
+   121:   become: true
+   122:   register: nc_indices_cmd
+   123:   changed_when: '""Done"" not in nc_indices_cmd.stdout'
+   124:   when: nextcloud_install_db
+   125:   tags:
+   126:     - molecule-idempotence-notest
+   127: 
+   128: - name: Main | Patch from the app 'user_saml' the file SAMLController.php
+   129:   when:
+   130:     - nextcloud_patch_user_saml_app
+   131:     - nc_available_apps.enabled['user_saml'] is defined or nc_available_apps.disabled['user_saml'] is defined
+   132:   tags:
+   133:     - patch_user_saml_app
+   134:   vars:
+   135:     pattern: '.*\$this->session->set\(.user_saml\.samlUserData.,\s+\$_SERVER\);.*'
+   136:     file2patch: ""{{ nextcloud_webroot + '/apps/user_saml/lib/Controller/SAMLController.php' }}""
+   137:   block:
+   138:     - name: Main | Check if SAMLController.php can be patched
+   139:       ansible.builtin.slurp:
+   140:         src: ""{{ file2patch }}""
+   141:       register: df_file
+   142: 
+   143:     - name: Main | Patch file SAMController.php
+   144:       ansible.builtin.blockinfile:
+   145:         block: ""{{ lookup('ansible.builtin.file', 'files/SAMLController.patch') }}""
+   146:         path: ""{{ file2patch }}""
+   147:         insertbefore: ""{{ pattern }}""
+   148:         marker: ""                                /** {mark} ANSIBLE MANAGED BLOCK */""
+   149:       when: df_file.content | b64decode | regex_search(pattern)",negative,"nextcloud main.yml is orchestration via include_tasks/blocks; each block (TLS install, web server config, DB config, app install) delegates to a single conditional include per branch rather than performing multiple responsibilities itself.",,,,,,,
+2da115853d248ad64febfb55eb31197252b45c41e56fc3e6568838bc16cd11a6,large_task_loc,large-task,task,freifunk-berlin/bbb-configs,a504e8298bf12b7ffae09536a6b01841b091c01d,Q4,roles/cfg_openwrt/tasks/conditional_packages.yml,tasks,58,Remove or replace packages on low mem and low flash,23,15,>,true,true,1,false,,,,,false,7,,,,,,,,,,,,,,freifunk-berlin/bbb-configs|B5_current_positive_tail|current=true,B5_current_positive_tail,1,1.0000000000,1,Should this executable Ansible task be considered excessively large and in need of decomposition?,uncertain,"The 'Add QOS support if configured' set_fact performs only one simple list append, but its when-condition chains four selectattr/rejectattr filters over the networks structure that are hard to verify correctness of by inspection, leaving genuine ambiguity about whether the complexity belongs in the task or is acceptable declarative gating.",1,121,121,true,complete-file,"     1: ---
+     2: - name: ""Add irqbalance if multicore""
+     3:   set_fact:
+     4:     packages: ""{{ packages + ['irqbalance'] }}""
+     5:   when:
+     6:     - multicore|default(false)|bool
+     7: 
+     8: - name: ""Add airos-dfs-reset if configured""
+     9:   set_fact:
+    10:     packages: ""{{ packages + ['airos-dfs-reset'] }}""
+    11:   when:
+    12:     - airos_dfs_reset|default([])|length > 0
+    13:     - role == 'corerouter'
+    14: 
+    15: - name: ""Add Dawn + Luci app for corerouters""
+    16:   set_fact:
+    17:     packages: ""{{ packages + [item] }}""
+    18:   when:
+    19:     - role == 'corerouter' or role == 'ap'
+    20:     - not (low_mem | default(false))
+    21:     - not (low_flash | default(false))
+    22:     - wifi_roaming | default(false)
+    23:   loop:
+    24:     - dawn
+    25:     - luci-app-dawn
+    26:     - umdns
+    27: 
+    28: - name: ""Add tunspace if configured""
+    29:   set_fact:
+    30:     packages: ""{{ packages + ['tunspace', 'wireguard-tools'] }}""
+    31:   when:
+    32:     - networks is defined
+    33:     - networks | selectattr('role', 'defined') | selectattr('role','equalto','tunnel') | count > 0
+    34:     - role == 'corerouter'
+    35: 
+    36: - name: ""Add zram-swap on low mem and big flash""
+    37:   set_fact:
+    38:     packages: ""{{ packages + ['zram-swap'] }}""
+    39:   when:
+    40:     - low_mem | default(false)
+    41:     - not (low_flash | default(false))
+    42: 
+    43: - name: ""Add debugging-packages on core-routers""
+    44:   set_fact:
+    45:     packages: ""{{ packages + ['mosh-server', 'tmux'] }}""
+    46:   when:
+    47:     - role == 'corerouter'
+    48:     - not (low_mem | default(false))
+    49:     - not (low_flash | default(false))
+    50: 
+    51: - name: ""Add adblock-fast on core-routers""
+    52:   set_fact:
+    53:     packages: ""{{ packages + ['adblock-fast', 'luci-app-adblock-fast', 'ca-bundle', 'gawk', 'grep', 'sed', 'coreutils-sort'] }}""
+    54:   when:
+    55:     - role == 'corerouter'
+    56:     - adblock_enabled | default(false) | bool
+    57: 
+    58: - name: ""Remove or replace packages on low mem and low flash""
+    59:   set_fact:
+    60:     packages: ""{{ packages + [item] }}""
+    61:   when: low_mem | default(false) or low_flash | default(false)
+    62:   loop:
+    63:     - -ethtool
+    64:     - -iperf3
+    65:     - -iwinfo
+    66:     - -libiwinfo-lua
+    67:     - -collectd-mod-iwinfo
+    68:     - -kmod-ipt-core
+    69:     - -kmod-ipt-offload
+    70:     - -kmod-nf-ipt
+    71:     - -kmod-nls-base
+    72:     - -kmod-phy-ath79-usb
+    73:     - -kmod-usb-core
+    74:     - -kmod-usb-ehci
+    75:     - -kmod-usb-ohci
+    76:     - -kmod-usb2
+    77:     - -opkg
+    78:     - -tcpdump
+    79:     - tcpdump-mini
+    80:     - -vnstat
+    81: 
+    82: - name: ""Remove Luci on low mem and low flash""
+    83:   set_fact:
+    84:     packages: ""{{ packages + ['-' + item] }}""
+    85:   when: (low_mem | default(false) or low_flash | default(false)) and role != ""corerouter""
+    86:   loop: ""{{ all_luci_base__packages__to_merge }}""
+    87: 
+    88: - name: ""Disable uhttpd on low mem""
+    89:   set_fact:
+    90:     disabled_services: ""{{ disabled_services + ['uhttpd'] }}""
+    91:   when: low_mem | default(false)
+    92: 
+    93: - name: ""Add ip-bridge if dsa target""
+    94:   set_fact:
+    95:     packages: ""{{ packages + ['ip-bridge'] }}""
+    96:   when:
+    97:     - dsa_ports is defined
+    98: 
+    99: - name: ""Add poemgr if poemgr target""
+   100:   set_fact:
+   101:     packages: ""{{ packages + ['poemgr'] }}""
+   102:   when:
+   103:     - poemgr_ports is defined
+   104: 
+   105: - name: ""Add QOS support if configured""
+   106:   set_fact:
+   107:     packages: ""{{ packages + ['qos-scripts'] }}""
+   108:   when:
+   109:     - networks is defined
+   110:     - networks | rejectattr('qos_engine', 'defined') | selectattr('ingress', 'defined') | count > 0
+   111:       or networks | rejectattr('qos_engine', 'defined') | selectattr('egress', 'defined') | count > 0
+   112:       or networks | selectattr('qos_engine', 'defined') | rejectattr('qos_engine', 'equalto', 'qosify') | selectattr('ingress', 'defined') | count > 0
+   113:       or networks | selectattr('qos_engine', 'defined') | rejectattr('qos_engine', 'equalto', 'qosify') | selectattr('egress', 'defined') | count > 0
+   114: 
+   115: - name: ""Add qosify support if configured""
+   116:   set_fact:
+   117:     packages: ""{{ packages + ['qosify'] }}""
+   118:   when:
+   119:     - networks is defined
+   120:     - networks | selectattr('qos_engine', 'defined') | selectattr('qos_engine', 'equalto', 'qosify') | selectattr('ingress', 'defined') | count > 0
+   121:       or networks | selectattr('qos_engine', 'defined') | selectattr('qos_engine', 'equalto', 'qosify') | selectattr('egress', 'defined') | count > 0",negative,"Each set_fact appends to a shared packages list under its own when guard; even the longest task (an 18-item removal loop) is a static package-name list for one operation, not mixed logic.",,,,,,,
+7f1bf1acfa138d006fd2da1634fc64ac0a5f45084bb51ab36a71d4b20cdb1342,large_task_loc,large-task,task,usegalaxy-eu/vgcn,c65e4ea9febe2bf5eeca04715c93a441d82f7875,Q1,ansible/playbooks-internal.yml,tasks,18,Unknown,1,15,>,true,false,1,false,,,,,false,3,,,,,,,,,,,,,,usegalaxy-eu/vgcn|B1_low|current=false,B1_low,17,0.0588235294,17,Should this executable Ansible task be considered excessively large and in need of decomposition?,uncertain,"The file consists solely of import_playbook directives with no executable task body present, so there is no leaf task in this excerpt to judge against the codebook's decomposition question.",1,20,20,true,complete-file,"     1: # Meta-playbook for internal images that just imports all other playbooks.
+     2: # This Meta-playbook is selected when packer finds 'internal' in the group names.
+     3: # Requires a --vault-password-file=.vault_password argument in packer.
+     4: #
+     5: # It defines the order in which playbooks should be run during the provisioning
+     6: # step. Each playbook contains plays that only apply to hosts belonging to a
+     7: # group with the same name. Therefore, individual playbooks can be turned on
+     8: # and off via the ""groups"" variable defined in ""templates/variables.pkr.hcl"",
+     9: # which can also be overriden form the command line each time packer is
+    10: # launched.
+    11: ---
+    12: - ansible.builtin.import_playbook: generic.yml
+    13: 
+    14: - ansible.builtin.import_playbook: workers.yml
+    15: 
+    16: - ansible.builtin.import_playbook: internal.yml
+    17: 
+    18: - ansible.builtin.import_playbook: pxe.yml
+    19: 
+    20: - ansible.builtin.import_playbook: kvm.yml",negative,Meta-playbook that only chains five import_playbook statements; no task logic at all.,,,,,,,
+fca440e92a586e6127548a4cd43743adbc3f92acdb61a118e83e6a0ffa7d3101,large_task_loc,large-task,task,ric03uec/clawrium,77274d5ca3d71b5a057df332482dd678446d9544,Q2,src/clawrium/platform/registry/openclaw/playbooks/install_macos.yaml,playbook,192,Clean up installer script,5,15,>,true,false,1,false,,,,,false,19,,,,,,,,,,,,,,ric03uec/clawrium|B2_lower_middle|current=false,B2_lower_middle,247,0.0040485830,247,Should this executable Ansible task be considered excessively large and in need of decomposition?,negative,"Each visible task (file/copy/template operations for directories, config, and the plist) performs one single-purpose filesystem or templating action with parameters needed for that one resource, not combined responsibilities.",187,272,440,false,local-window,"   187:       environment:
+   188:         HOME: ""/Users/{{ agent_name }}""
+   189:         PATH: ""/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin""
+   190:       when: not openclaw_already_installed
+   191: 
+   192:     - name: Clean up installer script
+   193:       ansible.builtin.file:
+   194:         path: ""/Users/{{ agent_name }}/openclaw-install.sh""
+   195:         state: absent
+   196:       when: not openclaw_already_installed
+   197: 
+   198:     - name: Create workspace directory
+   199:       ansible.builtin.file:
+   200:         path: ""/Users/{{ agent_name }}/workspace""
+   201:         state: directory
+   202:         owner: ""{{ agent_name }}""
+   203:         group: staff
+   204:         mode: ""0700""
+   205: 
+   206:     - name: Create OpenClaw config directory
+   207:       ansible.builtin.file:
+   208:         path: ""/Users/{{ agent_name }}/.openclaw""
+   209:         state: directory
+   210:         owner: ""{{ agent_name }}""
+   211:         group: staff
+   212:         mode: ""0700""
+   213: 
+   214:     - name: Create OpenClaw logs directory
+   215:       ansible.builtin.file:
+   216:         path: ""/Users/{{ agent_name }}/.openclaw/logs""
+   217:         state: directory
+   218:         owner: ""{{ agent_name }}""
+   219:         group: staff
+   220:         mode: ""0700""
+   221: 
+   222:     - name: Resolve per-instance gateway port from inventory (issue #533)
+   223:       ansible.builtin.set_fact:
+   224:         openclaw_port: ""{{ config.gateway.port }}""
+   225: 
+   226:     - name: Validate openclaw_port is a plain integer
+   227:       ansible.builtin.fail:
+   228:         msg: ""Invalid openclaw_port: must be digits only""
+   229:       when: openclaw_port | string is not regex('^[0-9]+$')
+   230: 
+   231:     - name: Write openclaw config (pre-rendered)
+   232:       ansible.builtin.copy:
+   233:         content: ""{{ prerendered_openclaw_config_json }}""
+   234:         dest: ""/Users/{{ agent_name }}/.openclaw/openclaw.json""
+   235:         owner: ""{{ agent_name }}""
+   236:         group: staff
+   237:         mode: ""0600""
+   238:       when: not openclaw_already_installed
+   239:       no_log: true
+   240: 
+   241:     - name: Write exec approvals policy from template
+   242:       ansible.builtin.template:
+   243:         src: ""{{ template_path }}/exec-approvals.json.j2""
+   244:         dest: ""/Users/{{ agent_name }}/.openclaw/exec-approvals.json""
+   245:         owner: ""{{ agent_name }}""
+   246:         group: staff
+   247:         mode: ""0600""
+   248:         backup: yes
+   249:       no_log: true
+   250: 
+   251:     - name: Verify exec approvals JSON is valid
+   252:       ansible.builtin.command:
+   253:         cmd: python3 -m json.tool /Users/{{ agent_name }}/.openclaw/exec-approvals.json
+   254:       changed_when: false
+   255: 
+   256:     - name: Create environment file for agent
+   257:       ansible.builtin.copy:
+   258:         dest: ""/Users/{{ agent_name }}/.openclaw/env""
+   259:         content: """"
+   260:         owner: ""{{ agent_name }}""
+   261:         group: staff
+   262:         mode: ""0600""
+   263:         force: no
+   264: 
+   265:     # ----- launchd plist (shared template — see openclaw.plist.j2) -----
+   266:     # `openclaw_binary` is passed in vars so the ProgramArguments string
+   267:     # in the plist points at the SAME binary `openclaw_runtime_binary`
+   268:     # resolved above (per-agent prefix preferred, PATH fallback). Without
+   269:     # this, the plist would hardcode the per-agent path and crash-loop
+   270:     # on hosts where the version-aware skip leaves only the PATH binary
+   271:     # installed.
+   272:     - name: Write launchd plist from shared template",uncertain,"This windowed excerpt cuts off exactly at the start of the ""Write launchd plist from shared template"" task (the final visible line), leaving its module arguments and templated content entirely unseen, so the actual size/cohesion of that task cannot be judged from what's given.",,,,,,,
+8767355b706d3353213cefb0089843f24d8f945931dd2b27c9361bc2d60edea2,large_task_loc,large-task,task,stuttgart-things/ansible,7f836ef7eb98edae0f4d6810943121bc9e6bce20,Q1,plays/manage-root-fs.yaml,playbook,31,Ensure growpart is available,4,15,>,true,false,1,false,,,,,false,4,,,,,,,,,,,,,,stuttgart-things/ansible|B1_low|current=false,B1_low,27,0.0370370370,27,Should this executable Ansible task be considered excessively large and in need of decomposition?,positive,"The 'Parse disk and partition number from root device' set_fact combines two different derived values (disk name and partition number) via chained regex substitutions in its vars, including a ternary expression that always evaluates to an empty string regardless of the condition it tests, indicating fragile, hard-to-verify parsing logic bundled into one task.",1,53,53,true,complete-file,"     1: ---
+     2: - name: Manage root filesystem (LVM-aware, no virt-type branching)
+     3:   hosts: all
+     4:   become: true
+     5:   tasks:
+     6:     - name: Find the device backing /
+     7:       ansible.builtin.set_fact:
+     8:         root_source: ""{{ ansible_facts['mounts']
+     9:           | selectattr('mount', 'equalto', '/')
+    10:           | map(attribute='device') | first }}""
+    11: 
+    12:     - name: Detect whether root is on LVM
+    13:       ansible.builtin.set_fact:
+    14:         root_is_lvm: ""{{ root_source is match('^/dev/mapper/') or root_source is match('^/dev/dm-') }}""
+    15: 
+    16:     - name: Show what was detected
+    17:       ansible.builtin.debug:
+    18:         msg: ""root device={{ root_source }} lvm={{ root_is_lvm }}""
+    19: 
+    20:     # ---------- non-LVM path (this VM) ----------
+    21:     - name: Grow + resize a plain root partition
+    22:       when: not root_is_lvm
+    23:       block:
+    24:         - name: Parse disk and partition number from root device
+    25:           ansible.builtin.set_fact:
+    26:             root_disk: ""/dev/{{ root_pkname }}""
+    27:             root_partnum: ""{{ root_source | regex_replace('^.*[^0-9]([0-9]+)$', '\\1') }}""
+    28:           vars:
+    29:             root_pkname: ""{{ (ansible_facts['device_links'] is defined) | ternary('', '') }}{{ root_source | regex_replace('^/dev/', '') | regex_replace('[0-9]+$', '') }}""
+    30: 
+    31:         - name: Ensure growpart is available
+    32:           ansible.builtin.package:
+    33:             name: cloud-guest-utils
+    34:             state: present
+    35: 
+    36:         - name: Grow the partition to fill the disk
+    37:           ansible.builtin.command: ""growpart {{ root_disk }} {{ root_partnum }}""
+    38:           register: growpart_result
+    39:           changed_when: ""'NOCHANGE' not in growpart_result.stdout""
+    40:           failed_when:
+    41:             - growpart_result.rc != 0
+    42:             - ""'NOCHANGE' not in growpart_result.stdout""
+    43: 
+    44:         - name: Grow the ext4 filesystem
+    45:           ansible.builtin.command: ""resize2fs {{ root_source }}""
+    46:           register: resize_result
+    47:           changed_when: ""'Nothing to do' not in resize_result.stderr""
+    48: 
+    49:     # ---------- LVM path (other templates) ----------
+    50:     - name: Manage LVM-backed root
+    51:       when: root_is_lvm
+    52:       ansible.builtin.debug:
+    53:         msg: ""Root is on LVM ({{ root_source }}); plug your existing LVM extend tasks here.""",negative,"""Parse disk and partition number from root device"" derives two closely related facts (disk name, partition number) from the same source string for the single downstream purpose of growing that partition; it is necessary parsing, not separable responsibilities.",,,,,,,
+146eb56ec878f915ad813c2f38357d1d21af34fa18a861129e44777acf576c6f,large_task_loc,large-task,task,grycap/im,5e54aa6e02108a615abf2670abaa4aa1c56add02,Q1,contextualization/basic.yml,playbook,31,Bootstrap with python Debian/Ubuntu,7,15,>,true,false,1,false,,,,,false,4,,,,,,,,,,,,,,grycap/im|B3_upper_middle|current=false,B3_upper_middle,11,0.0909090909,11,Should this executable Ansible task be considered excessively large and in need of decomposition?,positive,"The 'Link python 3 or 2 in case is needed' raw task chains a check-existence test with two different fallback symlink-creation branches using shell `||` short-circuiting (`ls /usr/bin/python || { ...python3...; } || { ...python2...; }`), combining detection and two distinct remediation paths into one opaque raw shell one-liner instead of separate stat/file tasks with when-conditions.",1,121,121,true,complete-file,"     1: ---
+     2: - gather_facts: False
+     3:   tasks: 
+     4:   ############## To avoid some issues with cloud-init and unattended upgrades ###############
+     5:     - name: Avoid unattended upgrades
+     6:       raw: |
+     7:         sudo touch /var/lib/apt/periodic/upgrade-stamp; \
+     8:         sudo touch /var/lib/apt/periodic/update-stamp; \
+     9:         sudo touch /var/lib/apt/periodic/download-upgradeable-stamp;
+    10:       ignore_errors: yes
+    11:       changed_when: false
+    12: 
+    13:     - name: Wait for the VM to boot
+    14:       raw: systemctl is-system-running --wait
+    15:       ignore_errors: yes
+    16:       changed_when: false
+    17: 
+    18:     # Some OSs does not have python by default
+    19:     - name: Check Python2 is installed
+    20:       raw: python2 -c 'import sys; print(sys.version_info[1])'
+    21:       ignore_errors: yes
+    22:       register: python2_version
+    23:       changed_when: false
+    24: 
+    25:     - name: Check Python3 is installed
+    26:       raw: python3 -c 'import sys; print(sys.version_info[1])'
+    27:       ignore_errors: yes
+    28:       register: python3_version
+    29:       changed_when: false
+    30: 
+    31:     - name: Bootstrap with python Debian/Ubuntu
+    32:       raw: sudo apt update && sudo apt install -y python3.5; sudo apt install -y python3
+    33:       ignore_errors: yes
+    34:       register: python_install
+    35:       changed_when: python_install.stdout_lines|length > 1
+    36:       when: (python2_version is failed and python3_version is failed) or python3_version.stdout|int < 5
+    37: 
+    38:     - name: Link correct python version in Ubuntu 14
+    39:       raw: ls /usr/bin/python3.5 && sudo rm -f /usr/bin/python3 && sudo ln -s /usr/bin/python3.5 /usr/bin/python3
+    40:       when: python3_version is success and python3_version.stdout|int < 5
+    41:       ignore_errors: yes
+    42: 
+    43:     - name: Bootstrap with python RedHat/CentOS
+    44:       raw: sudo yum install -y python3
+    45:       ignore_errors: yes
+    46:       register: python_install
+    47:       changed_when: python_install.stdout_lines|length > 1
+    48:       when: python2_version is failed and python3_version is failed
+    49: 
+    50:     - name: RedHat/CentOS install python3-dnf
+    51:       command: sudo yum install -y python3 python3-dnf
+    52:       ignore_errors: yes
+    53: 
+    54:     - name: Bootstrap with python SUSE
+    55:       raw: sudo zypper -n install python3 python3-xml
+    56:       ignore_errors: yes
+    57:       register: python_install
+    58:       changed_when: python_install.stdout_lines|length > 1
+    59:       when: python2_version is failed and python3_version is failed
+    60: 
+    61:     - name: Link python 3 or 2 in case is needed
+    62:       raw: ls /usr/bin/python || { ls /usr/bin/python3 && ln -s /usr/bin/python3 /usr/bin/python; } || { ls /usr/bin/python2 && ln -s /usr/bin/python2 /usr/bin/python; }
+    63:       become: yes
+    64:       ignore_errors: yes
+    65: 
+    66:     # In case of redhat systems libselinux-python3 is needed
+    67:     - name: Install libselinux-python3 on RH systems
+    68:       raw: ls /usr/bin/python3 && yum -y install libselinux-python3
+    69:       become: yes
+    70:       ignore_errors: yes
+    71: 
+    72:     # In case of redhat systems libselinux-python is needed
+    73:     - name: Install libselinux-python on RH systems
+    74:       raw: ls /usr/bin/python2 && yum -y install libselinux-python
+    75: 
+    76:       become: yes
+    77:       ignore_errors: yes
+    78: 
+    79:     # Set the correct hostname
+    80:     - name: Set the hostname of the node
+    81:       hostname: name={{ IM_NODE_FQDN }}
+    82:       become: yes
+    83:       ignore_errors: yes
+    84: 
+    85:     # In case of redhat systems disable SELinux
+    86:     - name: Disable SELinux in REL systems
+    87:       selinux: state=disabled
+    88:       become: yes
+    89:       ignore_errors: yes
+    90: 
+    91:     # Add the authorized_key to the nodes to enable accessing without password
+    92:     # pk_file var must be added by the ctxt agent
+    93:     - name: Add the authorized_key to the nodes
+    94:       authorized_key: user={{ansible_user}} key=""{{ lookup('file', pk_file) }}""
+    95: 
+    96:     # Added to solve GCE issues removing the key
+    97:     - name: Add the authorized_key to the nodes again
+    98:       lineinfile: dest=""/home/{{ansible_user}}/.ssh/authorized_keys"" line=""{{ lookup('file', pk_file) }}2""
+    99:       ignore_errors: yes
+   100: 
+   101:     - name: Gather Facts
+   102:       setup:
+   103: 
+   104:     - name: Ubuntu apt update
+   105:       apt: update_cache=yes cache_valid_time=3600
+   106:       when: ansible_distribution == ""Ubuntu""
+   107:       ignore_errors: yes
+   108:       register: apt_update
+   109:       become: yes
+   110:       become_method: sudo
+   111:       async: 120
+   112:       poll: 1
+   113:   
+   114:     - name: Ubuntu force apt update (avoid apt lock)
+   115:       command: apt update
+   116:       when: ansible_distribution == ""Ubuntu"" and apt_update is failed
+   117:       ignore_errors: yes
+   118:       become: yes
+   119:       become_method: sudo
+   120:       async: 120
+   121:       poll: 1",negative,"contextualization/basic.yml has many raw/command tasks but each performs one bootstrap step (check python2, check python3, install on one distro family); the play is long because it enumerates OS variants, not because any one task is overloaded.",,,,,,,
+64ebbf7ff92f899a662ab020841384069a841544094616bb4e02187ef79b998e,large_task_loc,large-task,task,CMSgov/bluebutton-web-deployment,ef2da5200c4d70c9db49e682ae28cd52ca92c995,Q1,roles/app_install/tasks/main.yml,tasks,83,install requirements,14,15,>,true,false,1,false,,,,,false,9,,,,,,,,,,,,,,CMSgov/bluebutton-web-deployment|B4_high|current=false,B4_high,5,0.2000000000,5,Should this executable Ansible task be considered excessively large and in need of decomposition?,positive,"The 'install requirements' shell task activates a virtualenv, upgrades pip/setuptools/wheel, and installs hashed requirements all in one raw shell block, when the ansible.builtin.pip module natively supports a virtualenv target and extra_args, making this an ad hoc script combining steps that a dedicated module would express more safely and idempotently.",1,154,154,true,complete-file,"     1: ---
+     2: - name: ""Create Virtualenv""
+     3:   become_user: ""{{ remote_admin_account }}""
+     4:   become: yes
+     5:   shell: ""cd /var/virtualenv; {{ python_bin_dir }}python{{ python_ver }} -m venv {{ project_dir }}""
+     6: 
+     7: - name: Ensure group ""www-data"" exists
+     8:   become_user: ""{{ remote_admin_account }}""
+     9:   become: yes
+    10:   group:
+    11:     name: ""{{ app_group }}""
+    12:     state: present
+    13: 
+    14: - name: ""Set permissions to application code""
+    15:   become_user: ""{{ remote_admin_account }}""
+    16:   become: yes
+    17:   file:
+    18:     dest: ""{{ app_pyapp_home }}""
+    19:     state: directory
+    20:     recurse: yes
+    21:     owner: ""{{ app_pyapps_user }}""
+    22:     group: ""{{ app_group }}""
+    23:     mode: 0755
+    24: 
+    25: - name: ""set ownership to pyapps:www-data ({{ app_pyapps_user }}:{{ app_group }})""
+    26:   become_user: ""{{ remote_admin_account }}""
+    27:   become: yes
+    28:   file:
+    29:     owner: ""{{ app_pyapps_user }}""
+    30:     group: ""{{ app_group }}""
+    31:     dest: ""/var/virtualenv""
+    32:     state: directory
+    33:     recurse: yes
+    34: 
+    35: - name: ""install from git: {{ project_repo }} branch:{{ git_branch }}""
+    36:   become_user: ""{{ remote_admin_account }}""
+    37:   become: yes
+    38:   git:
+    39:     repo: ""{{ project_repo }}""
+    40:     dest: ""{{ install_root }}/{{ project_name }}""
+    41:     force: yes
+    42:     clone: yes
+    43: 
+    44: - name: ""update from git: {{ project_repo }} branch:{{ git_branch }}""
+    45:   become_user: ""{{ remote_admin_account }}""
+    46:   become: yes
+    47:   git:
+    48:     repo: ""{{ project_repo }}""
+    49:     dest: ""{{ install_root }}/{{ project_name }}""
+    50:     version: ""{{ git_branch }}""
+    51:   register: git_history
+    52: 
+    53: - name: ""clone bluebutton-css to hhs_oauth_server app base directory""
+    54:   become_user: ""{{ remote_admin_account }}""
+    55:   become: yes
+    56:   git:
+    57:     repo: ""{{ css_repo }}""
+    58:     dest: ""{{ install_root }}/{{ project_name }}/{{ css_dir }}""
+    59:     force: yes
+    60:     clone: yes
+    61: 
+    62: - name: ""set permissions to application code ( {{ app_pyapps_user }}:{{ app_group }} )""
+    63:   become_user: ""{{ remote_admin_account }}""
+    64:   become: yes
+    65:   file:
+    66:     dest: ""{{ app_pyapp_home }}""
+    67:     state: directory
+    68:     recurse: yes
+    69:     owner: ""{{ app_pyapps_user }}""
+    70:     group: ""{{ app_group }}""
+    71:     mode: 0755
+    72: 
+    73: - name: ""create pip tmp directory""
+    74:   become_user: ""{{ remote_admin_account }}""
+    75:   become: yes
+    76:   ansible.builtin.file:
+    77:     path: /pip-tmp
+    78:     state: directory
+    79:     owner: ""{{ app_pyapps_user }}""
+    80:     group: ""{{ app_group }}""
+    81:     mode: 0755
+    82: 
+    83: - name: ""install requirements""
+    84:   become_user: ""{{ remote_admin_account }}""
+    85:   become: yes
+    86:   shell: |
+    87:     source {{ app_py_virtual_env }}/bin/activate
+    88:     python3.12 -m pip install --upgrade pip setuptools wheel
+    89:     TMPDIR=/pip-tmp pip3.12 install -r requirements/requirements.txt --require-hashes --no-deps --prefer-binary
+    90:   args:
+    91:     chdir: ""{{ app_pyapp_home }}/{{ common_project_name }}""
+    92:   register: out
+    93: 
+    94: - debug: var=out.stdout_lines
+    95: 
+    96: - name: ""remove pip tmp directory""
+    97:   become_user: ""{{ remote_admin_account }}""
+    98:   become: yes
+    99:   ansible.builtin.file:
+   100:     path: /pip-tmp
+   101:     state: absent
+   102: 
+   103: # Use task directly rather than importing from deprecated location
+   104: - name: ""Create a back-end app certstore""
+   105:   become_user: ""{{ remote_admin_account }}""
+   106:   become: yes
+   107:   file:
+   108:     dest: ""{{ app_pyapp_home }}/certstore""
+   109:     mode: 0750
+   110:     owner: ""{{ app_pyapps_user }}""
+   111:     group: ""{{ app_group }}""
+   112:     recurse: yes
+   113:     state: directory
+   114: 
+   115: - name: ""Create run dir for service .sock/.pid files""
+   116:   become_user: ""{{ remote_admin_account }}""
+   117:   become: yes
+   118:   file:
+   119:     dest: ""{{ app_pyapp_home }}/run""
+   120:     mode: 0755
+   121:     owner: ""{{ app_pyapps_user }}""
+   122:     group: ""{{ app_group }}""
+   123:     recurse: yes
+   124:     state: directory
+   125: 
+   126: # change ownership of files
+   127: - name: ""Update file ownership""
+   128:   become_user: ""{{ remote_admin_account }}""
+   129:   become: yes
+   130:   file:
+   131:     path: ""{{ install_root }}/{{ project_name }}/""
+   132:     recurse: yes
+   133:     owner: ""{{ app_owner }}""
+   134:     group: ""{{ app_group }}""
+   135:     mode:  ""u+rw,g+rw,o-rwx""
+   136: 
+   137: # Change ownership for libraries
+   138: - name: ""Change ownership for libraries""
+   139:   become_user: ""{{ remote_admin_account }}""
+   140:   become: yes
+   141:   file:
+   142:     path: ""{{ venv }}""
+   143:     recurse: yes
+   144:     owner: ""{{ app_owner }}""
+   145:     group: ""{{ app_group }}""
+   146:     mode:  ""u+rw,g+rw,o-rwx""
+   147: 
+   148: - name: make manage.py executable
+   149:   become_user: ""{{ remote_admin_account }}""
+   150:   become: yes
+   151:   file:
+   152:     path: ""{{ install_root }}/{{ project_name }}/manage.py""
+   153:     state: touch
+   154:     mode: ""u+rwx,g+rwx,o-rwx""",negative,app_install tasks are each one virtualenv/git/file/permission step; 'install requirements' bundles venv activation with one pip upgrade and one hashed install invocation for the single purpose of installing the app's dependencies.,,,,,,,
+0433e6cb37b07d477ca18b6bb3947f830d31568c2441b51f41ecff253e09252a,large_task_loc,large-task,task,nmime/ansible-k8s-full-setup,345f3044199bb323b5c34b3667657e7289abf3a1,Q2,roles/k8s-databases/tasks/main.yml,tasks,858,Discover the PostgreSQL primary for role settings,15,15,>,true,false,1,false,,,,,false,40,,,,,,,,,,,,,,nmime/ansible-k8s-full-setup|B4_high|current=false,B4_high,393,0.0025445293,393,Should this executable Ansible task be considered excessively large and in need of decomposition?,positive,"The 'Install declared PostgreSQL database extensions' k8s_exec task embeds a Jinja for-loop inside the psql command string to dynamically build a compound, semicolon-chained sequence of CREATE EXTENSION statements per subelement, rather than using Ansible's own subelements loop per extension, making failures of individual extensions hard to isolate or test.",853,938,1958,false,local-window,"   853:     fail_msg: >-
+   854:       PostgreSQL extra-user names must be DNS-compatible operator identities,
+   855:       and search_path values must be lowercase SQL identifiers.
+   856:   loop: '{{ _pg_role_search_paths | default([]) }}'
+   857:   when: platform_postgresql_enabled | default(true) | bool
+   858: - name: Discover the PostgreSQL primary for role settings
+   859:   kubernetes.core.k8s_info:
+   860:     kind: Pod
+   861:     namespace: '{{ db_ns }}'
+   862:     label_selectors:
+   863:     - postgres-operator.crunchydata.com/cluster={{ project_name | default('k8s') }}-pg
+   864:     - postgres-operator.crunchydata.com/role=primary
+   865:   register: _pg_role_primary
+   866:   until: (_pg_role_primary.resources | default([])) | length == 1
+   867:   retries: 30
+   868:   delay: 5
+   869:   when:
+   870:   - platform_postgresql_enabled | default(true) | bool
+   871:   - >-
+   872:     (_pg_role_search_paths | default([]) | length) > 0 or
+   873:     (_pg_database_extensions | default([]) | length) > 0
+   874: - name: Configure PostgreSQL role search paths
+   875:   kubernetes.core.k8s_exec:
+   876:     namespace: '{{ db_ns }}'
+   877:     pod: '{{ _pg_role_primary.resources[0].metadata.name }}'
+   878:     container: database
+   879:     command: >-
+   880:       psql -v ON_ERROR_STOP=1 -d postgres
+   881:       -c 'ALTER ROLE ""{{ item.operator.name }}"" SET search_path TO
+   882:       ""{{ item.search_path }}"", pg_catalog;'
+   883:   loop: '{{ _pg_role_search_paths | default([]) }}'
+   884:   when: platform_postgresql_enabled | default(true) | bool
+   885: - name: Install declared PostgreSQL database extensions
+   886:   kubernetes.core.k8s_exec:
+   887:     namespace: '{{ db_ns }}'
+   888:     pod: '{{ _pg_role_primary.resources[0].metadata.name }}'
+   889:     container: database
+   890:     command: >-
+   891:       psql -v ON_ERROR_STOP=1 -d ""{{ item.1 }}""
+   892:       -c '{% for extension in item.0.extensions %}CREATE EXTENSION IF NOT EXISTS
+   893:       ""{{ extension }}"";{% endfor %}'
+   894:   loop: ""{{ query('subelements', _pg_database_extensions | default([]), 'operator.databases') }}""
+   895:   when: platform_postgresql_enabled | default(true) | bool
+   896: - name: Check MongoDB Operator Helm release status
+   897:   ansible.builtin.command: helm status percona-server-mongodb-operator -n {{ db_ns }} -o json
+   898:   register: _mongo_operator_helm_status
+   899:   failed_when: false
+   900:   changed_when: false
+   901:   when: platform_mongodb_enabled | default(true) | bool
+   902: - name: Remove failed MongoDB Operator Helm release before reinstall
+   903:   kubernetes.core.helm:
+   904:     name: percona-server-mongodb-operator
+   905:     release_namespace: '{{ db_ns }}'
+   906:     release_state: absent
+   907:     wait: true
+   908:   when:
+   909:   - platform_mongodb_enabled | default(true) | bool
+   910:   - _mongo_operator_helm_status.rc == 0
+   911:   - (_mongo_operator_helm_status.stdout | from_json).info.status | default('') == 'failed'
+   912: - name: Reconcile MongoDB Operator CRDs for the selected version
+   913:   ansible.builtin.shell: |
+   914:     set -o pipefail
+   915:     helm show crds percona/psmdb-operator --version {{ psmdb_operator_ver }} |
+   916:       kubectl apply --server-side \
+   917:         --force-conflicts \
+   918:         --field-manager=ansible-psmdb-crds \
+   919:         -f -
+   920:   args:
+   921:     executable: /bin/bash
+   922:   register: _psmdb_crd_reconcile
+   923:   retries: 3
+   924:   delay: 15
+   925:   until: _psmdb_crd_reconcile.rc == 0
+   926:   changed_when: >-
+   927:     (' created' in _psmdb_crd_reconcile.stdout)
+   928:     or (' configured' in _psmdb_crd_reconcile.stdout)
+   929:     or (' serverside-applied' in _psmdb_crd_reconcile.stdout)
+   930:   when: platform_mongodb_enabled | default(true) | bool
+   931: - name: Install Percona MongoDB Operator
+   932:   kubernetes.core.helm:
+   933:     name: percona-server-mongodb-operator
+   934:     chart_ref: percona/psmdb-operator
+   935:     chart_version: '{{ psmdb_operator_ver }}'
+   936:     release_namespace: '{{ db_ns }}'
+   937:     create_namespace: true
+   938:     release_state: present",negative,"k8s-databases tasks are each one k8s_info/k8s_exec/helm call scoped to a single operation (discover primary, set search path, install extensions, manage the mongo operator release).",,,,,,,

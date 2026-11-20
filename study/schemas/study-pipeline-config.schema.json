@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ansibleguard://schemas/study-pipeline-config-v1.json",
+  "title": "AnsibleGuard study pipeline configuration",
+  "type": "object",
+  "required": ["run", "tool", "repositories", "output"],
+  "properties": {
+    "run": {
+      "type": "object",
+      "required": ["id", "profile"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+        "profile": {"type": "string", "minLength": 1},
+        "ansible_lint_scope": {"enum": ["v004-target", "v005-selected"]},
+        "workers": {"type": "integer", "minimum": 1},
+        "repository_timeout": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "resume": {"type": "boolean"},
+        "stop_on_error": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "tool": {
+      "type": "object",
+      "required": ["mode", "version"],
+      "properties": {
+        "mode": {"enum": ["current-worktree", "installed"]},
+        "version": {"type": "string", "minLength": 1},
+        "python": {"type": "string", "minLength": 1},
+        "git_ref": {"type": "string"},
+        "allow_dirty": {"type": "boolean"},
+        "commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      },
+      "additionalProperties": false
+    },
+    "repositories": {
+      "type": "object",
+      "required": ["manifest", "file_manifests_dir"],
+      "properties": {
+        "manifest": {"type": "string", "minLength": 1},
+        "file_manifests_dir": {"type": "string", "minLength": 1},
+        "expected_count": {"type": "integer", "minimum": 1},
+        "limit": {"type": "integer", "minimum": 1},
+        "checkout_root": {"type": "string", "minLength": 1},
+        "verified_checkout_cache": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "required": ["root"],
+      "properties": {"root": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "providers": {
+      "type": "object",
+      "properties": {
+        "require_ansible_lint": {"type": "boolean"},
+        "require_gitleaks": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "formats": {"type": "array", "items": {"enum": ["svg", "png"]}},
+        "top_rules": {"type": "integer", "minimum": 1},
+        "top_repositories": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

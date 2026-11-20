@@ -1,0 +1,20 @@
+{
+  "metric_id": "large_playbook_play_count",
+  "pilot_band_counts": {
+    "B1_low": 30,
+    "B4_high": 30,
+    "B5_current_positive_tail": 15
+  },
+  "pilot_prediction_counts": {
+    "false": 30,
+    "true": 45
+  },
+  "pilot_projects": 67,
+  "pilot_rows": 75,
+  "pilot_sha256": "bab9860d50fa4c16eda36dc7de873c6600a79f3148aafb0a320af8a2eb68a7a9",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 662,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

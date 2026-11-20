@@ -1,0 +1,11 @@
+concept_id,findings,share_percent,eligible_repositories,missing_repositories,repositories_affected,repository_prevalence_percent,median_per_repository,q1_per_repository,q3_per_repository,findings_per_1000_selected_loc
+fqcn-migration,2487,30.88,65,62,14,21.54,0,0.0,0.0,19.4428
+ansible-lint-issue,2242,27.83,65,62,28,43.08,0,0.0,7.5,17.5274
+variable-naming-convention,1160,14.4,65,62,14,21.54,0,0.0,0.0,9.0686
+yaml-formatting,822,10.2,65,62,22,33.85,0,0.0,4.0,6.4262
+yaml-truthy-value,422,5.24,65,62,12,18.46,0,0.0,0.0,3.2991
+insecure-permissions,361,4.48,65,62,14,21.54,0,0.0,0.0,2.8222
+long-yaml-line,268,3.33,65,62,25,38.46,0,0.0,5.0,2.0952
+non-idempotent-command,239,2.97,65,62,14,21.54,0,0.0,0.0,1.8684
+shell-module-migration,49,0.61,65,62,5,7.69,0,0.0,0.0,0.3831
+module-deprecation,5,0.06,65,62,1,1.54,0,0.0,0.0,0.0391

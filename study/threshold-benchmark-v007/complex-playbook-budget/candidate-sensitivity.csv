@@ -1,0 +1,9 @@
+metric_id,rule_id,candidate_sources,threshold,eligible_observations,predicted_positive_observations,observation_candidate_rate,eligible_repositories,repositories_with_prediction,repository_candidate_rate
+complex_playbook_budget,complex-playbook,q1,0.3,21455,16046,0.74789093,197,197,1.00000000
+complex_playbook_budget,complex-playbook,q2_median,0.5894,21455,10726,0.49993009,197,196,0.99492386
+complex_playbook_budget,complex-playbook,q3,1.1758,21455,5359,0.24977861,197,192,0.97461929
+complex_playbook_budget,complex-playbook,p80,1.3851,21455,4291,0.20000000,197,190,0.96446701
+complex_playbook_budget,complex-playbook,current,2,21455,2516,0.11726870,197,177,0.89847716
+complex_playbook_budget,complex-playbook,p90,2.2152,21455,2142,0.09983687,197,174,0.88324873
+complex_playbook_budget,complex-playbook,tukey_upper_fence,2.4895,21455,1726,0.08044745,197,168,0.85279188
+complex_playbook_budget,complex-playbook,p95,3.197,21455,1072,0.04996504,197,139,0.70558376

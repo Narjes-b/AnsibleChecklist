@@ -1,0 +1,20 @@
+{
+  "metric_id": "undocumented_complex_jinja_filters",
+  "pilot_band_counts": {
+    "B1_low": 26,
+    "B4_high": 25,
+    "B5_current_positive_tail": 24
+  },
+  "pilot_prediction_counts": {
+    "false": 38,
+    "true": 37
+  },
+  "pilot_projects": 59,
+  "pilot_rows": 75,
+  "pilot_sha256": "3cee5717f28b162fb5123c0cd2d0d2b6f22e96f92ff4d49c7ba6a5338d6f01bd",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 550,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

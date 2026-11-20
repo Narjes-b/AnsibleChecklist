@@ -1,0 +1,21 @@
+{
+  "complete": 171,
+  "expected_repositories": 207,
+  "failed": 1,
+  "observed_profile_rule_hashes": [
+    "d4e880e2fdbc0308bdc2bf40e1fed6f919564c8bb7d17fdc96b3740f9cc199a8"
+  ],
+  "observed_tool_commits": [
+    "ad1d60023d237b6e1cfa53466e81407e3f329229"
+  ],
+  "partial": 35,
+  "publication_ready": false,
+  "repository_status_counts": {
+    "complete": 171,
+    "failed": 1,
+    "partial": 35
+  },
+  "schema_version": 1,
+  "status": "failed",
+  "validated_at_utc": "2026-10-22T14:23:13.064486+00:00"
+}

@@ -1,0 +1,61 @@
+{
+  "purpose": "structural context and lexical audit; no semantic certification",
+  "eligible_for_performance_scoring": false,
+  "selected_rows": 861,
+  "recorded_rows": 861,
+  "metadata_manifest_sha256": "541d219c0566589df717e1da7d5e1ec07d4ab195be0d624e2b2cbb704691a3b7",
+  "status_counts": {
+    "constructs-located": 661,
+    "file-only-no-enclosing-node": 185,
+    "yaml-aliases-require-resolution": 8,
+    "yaml-duplicate-keys-require-review": 7
+  },
+  "lexical_subject_counts": {
+    "no-named-subject": 546,
+    "not-checked": 15,
+    "placeholder-subject": 22,
+    "casefold-token-only": 119,
+    "exact-token-located": 142,
+    "no-anchored-construct": 4,
+    "token-not-located": 6,
+    "unsupported-subject-shape": 4,
+    "template-parse-incomplete": 3
+  },
+  "task_candidates": 468,
+  "play_candidates": 186,
+  "truncated_units": 3,
+  "redacted_units": 123,
+  "subject_verified": 0,
+  "complete_rule_evidence": 0,
+  "labels_generated": 0,
+  "model_calls": 0,
+  "implementation_sha256": "80b6c4116d184d9c4d8cb87cf7014bd8784ef7ff9ebf8c50e73c64b6c4af933b",
+  "dependency_sha256": {
+    "src/ansibleguard/task_traversal.py": "6c69570fb768e508385ea8b0f4c4f013d09714fab6d9caeddd86e38523dc49e5",
+    "scripts/retrieve_sample_evidence.py": "aa079a5b9b2037c6dc213e06940e59f9301709da35d80531611bc12fa99e6328",
+    "scripts/v007_bundle_context_v2.py": "d782d4dd36ba3bc5825185a654bffb5c2e99ee7a844b591acf2b0ffa9d9f4c8f",
+    "scripts/v007_bundle_redact_v2.py": "622a61c23d3c9ccdb55f8e5d7b0418e30243ec2abdd36e2e8c01b7080de61437",
+    "scripts/v007_bundle_secret_scan.py": "e531754be6366c3f3a42dabdc71cc8a0adaf82dd7dae0462c89d104b43564bf0",
+    "scripts/v007_validation_pilot.py": "a73b8703c29c7d7e70874d95d95636fd3b1abec216ff2bf0295ab451e9ef59ef"
+  },
+  "source_stores": [
+    "/home/aymmzn/Documents/AnsibleChecklist/study/repositories",
+    "/home/aymmzn/Documents/AnsibleChecklist/study/cache/v0071-rerun-2026-10-22/repositories"
+  ],
+  "git_version": "git version 2.56.0",
+  "python_version": "3.14.8",
+  "pyyaml_version": "6.0.1",
+  "jinja_version": "3.1.6",
+  "limits": {
+    "max_unit_display_lines": 600,
+    "window": 80,
+    "max_cached_files": 64,
+    "yaml_max_events": 100000,
+    "yaml_max_depth": 64
+  },
+  "local_packet_directory": "/home/aymmzn/Documents/AnsibleChecklist/study/evidence-local/constructs-2026-10-23/required",
+  "output_sha256": {
+    "construct-ledger.csv": "f718603c022b5433c5999b90756635e543e53734e7c2f6fc965211c16011eb1c",
+    "construct-cells.csv": "37e7fd241ff67cbd5ad22cb27035b99809ac78d5d60018b05f02b579d1852e5e"
+  }
+}

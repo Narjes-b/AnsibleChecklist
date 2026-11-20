@@ -1,0 +1,41 @@
+{
+  "archive_doi": null,
+  "archive_sha256": null,
+  "environment_files": {
+    "Dockerfile.research": "39df2a10b363641eb3a63e112ba2ebefb2f71037244253663d272a101d9b657b",
+    "collections.lock.yml": "0ca2b2e99935150530a38410365169958d85a92ee791ded0e9e6f746e5d9ddae",
+    "requirements.txt": "a5caf8db717d65df845ddcdeccc9f1c3f107d853595daa360c90bddf1d3bfb73"
+  },
+  "evidence_status": {
+    "calibration-report.md": "included",
+    "calibration-sample.csv.gz": "included",
+    "file-population-manifest.csv.gz": "included",
+    "injection-pr-labels.csv": "included",
+    "injection-pr-report.md": "included",
+    "precision-summary.csv": "included",
+    "repository-manifest.csv": "included",
+    "synthetic-sensitivity-report.md": "included"
+  },
+  "independent_human_labels": "not-yet-available",
+  "natural_pr_validation": "not-yet-available",
+  "natural_recall_reference": "not-yet-available",
+  "release": "v0.0.4-integrated-freeze",
+  "research_image": {
+    "embedded_tool_commit": "645b6c5521f992c6d40e7c9159812468908373e6",
+    "git_lfs_version": "3.6.1",
+    "git_version": "2.47.3",
+    "image_id": "sha256:429955276b3d9564772a2a3d8d66af2ed940a6b93a4f4483c50475e089a2ca1d",
+    "python_version": "3.12.11",
+    "tag": "ansibleguard-research:v004-integrated-freeze",
+    "verification": {
+      "full_suite": "644 passed, 2 opt-in integration gates skipped",
+      "labeled_calibration": "4 TP, 4 TN, 0 FP, 0 FN",
+      "pinned_public_equivalence": "1 passed, 1 private gate deselected",
+      "rebuild_reason": "corrected an invalid build-commit argument; runtime metadata verified against the semantic commit"
+    }
+  },
+  "schema_version": 1,
+  "tool_commit": "645b6c5521f992c6d40e7c9159812468908373e6",
+  "working_tree_base_commit": "645b6c5521f992c6d40e7c9159812468908373e6",
+  "working_tree_dirty": false
+}

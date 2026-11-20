@@ -1,0 +1,426 @@
+\chapter{Operational Reference}
+\label{chap:operations}
+
+\section{Source-Code Architecture}
+The implementation separates orchestration, semantics, detectors, providers,
+and reporting so that a provider or serializer change does not silently alter
+parsing. The following table maps the principal packages to their
+responsibilities.
+
+\begin{longtable}{p{5cm}p{9.2cm}}
+\caption{Principal implementation modules.}\\
+\toprule Source area & Responsibility \\ \midrule\endhead
+\code{cli.py}, \code{api/} & Command-line and programmatic entry points,
+argument/configuration resolution, mode selection, exit status and hand-off to
+the runtime. \\
+\code{runtime.py} & Scan orchestration, provider isolation, result assembly,
+health evaluation, validation and output dispatch. \\
+\code{file_manifest.py} & Reproducible discovery, selection, exclusions,
+population identity and file/LOC denominators. \\
+\code{parser.py}, \code{document.py} & Tolerant YAML loading, source-coordinate
+retention, document shape and artifact classification. \\
+\code{jinja_semantics.py} & Jinja name extraction, lexical locals, guard and
+filter recognition, and uncertainty reasons. \\
+\code{task_semantics.py} & Task/module/action identification, registration,
+facts, loops, conditions, environment and execution-order evidence. \\
+\code{symbol_index.py} & Repository definitions/uses, static include/import
+edges, reachability and ordered persistent-definition propagation. \\
+\code{role_context.py}, \code{include_vars_semantics.py} & Role defaults/vars,
+dependencies, inventory-like sources and included-variable provenance. \\
+\code{detectors/} & Review-checklist, paper-derived, partial and currently
+non-automatable-boundary detector families. \\
+\code{external/ansible_lint.py} & Project-root discovery/collapse, subprocess
+execution, configuration/suppression handling and native evidence conversion. \\
+\code{external/gitleaks.py} & Secret scan execution, path/fingerprint
+normalisation, exclusions, redaction and evidence conversion. \\
+\code{profiles.py} & Versioned rule/provider populations and profile invariants. \\
+\code{report/} & Catalogue, canonical occurrences, CSV/JSON/SARIF/text/Markdown
+serialisation, comparison identities, schema loading and validation. \\
+\code{diff_workflow.py} & Local/commit/PR snapshot selection and safe
+introduced/fixed/unchanged/moved comparison. \\
+\bottomrule
+\end{longtable}
+
+\section{End-to-End Pipeline}
+The pipeline is deliberately staged so that every final number can be traced
+back to a repository, revision, selected file, detector, and provider run.
+
+\begin{enumerate}
+  \item \textbf{Repository acquisition.} Resolve the repository identity and
+  freeze the commit SHA. Research scans use the recorded manifest rather than
+  silently moving to the latest default branch.
+  \item \textbf{Discovery.} Apply ignore rules, classify candidate extensions,
+  and record manifest and selected populations separately. The distinction
+  explains why the frozen corpus contains 64,876 YAML files but only 27,709
+  selected Ansible artifacts.
+  \item \textbf{Parsing.} Load YAML tolerantly, retain exact coordinates, scan
+  source text where formatting matters, and extract embedded Jinja expressions.
+  A parse problem becomes a diagnostic tied to its file and stage.
+  \item \textbf{Artifact classification.} Decide whether a document is a
+  playbook, task list, handler list, vars/defaults, inventory, metadata, or an
+  import-only artifact. Only compatible detectors are scheduled.
+  \item \textbf{Local analysis.} Run syntax-, task-, play-, file-, and
+  directory-level rules and collect definition/use/guard evidence.
+  \item \textbf{Repository model.} Build role context, symbol indexes, static
+  include/import edges, handler relations, variable provenance, and execution
+  order. Re-run graph-aware predicates with repository evidence.
+  \item \textbf{External providers.} Execute ansible-lint at collapsed project
+  roots and GitLeaks at the repository boundary. Preserve native rule IDs,
+  fingerprints, messages, tool versions, and health.
+  \item \textbf{Normalisation.} Convert heterogeneous records into the v3
+  finding shape, redact sensitive material, and attach source/analysis
+  population identities.
+  \item \textbf{Canonicalisation.} Group only sufficiently specific evidence,
+  select a lead occurrence, merge provider evidence, and retain all raw records.
+  \item \textbf{Validation and export.} Validate the envelope and critical
+  nested types against the packaged schema, copy that schema into the output,
+  then produce JSON, CSV, SARIF, text, and Markdown projections.
+  \item \textbf{Comparison.} For base/head or version comparisons, match exact
+  IDs first, then semantic identities that account for file paths. Report introduced,
+  fixed, unchanged, and moved/uncertain partitions.
+\end{enumerate}
+
+\section{Provider Lifecycle and Failure Semantics}
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+ s/.style={draw=ansblue,rounded corners,minimum width=28mm,minimum height=9mm,
+ align=center,fill=anslightblue,font=\small},
+ d/.style={draw=ansorange,diamond,aspect=2,align=center,fill=anslightyellow,font=\small},
+ a/.style={-{Latex[length=2mm]},thick},node distance=8mm and 13mm]
+\node[s] (plan) {Provider planned};
+\node[d,right=of plan] (available) {Dependency available?};
+\node[s,right=of available] (run) {Execute isolated run};
+\node[d,below=of run] (valid) {Valid complete output?};
+\node[s,left=of valid] (partial) {Partial / failed diagnostic};
+\node[s,right=of valid] (complete) {Completed evidence};
+\node[s,below=of available] (missing) {Unavailable diagnostic};
+\draw[a] (plan)--(available);
+\draw[a] (available)--node[above,font=\scriptsize]{yes}(run);
+\draw[a] (available)--node[left,font=\scriptsize]{no}(missing);
+\draw[a] (run)--(valid);
+\draw[a] (valid)--node[above,font=\scriptsize]{no}(partial);
+\draw[a] (valid)--node[above,font=\scriptsize]{yes}(complete);
+\end{tikzpicture}
+}
+\caption{External-provider state machine. No failure path produces a clean result.}
+\end{figure}
+
+The analysis-health envelope distinguishes \code{completed}, \code{partial},
+\code{failed}, and \code{unavailable} outcomes. Diagnostics record stage,
+category, status, failure nature, message, and optional file. A missing binary
+is environment-dependent. A tool timeout or incompatible repository
+configuration is a provider execution outcome. A YAML parser exception is an
+analysis diagnostic. None of these becomes an ordinary source smell, because
+doing so would blame the repository for the analysis environment.
+
+\subsection{ansible-lint}
+AnsibleGuard delegates established Ansible lint checks to ansible-lint and
+does not rename them as internally invented detectors. Native IDs such as FQCN,
+syntax, risky permissions, or command-use rules remain in provider evidence.
+Project roots are discovered from configuration and repository structure.
+Nested unconfigured roots covered by an ancestor collapse into that ancestor;
+independently configured nested roots remain separate. This prevents duplicate
+linting without erasing configuration boundaries. ansible-lint skip/warn lists
+and inline \code{noqa} suppressions are respected.
+
+\subsection{GitLeaks}
+GitLeaks supplies pattern and entropy evidence for content and optional history.
+AnsibleGuard normalises paths and coordinates, preserves the native rule and
+fingerprint, redacts the secret value, and attaches contextual status. A
+provider match proves that the configured GitLeaks predicate fired; it does not
+prove that an example token is active. This distinction explains why all 1,049
+canonical GitLeaks occurrences in the frozen scan retain
+\code{secret_context=uncertain_secret}.
+
+\section{Exact v0.0.6 Profiles}
+Profiles define a reproducible population of rules and providers. They are not
+mere display filters: some require external tools, a manifest, or review-range
+input.
+These 11 named profiles were defined in AnsibleGuard for distinct users and
+decisions; their rule subsets and provider choices are part of the system
+design, rather than output groupings selected after the results were known.
+
+\begin{longtable}{p{3.4cm}r p{3.4cm}p{6cm}}
+\toprule Profile & Rules & Providers & Purpose and boundary \\ \midrule\endhead
+\code{technical-full} & 76 & internal, ansible-lint, GitLeaks & All source,
+external-tool, and Git-review findings. \\
+\code{developer-fast} & 24 & internal & Fast security, correctness and
+reliability feedback without external dependencies. \\
+\code{security} & 9 & all three & Eight security concepts plus the selected
+security-relevant ansible-lint subset and GitLeaks. \\
+\code{lint} & 1 & ansible-lint & Native ansible-lint findings only, carried by
+the lint envelope and native evidence. \\
+\code{quality} & 54 & internal & Correctness, dependencies, documentation,
+maintainability, reliability, structure, style and testing. \\
+\code{pr} & 69 & all three & Base/head source and provider snapshots; the seven
+review-metadata rules run in their separate range phase. \\
+\code{snapshot-source} & 67 & internal & Frozen source state excluding review
+range and external providers; requires a manifest. \\
+\code{research-core} & 8 & internal & Conservative paper-derived allowlist;
+provisional pending manual calibration. \\
+\code{extended-ansible} & 59 & internal & Disjoint Ansible-specific secondary
+stratum outside the research core; requires a manifest. \\
+\code{review-range} & 7 & internal & Commit/base-to-head review-process rules
+only; no source snapshot analysis. \\
+\code{incremental-file-local} & 6 & internal & Explicitly partial changed-file
+feedback; never equivalent to a full repository comparison. \\
+\bottomrule
+\end{longtable}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \fill[anspaper,rounded corners=4pt] (0,0) rectangle (14.4,3.5);
+  \node[anchor=west,text=ansnavy,font=\bfseries\large] at (.35,3.06)
+    {Profiles are designed around decisions};
+  \node[draw=ansblue,fill=white,rounded corners=4pt,
+    text width=3.8cm,minimum height=2.05cm,align=left,anchor=north west,
+    inner sep=7pt] at (.35,2.65)
+    {\textcolor{ansblue}{\bfseries Authors}\\[3pt]
+    \small Local feedback\\[3pt]
+    \footnotesize\code{developer-fast}\\\code{quality}};
+  \node[draw=ansteal,fill=white,rounded corners=4pt,
+    text width=3.8cm,minimum height=2.05cm,align=left,anchor=north west,
+    inner sep=7pt] at (5.0,2.65)
+    {\textcolor{ansteal}{\bfseries Reviewers}\\[3pt]
+    \small PR and security evidence\\[3pt]
+    \footnotesize\code{pr} / \code{security}\\\code{review-range}};
+  \node[draw=ansgold,fill=white,rounded corners=4pt,
+    text width=3.8cm,minimum height=2.05cm,align=left,anchor=north west,
+    inner sep=7pt] at (9.65,2.65)
+    {\textcolor{ansnavy}{\bfseries Researchers}\\[3pt]
+    \small Frozen populations\\[3pt]
+    \footnotesize\code{technical-full}\\\code{research-core}};
+\end{tikzpicture}
+\caption{Representative intended users and profiles. The complete eleven-profile
+definition, including manifest and provider requirements, is given above.}
+\label{fig:profile_audiences}
+\end{figure}
+
+The eight \code{research-core} concepts are \code{complex-expression},
+\code{incomplete-task}, \code{long-statement}, \code{unstructured-module},
+\code{empty-abstraction}, \code{excessive-nesting},
+\code{missing-abstraction}, and \code{broken-role-dependency}. The six
+incremental file-local rules are \code{long-task-name}, \code{large-task},
+\code{plaintext-sensitive-variable}, \code{missing-validate-certs},
+\code{loop-legacy-syntax}, and \code{variable-naming-convention}.
+
+\subsection{Rule Layers Used in the 149-Repository Study}
+The frozen study uses \code{technical-full}, the only profile intended to
+inventory all 76 catalogue concepts together with both external providers.
+``All rules'' does not mean that every detector executes on every file. The
+artifact classifier and rule metadata restrict each predicate to compatible
+contexts, as summarised below; the complete rule-by-rule predicates appear in
+Appendix~\ref{chap:rules}.
+
+\begin{longtable}{@{}p{3.0cm}p{3.3cm}p{3.8cm}p{3.7cm}@{}}
+\caption{Analysis-rule layers applied to each frozen repository.}
+\label{tab:study_rule_layers}\\
+\toprule Layer & Owner & Applicable evidence & Study role \\
+\midrule\endfirsthead
+\toprule Layer & Owner & Applicable evidence & Study role \\
+\midrule\endhead
+Source syntax and structure & AnsibleGuard & Selected playbooks, tasks,
+handlers, variable/default, inventory, metadata and role/collection artifacts
+according to rule compatibility & Detect malformed, oversized, incomplete, or
+misplaced structures while avoiding unrelated YAML. \\
+Repository semantics & AnsibleGuard & Cross-file definitions, includes/imports,
+roles, handlers, dependencies, documentation and test layout & Detect concerns
+that a file-local linter cannot decide safely. \\
+Variable/runtime evidence & AnsibleGuard & Jinja uses, static definitions,
+persistent runtime producers, guards, lexical locals, ordering and named
+dynamic sources & Assign \code{CONFIRMED}, \code{UNCERTAIN},
+\code{UNRESOLVED}, or \code{ORDERED_CONFLICT} with traceable evidence. \\
+Established Ansible lint & ansible-lint & Each resolved project root under its
+own configuration and suppression policy & Delegate FQCN, naming, YAML and
+module-practice rules without pretending they are native inventions. \\
+Candidate secrets & GitLeaks & Selected repository content under provider
+configuration, with secret value redacted & Supply pattern/entropy evidence and
+native rule identity for security canonicalisation. \\
+Review-range metadata & AnsibleGuard & Git history/base--head or PR metadata
+when the required range exists & Seven range concepts are in the 76-concept
+profile, but require suitable Git review context; absence of a range is not a
+source finding. \\
+Canonical overlap & AnsibleGuard evidence layer & Normalised native,
+ansible-lint and GitLeaks records & Merge one review concern without deleting
+provider provenance or cross-file identity safeguards. \\
+\bottomrule
+\end{longtable}
+
+Thus, the 149-repository result is the composition of compatible native rules,
+delegated linter evidence, candidate-secret evidence, and any available
+range-dependent evidence under one validated contract. Provider failure or a
+missing range changes analysis health/availability; it does not manufacture an
+ordinary source smell.
+
+\section{Output Directory and File Responsibilities}
+\begin{longtable}{p{4.2cm}p{10cm}}
+\toprule Path family & Contents and use \\ \midrule\endhead
+\code{summary/} & Per-repository and all-repository CSV/JSON aggregations,
+including population denominators, provider health, diagnostics, and grouped
+counts. \\
+\code{raw/} & Provider-specific records before cross-provider canonicalisation;
+used to reproduce transformations and debug adapters. \\
+\code{canonical/} & Canonical occurrences, lead detector, merged evidence,
+semantic identity, status and severity. This is the principal analysis unit. \\
+\code{metadata/} & Repository URL/slug, commit SHA, tool and dependency
+versions, configuration/profile, manifest identity, timing and diagnostics. \\
+\code{files/} & Optional per-file projections, maintaining repository-relative
+paths and source regions. \\
+\code{diff/} & Comparison partitions and matching evidence for base/head,
+commit, PR, or release comparisons. \\
+\code{schemas/output-v3.json} & Exact JSON Schema copied from the installed
+package and used to validate this output. \\
+\bottomrule
+\end{longtable}
+
+\section{Versioned Envelope}
+Every versioned document identifies \code{schema_version}, \code{kind}, and a
+\code{contract}. Depending on kind, it contains \code{items}, aggregate
+\code{counts}, \code{analysis_health}, \code{artifacts}, \code{policy}, or a
+\code{comparison}. The shared validator rejects a malformed versioned envelope.
+The PR comparison script accepts an explicit legacy list only when the input is
+actually a list; invalid v3 data cannot fall through as legacy.
+
+\subsection{Finding fields}
+\begin{longtable}{p{4cm}p{10.2cm}}
+\toprule Field & Meaning \\ \midrule\endhead
+\code{finding_id} & Stable provider-level record identity. \\
+\code{provider} & Producing component: internal, ansible-lint, or GitLeaks. \\
+\code{rule_id} & Normalised AnsibleGuard concept/envelope. \\
+\code{concept_id} & Cross-provider conceptual identity used for overlap. \\
+\code{file}, \code{line} & Repository-relative source location and positive line. \\
+\code{severity} & Policy level: error, warning, or note. \\
+\code{message} & Human-readable explanation after redaction. \\
+\code{source_population} & Identity of the source/manifest population. \\
+\code{analysis_population} & Identity of the rule/provider population. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Canonical occurrence fields}
+\begin{longtable}{p{4cm}p{10.2cm}}
+\toprule Field & Meaning \\ \midrule\endhead
+\code{occurrence_id} & Stable canonical record identity. \\
+\code{concept_id} & Normalised concept shared by overlapping detectors. \\
+\code{file}, \code{line} & Lead source location; cross-file matching requires
+specific file-aware evidence. \\
+\code{detectors} & Set of detectors contributing evidence. \\
+\code{semantic_key} & Rule-aware identity for controlled comparison. \\
+\code{content_semantic_key} & Content-based identity used only under safe
+matching constraints. \\
+\code{semantic_subject} & Variable, task, handler, role, secret class, or other
+subject that the occurrence describes. \\
+\code{task_fingerprint} & Stable task identity where task structure exists. \\
+\code{provider_evidence_fingerprint} & Digest of merged native evidence. \\
+\code{scan_mode} & Full, snapshot, PR, commit, or explicitly partial mode. \\
+\code{source_population}, \code{analysis_population} & Denominators needed for
+valid comparisons. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Provider-evidence and diagnostic fields}
+Provider evidence contains \code{provider}, \code{rule_id},
+\code{native_rule_id}, \code{finding_id}, \code{native_fingerprint}, and
+\code{message}. Diagnostics contain \code{stage}, \code{category},
+\code{status}, \code{failure_nature}, \code{message}, and optional
+\code{file}. Analysis health contains an aggregate \code{status} and boolean
+\code{complete}. These fields make a partial provider distinguishable from a
+complete zero-finding run.
+
+\section{Meaning of Summary CSV Columns}
+The exact wide summary may add one column per category, status, severity,
+provider, or concept, but all columns belong to one of the following groups.
+
+\begin{longtable}{p{4.4cm}p{9.8cm}}
+\toprule Column group & Interpretation \\ \midrule\endhead
+Repository columns & Stable slug/URL, recorded SHA and completion state; define
+which repository revision was measured. \\
+Manifest files/LOC & All YAML candidates in the frozen manifest; broad corpus
+denominator. \\
+Selected files/LOC & Files classified as in-scope Ansible artifacts and their
+line count; actual analysis denominator. \\
+Raw findings & Sum emitted by providers before canonical merge. \\
+Canonical occurrences & Deduplicated evidence units; not the sum of category
+columns if a projection intentionally excludes a zero/unavailable group. \\
+Provider raw columns & Native contribution from AnsibleGuard, ansible-lint, and
+GitLeaks before merge. \\
+Provider lead columns & Provider selected as lead for a canonical occurrence;
+not the same as total evidence contributed by that provider. \\
+Status columns & CONFIRMED, UNCERTAIN, EXPOSED, UNRESOLVED, and
+\code{ORDERED_CONFLICT} detector-state counts. \\
+Severity columns & Error, warning, and note policy-impact counts. \\
+Category columns & Canonical occurrences grouped by taxonomy category. \\
+Concept/rule columns & Occurrence counts for each normalised concept or native
+rule projection. \\
+Provider health columns & Completed, partial, failed, unavailable and diagnostic
+counts; required before interpreting zeroes. \\
+Timing/version columns & Runtime, package/provider versions, profile and schema
+identity for reproduction. \\
+\bottomrule
+\end{longtable}
+
+\section{Full, Local, Commit, and Pull-Request Operation}
+\textbf{Full repository mode} scans the selected manifest, constructs the
+repository graph, invokes configured providers, and writes a complete output
+tree. \textbf{Local mode} can provide quick changed-file feedback but must say
+when repository-global and external checks are deferred. \textbf{Commit mode}
+resolves two revisions, analyses both compatible populations, then compares
+canonical evidence. \textbf{PR mode} uses the base/head revisions and adds the
+review-range rules for commit message, dependency trailers, release notes,
+copyright, and test-update obligations.
+
+The safe comparison hierarchy is: exact occurrence identity; native provider
+fingerprint; file-aware semantic/task identity; then explicitly uncertain
+movement. Generic line/column findings cannot cross file boundaries and become
+semantic renames. This prevents a common error in which unrelated findings on
+the same line number in two files are reported as one moved occurrence.
+
+\section{Version Evolution and Evidence}
+This section provides historical traceability. The current v0.0.7 study is in
+Chapter~\ref{chap:v007}; earlier releases appear where they explain a
+requirement, regression test, or controlled change.
+\begin{longtable}{p{2.2cm}p{5.5cm}p{6.6cm}}
+\toprule Version & Problem or objective & Implemented response and evidence \\
+\midrule\endhead
+v0.0.4 & Establish a frozen full-study baseline and identify provider and
+semantic weaknesses. & Produced the baseline population used for later paired
+comparisons; exposed the need to separate provider health and canonical data. \\
+v0.0.5 & Prevent provider crashes from aborting repositories and stop partial
+ansible-lint runs from appearing clean. & Added provider isolation, explicit
+partial diagnostics, canonical occurrence output, GitLeaks integration, and
+initial semantic uncertainty. A 15-repository diagnostic replay completed all
+repositories but still produced 26,552 unguarded-variable occurrences, so it
+was not accepted as a semantic endpoint. \\
+v0.0.6 & Explain remaining variable findings and harden reproducibility. & Added
+static include/import propagation without disconnected-file leakage, lexical
+Jinja loop scope, safer occurrence matching, shared v3 validation, packaged
+schema copies, stronger field/type checks, ansible-lint root-collapse tests,
+and targeted rule fixes. The frozen 149-repository scan completed and its
+mechanism distributions are reported in Chapter~\ref{chap:results}. \\
+\bottomrule
+\end{longtable}
+
+Changes in totals have more than one cause: restored identity can increase
+canonical occurrences; provider suppression can lower raw findings; new
+uncertainty reasons can move cases out of non-uncertain states; stronger
+canonicalisation can merge duplicates; and rule fixes can remove demonstrated
+false-positive mechanisms. Therefore, no version delta is interpreted without
+same-population denominators and mechanism evidence.
+
+\section{Reproduction and Validation Checklist}
+For a defensible rerun, record the branch and AnsibleGuard commit, pull both
+code and frozen manifests, create an isolated environment, install the package
+and provider dependencies, verify provider versions, run the selected profile,
+and monitor per-repository logs. After execution, check 149/149 repository
+states, provider-health totals, diagnostics, selected files/LOC, schema
+validation, and summary reconciliation before interpreting any rule count.
+
+Release validation includes focused regression tests, the full pytest suite,
+checks for stale documentation, Python byte-code compilation, whitespace checks,
+optional remote equivalence tests, and available benchmark gates.
+
+Research validation adds comparison on a frozen population, mechanism sampling,
+and independent manual labels before any precision claim. It also requires
+adjudication, confidence intervals, and a seeded-defect corpus for recall.

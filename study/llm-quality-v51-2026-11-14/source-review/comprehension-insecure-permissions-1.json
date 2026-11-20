@@ -1,0 +1,21 @@
+{
+  "case_id": "comprehension-insecure-permissions-1",
+  "family": "insecure-permissions",
+  "occurrence": {
+    "file": "tasks.yml",
+    "line": 1,
+    "rule_id": "insecure-permissions",
+    "message": "This task grants unsafe permission bits."
+  },
+  "intent": null,
+  "snippets": [
+    {
+      "file": "tasks.yml",
+      "text": "    1 | - name: Manage comprehension_1\n    2 |   ansible.builtin.file:\n    3 |     path: /srv/comprehension_1\n    4 |     state: touch\n    5 |     group: developers\n    6 |     mode: '0644'"
+    }
+  ],
+  "missing": [],
+  "files": {
+    "tasks.yml": "- name: Manage comprehension_1\n  ansible.builtin.file:\n    path: /srv/comprehension_1\n    state: touch\n    group: developers\n    mode: '0644'\n"
+  }
+}

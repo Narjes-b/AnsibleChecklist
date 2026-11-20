@@ -1,0 +1,11 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: risky
+      block:
+        - name: normal
+          debug: {msg: hi}
+      rescue:
+        - name: check
+          debug: {msg: hi}
+          when: some_var == "true"

@@ -1,0 +1,170 @@
+\chapter{Complete v0.0.6 Rule Catalogue}
+\label{chap:rules}
+
+This chapter is generated from the conceptual structure of
+\code{RULE_CATALOG} in the v0.0.6 source. It documents all 76 active concepts.
+The catalogue has 12 categories; the frozen snapshot result table has 11
+populated categories because \emph{legal} contains a review-range rule and no
+legal occurrence was present in the source-snapshot aggregation. A catalogue
+category must therefore not be confused with a non-zero result category.
+
+For each rule, the table states the stable identifier, default severity, and
+operational meaning. Exact thresholds remain configurable; the descriptions
+below explain the predicate rather than claiming that every match is a defect.
+
+\section{Security Rules (8)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{become-scope-too-broad} & warning & Detects play-level privilege escalation that applies root scope to every task. \\
+\code{credentials-leaking-in-log} & error & Detects a task handling sensitive data without known \code{no_log: true} protection. \\
+\code{default-credentials} & error & Detects credential fields assigned known default or placeholder values. \\
+\code{hardcoded-credentials} & error & Canonical concept receiving secret-pattern evidence from GitLeaks. \\
+\code{insecure-permissions} & error & Detects managed resources whose mode grants unsafe access to other users. \\
+\code{missing-validate-certs} & warning & Detects disabled TLS verification for HTTPS-capable modules. \\
+\code{plaintext-sensitive-variable} & warning & Detects sensitive variable names assigned plaintext literals. \\
+\code{vault-inline-overload} & note & Detects many inline vault values where a dedicated vault file may be clearer. \\
+\bottomrule
+\end{longtable}
+
+\section{Correctness Rules (14)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{broken-role-dependency} & error & Detects missing, cyclic, or self-referential local role dependencies. \\
+\code{invalid-numeric-value} & error & Detects supported numeric module values outside their valid range. \\
+\code{invalid-task-attribute-type} & error & Detects common task attributes represented with the wrong YAML type. \\
+\code{missing-bool-filters} & warning & Detects conditions comparing values with quoted boolean strings. \\
+\code{missing-handler} & error & Detects \code{notify} targets without a resolvable handler definition. \\
+\code{non-idempotent-command} & warning & Detects mutating command/shell tasks without a modelled idempotency guard. \\
+\code{overriden-keys} & error & Detects duplicate YAML mapping keys that silently discard an earlier value. \\
+\code{overriding-facts} & warning & Detects a \code{set_fact} name reassigned with a different expression. \\
+\code{role-variable-precedence-collision} & warning & Detects the same role variable in both defaults and vars. \\
+\code{shell-environment-export} & warning & Detects shell \code{export} where Ansible's environment mapping should be used. \\
+\code{unguarded-variable} & warning & Classifies a Jinja use from visible definition, guard, runtime source, order, and uncertainty evidence. \\
+\code{unscoped-shell-variable} & warning & Detects shell-variable use not declared through the task environment. \\
+\code{variable-use-before-definition} & warning & Detects a use before a later registered result or persistent fact producer. \\
+\code{yaml-truthy-value} & warning & Detects non-canonical YAML truth values such as \code{yes}/\code{no}. \\
+\bottomrule
+\end{longtable}
+
+\section{Maintainability Rules (15)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{complex-expression} & warning & Detects Jinja or conditional expressions above configured complexity. \\
+\code{complex-playbook} & warning & Detects aggregate playbook complexity above threshold. \\
+\code{deprecated-modules} & warning & Detects deprecated module use through the compatibility map. \\
+\code{duplicated-code} & warning & Detects structurally repeated task blocks. \\
+\code{excessive-nesting} & warning & Detects deeply nested block/rescue/always structures. \\
+\code{high-coupling} & warning & Detects unusually many role/import relationships. \\
+\code{incomplete-task} & warning & Detects unresolved TODO/FIXME markers in configuration code. \\
+\code{insufficient-modularization} & warning & Detects large multi-play files that should be split. \\
+\code{large-play} & warning & Detects plays exceeding size thresholds. \\
+\code{large-playbook} & warning & Detects playbooks exceeding aggregate size thresholds. \\
+\code{large-task} & warning & Detects task mappings exceeding size thresholds. \\
+\code{redundant-default-value} & note & Detects an assignment repeating a role-default value. \\
+\code{shell-instead-of-module} & warning & Detects shell/command forms replaceable by modelled native modules. \\
+\code{unused-handler} & warning & Detects defined handlers that are never notified. \\
+\code{unused-registered-variable} & note & Detects registered results without a visible consumer. \\
+\bottomrule
+\end{longtable}
+
+\section{Style Rules (13)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{duplicate-task-names} & note & Detects repeated task names within the applicable scope. \\
+\code{inconsistent-naming-convention} & note & Detects names dominated by special characters or inconsistent forms. \\
+\code{long-statement} & note & Detects YAML source lines above the configured limit. \\
+\code{long-task-name} & note & Detects task names above the configured limit. \\
+\code{missing-file-extension} & note & Detects file references without an extension where one is expected. \\
+\code{missing-tags} & note & Optional policy detecting tasks without explicit or inherited tags. \\
+\code{unnamed-play} & note & Detects plays without \code{name}. \\
+\code{unnamed-task} & note & Detects tasks without \code{name}. \\
+\code{unnecessary-abstraction} & note & Detects a block wrapping only one task. \\
+\code{unnecessary-set-fact} & note & Detects a fact assignment with no modelled consumer. \\
+\code{unused-include-vars} & note & Detects included variable data with no modelled use. \\
+\code{variable-naming-convention} & note & Detects role variables without the role-name prefix. \\
+\code{yaml-formatting} & note & Detects indentation, whitespace, and line-ending problems. \\
+\bottomrule
+\end{longtable}
+
+\section{Compatibility Rules (4)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{deprecated-module-option} & warning & Detects deprecated options for recognised modules. \\
+\code{fqcn-migration} & note & Detects short module names with a known fully qualified form. \\
+\code{loop-legacy-syntax} & warning & Detects legacy \code{with_*} iteration instead of \code{loop}. \\
+\code{redirected-module} & note & Detects legacy module names redirected to a collection FQCN. \\
+\bottomrule
+\end{longtable}
+
+\section{Documentation Rules (6)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{commit-message-format} & note & Checks the latest commit message against review conventions. \\
+\code{galaxy-meta-incomplete} & note & Detects missing required Galaxy metadata fields. \\
+\code{missing-bug-reference} & note & Detects a bug-fix commit without a bug reference. \\
+\code{missing-release-note} & note & Detects a configuration change without an associated release note. \\
+\code{role-readme-absent} & note & Detects roles without a README. \\
+\code{undocumented-complex-task} & note & Detects complex tasks without a nearby explanatory comment. \\
+\bottomrule
+\end{longtable}
+
+\section{Structure Rules (4)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{empty-abstraction} & warning & Detects empty task files or nested task abstractions. \\
+\code{missing-abstraction} & warning & Detects large task collections not split into roles or includes. \\
+\code{unexpected-task-location} & warning & Detects task/handler documents in incompatible role directories. \\
+\code{unstructured-module} & warning & Detects roles that do not follow the conventional directory layout. \\
+\bottomrule
+\end{longtable}
+
+\section{Reliability Rules (3)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{read-only-command-change} & note & Detects read-only commands that may report changed on every run. \\
+\code{silent-error-suppression} & warning & Detects ignored failure without retaining a result for later control. \\
+\code{unsafe-file-write} & warning & Detects file operations disabling atomic-write protection. \\
+\bottomrule
+\end{longtable}
+
+\section{Testing Rules (3)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{missing-test-update} & warning & Detects configuration changes without corresponding test changes. \\
+\code{molecule-test-absent} & note & Detects a role without a Molecule scenario. \\
+\code{untested-override-change} & warning & Detects defaults/vars changes without an override-test change. \\
+\bottomrule
+\end{longtable}
+
+\section{Dependencies Rules (2)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{invalid-depends-on-reference} & warning & Detects malformed \code{Depends-On} review trailers. \\
+\code{unpinned-ansible-dependency} & warning & Detects role/collection dependencies without a fixed version. \\
+\bottomrule
+\end{longtable}
+
+\section{Cohesion Rules (2)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{incohesive-play} & note & Uses module-domain entropy to identify plays spanning unrelated concerns. \\
+\code{incohesive-playbook} & note & Applies the same domain-diversity model at playbook scope. \\
+\bottomrule
+\end{longtable}
+
+\section{Lint and Legal Rules (2)}
+\begin{longtable}{p{4.2cm}p{1.4cm}p{8cm}}
+\toprule Rule identifier & Level & Detection intent \\ \midrule\endhead
+\code{ansible-lint-issue} & warning & Envelope for native ansible-lint evidence; the native rule remains in provider evidence. \\
+\code{removed-copyright-notice} & warning & Review-range check detecting removal of an existing copyright notice. \\
+\bottomrule
+\end{longtable}
+
+\section{How to Interpret a Rule Match}
+A rule match has four independent dimensions. The \emph{concept} states what
+was detected; \emph{severity} states default policy impact; \emph{semantic
+status} states evidence confidence or runtime limitation; and \emph{provider
+evidence} records who observed it. For example, a warning-level
+\code{unguarded-variable} can be \code{UNCERTAIN} because a dynamic inventory
+may define it. Severity must not be used as a substitute for semantic status,
+and neither is a human true/false-positive label.

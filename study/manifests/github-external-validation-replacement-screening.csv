@@ -1,0 +1,2 @@
+source_host,project,source_url,clone_url,html_url,stars,star_band,forks,license_spdx,repository_size_kb,preclone_eligible,preclone_reasons,collect_for_screening,selected,revision,selection_as_of_utc,selection_reason
+github,openwisp/ansible-openwisp2,https://github.com/openwisp/ansible-openwisp2,https://github.com/openwisp/ansible-openwisp2.git,https://github.com/openwisp/ansible-openwisp2,515,100-999,134,BSD-3-Clause,2056,true,,true,false,,2026-08-03T00:00:00+00:00,replacement screening for standalone-role stratum after Oefenweb failed post-clone size floor

@@ -1,0 +1,16 @@
+{
+  "agreements": 0,
+  "cohens_kappa": null,
+  "confusion_matrix": {},
+  "disagreements": 0,
+  "first_column": "reviewer_1_label",
+  "gwet_ac1": null,
+  "label_prevalence": {},
+  "label_specific_agreement": {},
+  "minimum_paired": 50,
+  "paired_items": 0,
+  "raw_agreement": null,
+  "second_column": "reviewer_2_label",
+  "status": "insufficient-independent-labels",
+  "target": 0.8
+}

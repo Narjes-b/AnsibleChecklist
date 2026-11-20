@@ -1,0 +1,397 @@
+\chapter{Background and Related Work}
+\label{chap:literature}
+
+\noindent
+This chapter surveys the scientific and engineering foundations on which
+AnsibleGuard is built. Section~\ref{sec:iac_bg} introduces Infrastructure as
+Code with emphasis on Ansible's execution model. Section~\ref{sec:smells_bg}
+covers code smells and their extension to \ac{IaC}. Section~\ref{sec:checklist_bg}
+presents the OpenStack code-review checklist paper that directly motivates
+AnsibleGuard's rule taxonomy. Section~\ref{sec:static_bg} surveys static analysis
+tools for Ansible. Section~\ref{sec:empirical_bg} reviews empirical \ac{IaC} quality
+studies. Section~\ref{sec:gaps_bg} synthesizes the research gaps.
+
+% ---------------------------------------------------------------
+\section{Infrastructure as Code}
+\label{sec:iac_bg}
+% ---------------------------------------------------------------
+
+\subsection{Definition and Historical Context}
+
+\textit{Infrastructure as Code} is the practice of expressing every
+configuration and provisioning decision in machine-readable files that are
+version-controlled, reviewed, tested, and deployed through the same automation
+pipelines used for application software \cite{humble2010continuous}. The term
+emerged from the DevOps movement of the late 2000s, first articulated by Patrick
+Debois at the Agile 2008 conference \cite{debois2008agile}, as teams began
+applying software-engineering discipline to the manual, error-prone work of
+server configuration. Before \ac{IaC}, a production environment could drift from
+its intended state silently; after a misconfigured manual change, reproducing the
+environment from scratch was a multi-day effort. \ac{IaC} addresses both problems:
+all intended state is in version control, and a clean environment can be
+re-provisioned from that state at any time.
+
+\medskip\noindent
+The practical consequences are significant. Large cloud deployments —
+involving hundreds of machines, dozens of services, and multiple geographic
+regions — are manageable only when their configuration is code. A pull request
+on an \ac{IaC} repository is not a documentation change; it is a production
+deployment proposal, and it must be reviewed with the same rigor as application
+code \cite{bessghaier2025iac}.
+
+\subsection{The IaC Tool Landscape}
+
+Several tools have emerged with distinct approaches to expressing and enforcing
+infrastructure state:
+
+\begin{itemize}
+  \item \textbf{Ansible} (Red Hat) — agentless, push-based, YAML playbooks
+        describing operations to execute. The control machine connects over
+        \ac{SSH}; no resident daemon is required on managed nodes.
+  \item \textbf{Puppet} (Perforce) — agent-based, declarative \ac{DSL}. Resources
+        declare a desired state that Puppet's agent enforces on a periodic schedule.
+  \item \textbf{Chef} (Progress) — agent-based Ruby \ac{DSL}; procedural recipes
+        and declarative resources for operators with Ruby backgrounds.
+  \item \textbf{Terraform} (HashiCorp) — declarative HCL focused on cloud resource
+        provisioning. Explicit plan/apply with state files.
+  \item \textbf{SaltStack} (VMware) — event-driven, can run agent-based (minion)
+        or agentless. Stronger real-time monitoring than Ansible.
+\end{itemize}
+
+\noindent
+Puppet has been the most studied in the empirical quality literature
+\cite{sharma2016puppet,bessghaier2024saner}. Ansible, despite leading industry
+adoption surveys, has received comparatively less formal study — a gap that
+motivates this work.
+
+\subsection{Ansible: Architecture and Execution Model}
+\label{sec:ansible_arch}
+
+Ansible's core execution model is simpler than that of agent-based tools but
+places more responsibility on the playbook author for idempotency. Its key
+constructs are:
+
+\begin{description}
+  \item[Module.] An atomic operation encapsulated in a Python plugin. Ansible
+    ships over 3,000 built-in modules in the \code{ansible.builtin} collection.
+    Community collections (e.g., \code{community.general}, \code{community.aws})
+    add thousands more. Modules are identified by their \textit{Fully Qualified
+    Collection Name} (\ac{FQCN}): \code{ansible.builtin.copy},
+    \code{community.aws.s3\_bucket}. Short names (\code{copy}, \code{s3\_bucket})
+    are deprecated since Ansible 2.10.
+
+  \item[Task.] A mapping in \ac{YAML} that invokes one module with arguments.
+    A task may carry metadata: \code{name}, \code{when} conditions,
+    \code{register} (capture output), \code{notify} (fire a handler),
+    \code{tags}, \code{become} (privilege escalation), \code{loop},
+    \code{ignore\_errors}, \code{no\_log}, and others.
+
+  \item[Play.] A mapping that binds a set of tasks to a target host pattern.
+    A play defines remote user, privilege-escalation settings, variable
+    overrides, and the ordered list of \code{pre\_tasks}, \code{roles},
+    \code{tasks}, and \code{post\_tasks}.
+
+  \item[Playbook.] A YAML file containing one or more plays. Operators execute
+    playbooks with the \code{ansible-playbook} command.
+
+  \item[Role.] A self-contained reusable component with a standardized
+    directory layout (Table~\ref{tab:role_layout}). Roles are the unit of
+    sharing on Ansible Galaxy\cite{ansible_galaxy}, which hosts over 36,000
+    community roles.
+
+  \item[Handler.] A task that executes at the end of a play only when notified
+    by at least one task. Used for service restarts, cache flushes, or other
+    post-change reactions.
+
+  \item[Variable.] Ansible defines 22 distinct variable-precedence levels,
+    from role defaults (lowest) through command-line \code{--extra-vars}
+    (highest). This complexity is the source of several AnsibleGuard rules:
+    \code{role-variable-precedence-collision}, \code{unguarded-variable}, and
+    \code{variable-use-before-definition}.
+\end{description}
+
+\begin{table}[htbp]
+\centering
+\caption{Standard Ansible role directory layout.}
+\label{tab:role_layout}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Directory / File} & \textbf{Purpose} \\
+\midrule
+\code{tasks/main.yml}       & Default task entry point \\
+\code{handlers/main.yml}    & Handler definitions \\
+\code{defaults/main.yml}    & Role defaults (lowest precedence) \\
+\code{vars/main.yml}        & Role variables (overrides play/task) \\
+\code{templates/}           & Jinja2 template files \\
+\code{files/}               & Static files to copy \\
+\code{meta/main.yml}        & Role metadata, dependencies, Galaxy info \\
+\code{tests/}               & Molecule or other test scenarios \\
+\code{README.md}            & Required for Galaxy publication \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Why Ansible Code Is Hard to Analyze}
+
+Ansible's simplicity is also its vulnerability to quality problems. Because
+any valid YAML file that loosely follows the expected schema is accepted as a
+playbook, there are no compile-time or type-system gates. Key analysis
+challenges include:
+
+\begin{itemize}
+  \item \textbf{No type system.} Variables are untyped; their value at runtime
+        depends on which of 22 precedence levels wins, including sources
+        invisible at scan time (inventory, \code{--extra-vars}, facts, vault).
+  \item \textbf{Jinja2 templating inside YAML.} Expressions like
+        \code{\{\{ my\_var | default('fallback') \}\}} must be parsed as
+        Jinja2 within a YAML string, requiring a two-level parser.
+  \item \textbf{Dynamic includes.} \code{include\_tasks} with a Jinja2 path
+        argument cannot be resolved statically; the included file's tasks
+        are invisible to static analysis.
+  \item \textbf{Idempotency is the author's responsibility.} Unlike Puppet,
+        Ansible does not guarantee idempotency; whether a
+        \code{command:} task changes the system depends on the author's use
+        of \code{creates:}, \code{removes:}, or \code{changed\_when:}.
+\end{itemize}
+
+% ---------------------------------------------------------------
+\section{Code Smells and IaC Quality}
+\label{sec:smells_bg}
+% ---------------------------------------------------------------
+
+\subsection{The Code Smell Concept}
+
+The term \textit{code smell} was coined by Kent Beck and popularized by Martin
+Fowler \cite{fowler1999refactoring}. A smell is not a bug — the code runs —
+but its structure makes it harder to understand, evolve, or maintain than it
+needs to be. Fowler's catalogue pairs each smell with a named refactoring.
+Steve McConnell \cite{mcconnell2004codecomplete} frames the same intuition in
+terms of \textit{code quality attributes}: correctness, readability, robustness,
+and maintainability. Both works established that structural quality is
+measurable, documentable, and worth automating.
+
+\subsection{IaC Smell Studies}
+
+The adaptation of smells to \ac{IaC} began with Sharma, Fragkoulis, and
+Spinellis \cite{sharma2016puppet}, who identified ten configuration smells in
+Puppet manifests using an automated detector (Puppeteer). Their analysis of
+2,214 Puppet repositories found that misplaced attributes, long resources, and
+missing documentation occur frequently and correlate with subsequent
+defect-fixing commits — providing the first empirical evidence that \ac{IaC}
+smells matter in practice.
+
+\medskip\noindent
+Bessghaier et al.\ \cite{bessghaier2024saner} extended this line of work in
+their SANER 2024 paper, studying the \textit{prevalence, co-occurrence, and
+impact} of 12 Puppet smell types across 82 projects using 19,641 commits. Their
+study demonstrated that smelly Puppet files are more change-prone and
+defect-prone than clean files, lending empirical weight to the practical importance
+of smell detection. The 12 smells comprise four implementation smells (complex
+expression, incomplete tasks, deprecated statement, incomplete conditional) and
+eight design smells (multifaceted abstraction, insufficient modularization,
+tight coupling, weakened modularity, unstructured module, missing dependency,
+dense structure, deficient encapsulation). AnsibleGuard directly maps these
+12 smells to equivalent Ansible constructs.
+
+\medskip\noindent
+Rahman, Parnin, and Williams \cite{rahman2019security} identified seven security
+smells in Ansible and Chef scripts, reporting precision between 72\,\% and
+93\,\% per smell. Their protocol informs a future labelled evaluation of
+AnsibleGuard, but those figures are not directly comparable to the unlabelled
+occurrence distributions in Chapter~\ref{chap:results}.
+
+\medskip\noindent
+Opdebeeck, Zerouali, and De Roover \cite{opdebeeck2023ansible} studied 8,065
+Ansible Galaxy roles and found that 97\,\% contained at least one smell from
+a combined catalogue. Documentation and role-variable scoping problems dominate.
+Kumari and Rahman \cite{kumari2021ansible} further studied maintainability smells
+in Ansible specifically, cataloguing patterns that increase change cost without
+providing correctness benefits.
+
+% ---------------------------------------------------------------
+\section{The OpenStack IaC Code-Review Checklist}
+\label{sec:checklist_bg}
+% ---------------------------------------------------------------
+
+The most direct motivator for AnsibleGuard's rule taxonomy is the study by
+Bessghaier et al.\ \cite{bessghaier2025iac}, published in \textit{Empirical
+Software Engineering} 30:106, 2025. The study performed a large-scale empirical
+analysis of Ansible code review on OpenStack projects:
+
+\begin{itemize}
+  \item \textbf{Dataset:} 300,000+ OpenStack Gerrit review comments and 379
+        manually sampled merged \ac{IaC} changes.
+  \item \textbf{Methodology:} Two authors independently coded the sample with
+        Krippendorff's $\alpha = 0.99$ after discussion; nine of the 100 most
+        active OpenStack Ansible reviewers validated the checklist (98\,\%
+        positive ratings across 324 responses).
+  \item \textbf{Output:} 38 review criteria grouped into seven topics —
+        Documentation, Logic, Best Practices, Compatibility, Dependencies,
+        Test, and Security.
+\end{itemize}
+
+\medskip\noindent
+The checklist derived from this study is the ground truth for AnsibleGuard's
+design. Table~\ref{tab:checklist_summary} summarizes the seven topics and their
+coverage in AnsibleGuard (full mapping in Chapter~\ref{chap:implementation}).
+
+\begin{table}[htbp]
+\centering
+\caption{Summary of the 38-criterion OpenStack IaC review checklist and AnsibleGuard coverage.}
+\label{tab:checklist_summary}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Topic} & \textbf{Criteria} & \textbf{Yes} & \textbf{Partial} & \textbf{No} \\
+\midrule
+Documentation    & 5  & 1 & 3 & 1 \\
+Logic            & 11 & 5 & 5 & 1 \\
+Best Practices   & 9  & 6 & 2 & 1 \\
+Compatibility    & 4  & 0 & 4 & 0 \\
+Dependencies     & 2  & 0 & 2 & 0 \\
+Test             & 3  & 1 & 2 & 0 \\
+Security         & 4  & 3 & 1 & 0 \\
+\midrule
+\textbf{Total}   & \textbf{38} & \textbf{15} & \textbf{18} & \textbf{5} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+The five criteria with no automation are: blank line before a configuration
+section (a source-format convention, not an Ansible semantic), setting
+deprecated parameters to UNDEF (a Puppet-specific construct inapplicable to
+Ansible), following OpenStack IRC conventions (a process rule, not a YAML
+property), testing assigned values for correctness (requires test execution),
+and parameter-value compatibility (requires service-specific knowledge). These
+are permanently excluded from AnsibleGuard's scope.
+
+% ---------------------------------------------------------------
+\section{Static Analysis Tools for Ansible}
+\label{sec:static_bg}
+% ---------------------------------------------------------------
+
+\subsection{Precision and Recall}
+
+Static analysis trades off precision against recall. A tool that reports
+every file as defective has 100\,\% recall but potentially near-0\,\% precision;
+practitioners may ignore it. Precision therefore requires a labelled sample,
+whereas recall requires known relevant defects. Neither can be inferred from a
+raw finding count. This report treats both as future evaluation outcomes.
+
+\subsection{Existing Ansible Quality Tools}
+
+\textbf{ansible-lint}\cite{ansiblelint_docs} is the primary Ansible quality
+tool. Maintained by the Ansible community (Red Hat), it implements
+approximately 180 built-in rules covering \ac{FQCN} compliance, variable naming,
+task structure, and syntax correctness. Its limitations relative to AnsibleGuard:
+it has no size/complexity rules, no cross-file analysis (handler resolution,
+variable scoping), no pull-request diff mode, and no empirical precision study.
+
+\medskip\noindent
+\textbf{yamllint}\cite{yamllint_docs} enforces YAML formatting (indentation,
+trailing spaces, colon spacing) without any Ansible-specific semantic understanding.
+AnsibleGuard integrates both tools as providers, normalizing their findings into
+the same output schema as internal rules.
+
+\medskip\noindent
+\textbf{GitLeaks}\cite{gitleaks_github} detects secrets in repository trees
+and Git history using regular expressions and entropy heuristics. It covers
+hard-coded credentials, API keys, and other sensitive material. AnsibleGuard
+integrates GitLeaks as an external provider, with a conservative noise filter
+that suppresses findings matching known checksum or comment patterns.
+
+\medskip\noindent
+\textbf{SLIC} \cite{rahman2019security} is a research tool implementing the
+seven security smells for Ansible and Chef. It provides the most directly
+comparable published precision baseline (72–93\,\% per smell). Unlike
+AnsibleGuard, SLIC covers only security and has not been validated at scale
+with a dual-reviewer protocol.
+
+\subsection{The SARIF Interchange Format}
+
+SARIF 2.1.0 \cite{oasis2019sarif} is an OASIS standard JSON schema for static
+analysis results. Its significance for CI/CD integration is that GitHub Code
+Scanning\cite{github_sarif}, VS Code, and JetBrains all consume SARIF files
+natively, rendering findings as inline pull-request line annotations without
+custom post-processing. AnsibleGuard produces SARIF with:
+\begin{itemize}
+  \item repository-relative \code{artifactLocation.uri} (required by GitHub),
+  \item stable \code{partialFingerprints.ansibleguardSemanticId/v1} (required
+        for result identity after line movements), and
+  \item \code{ruleId} mapped to the native ansible-lint rule (not the generic
+        \code{ansible-lint-issue} envelope) so each lint check gets a distinct
+        dismissal scope in GitHub Code Scanning.
+\end{itemize}
+
+% ---------------------------------------------------------------
+\section{Empirical IaC Quality Studies}
+\label{sec:empirical_bg}
+% ---------------------------------------------------------------
+
+\subsection{Defect Studies}
+
+Rahman and Williams \cite{rahman2015iac} analyzed 1,726 defect-fixing commits
+across Ansible and Chef repositories, finding that security and dependency
+defects carry the highest fixing cost. Their follow-up \cite{rahman2020defective}
+applied source-code metrics (change frequency, code churn) to predict defect-prone
+files with AUC $> 0.75$.
+
+\subsection{Precision Measurement Protocols}
+
+The standard protocol for measuring static analysis precision involves:
+(1) stratified sampling to ensure representation of all rules, (2) two
+independent reviewers, (3) adjudication of disagreements by a third reviewer,
+and (4) Wilson-score confidence intervals \cite{wilson1927probable} rather than
+normal approximations, which are inaccurate for proportions near 0 or 1.
+Cohen's $\kappa$ \cite{cohen1960kappa} quantifies inter-rater agreement. Rahman
+et al.\ \cite{rahman2019security} used this protocol with $\kappa = 0.92$ for
+their seven security smells. The present work specifies this protocol for a
+future labelled study; it does not claim that independent review and
+adjudication have already been completed.
+
+% ---------------------------------------------------------------
+\section{Research Gaps and Positioning}
+\label{sec:gaps_bg}
+% ---------------------------------------------------------------
+
+\noindent
+Three gaps motivate AnsibleGuard:
+
+\begin{enumerate}
+  \item \textbf{Breadth.} No single Ansible tool covers structural, security,
+        correctness, documentation, and testing concerns in a unified pipeline.
+  \item \textbf{Empirical rigor.} Tool behaviour, provider health, labelled
+        accuracy, and ecosystem prevalence are often conflated; a reproducible
+        evaluation must keep these claims separate.
+  \item \textbf{CI integration.} No existing Ansible tool offers a pull-request
+        diff mode with SARIF output and GitHub inline annotations out of the box.
+\end{enumerate}
+
+Table~\ref{tab:tool_comparison_bg} positions AnsibleGuard against the closest
+related tools.
+
+\begin{table}[htbp]
+\centering
+\caption{Feature comparison of Ansible quality tools.}
+\label{tab:tool_comparison_bg}
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Feature} & \rotatebox{70}{\textbf{ansible-lint}} & \rotatebox{70}{\textbf{yamllint}} & \rotatebox{70}{\textbf{GitLeaks}} & \rotatebox{70}{\textbf{SLIC}} & \rotatebox{70}{\textbf{AnsibleGuard}} \\
+\midrule
+Style / naming      & \checkmark & \checkmark &  &  & \checkmark \\
+Correctness         & partial    &            &  & partial & \checkmark \\
+Security            & partial    &            & \checkmark & \checkmark & \checkmark \\
+Size / complexity   &            &            &  &  & \checkmark \\
+Testing / checklist &            &            &  &  & \checkmark \\
+Cross-file analysis &            &            &  &  & \checkmark \\
+Symbol index        &            &            &  &  & \checkmark \\
+SARIF output        & \checkmark &            &  &  & \checkmark \\
+PR diff mode        &            &            &  &  & \checkmark \\
+Precision study     &            &            &  & \checkmark & \checkmark \\
+149-repo corpus     &            &            &  &  & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,1107 @@
+sample_id,rule_id,concept_id,review_family,tier,rule_total_occurrences,rule_cumulative_share_percent,repository,commit_sha,path,line,severity,message,occurrence_id,source_context,ai_semantic_label,ai_actionability_label,ai_context_sufficient,ai_requires_external_context,ai_external_context_type,ai_reason_code,ai_notes,ai_confidence,ai_model_identity,ai_review_protocol_version
+V007STRAT-LOOP-LEGACY-SYNTAX-001,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,trilioData/triliovault-cfg-scripts,30ca8d696541328662432c9e271c95bd3606771c,ansible/roles/ansible-datamover-api/tasks/service_setup.yml,37,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),811577e62a4692aef266ca8fa521e23be08a954ba07b7ee8bd37075e35a97133,"      23 |         state: present
+      24 |         name: ""{{ _project_name }}""
+      25 |         description: ""{{ _project_description | default(omit) }}""
+      26 |         domain_id: ""{{ _project_domain | default('default') }}""
+      27 |         endpoint_type: admin
+      28 |         validate_certs: ""{{ not (_service_adminuri_insecure | default(True) | bool) }}""
+      29 |       register: add_service
+      30 |       when:
+      31 |         - not (_service_in_ldap | default(False) | bool)
+      32 |         - _project_name is defined
+      33 |       until: add_service is success
+      34 |       retries: 5
+      35 |       delay: 10
+      36 | 
+>>    37 |     - name: Add services to the keystone service catalog
+      38 |       os_keystone_service:
+      39 |         cloud: default
+      40 |         state: ""{{ item.state | default('present') }}""
+      41 |         name: ""{{ item.name }}""
+      42 |         service_type: ""{{ item.type }}""
+      43 |         description: ""{{ item.description | default('') }}""
+      44 |         endpoint_type: admin
+      45 |         validate_certs: ""{{ not (_service_adminuri_insecure | default(True) | bool) }}""
+      46 |       register: add_service
+      47 |       with_items: ""{{ _service_catalog }}""
+      48 |       when: _service_catalog is defined
+      49 |       until: add_service is success
+      50 |       retries: 5
+      51 |       delay: 10",positive,actionable,yes,no,none,condition-present,"with_items is used at line 47 for 'Add services to the keystone service catalog', confirming the deprecated loop syntax on the exact anchored task.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-002,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,easzlab/kubeasz,fcb46a47a7fcd3bbc97498ea4aefdd564e16b383,playbooks/91.start.yml,15,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),0dcead6bea8a8172023fbf0f27ffad499c95e14b53be0b6c92e3cfe7ddb9a44f,"       1 | - hosts: etcd
+       2 |   tasks:
+       3 |   - name: starting etcd cluster
+       4 |     service: name=etcd state=started enabled=yes
+       5 | 
+       6 | - hosts:
+       7 |   - kube_master
+       8 |   - kube_node
+       9 |   tasks:
+      10 |   - name: starting kube-lb
+      11 |     service: name=kube-lb state=started enabled=yes
+      12 | 
+      13 | - hosts: kube_master
+      14 |   tasks:
+>>    15 |   - name: starting kube_master services
+      16 |     service: name={{ item }} state=started enabled=yes
+      17 |     with_items:
+      18 |     - kube-apiserver
+      19 |     - kube-controller-manager
+      20 |     - kube-scheduler
+      21 | 
+      22 | - hosts:
+      23 |   - kube_master
+      24 |   - kube_node
+      25 |   tasks:
+      26 |   - name: starting docker
+      27 |     service: name=docker state=started enabled=yes
+      28 |     when: ""CONTAINER_RUNTIME == 'docker'""
+      29 | ",positive,actionable,yes,no,none,condition-present,"with_items with a Jinja list expression appears directly in the anchored task body (line 17), confirming deprecated loop syntax.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-003,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,roots/trellis,cd8e671076918a82efb43d5a313451f4e71da318,roles/hosts/tasks/main.yml,2,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),6b35b67fff1e7bb487d8cdf86b9579ace3f335761aa6cf21b89af7aca845505f,"       1 | ---
+>>     2 | - name: Add WordPress sites to /etc/hosts
+       3 |   lineinfile:
+       4 |     path: /etc/hosts
+       5 |     line: ""127.0.0.1 {{ item }}""
+       6 |     create: yes
+       7 |   with_items: ""{{ wordpress_sites.values() | map(attribute='site_hosts') | list | flatten | map(attribute='canonical') | list | union(wordpress_sites.values() | map(attribute='site_hosts') | list | flatten | selectattr('redirects', 'defined') | map(attribute='redirects') | list | flatten) }}""",positive,actionable,yes,no,none,condition-present,with_items is used at line 7 of the anchored lineinfile task; migrating to loop: is mechanical since the same Jinja expression still yields a list.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-004,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,FreiFunkMuenster/Ansible-Freifunk-Gateway,b04e8f81b2b010eaccd13a63271c7ce7eb6fb4b3,backports-kernel/tasks/main.yml,1,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),e3f6bf3fb5c738534a01885a94a4ecd7d25b23e64bc2c33706d16d240d9f0342,">>     1 | - name: add backports repo
+       2 |   apt_repository:
+       3 |     repo: ""{{ item }}""
+       4 |     state: present
+       5 |   with_items:
+       6 |     - ""deb http://deb.debian.org/debian/ {{ ansible_distribution_release }}-backports main""
+       7 |   when: ansible_distribution == ""Debian""
+       8 |   register: addrepo
+       9 | 
+      10 | - name: update apt cache
+      11 |   apt:
+      12 |     update_cache: yes
+      13 |   when: addrepo.changed
+      14 | 
+      15 | - name: install backports-kernel",positive,actionable,yes,no,none,condition-present,"A with_items list directly follows the anchored apt_repository task (line 5), confirming deprecated syntax.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-005,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,hyphacoop/cosmos-ansible,8a3a2afdc232bf3cf08e9b19cdb3055e008b0c29,roles/bigdipper/tasks/bdjuno.yml,49,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),9c30b4649e3611d4447e0e66f08c84ccfd6ced4618d0c3c0c3e487c1f9b1d11a,"      35 | - name: Grant user access to database
+      36 |   become_user: postgres
+      37 |   community.postgresql.postgresql_privs:
+      38 |     db: ""{{bigdipper_db}}""
+      39 |     privs: ALL
+      40 |     type: database
+      41 |     obj: ""{{bigdipper_db}}""
+      42 |     role: ""{{bigdipper_db_user}}""
+      43 | 
+      44 | - name: Find bdjuno schema files
+      45 |   find:
+      46 |     paths: ""{{bdjuno_dir}}/database/schema""
+      47 |   register: bdjuno_schemas
+      48 | 
+>>    49 | - name: Run postgresql bdjuno setup scripts
+      50 |   community.postgresql.postgresql_script:
+      51 |     db: ""{{bigdipper_db}}""
+      52 |     path: ""{{ item.path }}""
+      53 |     login_user: ""{{bigdipper_db_user}}""
+      54 |     login_password: ""{{bigdipper_db_password}}""
+      55 |     login_host: ""127.0.0.1""
+      56 |   with_items: ""{{ bdjuno_schemas.files | sort(attribute='path') }}""
+      57 | 
+      58 | - name: ""Install BDJuno""
+      59 |   become_user: ""{{bigdipper_user}}""
+      60 |   shell: |
+      61 |     export PATH=$PATH:/usr/local/go/bin:/home/{{bigdipper_user}}/go/bin
+      62 |     cd {{bdjuno_dir}}
+      63 |     make install",positive,actionable,yes,no,none,condition-present,with_items at line 56 belongs to the anchored postgresql_script task (line 49); confirmed present.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-006,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,ansible/zuul-config,82f3415452ef899524f4257b3cdae20b13692c87,playbooks/ansible-collection/post.yaml,11,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),6d96115eb2ba8c35ba917cfeb535347b5ea322ded7ab738d46fa92d0fc487c8e,"       1 | ---
+       2 | - hosts: all
+       3 |   tasks:
+       4 |     - name: Find tarballs in folder
+       5 |       find:
+       6 |         file_type: file
+       7 |         paths: ""~/artifacts""
+       8 |         patterns: ""*.tar.gz""
+       9 |       register: result
+      10 | 
+>>    11 |     - name: Display stat for tarballs
+      12 |       stat:
+      13 |         path: ""{{ item.path }}""
+      14 |       with_items: ""{{ result.files }}""
+      15 | 
+      16 |     - name: Ensure artifacts directory exists
+      17 |       file:
+      18 |         path: ""{{ zuul.executor.log_root }}/artifacts""
+      19 |         state: directory
+      20 |       delegate_to: localhost
+      21 | 
+      22 |     - name: Collect tarball artifacts
+      23 |       synchronize:
+      24 |         dest: ""{{ zuul.executor.log_root }}/artifacts/""
+      25 |         mode: pull",positive,actionable,yes,no,none,condition-present,with_items at line 14 is part of the anchored stat task (line 11).,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-007,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,openfoodfoundation/ofn-install,5e26b29ee7c0eb6ffff54e502b570b4b92e0b7d9,community/jdauphant.nginx/tasks/configuration.yml,9,warning,Task uses deprecated 'with_dict' loop syntax. Use loop: over (my_dict | dict2items). (Introduced in Ansible 2.5.),63cdb018a89aed4211821c057acea9ce3992dd5dcf775b6fa985087f158da365,"       1 | ---
+       2 | - name: Copy the nginx configuration file
+       3 |   template:
+       4 |     src: nginx.conf.j2
+       5 |     dest: ""{{ nginx_conf_dir }}/nginx.conf""
+       6 |   notify:
+       7 |     - restart nginx
+       8 | 
+>>     9 | - name: Ensure auth_basic files created
+      10 |   template:
+      11 |     src: auth_basic.j2
+      12 |     dest: ""{{ nginx_conf_dir }}/auth_basic/{{ item.key }}""
+      13 |     mode: 0750
+      14 |     group: ""{{ nginx_group }}""
+      15 |   with_dict: ""{{ nginx_auth_basic_files }}""
+      16 | 
+      17 | - name: Create the configurations for sites
+      18 |   template:
+      19 |     src: ""{{ item.value.template | default(nginx_default_site_template) }}""
+      20 |     dest: ""{{ nginx_conf_dir }}/sites-available/{{ item.key }}.conf""
+      21 |   with_dict: ""{{ nginx_sites }}""
+      22 |   when: item.key not in nginx_remove_sites
+      23 |   notify:",positive,actionable,yes,no,none,condition-present,with_dict is used at line 15 in the anchored template task; migration requires a dict2items filter but is still a proportionate mechanical change.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-008,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,IAreKyleW00t/k2net,63cf522a122691ae38ec90146c10a6d332231d00,ansible/roles/common/tasks/users.yaml,44,warning,Task uses deprecated 'with_file' loop syntax. Replace with loop: using the equivalent Jinja2 filter or lookup. (Introduced in Ansible 2.5.),2321a5f71b8e1cb9db552193bb0e2c3d88b2b7fc2b81c207d8b7e539e8bd70b5,"      30 |         owner: ""{{ user.name }}""
+      31 |         group: ""{{ user.name }}""
+      32 |         mode: ""0600""
+      33 |       when: user.ssh.enabled | bool
+      34 | 
+      35 |     - name: System Users | Set SSH public key for user '{{ user.name }}'
+      36 |       ansible.builtin.copy:
+      37 |         dest: ""/home/{{ user.name }}/.ssh/{{ user.ssh.name }}.pub""
+      38 |         src: ""{{ user.ssh.local_key_path }}.pub""
+      39 |         owner: ""{{ user.name }}""
+      40 |         group: ""{{ user.name }}""
+      41 |         mode: ""0644""
+      42 |       when: user.ssh.enabled | bool
+      43 | 
+>>    44 |     - name: System Users | Add SSH public to authorized_keys for '{{ user.name }}'
+      45 |       ansible.builtin.lineinfile:
+      46 |         path: /home/{{ user.name }}/.ssh/authorized_keys
+      47 |         line: ""{{ item }}""
+      48 |         owner: ""{{ user.name }}""
+      49 |         group: ""{{ user.name }}""
+      50 |         mode: ""0644""
+      51 |         create: true
+      52 |       with_file:
+      53 |         - ""{{ user.ssh.local_key_path }}.pub""
+      54 |       when: user.ssh.enabled | bool
+      55 |   become: true
+      56 |   tags:
+      57 |     - users
+      58 |     - common",positive,actionable,yes,no,none,condition-present,with_file is used at line 52 within the anchored lineinfile task (line 44); confirmed deprecated loop form.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-009,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,wazuh/wazuh-ansible,a80acf87449f47f5a1db7d8e0841448785b2a7a8,roles/wazuh-dashboard/tasks/main.yml,96,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),fd340a1581fccbc66e1ec5d32757c3106e64228212de924b32a42cd685659c90,"      82 |           - ( expected_cert_path is match('^/.+\\.pem$') ) and ( expected_key_path is match('^/.+\\.pem$') )
+      83 |         fail_msg: >-
+      84 |           Invalid dashboard SSL certificate/key filenames detected from
+      85 |           /etc/wazuh-dashboard/opensearch_dashboards.yml.
+      86 |       changed_when: false
+      87 | 
+      88 |     - name: Create expected cert/key directory (if does not exist)
+      89 |       ansible.builtin.file:
+      90 |         path: ""{{ expected_cert_path | dirname }}""
+      91 |         state: directory
+      92 |         owner: wazuh-dashboard
+      93 |         group: wazuh-dashboard
+      94 |         mode: ""0700""
+      95 | 
+>>    96 | - name: Copy the certificates from local to the Wazuh dashboard instance
+      97 |   ansible.builtin.copy:
+      98 |     src: ""{{ local_configs_path }}/wazuh-certificates/{{ item }}""
+      99 |     dest: ""{{ expected_cert_path | dirname }}/{{ item }}""
+     100 |     owner: wazuh-dashboard
+     101 |     group: wazuh-dashboard
+     102 |     mode: ""0400""
+     103 |   with_items:
+     104 |     - ""root-ca.pem""
+     105 |     - ""{{ dashboard_node_name }}-key.pem""
+     106 |     - ""{{ dashboard_node_name }}.pem""
+     107 | 
+     108 | - name: Copy certificates to match default names
+     109 |   ansible.builtin.copy:
+     110 |     src: ""{{ expected_cert_path | dirname }}/{{ item.src }}""",positive,actionable,yes,no,none,condition-present,with_items at line 103 follows the anchored copy task (line 96).,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-010,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,clusterinthecloud/ansible,a378fceff7cd03dbd36da1fc4bd5a4ed09270c60,roles/monitoring/tasks/master.yml,3,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),7138c5d08826a27f238055071aac36087b60c22c5e3df53f0b78d4abf1619650,"       1 | ---
+       2 | 
+>>     3 | - name: Configure mgmt to recieve syslog on UDP and TCP
+       4 |   ansible.builtin.replace:
+       5 |     path: /etc/rsyslog.conf
+       6 |     regexp: ""{{ item.regexp }}""
+       7 |     replace: ""{{ item.replace }}""
+       8 |   with_items:
+       9 |     - regexp: '#\$ModLoad imudp'
+      10 |       replace: '$ModLoad imudp'
+      11 |     - regexp: '#\$UDPServerRun 514'
+      12 |       replace: '$UDPServerRun 514'
+      13 |     - regexp: '#\$ModLoad imtcp'
+      14 |       replace: '$ModLoad imtcp'
+      15 |     - regexp: '#\$InputTCPServerRun 514'
+      16 |       replace: '$InputTCPServerRun 514'
+      17 |   notify: Restart rsyslog",positive,actionable,yes,no,none,condition-present,A with_items list at line 8 directly follows the anchored replace task (line 3).,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-011,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,ls1intum/artemis-ansible-collection,02e584e629e7eda53301159bc2790e45a14f444c,roles/artemis/tasks/generate_ssh_keys.yml,14,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),ac9dd7f23a42f341f92f7248ccdd9f0de54c3a4aeabf1c2f988ccad99c7ba5e9,"       1 | ---
+       2 | - name: Ensure SSH key directory is present
+       3 |   become: true
+       4 |   become_user: ""{{ artemis_user_name }}""
+       5 |   file:
+       6 |     path: ""{{ version_control.localvc.ssh_key_path }}""
+       7 |     state: directory
+       8 |     mode: ""770""
+       9 |     owner: ""{{ artemis_user_name }}""
+      10 |     group: ""{{ artemis_user_group }}""
+      11 |   throttle: 1
+      12 |   when: artemis_computed_is_core_node
+      13 | 
+>>    14 | - name: Generate SSH host key
+      15 |   become: true
+      16 |   become_user: ""{{ artemis_user_name }}""
+      17 |   community.crypto.openssh_keypair:
+      18 |     comment: ""Artemis""
+      19 |     force: false
+      20 |     mode: ""770""
+      21 |     owner: ""{{ artemis_user_name }}""
+      22 |     group: ""{{ artemis_user_group }}""
+      23 |     path: ""{{ version_control.localvc.ssh_key_path }}/{{ item.type }}""
+      24 |     private_key_format: ""auto""
+      25 |     regenerate: ""never""
+      26 |     size: ""{{ item.size }}""
+      27 |     type: ""{{ item.type }}""
+      28 |   with_items:",positive,actionable,yes,no,none,condition-present,The anchored task (line 14) ends with 'with_items:' at line 28; keyword presence alone confirms the deprecated syntax even though the list values are cut off by the context window.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-012,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,NationalGenomicsInfrastructure/miarka-provision,52daa7027450753c62cb0f38a2b5ef546cae7ede,install.yml,48,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),70286f45f63a75361f5c7e3b9a6a3acd76b4253dc6389833c48c76aaa913d528,"      34 |         dir: env_secrets
+      35 |         files_matching: site_(all|{{ site }})_env_(all|{{ deployment_environment }}).yml$
+      36 |       tags: always
+      37 | 
+      38 |     - name: create {{ proj_root }} folder and configure setgid
+      39 |       file:
+      40 |         path: ""{{ proj_root }}""
+      41 |         group: ""{{ ngi_group }}""
+      42 |         state: directory
+      43 |         recurse: no
+      44 |         mode: g+rwXs,o-rwx
+      45 |       when: deployment_environment in [""staging"", ""devel""]
+      46 |       tags: always
+      47 | 
+>>    48 |     - name: create folder and configure setgid
+      49 |       file:
+      50 |         path: ""{{ item }}""
+      51 |         group: ""{{ ngi_sw_group }}""
+      52 |         state: directory
+      53 |         recurse: no
+      54 |         mode: g+rwXs,o=rX
+      55 |       tags: always
+      56 |       with_items:
+      57 |         - ""{{ root_path }}""
+      58 |         - ""{{ ngi_containers }}""
+      59 |         - ""{{ igenomes_dir }}""
+      60 | 
+      61 |     - name: initiate list of static folders that must be created on the target, after deployment
+      62 |       set_fact:",positive,actionable,yes,no,none,condition-present,with_items at line 56 belongs to the anchored file task (line 48).,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-013,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,gdcc/dataverse-ansible,ae29ce65dd4cddd5187c2bc00aefd319b6bb4484,tasks/ansible-scripts.yml,2,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),51660d953d9c3deb73c6f73e1f1d2d76a85d807af17827b93ecdb37eb05c58be,"       1 | 
+>>     2 | - name: install script(s) necessary for various ansible subtasks
+       3 |   template:
+       4 |     src: '{{ item }}.j2'
+       5 |     dest: '/usr/local/bin/{{ item }}'
+       6 |     mode: 0755
+       7 |   with_items:
+       8 |    - asadmin-create-or-replace-option.sh
+       9 |    - asadmin-create-or-replace-password-alias.sh",positive,actionable,yes,no,none,condition-present,A with_items list at line 7 directly follows the anchored template task (line 2).,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LOOP-LEGACY-SYNTAX-014,ansibleguard/loop-legacy-syntax,loop-legacy-syntax,Objective correctness,C-moderate,1102,87.35,TerryHowe/ansible-modules-hashivault,e68f68bb531eeb33cec1e79e6e998c51a69bfedd,functional/test_pki.yml,1,warning,Task uses deprecated 'with_items' loop syntax. Use loop: with a list value. (Introduced in Ansible 2.5.),b9f18c8b24707b4fe123547adaf2287ee020050ad96f241e5e520fec001a1150,">>     1 | ---
+       2 | - hosts: localhost
+       3 |   gather_facts: no
+       4 |   vars:
+       5 |     mount_root: ""root""
+       6 |     mount_inter: ""inter""
+       7 |     role: ""larole""
+       8 |     expiry: 24h
+       9 |   tasks:
+      10 |     - name: Disable PKI secrets engine
+      11 |       hashivault_secret_engine:
+      12 |         name: ""{{mount_inter}}""
+      13 |         backend: ""pki""
+      14 |         description: ""Root pki engine""
+      15 |         state: absent",uncertain,uncertain,no,yes,other-source-lines,insufficient-source-context,"Anchor is line 1 ('---') and the 15-line window shows only a hosts/vars header plus one hashivault_secret_engine task with no with_items anywhere; the frozen context does not contain the task the detector flagged, so the claim cannot be verified.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-001,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,gdcc/dataverse-ansible,ae29ce65dd4cddd5187c2bc00aefd319b6bb4484,tasks/aws_cli.yml,10,warning,Commands should not change things if nothing needs doing.,afb029ef82e937eae51002b1a3375804ea7c87b70ec7d87eb97c73d54c97d0db,"       1 | ---
+       2 | 
+       3 | #- name: we need awscli on 8
+       4 | #  pip:
+       5 | #    name: awscli
+       6 | #    executable: pip3
+       7 | #  when: (ansible_os_family == ""RedHat"") and
+       8 | #        (ansible_distribution_major_version) == ""8""
+       9 | 
+>>    10 | - name: rocky9 needs codereadybuilder
+      11 |   ansible.builtin.shell:
+      12 |     cmd: 'dnf config-manager --set-enabled crb'
+      13 |   when: ansible_distribution == ""Rocky"" and
+      14 |         ansible_distribution_major_version == ""9""
+      15 | 
+      16 | - name: just use OS-included binary for now
+      17 |   ansible.builtin.package:
+      18 |     name: awscli
+      19 |     state: latest
+      20 |   when: ansible_os_family == ""RedHat"" or ansible_os_family == ""Debian""",positive,actionable,yes,no,none,condition-present,"The shell task runs 'dnf config-manager --set-enabled crb' with no changed_when/creates/removes guard, so it reports changed on every run even when crb is already enabled.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-002,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,qld-gov-au/ckan-qld-infrastructure,4bd697b0fafe18c453bc96b61e70cc85c3130003,CKAN-Stack.yml,24,warning,Commands should not change things if nothing needs doing.,fa6995f42ce8c40db3cf082e55f0eab265f4f47e833fbe052f4446dc9d19b7ce,"      10 |     - set_fact:
+      11 |         acm_stack_name: ""{{ service_name }}-{{ Environment }}-acm""
+      12 | 
+      13 |     - name: Describe acm cert cloudformation stack in default region
+      14 |       cloudformation_info:
+      15 |         region: ""{{ region }}""
+      16 |         stack_name: ""{{ acm_stack_name }}""
+      17 |         stack_resources: true
+      18 |       register: acm
+      19 | 
+      20 |     - set_fact:
+      21 |         ACMCertificateARNForDefaultRegion: ""{{ acm['cloudformation'][acm_stack_name].stack_outputs.AcmCert }}""
+      22 | 
+      23 |     # 'list-aliases' doesn't offer server-side --filters so fall back to client-side --query
+>>    24 |     - name: Retrieve ARN for SSM encryption key
+      25 |       shell: |
+      26 |         KEY_ID=$(aws kms list-aliases --region ""{{ region }}"" --query ""Aliases[?AliasName=='alias/aws/ssm'].TargetKeyId"" --output text | head -1)
+      27 |         if [ ""$KEY_ID"" != """" ]; then
+      28 |           aws kms describe-key --region ""{{ region }}"" --key-id ""$KEY_ID"" --query ""KeyMetadata.Arn"" --output text
+      29 |         fi
+      30 |       register: ssmKeyFacts
+      31 |     - set_fact:
+      32 |         SSMKey: ""{{ ssmKeyFacts.stdout }}""
+      33 | 
+      34 |     - name: Generate Lambda file hash
+      35 |       shell: >
+      36 |         md5sum files/instanceSetupLambda.js | awk '{print substr($1, 1, 20)}'
+      37 |       register: hash_output
+      38 |     - set_fact:",negative,not-applicable,yes,no,none,condition-absent,"The registered shell block (aws kms list-aliases/describe-key) only reads AWS KMS state and performs no mutation, so there is nothing for an idempotency guard to protect against.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-003,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,clincha-org/clincha,5f3bc1dfb500509433a917ddf29489a1c610b316,Ansible/proxmox.yml,182,warning,Mutating command has no effective creates/removes execution guard.,1bf5bdeef102a79067fecb9c243701743b1403d636a4ec16ff9e147791956aa5,"     168 |         owner: root
+     169 |         group: root
+     170 |         mode: ""0644""
+     171 |         timeout: 30
+     172 |       register: ubuntu_iso
+     173 |       until: ubuntu_iso is succeeded
+     174 |       retries: 5
+     175 |       delay: 15
+     176 | 
+     177 |     - name: ""Update LXC template catalogue""
+     178 |       ansible.builtin.command:
+     179 |         cmd: pveam update
+     180 |       changed_when: false
+     181 | 
+>>   182 |     - name: ""Find latest Debian 12 LXC template""
+     183 |       ansible.builtin.shell:
+     184 |         cmd: >-
+     185 |           set -o pipefail &&
+     186 |           pveam available --section system |
+     187 |           grep 'debian-12-standard' |
+     188 |           awk '{print $2}' |
+     189 |           sort -V |
+     190 |           tail -1
+     191 |         executable: /bin/bash
+     192 |       register: debian_template
+     193 |       changed_when: false
+     194 | 
+     195 |     - name: ""Download Debian 12 LXC template""
+     196 |       ansible.builtin.command:",negative,not-applicable,yes,no,none,valid-guard-or-reference,"The shell command is read-only (lists/sorts available templates) and already carries changed_when: false at line 193, so an effective guard is present.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-004,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,delphix/appliance-build,e6237bbdcc7f3b49d7e053f1dad8800c0b30e4cc,live-build/misc/ansible-roles/appliance-build.virtualization-common/tasks/main.yml,62,warning,Commands should not change things if nothing needs doing.,9a1315d87d398b8ebe35f38c46890f0ba9ab36c6a0eebe12a051bed0eced1868,"      48 | #
+      49 | # We have divided the disabling and masking of the services in multiple
+      50 | # code blocks to group together services that are handled in the same way by
+      51 | # the appliance.
+      52 | #
+      53 | # Note that if you want to modify this list make sure to also update
+      54 | # the logic in fix_and_migrate_services() that is invoked during upgrade.
+      55 | # You may also want to look at the logic that handles enabling disabling
+      56 | # services in dlpx-app-gate.
+      57 | #
+      58 | 
+      59 | #
+      60 | # The services in this section should always remain disabled & masked.
+      61 | #
+>>    62 | - name: Disable and mask services that should never run
+      63 |   shell: |
+      64 |     systemctl disable {{ item }}
+      65 |     systemctl mask {{ item }}
+      66 |   with_items:
+      67 |     - fluentd.service
+      68 |     - nginx.service
+      69 |     - postgresql.service
+      70 |     - telegraf.service
+      71 |     - influxdb.service
+      72 | 
+      73 | #
+      74 | # The services in this section should be disabled & masked initially, but
+      75 | # can be later dynamically enabled by the appliance.
+      76 | #",positive,actionable,yes,no,none,condition-present,"The shell task runs 'systemctl disable'/'mask' for five services with no changed_when or creates/removes guard, so it reports changed on every run regardless of prior state.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-005,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,TylerHendrickson/home-ops,d6e1beb5d968761d85c24d7b9c1036c418ed6a1c,ansible/playbooks/cluster-rollout-update.yaml,14,warning,Mutating command has no effective creates/removes execution guard.,159bca9d952d7bad32f478760832eb5e7271e78ed335f1379d59c07a4876867f,"       1 | ---
+       2 | # https://github.com/kevincoakley/ansible-role-k8s-rolling-update
+       3 | - name: Cluster rollout update
+       4 |   hosts: kubernetes
+       5 |   become: true
+       6 |   gather_facts: true
+       7 |   any_errors_fatal: true
+       8 |   serial: 1
+       9 |   pre_tasks:
+      10 |     - name: Pausing for 5 seconds...
+      11 |       ansible.builtin.pause:
+      12 |         seconds: 5
+      13 |   tasks:
+>>    14 |     - name: Details
+      15 |       ansible.builtin.command: ""kubectl get node {{ inventory_hostname }} -o json""
+      16 |       register: kubectl_get_node
+      17 |       delegate_to: ""{{ groups['master'][0] }}""
+      18 |       failed_when: false
+      19 |       changed_when: false
+      20 | 
+      21 |     - name: Update
+      22 |       when:
+      23 |         # When status.conditions[x].type == Ready then check stats.conditions[x].status for True|False
+      24 |         - kubectl_get_node['stdout'] | from_json | json_query(""status.conditions[?type == 'Ready'].status"")
+      25 |         # If spec.unschedulable is defined then the node is cordoned
+      26 |         - not (kubectl_get_node['stdout'] | from_json).spec.unschedulable is defined
+      27 |       block:
+      28 |         - name: Cordon",negative,not-applicable,yes,no,none,valid-guard-or-reference,The anchored command is a read-only 'kubectl get node ... -o json' with explicit changed_when: false and failed_when: false; no idempotency defect is present.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-006,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,FreiFunkMuenster/Ansible-Freifunk-Gateway,b04e8f81b2b010eaccd13a63271c7ce7eb6fb4b3,backbone_gre_intern/handlers/main.yml,2,warning,Commands should not change things if nothing needs doing.,a975779bebae404ec66e0bd9490aebf4bdf54ab051b95a32da3675eab97a744e,"       1 | ---
+>>     2 | - name: restart networking
+       3 |   shell: systemctl restart networking; if systemctl -q is-active isc-dhcp-server; then systemctl restart isc-dhcp-server; fi; if systemctl -q is-active kea-dhcp4.service; then systemctl restart kea-dhcp4.service; fi; if systemctl -q is-active tunneldigger; then systemctl restart tunneldigger; fi",uncertain,uncertain,yes,no,none,other,"This is a handler ('restart networking') invoked only via notify; the restart action is the intended effect each time it fires, so the generic 'should not change when nothing needs doing' heuristic does not cleanly apply to notify-gated handlers. Reasonable reviewers could treat this either as a legitimate pattern or as a missing guard.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-007,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,clusterinthecloud/ansible,a378fceff7cd03dbd36da1fc4bd5a4ed09270c60,roles/ldap/tasks/main.yml,3,warning,Mutating command has no effective creates/removes execution guard.,737e285d902a8ec61ec96d2b459c05e0cc1deebfcd874dfd46bf0eedd36baf39,"       1 | ---
+       2 | 
+>>     3 | - name: Enable 389-ds module
+       4 |   ansible.builtin.command:
+       5 |     cmd: dnf module enable -y 389-ds:1.4
+       6 |   register: dnf_result
+       7 |   changed_when: '""Nothing to do"" not in dnf_result.stdout'
+       8 | 
+       9 | - name: Install 389-ds
+      10 |   ansible.builtin.package:
+      11 |     name: 389-ds-base
+      12 | 
+      13 | - name: Check if 389 setup already run
+      14 |   ansible.builtin.command: systemctl list-unit-files dirsrv@.service  # noqa no-changed-when command-instead-of-module
+      15 |   register: dirsrv_unit_list
+      16 | 
+      17 | - name: Copy 389 config template",negative,not-applicable,yes,no,none,valid-guard-or-reference,changed_when checking for 'Nothing to do not in dnf_result.stdout' (line 7) inspects actual command output to report change state correctly; the guard is effective.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-008,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,ARTbio/GalaxyKickStart,d04bc40174594a2996a23a1c1b07155de4a694e4,galaxy.yml,22,warning,Mutating command has no effective creates/removes execution guard.,70d86732cc722e227dfbeafb703859ebeb144dce3ff603e1d9cb800a8f10725a,"       8 |     - include_tasks: roles/handlers/galaxy.yml
+       9 | 
+      10 |   pre_tasks:
+      11 |     - name: gather facts
+      12 |       setup:
+      13 |       tags:
+      14 |         - always
+      15 | 
+      16 |     - name: Check ansible version
+      17 |       fail: msg=""Installed ansible version {{ ansible_version.full }}, but ansible version >= 2.7.4 required""
+      18 |       when: ansible_version.full is version('2.7', '<')
+      19 |       tags:
+      20 |         - always
+      21 | 
+>>    22 |     - name: Install python if absent
+      23 |       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal)
+      24 |       register: output
+      25 |       changed_when: output.stdout
+      26 |       tags:
+      27 |         - always
+      28 | 
+      29 |     - name: Install psycopg2
+      30 |       become: yes
+      31 |       apt:
+      32 |         name: python3-psycopg2
+      33 |         state: present
+      34 | 
+      35 |     - name: get host ip in ipify_public_ip variable
+      36 |       ipify_facts:",negative,not-applicable,yes,no,none,valid-guard-or-reference,The raw command embeds its own guard ('test -e ... || (...)') and changed_when: output.stdout reflects whether the install branch ran; this is a working idempotency guard.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-NON-IDEMPOTENT-COMMAND-009,ansibleguard/non-idempotent-command,non-idempotent-command,Objective correctness,C-moderate,500,94.14,TerryHowe/ansible-modules-hashivault,e68f68bb531eeb33cec1e79e6e998c51a69bfedd,functional/test_userpass_no_policy.yml,37,warning,Mutating command has no effective creates/removes execution guard.,9bc1687e16a9b86cbd8681ebe4afe508f4425c136a5c8f0f81a2648d1523c077,"      23 |       path ""sys/policy/*"" {
+      24 |         capabilities = [""create"", ""read"", ""update"", ""delete"", ""list""]
+      25 |       }
+      26 | 
+      27 |   tasks:
+      28 |     - name: Enable kv2 secret store
+      29 |       hashivault_userpass:
+      30 |         name: ""{{username}}""
+      31 |         state: absent
+      32 |       no_log: True
+      33 | 
+      34 |     #- pause:
+      35 |     #    prompt: ""Make sure org.foo.FooOverload exception is not present""
+      36 | 
+>>    37 |     - name: Create userpass for bob via POST to omit the policies field
+      38 |       # Shell out to curl rather than the uri module: under macOS fork safety
+      39 |       # (OBJC_DISABLE_INITIALIZE_FORK_SAFETY) the uri module's Python ssl state
+      40 |       # gets corrupted and every request to the plaintext vault port fails with
+      41 |       # ""[ASN1: NOT_ENOUGH_DATA]"". curl avoids that code path entirely.
+      42 |       command: >-
+      43 |         curl -s -o /dev/null -w ""%{http_code}""
+      44 |         -X POST
+      45 |         -H ""X-Vault-Token: {{ lookup('env','VAULT_TOKEN') }}""
+      46 |         -d '{""password"": ""{{userpass}}""}'
+      47 |         {{ lookup('env','VAULT_ADDR') }}/v1/auth/userpass/users/{{username}}
+      48 |       register: bob_create
+      49 |       changed_when: true
+      50 |       failed_when: bob_create.stdout != ""204""
+      51 | ",positive,advisory,yes,no,none,condition-present,"The command POSTs a user-create request with changed_when: true (always changed) and no creates/removes guard, so repeat execution is not idempotent; however this lives in a 'functional' test-fixture playbook rather than production automation, which limits actionability.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-001,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,handlers/main.yml,137,warning,Task uses ignore_errors: true without observable recovery handling. No result is registered for later recovery.,0c9b73ff84113f587d5b933e352138b1a7f6d8050a92e90063deacb8deeb318c,"     123 | 
+     124 | - name: ""Remounting /boot/efi""
+     125 |   vars:
+     126 |     mount_point: '/boot/efi'
+     127 |   ansible.posix.mount:
+     128 |     path: ""{{ mount_point }}""
+     129 |     state: remounted
+     130 |   notify: Set reboot required
+     131 |   listen: ""Remount /boot/efi""
+     132 | 
+     133 | - name: Reload sysctl
+     134 |   ansible.builtin.command: sysctl --system
+     135 |   changed_when: true
+     136 | 
+>>   137 | - name: Sysctl flush ipv4 route table
+     138 |   when:
+     139 |     - rhel9cis_flush_ipv4_route
+     140 |     - not system_is_container
+     141 |   ansible.posix.sysctl:
+     142 |     name: net.ipv4.route.flush
+     143 |     value: '1'
+     144 |     sysctl_set: true
+     145 |   ignore_errors: true  # noqa ignore-errors
+     146 | 
+     147 | - name: Sysctl flush ipv6 route table
+     148 |   when:
+     149 |     - rhel9cis_flush_ipv6_route
+     150 |     - not system_is_container
+     151 |   ansible.posix.sysctl:",positive,actionable,yes,no,none,condition-present,"ignore_errors: true at line 145 has no register and no subsequent check, so any sysctl failure is fully swallowed with no observable trace.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-002,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,ansible/instruqt,e23435acd50f1f645c88958c8dee4fe2929014b6,images/ansible/setup-scripts/devops-controller/setup-devops-controller.yml,85,warning,Task uses failed_when: false without observable recovery handling. Registered result '__remove_jenkins_builds' is never inspected later.,98f9b3727f5f67b1d791e8c20ea3ffaac4986294adf325970fc70187bdf44653,"      71 |           Jenkins-Crumb: ""{{ __jenkins_crumb.json.crumb }}""
+      72 |         url: https://jenkins:6443/job/ACMECorp/api/json?pretty=true&tree=builds[number,status,url]
+      73 |         method: GET
+      74 |         force_basic_auth: true
+      75 |         url_username: ""{{ student_user }}""
+      76 |         url_password: ""{{ student_password }}""
+      77 |         return_content: true
+      78 |         validate_certs: false
+      79 |       register: __jenkins_builds
+      80 |       tags:
+      81 |         - update-app-solve
+      82 |         - update-app-solve-jenkins
+      83 |         - controller-approval-solve
+      84 | 
+>>    85 |     - name: Update-app-solve cancel ACMECorp Jenkins builds
+      86 |       ansible.builtin.uri:
+      87 |         headers:
+      88 |           Cookie: ""{{ __jenkins_crumb.cookies_string }}""
+      89 |           Jenkins-Crumb: ""{{ __jenkins_crumb.json.crumb }}""
+      90 |         url: ""https://jenkins:6443/job/ACMECorp/{{ item.number }}/doDelete/api/json""
+      91 |         method: POST
+      92 |         mode: json
+      93 |         force_basic_auth: true
+      94 |         url_username: ""{{ student_user }}""
+      95 |         url_password: ""{{ student_password }}""
+      96 |         return_content: true
+      97 |         validate_certs: false
+      98 |         follow_redirects: true
+      99 |         status_code: 200",uncertain,uncertain,no,yes,other-source-lines,insufficient-source-context,"The frozen window for the anchored task (lines 85-99) ends at 'status_code: 200' and never shows a failed_when or register line, so the claimed failed_when: false and unobserved '__remove_jenkins_builds' register cannot be confirmed from the given context.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-003,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,NationalGenomicsInfrastructure/miarka-provision,52daa7027450753c62cb0f38a2b5ef546cae7ede,roles/nf-core/tasks/pipeline.yml,17,warning,Task uses ignore_errors: true without observable recovery handling. No result is registered for later recovery.,174f40f61489e26b07be983dcb7c23ff99ad1af6128f39b22da40116ee9988ab,"       3 |   file:
+       4 |     path: ""{{ container_dir }}""
+       5 |     state: directory
+       6 | 
+       7 | - name: Create temp directories for singularity images
+       8 |   file:
+       9 |     path: ""{{ cachedir }}""
+      10 |     state: directory
+      11 |   with_items:
+      12 |     - ""{{ nf_core_vars.APPTAINER_CACHEDIR }}""
+      13 |     - ""{{ nf_core_vars.APPTAINER_TMPDIR }}""
+      14 |   loop_control:
+      15 |     loop_var: cachedir
+      16 | 
+>>    17 | - name: nf-core download {{ pipeline }} {{ release }}
+      18 |   command: >
+      19 |     nf-core -v
+      20 |     pipelines download {{ repository }}
+      21 |     --download-configuration yes
+      22 |     --compress none
+      23 |     --outdir {{ sw_path }}/{{ pipeline }}
+      24 |     --revision {{ release }}
+      25 |     --container-system singularity
+      26 |     --container-cache-utilisation amend
+      27 |     --parallel-downloads 4
+      28 |   environment: ""{{ nf_core_vars }}""
+      29 |   ignore_errors: true
+      30 |   args:
+      31 |     chdir: ""{{ sw_path }}""",positive,actionable,yes,no,none,condition-present,"ignore_errors: true at line 29 on the nf-core download command has no register, so a failed download would be silently ignored with no downstream check.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-004,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,ictsc/ictsc-drove,05ebbc720b4b71d5dbe7d1a8da3d617807378cb5,ansible/roles/components/tasks/main.yaml,33,warning,Task uses failed_when: false without observable recovery handling. No result is registered for later recovery.,de5c92a574047b44a4656705c32da4f001bd59aed7edb02cb69208577531dfd2,"      19 | - name: Setup Cilium
+      20 |   when: components_cilium_installed.rc != 0
+      21 |   block:
+      22 |     - name: Add Cilium chart repo
+      23 |       ansible.builtin.shell: |
+      24 |         helm repo add cilium https://helm.cilium.io/
+      25 |         helm repo update
+      26 |       changed_when: false
+      27 |     - name: Deploy Cilium
+      28 |       ansible.builtin.shell: |
+      29 |         helm upgrade --install cilium cilium/cilium --namespace cilium --create-namespace \
+      30 |           --set kubeProxyReplacement=true --set k8sServiceHost=auto --set ipv6.enabled=true \
+      31 |           --set l2announcements.enabled=true --set k8sClientRateLimit.qps=40 --set k8sClientRateLimit.burst=50
+      32 |       changed_when: false
+>>    33 |     - name: Restart pods
+      34 |       ansible.builtin.shell:
+      35 |         executable: /bin/bash
+      36 |         cmd: |
+      37 |           set -o pipefail
+      38 |           kubectl get pods -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,HOSTNETWORK:.spec.hostNetwork \
+      39 |             --namespace cilium --no-headers=true | grep '<none>' | awk '{print ""-n ""$1"" ""$2}' | xargs -L 1 -r kubectl delete pod
+      40 |       changed_when: false
+      41 |       failed_when: false
+      42 | 
+      43 | - name: Setup IP pool
+      44 |   block:
+      45 |     - name: Send IP pool config
+      46 |       ansible.builtin.template:
+      47 |         src: pool.yaml.j2",positive,actionable,yes,no,none,condition-present,"failed_when: false at line 41 on the pod-restart shell task has no register or recovery check, so failures restarting pods are not surfaced.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-005,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,openfoodfoundation/ofn-install,5e26b29ee7c0eb6ffff54e502b570b4b92e0b7d9,roles/shared_handlers/handlers/main.yml,3,warning,Task uses ignore_errors: true without observable recovery handling. No result is registered for later recovery.,9bf7653a6da269999e60c9448ae085d1a91790d7f2fe44578229e7a8f16dedcb,"       1 | # This role holds reusable handlers that can be included in multiple playbooks to keep things DRY
+       2 | 
+>>     3 | - name: fetch services status # into the global variable ansible_facts.services
+       4 |   service_facts:
+       5 |   ignore_errors: true # Temporary work around for ansible < 2.10 (https://github.com/ansible/ansible/issues/68536)
+       6 |   listen: # run if the following tasks have been notified:
+       7 |     - restart sidekiq
+       8 | 
+       9 | - name: restart puma
+      10 |   service:
+      11 |     name: puma
+      12 |     state: restarted
+      13 |   become: yes
+      14 |   become_user: root
+      15 | 
+      16 | - name: restart postgres
+      17 |   service:",positive,advisory,yes,no,none,condition-present,"ignore_errors: true on service_facts has no register, though the inline comment documents it as a deliberate workaround for a known Ansible <2.10 bug, which limits (but does not eliminate) the actionability of adding observability.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-006,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,Kubeinit/kubeinit,da6fec314d5594b6bd97ef2e4e71f9098a85e63c,kubeinit/roles/kubeinit_openshift/tasks/prepare_cluster.yml,399,warning,Task uses ignore_errors: true without observable recovery handling. Registered result '_result' is never inspected later.,bc666ad04c618451d312724b36b3de64f26d11eaaddde603b50a30f5be36edfe,"     385 | 
+     386 |     - name: Apply permissions to the apache folder
+     387 |       ansible.builtin.file:
+     388 |         path: ""/var/kubeinit/html/""
+     389 |         state: directory
+     390 |         recurse: yes
+     391 |         mode: '0755'
+     392 | 
+     393 |     - name: Create kube directory
+     394 |       ansible.builtin.file:
+     395 |         path: ~/.kube
+     396 |         state: directory
+     397 |         mode: '0644'
+     398 | 
+>>   399 |     - name: Autoload kubeconfig
+     400 |       ansible.builtin.shell: |
+     401 |         echo ""export KUBECONFIG=~/install_dir/auth/kubeconfig"" >> ~/.bashrc
+     402 |       args:
+     403 |         executable: /bin/bash
+     404 |       ignore_errors: yes
+     405 |       register: _result
+     406 |       changed_when: ""_result.rc == 0""
+     407 | 
+     408 |   delegate_to: ""{{ kubeinit_provision_service_node }}""",uncertain,uncertain,yes,no,none,other,"The task does register _result and uses it in changed_when ('_result.rc == 0'), so the result is not entirely uninspected as the message implies; however nothing checks the result in a later task, so whether this satisfies 'observable recovery handling' is genuinely ambiguous.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-007,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,jlu5/ansible-dn42,7849481eec35fe085a7b45d187ed909f356cb8f1,roles/config-bird2/tasks/main.yml,15,warning,Task uses ignore_errors: true without observable recovery handling. No result is registered for later recovery.,bbb15edad2d6f2975a681daa5d23d80b33a4b96bdcdca8e6e409180a1fa3d738,"       1 | ###
+       2 | # Remove files no longer present in ansible config dir. Based off https://stackoverflow.com/a/18016700
+       3 | - name: ""List bird config files on remote""
+       4 |   shell: ""ls -1 /etc/bird/*.conf || true""
+       5 |   register: bird_contents
+       6 |   changed_when: false
+       7 |   check_mode: no
+       8 | 
+       9 | - name: ""Enumerate config folder paths""
+      10 |   set_fact:
+      11 |     config_dir: ""{{ role_path }}/config""
+      12 |     peers_config_dir: ""{{ role_path }}/config/peers/{{ inventory_hostname }}""
+      13 |     bird_managed_files: []
+      14 | 
+>>    15 | - name: ""Enumerate config folder contents (ignore errors if no peers are defined)""
+      16 |   # This is a separate step because set_fact can't template facts set in the same task
+      17 |   set_fact:
+      18 |     bird_managed_files: ""{{ lookup('fileglob', config_dir + '/*.conf*', wantlist=True) | map('basename') | map('regex_replace', '\\.j2$', '') | list }}""
+      19 |   ignore_errors: true
+      20 | 
+      21 | - name: ""Enumerate IPsets for BIRD""
+      22 |   set_fact:
+      23 |     ownnets4_ipset: ""{{ ownnets4 | map('regex_replace', '$', '+') | join(', ') }}""
+      24 |     ownnets6_ipset: ""{{ ownnets6 | map('regex_replace', '$', '+') | join(', ') }}""
+      25 |     ownnets4_aggr_ipset: ""{{ ownnets4 | join(', ') }}""
+      26 |     ownnets6_aggr_ipset: ""{{ ownnets6 | join(', ') }}""
+      27 |   ignore_errors: true
+      28 | 
+      29 | - name: ""Remove unknown bird config files""",positive,advisory,yes,no,none,condition-present,"Both ignore_errors: true tasks (lines 19 and 27) lack any register, though the first carries a comment indicating the suppression is intentional for config directories with no peers defined.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-SILENT-ERROR-SUPPRESSION-008,ansibleguard/silent-error-suppression,unhandled-failure-suppression,Objective correctness,D-long-tail,392,95.36,IDR/deployment,77f7a7e438a41ca775e85b629c0f84cc636ffad7,ansible/decommission/archive-instance-services.yml,8,warning,Task uses ignore_errors: true without observable recovery handling. No result is registered for later recovery.,7c3a99408e0a815c7fd1bae1d39f1c1a4af3d025754fd9ce76628a1cf03bfd5d,"       1 | # Shutdown services on a production instance
+       2 | 
+       3 | - hosts: ""{{ idr_environment | default('idr') }}-hosts""
+       4 | 
+       5 |   gather_facts: False
+       6 | 
+       7 |   tasks:
+>>     8 |   - name: Shutdown and disable production services
+       9 |     become: yes
+      10 |     service:
+      11 |       name: ""{{ item }}""
+      12 |       state: stopped
+      13 |       enabled: False
+      14 |     with_items:
+      15 |     - omero-logmonitor
+      16 |     - omero-server
+      17 |     - omero-web
+      18 |     - redis
+      19 |     - httpd
+      20 |     - nginx
+      21 |     - postgresql-16
+      22 |     - prometheus-node-exporter",negative,not-applicable,yes,no,none,condition-absent,"The full anchored task (lines 8-22, a service stop/disable loop) contains no ignore_errors, failed_when, or register key at all; the detector's claimed condition is not present in the frozen source.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-REDIRECTED-MODULE-001,ansibleguard/redirected-module,redirected-module,Objective correctness,D-long-tail,211,96.9,braucktoon/home-services-ansible-automation,47b8b32d5d23ac4f319eb42ada558173ddae47c1,roles/ssh-key-gen/tasks/main.yml,18,note,Task 'Copy the key add to authorized_keys using Ansible module': Module name 'authorized_key' is a legacy redirect or short name. Prefer 'ansible.posix.authorized_key'.,4e6ddf7cf64926d1db15e30952c4f0136891af923ad0e7db5bb4244da5f569b4,"       4 |     path: ""~/.ssh/{{ ssh_key_filename }}""
+       5 |     state: present
+       6 |     comment: ""Home services""
+       7 |     size: 4096
+       8 |     type: ""{{ ssh_key_type }}""
+       9 |   become: false
+      10 | 
+      11 | - name: Fetch the keyfile from the node to master
+      12 |   fetch: 
+      13 |     src: ""~/.ssh/{{ ssh_key_filename }}.pub""
+      14 |     dest: ""buffer/{{inventory_hostname}}-{{ ssh_key_filename }}.pub""
+      15 |     flat: yes
+      16 | 
+      17 | - name: Copy the key add to authorized_keys using Ansible module
+>>    18 |   authorized_key:
+      19 |     user: ""{{ ansible_user }}""
+      20 |     state: present
+      21 |     key: ""{{ lookup('file','buffer/{{item}}-{{ ssh_key_filename }}.pub')}}""
+      22 |   when: item != inventory_hostname
+      23 |   with_items:
+      24 |     - ""{{ groups['ssh_hosts'] }}""
+      25 | 
+      26 | - name: Copy the key add to authorized_keys using Ansible module - special case for build server ssh to itself
+      27 |   authorized_key:
+      28 |     user: ""{{ ansible_user }}""
+      29 |     state: present
+      30 |     key: ""{{ lookup('file','buffer/{{item}}-{{ ssh_key_filename }}.pub')}}""
+      31 |   when: item == 'biggie'
+      32 |   with_items:",positive,actionable,yes,no,none,condition-present,'authorized_key' (line 18) is the legacy short name redirected to ansible.posix.authorized_key since that module's extraction from ansible-core.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-REDIRECTED-MODULE-002,ansibleguard/redirected-module,redirected-module,Objective correctness,D-long-tail,211,96.9,ansible/ansible-zuul-jobs,acb7ddbcd03b090e8db140d379e656559a37cf63,playbooks/ansible-cloud/vcenter-appliance/pre.yaml,34,note,Task 'Enable TCP timestamp': Module name 'sysctl' is a legacy redirect or short name. Prefer 'ansible.posix.sysctl'.,ff490a22254807d6e3d82698dbcbedefd2edc6ae094132821e6c1eef148cab44,"      20 | 
+      21 |     - name: Setup tox role
+      22 |       include_role:
+      23 |         name: tox
+      24 |       vars:
+      25 |         tox_envlist: venv
+      26 |         tox_extra_args: -- ansible-playbook -v playbooks/ansible-cloud/vcenter-appliance/files/bootstrap.yaml
+      27 |         tox_install_siblings: false
+      28 |         zuul_work_dir: ""{{ zuul.projects['github.com/ansible/ansible-zuul-jobs'].src_dir }}""
+      29 | 
+      30 | - hosts: vcenter
+      31 |   gather_facts: false
+      32 |   tasks:
+      33 |     - name: Enable TCP timestamp
+>>    34 |       sysctl:
+      35 |         name: net.ipv4.tcp_timestamps
+      36 |         value: 1
+      37 |         state: present
+      38 |       become: true
+      39 |     - import_role:
+      40 |         name: vmware-ci-memory-configuration
+      41 | 
+      42 | - hosts: all
+      43 |   gather_facts: false
+      44 |   tasks:
+      45 |     - import_role:
+      46 |         name: vmware-ci-write-etc-hosts
+      47 |       vars:
+      48 |         vmware_ci_write_etc_hosts_mapping:",positive,actionable,yes,no,none,condition-present,'sysctl' (line 34) is the legacy short name redirected to ansible.posix.sysctl.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-REDIRECTED-MODULE-003,ansibleguard/redirected-module,redirected-module,Objective correctness,D-long-tail,211,96.9,anthonymolinari/ansible-gitops,61aa79a0c1f6641317187d3a7afec6b6c4d54a5f,tasks/main/containers.yml,5,note,Task 'node-exporter': Module name 'docker_container' is a legacy redirect or short name. Prefer 'community.docker.docker_container'.,25e40776ebf8d48f2f10c9f50ca8725d19da996711c8b51b5d582663052c3322,"       1 | ---
+       2 | 
+       3 | # node exporter
+       4 | - name: node-exporter
+>>     5 |   docker_container:
+       6 |     name: node-exporter
+       7 |     image: prom/node-exporter:v1.12.1
+       8 |     command: [""--path.rootfs=/host""]
+       9 |     ports:
+      10 |       - ""9100:9100""
+      11 |     volumes:
+      12 |       - ""/:/host:ro,rslave""
+      13 |     restart_policy: unless-stopped
+      14 | 
+      15 | # uptime kuma
+      16 | - name: uptime kuma
+      17 |   docker_container:
+      18 |     name: uptime-kuma
+      19 |     image: louislam/uptime-kuma:2",positive,actionable,yes,no,none,condition-present,'docker_container' (line 5) is the legacy short name redirected to community.docker.docker_container.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-REDIRECTED-MODULE-004,ansibleguard/redirected-module,redirected-module,Objective correctness,D-long-tail,211,96.9,NationalGenomicsInfrastructure/miarka-provision,52daa7027450753c62cb0f38a2b5ef546cae7ede,roles/archive-upload-ws/tasks/2_install_config.yml,19,note,Task 'modify uppsala's supervisord conf to start {{ arteria_service_name }}': Module name 'ini_file' is a legacy redirect or short name. Prefer 'community.general.ini_file'.,18935df22a73895111e9c57a4c4176ab547cab488901c44e631ea495295308a8,"       5 |     state: directory
+       6 |     path: ""{{ arteria_service_config_root }}""
+       7 | 
+       8 | - name: deploy {{ arteria_service_name }} app config
+       9 |   template:
+      10 |     src: archive_upload_app.config.j2
+      11 |     dest: ""{{ arteria_service_config_root }}/app.config""
+      12 | 
+      13 | - name: deploy {{ arteria_service_name }} logger config
+      14 |   template:
+      15 |     src: archive_upload_logger.config.j2
+      16 |     dest: ""{{ arteria_service_config_root }}/logger.config""
+      17 | 
+      18 | - name: modify uppsala's supervisord conf to start {{ arteria_service_name }}
+>>    19 |   ini_file: 
+      20 |     dest: ""{{ supervisord_conf }}""
+      21 |     section: ""program:{{ arteria_service_name }}-{{ deployment_environment }}""
+      22 |     option: command
+      23 |     value: ""{{ arteria_service_env_root }}/bin/archive-upload-ws --configroot={{ arteria_service_config_root }} --port={{ archive_upload_port }}""
+      24 |     backup: no
+      25 |  
+      26 | - name: modify uppsala's supervisord conf to start {{ arteria_service_name }}
+      27 |   ini_file: 
+      28 |     dest: ""{{ supervisord_conf }}""
+      29 |     section: program:{{ arteria_service_name }}-{{ deployment_environment }}
+      30 |     option: autorestart
+      31 |     value: true
+      32 |     backup: no",positive,actionable,yes,no,none,condition-present,'ini_file' (line 19) is the legacy short name redirected to community.general.ini_file.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-REDIRECTED-MODULE-005,ansibleguard/redirected-module,redirected-module,Objective correctness,D-long-tail,211,96.9,NLNOG/ring-ansible,b8a7aede6730b3fa3fc3065e187ace979ceedd01,roles/scamper/tasks/main.yml,11,note,Task 'Set up authorized_keys for the scamper user': Module name 'authorized_key' is a legacy redirect or short name. Prefer 'ansible.posix.authorized_key'.,0be60ec54adbed68b38bbd809be0243458cc82253cbfe7385f4752b5a6cd1304,"       1 | 
+       2 | - name: Create scamper user
+       3 |   user:
+       4 |     name: scamper
+       5 |     comment: Scamper measurements
+       6 |     uid: 2001
+       7 |     group: ring-users
+       8 |     shell: /bin/bash
+       9 | 
+      10 | - name: Set up authorized_keys for the scamper user
+>>    11 |   authorized_key:
+      12 |     user: scamper
+      13 |     key: ""{{ item }}""
+      14 |     state: present
+      15 |   with_file:
+      16 |     - ../keys/scamper.pub
+      17 | 
+      18 | - name: Install scamper packages
+      19 |   package:
+      20 |     name: ""{{ item }}""
+      21 |     state: latest
+      22 |   with_items:
+      23 |     - libscamperfile0
+      24 |     - scamper
+      25 | ",positive,actionable,yes,no,none,condition-present,'authorized_key' (line 11) is the legacy short name redirected to ansible.posix.authorized_key.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-REDIRECTED-MODULE-006,ansibleguard/redirected-module,redirected-module,Objective correctness,D-long-tail,211,96.9,ergho/homelab-ops,973ea65aca62d259f296153f5f989cc2013f2294,ansible/roles/container_runtime/tasks/main.yaml,42,note,Task 'configure sysctl values': Module name 'sysctl' is a legacy redirect or short name. Prefer 'ansible.posix.sysctl'.,a3a078bdffc819e8475b6daeab05abb0daa2ca3400813ed4c0ca685a6f9103ed,"      28 |       - --strip-components=1
+      29 |     remote_src: true
+      30 |     src: ""{{ containerd_packages.containerd_download_url }}""
+      31 | 
+      32 | - name: ""copy containerd stuff""
+      33 |   shell: |
+      34 |     set -e -o pipefail
+      35 |     find /tmp/containerd -type f | xargs -I {} mv {} /bin/
+      36 |   args:
+      37 |     executable: /usr/bin/bash
+      38 |   changed_when: false
+      39 | 
+      40 | - name: ""configure sysctl values""
+      41 |   loop: ""{{ sysctl_config }}""
+>>    42 |   sysctl:
+      43 |     name: ""{{ item.name }}""
+      44 |     state: present
+      45 |     value: ""{{ item.value }}""
+      46 | 
+      47 | - name: ""containerd config""
+      48 |   template:
+      49 |     dest: /etc/containerd/config.toml
+      50 |     mode: 384
+      51 |     src: config.toml
+      52 | 
+      53 | - name: Kubernetes | Generate Containerd Config
+      54 |   shell: containerd config default > /etc/containerd/config.toml
+      55 |   become: true
+      56 |   args:",positive,actionable,yes,no,none,condition-present,'sysctl' (line 42) is the legacy short name redirected to ansible.posix.sysctl.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-READ-ONLY-COMMAND-CHANGE-001,ansibleguard/read-only-command-change,read-only-command-change,Objective correctness,D-long-tail,193,97.19,konstruktoid/ansible-role-hardening,4dc09871ed38322eb6e4cdda8e2c77b79892d73d,tasks/apparmor.yml,49,note,Read-only curl command has no changed_when: false and may report a change on every run.,762d580b8b3f3efe3aa13c37b9a0a096d6f6134317b9154811e765095dcb1250,"      35 |         mode: ""0640""
+      36 |         owner: root
+      37 |         group: root
+      38 |       notify:
+      39 |         - Update GRUB
+      40 | 
+      41 |     - name: Get AppArmor status
+      42 |       environment:
+      43 |         PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      44 |       ansible.builtin.command:
+      45 |         cmd: aa-status --complaining
+      46 |       register: get_apparmor_complaining
+      47 |       changed_when: get_apparmor_complaining.stdout != ""0""
+      48 | 
+>>    49 |     - name: Enforce AppArmor profiles
+      50 |       ansible.builtin.command:
+      51 |         cmd: find /etc/apparmor.d/ -maxdepth 1 -type f -exec aa-enforce {} \;
+      52 |       register: enforce_apparmor_profiles
+      53 |       changed_when: enforce_apparmor_profiles.rc != 0
+      54 |       failed_when: enforce_apparmor_profiles.rc != 0
+      55 |       when:
+      56 |         - get_apparmor_complaining.stdout != ""0""
+      57 | 
+      58 |     - name: Enable apparmor
+      59 |       ansible.builtin.systemd_service:
+      60 |         name: apparmor
+      61 |         enabled: true
+      62 |         state: started",negative,not-applicable,yes,no,none,condition-absent,"'aa-enforce' actively applies AppArmor enforcement (a mutation, not a read-only query), and the task already has changed_when/failed_when keyed off enforce_apparmor_profiles.rc; the generic 'read-only curl' message does not match this command or its existing guard.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-READ-ONLY-COMMAND-CHANGE-002,ansibleguard/read-only-command-change,read-only-command-change,Objective correctness,D-long-tail,193,97.19,pjbriggs/ansible-palfinder-galaxy,e77a4b2ccc9ade57dcbb71f2c2d3e25db01d2169,roles/python3/tasks/main.yml,5,note,Read-only curl command has no changed_when: false and may report a change on every run.,a096d3c717ee845eaeae64328d178a3dfc64fcb73578f72e8ddbd00e97813828,"       1 | ---
+       2 | # Build and install Python 3 on the remote host
+       3 | # Also installs pip and virtualenv packages
+       4 | 
+>>     5 | - name: ""Get current user name""
+       6 |   command:
+       7 |     id -u -n
+       8 |   register: python_user_id
+       9 | 
+      10 | - name: ""Report current user name""
+      11 |   debug:
+      12 |     msg: ""User from 'id' is {{ python_user_id.stdout }}""
+      13 | 
+      14 | - name: ""Set major.minor Python version""
+      15 |   set_fact:
+      16 |     python_major_minor_version: ""{{ python_version.split('.')[:2] | join('.') }}""
+      17 | 
+      18 | - name: ""Report major.minor Python version""
+      19 |   debug:",positive,actionable,yes,no,none,condition-present,"'id -u -n' (line 7) is purely read-only and has no changed_when at all, so it reports changed on every run.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-READ-ONLY-COMMAND-CHANGE-003,ansibleguard/read-only-command-change,read-only-command-change,Objective correctness,D-long-tail,193,97.19,osism/testbed,ef457f4318fd7f7dce061cafe13159bcbb87f74e,ansible/manager-part-3.yml,138,note,Read-only curl command has no changed_when: false and may report a change on every run.,c41c927f82ea8a3f7d67de6b12b60e06a33ca16c3506db2afaf83bb1deb92278,"     124 |     - /opt/configuration/inventory/host_vars/testbed-manager/vars.yml
+     125 |     - /opt/configuration/environments/manager/configuration.yml
+     126 |     - /opt/configuration/environments/manager/images.yml
+     127 |     - /opt/configuration/environments/manager/secrets.yml
+     128 |     - /opt/configuration/environments/configuration.yml
+     129 |     - /opt/configuration/environments/secrets.yml
+     130 | 
+     131 |   tasks:
+     132 |     - name: Try to apply the manager role
+     133 |       block:
+     134 |         - name: Apply manager role
+     135 |           ansible.builtin.include_role:
+     136 |             name: osism.services.manager
+     137 |       rescue:
+>>   138 |         - name: Collect debug logs
+     139 |           ansible.builtin.shell: |
+     140 |             docker images
+     141 |             docker ps -a
+     142 |           changed_when: true",positive,actionable,yes,no,none,condition-present,"'docker images; docker ps -a' (lines 139-141) are read-only diagnostics, but changed_when: true forces a false 'changed' report on every execution.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-READ-ONLY-COMMAND-CHANGE-004,ansibleguard/read-only-command-change,read-only-command-change,Objective correctness,D-long-tail,193,97.19,jon77p/infrastructure,0d592772c61f490541ce7ab77dffa29114f5bd03,ansible/playbooks/roles/cloudflared/tasks/install-amd64.yml,6,note,Read-only curl command has no changed_when: false and may report a change on every run.,f9ae5a53391dad072eb4017b5d21bd6a5d7eb3e6827dcbb3ec9abb4cf25a1922,"       1 | ---
+       2 | - name: Add Cloudflare package URL to sources list
+       3 |   become: true
+       4 |   ansible.builtin.shell: echo 'deb http://pkg.cloudflare.com/ buster main' | sudo tee /etc/apt/sources.list.d/cloudflare-main.list
+       5 | 
+>>     6 | - name: Add Cloudflare GPG key
+       7 |   become: true
+       8 |   ansible.builtin.shell: curl -C - https://pkg.cloudflare.com/pubkey.gpg | sudo apt-key add -
+       9 | 
+      10 | - name: Update apt cache
+      11 |   become: true
+      12 |   ansible.builtin.apt:
+      13 |     update_cache: true
+      14 | 
+      15 | - name: Install cloudflared
+      16 |   become: true
+      17 |   ansible.builtin.apt:
+      18 |     name: cloudflared
+      19 |     state: latest",negative,not-applicable,yes,no,none,condition-absent,"'curl ... | sudo apt-key add -' (line 8) mutates the system keyring; it is not a read-only command, so the rule's read-only premise does not hold here even though changed_when is indeed absent.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-READ-ONLY-COMMAND-CHANGE-005,ansibleguard/read-only-command-change,read-only-command-change,Objective correctness,D-long-tail,193,97.19,jr0dd/home-ops,0e76c37818159bea648890d4ee132616f6ed6499,infrastructure/ansible/roles/ubuntu/tasks/grub.yml,7,note,Read-only curl command has no changed_when: false and may report a change on every run.,b401bda585542a7bccf85c2c237fd1e2dcc329ada8ee9ad733cb87efa83ec88f,"       1 | ---
+       2 | - name: grub | check for existence of grub
+       3 |   ansible.builtin.stat:
+       4 |     path: /etc/default/grub
+       5 |   register: grub_result
+       6 | 
+>>     7 | - name: grub | check if apparmor is disabled
+       8 |   ansible.builtin.shell: grep ""GRUB_CMDLINE_LINUX="" /etc/default/grub | grep -c ""apparmor=0""
+       9 |   register: apparmor_status
+      10 |   ignore_errors: true
+      11 | 
+      12 | - name: grub | check if mitigations is disabled
+      13 |   ansible.builtin.shell: grep ""GRUB_CMDLINE_LINUX="" /etc/default/grub | grep -c ""mitigations=off""
+      14 |   register: mitigations_status
+      15 |   ignore_errors: true
+      16 | 
+      17 | - name: grub | disable apparmor
+      18 |   ansible.builtin.replace:
+      19 |     path: /etc/default/grub
+      20 |     regexp: '^(GRUB_CMDLINE_LINUX=(?:(?!["" ]{{ option | regex_escape }}=).)*)(?:["" ]{{ option | regex_escape }}=\S+)?(.*"")$'
+      21 |     replace: '\1 {{ option }}={{ value }}\2'",positive,actionable,yes,no,none,condition-present,"The grep-based apparmor-status check (line 8) is read-only and has no changed_when, so it reports changed every run.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-READ-ONLY-COMMAND-CHANGE-006,ansibleguard/read-only-command-change,read-only-command-change,Objective correctness,D-long-tail,193,97.19,easzlab/kubeasz,fcb46a47a7fcd3bbc97498ea4aefdd564e16b383,playbooks/21.addetcd.yml,22,note,Read-only curl command has no changed_when: false and may report a change on every run.,0e7ab634e9b5203fe11d6aac8b8ea99d37b25990e02f4a2270c81de4ec218213,"       8 | 
+       9 |     - name: get etcd cluster status
+      10 |       shell: 'for ip in {{ NODE_IPS }};do \
+      11 |                 ETCDCTL_API=3 {{ base_dir }}/bin/etcdctl \
+      12 |                 --endpoints=https://""$ip"":2379 \
+      13 |                 --cacert={{ cluster_dir }}/ssl/ca.pem \
+      14 |                 --cert={{ cluster_dir }}/ssl/etcd.pem \
+      15 |                 --key={{ cluster_dir }}/ssl/etcd-key.pem \
+      16 |                 endpoint health; \
+      17 |               done'
+      18 |       register: ETCD_CLUSTER_STATUS
+      19 | 
+      20 |     - debug: var=""ETCD_CLUSTER_STATUS""
+      21 | 
+>>    22 |     - name: get a running ectd node
+      23 |       shell: 'echo -e ""{{ ETCD_CLUSTER_STATUS.stdout }}"" \
+      24 |                ""{{ ETCD_CLUSTER_STATUS.stderr }}"" \
+      25 |                |grep ""is healthy""|sed -n ""1p""|cut -d: -f2|cut -d/ -f3'
+      26 |       register: RUNNING_NODE
+      27 | 
+      28 |     - debug: var=""RUNNING_NODE.stdout""
+      29 |     connection: local
+      30 | 
+      31 |   # step2: add a new member in the etcd cluster
+      32 |   - name: add a new etcd member
+      33 |     shell: ""ETCDCTL_API=3 {{ bin_dir }}/etcdctl member add etcd-{{ NODE_TO_ADD }} \
+      34 |             --peer-urls=https://{{ NODE_TO_ADD }}:2380""
+      35 |     delegate_to: ""{{ RUNNING_NODE.stdout }}""
+      36 | ",positive,actionable,yes,no,none,condition-present,"The shell task (line 23) only parses a previously-registered variable via echo/grep/sed/cut and has no changed_when, so it falsely reports changed on every run.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNPINNED-ANSIBLE-DEPENDENCY-001,ansibleguard/unpinned-ansible-dependency,unpinned-ansible-dependency,Objective correctness,D-long-tail,45,99.71,StackStorm/ansible-st2,b321d87078a28e218bc66e072b5b27c3b545c26a,roles/StackStorm.mongodb/meta/main.yml,1,warning,Ansible dependency 'StackStorm.epel' has no explicit version; pin a reviewed tag or commit for reproducible scans.,2a903614a718114126d88cf1d008a27b29b37a7b7ad6267dbbf1609a9cd443c5,">>     1 | ---
+       2 | galaxy_info:
+       3 |   description: Install MongoDB
+       4 |   author: humblearner
+       5 |   company: StackStorm
+       6 |   license: Apache
+       7 |   min_ansible_version: 2.5
+       8 |   platforms:
+       9 |     - name: Ubuntu
+      10 |       versions:
+      11 |         - focal
+      12 |     - name: EL
+      13 |       versions:
+      14 |         - 7
+      15 |         - 8",uncertain,uncertain,no,yes,other-source-lines,insufficient-source-context,"The 15-line frozen window shows only the galaxy_info block (description/author/license/platforms); no 'dependencies:' section is visible at all, so the claimed unpinned 'StackStorm.epel' dependency cannot be confirmed from the given context.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNPINNED-ANSIBLE-DEPENDENCY-002,ansibleguard/unpinned-ansible-dependency,unpinned-ansible-dependency,Objective correctness,D-long-tail,45,99.71,ConnectBox/connectbox-pi,e69eabdecfa2e39b2751acdb928bfafb2f8f28f6,ansible/roles/connectbox-pi/meta/main.yml,1,warning,Ansible dependency 'mikegleasonjr.firewall' has no explicit version; pin a reviewed tag or commit for reproducible scans.,3f0d1e31c70ffe13ddd09d4fc84649ef3d3f79d9555a3424c0923e2d3c923033,">>     1 | ---
+       2 | dependencies:
+       3 |   - bootstrap
+       4 |   - { role: hat-service, when: not aws_instance }
+       5 |   - { role: dns-dhcp, when: not aws_instance }
+       6 |   - { role: network-interfaces, when: not aws_instance }
+       7 |   - { role: wifi-ap, when: not aws_instance }
+       8 |   - { role: mikegleasonjr.firewall, when: not aws_instance }
+       9 | #  - { role: php, when: build_moodle}
+      10 | #  - { role: ansible-postgresql, when: build_moodle}
+      11 | #  - { role: moodle, when: build_moodle}
+      12 |   - { role: enhanced-content, when: enhanced_interface}
+      13 |   - nginx
+      14 |   - captive-portal
+      15 |   - webserver-content",positive,actionable,yes,no,none,condition-present,"The dependencies list includes '{ role: mikegleasonjr.firewall, when: not aws_instance }' with no version/tag/source field, confirming an unpinned Galaxy role dependency.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-UNPINNED-ANSIBLE-DEPENDENCY-003,ansibleguard/unpinned-ansible-dependency,unpinned-ansible-dependency,Objective correctness,D-long-tail,45,99.71,ansible/ansible-zuul-jobs,acb7ddbcd03b090e8db140d379e656559a37cf63,roles/ansible-test/meta/main.yaml,1,warning,Ansible dependency 'community.general' has no explicit version; pin a reviewed tag or commit for reproducible scans.,49bd19de2adb585b158fecd22556e05e1b8fe3bd078176ebf117095de3534b6e,">>     1 | ---
+       2 | collections:
+       3 |     - community.general  # ini_file",positive,actionable,yes,no,none,condition-present,"'collections: - community.general' has no version constraint, confirming an unpinned collection dependency.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-INVALID-TASK-ATTRIBUTE-TYPE-001,ansibleguard/invalid-task-attribute-type,invalid-task-attribute-type,Objective correctness,D-long-tail,2,99.99,ergho/homelab-ops,973ea65aca62d259f296153f5f989cc2013f2294,ansible/roles/sshd/tasks/setup-Debian.yaml,2,error,Task attribute 'vars' expects a mapping.,3478bab8dee3e39462e3ca2553c6de7101f1b0f25a4ab14961a2d2c1b37b057f,"       1 | ---
+>>     2 | - name: Debian | Configure openssh server
+       3 |   become: true
+       4 |   vars:
+       5 |     - sshd_subsystem: ""/usr/lib/openssh/sftp-server""
+       6 |   block:
+       7 |     - name: Debian | Install Packages
+       8 |       package:
+       9 |         name: ""{{ item }}""
+      10 |         state: present
+      11 |       loop: ""{{ packages_install }}""
+      12 | 
+      13 |     - name: ""check if ssh_host_ecdsa_key exists""
+      14 |       register: ecdsa_key
+      15 |       stat:
+      16 |         path: ""/etc/ssh/ssh_host_ecdsa_key""",positive,blocking,yes,no,none,condition-present,"'vars:' is written as a YAML list ('- sshd_subsystem: ...') instead of a mapping; Ansible requires vars to be a dict, so this would raise a parser/validation error at runtime, not merely a style issue.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-MISSING-HANDLER-001,ansibleguard/missing-handler,missing-handler,Objective correctness,D-long-tail,2,100.0,sebdanielsson/infra,abc768b1d6cd78d1e2feef1262645bb2769fb5df,ansible/bpi-r4.yml,67,error,Notify 'UCI commit changes': Notify references handler 'UCI commit changes' which is not defined in this playbook. The notification will silently fail.,acd137d2a5bd896ffb109ed843519cc6dedf4eac0126d6c482bb900b36b96d6c,"      53 |         if [ ""$(/sbin/uci get system.cfg01e48a.conloglevel 2>/dev/null)"" != ""6"" ]; then
+      54 |           /sbin/uci set system.cfg01e48a.conloglevel='6' && echo ""Set console log level to 6""
+      55 |         fi
+      56 |       register: system_cfg01e48a_conloglevel
+      57 |       changed_when: ""'Set console log level to 6' in system_cfg01e48a_conloglevel.stdout""
+      58 |       notify: UCI commit changes
+      59 | 
+      60 |     - name: Enable HTTPS redirect in uHTTPd if not set
+      61 |       ansible.builtin.shell: |
+      62 |         if [ ""$(/sbin/uci get uhttpd.main.redirect_https 2>/dev/null)"" != ""1"" ]; then
+      63 |           /sbin/uci set uhttpd.main.redirect_https='1' && echo ""Enabled HTTPS redirect in uHTTPd""
+      64 |         fi
+      65 |       register: uhttpd_main_redirect_https
+      66 |       changed_when: ""'Enabled HTTPS redirect in uHTTPd' in uhttpd_main_redirect_https.stdout""
+>>    67 |       notify: UCI commit changes
+      68 | 
+      69 |     - name: Install packages
+      70 |       community.general.apk:
+      71 |         name:
+      72 |           - bash
+      73 |           - luci-proto-wireguard
+      74 |           - luci-app-https-dns-proxy
+      75 |           - luci-app-acme
+      76 |           - acme-acmesh-dnsapi
+      77 |           - tailscale
+      78 |           - curl
+      79 |         update_cache: true
+      80 |         state: latest
+      81 | ",uncertain,uncertain,no,yes,other-source-lines,insufficient-source-context,"Two tasks notify 'UCI commit changes' (lines 58, 67), but the frozen context only covers this tasks file and cuts off at line 81 with no handlers section shown, so whether the handler is truly undefined anywhere in the playbook cannot be confirmed from the given window.",medium,claude-sonnet-5,stratified-v2-400

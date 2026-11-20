@@ -1,0 +1,41 @@
+\chapter{Conclusion and Perspectives}
+\label{chap:conclusion}
+
+\section{Research Questions Revisited}
+\textbf{RQ1 -- Coverage.} AnsibleGuard represents 38 review criteria: 15 are
+fully automated, 18 have partial support, and 5 require manual judgement. Its
+76 analysis concepts and 11 profiles support different review decisions while
+retaining ansible-lint and GitLeaks as attributed specialist providers.
+
+\textbf{RQ2 -- Reliability.} The v0.0.6 study analysed all 149 frozen
+repositories and recorded 21 partial ansible-lint outcomes. In v0.0.7, 206
+of 207 frozen repositories yielded analyzable output; 35 provider runs were
+partial and one repository timed out. Neither partial evidence nor a timeout
+is reported as a clean scan.
+
+\textbf{RQ3 -- Evolution.} Paired runs on fixed populations isolate changes
+in detector behaviour. In v0.0.7, required role-argument reasoning suppressed
+247 unsupported variable occurrences across the 206 analyzable repositories;
+320 additional comparison identities were reclassifications of existing
+findings. These changes do not, by themselves, establish precision.
+
+\textbf{RQ4 -- Variable semantics.} Repository-level analysis distinguishes
+missing internal definitions, undeclared inputs, and unresolved runtime
+context. A single-agent review supported the role-contract correction and
+found a source-first false negative. It is diagnostic evidence, not an
+independent accuracy benchmark.
+
+\section{Contribution and Next Validation}
+The implemented system combines tolerant Ansible-aware parsing, semantic
+graphs, original rules, isolated providers, canonical evidence, and versioned
+outputs. Its frozen-corpus workflow separates source observations, provider
+health, and human labels. The separate 207-repository numerical benchmark
+records 2,986,459 observations across 24 metrics and prepares 16,971 review
+rows; candidate workload is measured, but threshold quality is not yet known.
+
+Two independent reviewers should label the agreement pilots, resolve
+disagreements, and adjudicate the stratified sample before precision or recall
+is estimated. Engineering follow-up should investigate the Miarka variable
+false negative and the persistent cosmos-ansible timeout. A held-out
+repository study and seeded-defect tests can then assess generalisation and
+recall beyond the frozen public corpus.

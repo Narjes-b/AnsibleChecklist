@@ -1,0 +1,9 @@
+case_id,file,rule_id,expected,rationale
+HC-P01,high_coupling_positive.yml,high-coupling,present,Five static imports exceed the default threshold of four.
+HC-N01,high_coupling_negative.yml,high-coupling,absent,One static import is below the default threshold.
+SF-P01,set_fact_positive.yml,unnecessary-set-fact,present,The defined fact is never referenced.
+SF-N01,set_fact_negative.yml,unnecessary-set-fact,absent,The fact is used by a bare Ansible when expression.
+UV-P01,unguarded_positive.yml,unguarded-variable,present,The unique variable has no repository definition or guard.
+UV-N01,unguarded_negative.yml,unguarded-variable,absent,The variable is defined in group_vars with provenance.
+MT-P01,missing_tags_positive.yml,missing-tags,present,The executable task has no tags.
+MT-N01,missing_tags_negative.yml,missing-tags,absent,The executable task has an explicit tag.

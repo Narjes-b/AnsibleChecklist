@@ -1,0 +1,20 @@
+{
+  "metric_id": "undocumented_complex_boolean_ops",
+  "pilot_band_counts": {
+    "B1_low": 26,
+    "B4_high": 25,
+    "B5_current_positive_tail": 24
+  },
+  "pilot_prediction_counts": {
+    "false": 38,
+    "true": 37
+  },
+  "pilot_projects": 51,
+  "pilot_rows": 75,
+  "pilot_sha256": "760a39a54600a43c279333cca1c0742c09b2188121e2b39b011a79833de11470",
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917",
+  "source_rows": 561,
+  "source_sample": "review-sample.csv",
+  "working_labels_are_mutable": true
+}

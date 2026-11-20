@@ -1,0 +1,41 @@
+[
+  {
+    "stage": "adapter",
+    "state": "start",
+    "elapsed_seconds": 0.0002659370074979961
+  },
+  {
+    "stage": "native-provider",
+    "state": "start",
+    "elapsed_seconds": 0.0020722800109069794
+  },
+  {
+    "stage": "native-provider",
+    "state": "end",
+    "elapsed_seconds": 36.77993573300773,
+    "duration_seconds": 36.77732298099727,
+    "returncode": 1
+  },
+  {
+    "stage": "noise-postprocessing",
+    "state": "start",
+    "elapsed_seconds": 46.159039502003,
+    "findings": 81598,
+    "distinct_files": 35
+  },
+  {
+    "stage": "noise-postprocessing",
+    "state": "end",
+    "elapsed_seconds": 75.8675028780126,
+    "duration_seconds": 29.705993548996048,
+    "retained": 80058,
+    "suppressed": 1540
+  },
+  {
+    "stage": "adapter",
+    "state": "end",
+    "elapsed_seconds": 75.87426763999974,
+    "status": "completed",
+    "duration_seconds": 75.8741910430108
+  }
+]

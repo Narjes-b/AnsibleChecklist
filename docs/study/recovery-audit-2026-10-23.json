@@ -1,0 +1,125 @@
+{
+  "audit_date": "2026-10-23",
+  "checkout": "a2f9ca6568edba64c392c75ed7c07f57c86eab9c",
+  "activity": "read-only code and existing artifact inspection; new planning documents only",
+  "local_llm_required": true,
+  "run_id": "v0071-rerun-2026-10-22",
+  "raw_archive": "~/Documents/AnsibleChecklist-results-2026-10-22/v0071-rerun-2026-10-22-results.tar.gz",
+  "source_census": {
+    "rows": 264704,
+    "counts": {
+      "policy": {
+        "optional": 181937,
+        "required": 82767
+      },
+      "certainty": {
+        "CONFIRMED": 203082,
+        "UNCERTAIN": 54196,
+        "UNRESOLVED": 997,
+        "EXPOSED": 6251,
+        "ORDERED_CONFLICT": 178
+      },
+      "confidence": {
+        "low": 184355,
+        "medium": 78376,
+        "high": 1973
+      },
+      "actionability": {
+        "informational": 144892,
+        "blocking": 7589,
+        "advisory": 66011,
+        "actionable": 46212
+      }
+    },
+    "rules": 59,
+    "note": "semantic_subject is absent from the study aggregate CSV; no subject coverage rate is inferred"
+  },
+  "heldout_exposure": {
+    "v007_rows": 126,
+    "v007_repositories": 32,
+    "v0071_rows": 110,
+    "v0071_repositories": 51,
+    "union_repositories": 55,
+    "heldout_repositories": 62,
+    "interpretation": "Existing source excerpts and AI labels establish exposure; causal influence on tuning requires chronology audit."
+  },
+  "root_diagnostics": {
+    "repository_files": 206,
+    "ansible_lint_provider_error_entries": 440,
+    "ansible_lint_affected_repositories": 35,
+    "review_parent_unavailable_repositories": 176,
+    "note": "Diagnostic entries may include nested provider-root evidence; they are not independent failures."
+  },
+  "threshold_integrity": {
+    "small_file_manifest_mismatches": [
+      "LABELING_CODEBOOK.md",
+      "large-task-agreement-pilot.csv"
+    ],
+    "round_sizes": [
+      75,
+      75,
+      75
+    ],
+    "pairwise_observation_id_overlap": [
+      75,
+      75,
+      75
+    ],
+    "recorded_kappa": [
+      0.6367061356297092,
+      0.6350364963503653,
+      0.7538293216630195
+    ],
+    "target": 0.8
+  },
+  "overlap_accounting": {
+    "unit": "Existing same-line matching, scoped by repository",
+    "corrections": [
+      {
+        "pair": "non-idempotent-command/no-changed-when",
+        "published_lint_only": 3188,
+        "repository_scoped_lint_only": 3187
+      },
+      {
+        "pair": "unnamed-task/name[missing]",
+        "published_lint_only": 751,
+        "repository_scoped_lint_only": 736
+      }
+    ],
+    "counting_definition_note": "983 native-supported non-idempotent occurrences on complete repositories comprises 453 internal-assigned plus 530 lint-assigned evidence rows; its difference from 708 full-population internally-assigned occurrences is not itself proof of duplication."
+  },
+  "llm_existing_runs": {
+    "original_eval": {
+      "cases": 12,
+      "ok": 11,
+      "error": 1,
+      "high_confidence_successes": 11,
+      "recorded_prompt_version": "ansible-explain-v1.1"
+    },
+    "verification": {
+      "cases": 12,
+      "ok": 12,
+      "high_confidence_successes": 12,
+      "recorded_prompt_version": "ansible-explain-v1"
+    },
+    "current_integrated_pipeline_evaluation": "No full post-cross-file frozen evaluation found."
+  },
+  "checks_performed": [
+    "Read full internal-source CSV and lint CSV from raw archive",
+    "Read all repository-root diagnostics from raw archive",
+    "Join exploratory sample repositories to frozen split",
+    "Inspect current reviewer form schemas and blank decision fields",
+    "Compare small frozen threshold artifact hashes",
+    "Compare threshold pilot observation IDs across three rounds",
+    "Reconcile overlap counts using repository-scoped locations",
+    "Inspect stored LLM execution, prompt-version and confidence fields",
+    "Check planning document local references"
+  ],
+  "not_performed": [
+    "No new full scan",
+    "No live LLM run",
+    "No independent human adjudication",
+    "No test suite rerun",
+    "No complete semantic correctness audit of all detector occurrences"
+  ]
+}

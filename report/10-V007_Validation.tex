@@ -1,0 +1,219 @@
+\chapter{Current v0.0.7 Evaluation and Validation}
+\label{chap:v007}
+
+\section{Evidence sets and denominators}
+This chapter updates the historical v0.0.6 evaluation in
+Chapter~\ref{chap:results}. Three v0.0.7 evidence sets answer different
+questions and must retain their own denominators. The production diagnostic
+scan froze 207 repositories at recorded commits; 206 yielded analyzable
+outputs and one timed out. A paired semantic change was evaluated on those
+same 206 outputs. The separate numerical-threshold benchmark parsed all 207
+frozen repositories and extracted unique metric observations. Its zero scan
+failures do not retroactively make the production provider run complete.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Scope of the current evidence sets. Counts are observations, not validated defects.}
+\label{tab:v007_scope}
+\begin{tabularx}{\textwidth}{p{3.1cm}p{3.0cm}X}
+\toprule
+Evidence set & Population & What it establishes \\
+\midrule
+Production scan & 206 analyzable / 207 frozen repositories & Source/provider
+counts and execution health; one repository timeout persists. \\
+Semantic paired run & Same 206 analyzable repositories & Effect of required
+role-argument reasoning with fixed commits, file manifests, profile and
+provider scope. \\
+Threshold benchmark & 207 / 207 repositories & Distributions and candidate
+rates for 24 numerical metrics; no human accuracy estimate yet. \\
+Agent-labelled review & 847 sampled units & Diagnostic calibration of
+variable resolution; one reviewer, with unresolved cases retained. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Production execution and rule composition}
+The v0.0.7 diagnostic run produced 390,441 raw findings and 376,271 canonical
+occurrences. Of the 207 frozen repositories, 171 had complete required and
+optional provider output, 35 were partial because of ansible-lint, and one
+failed after a 1,800-second timeout. The same repository timed out on the
+paired candidate run even with a 3,600-second allowance. Thus the 376,271
+total describes the 206 analyzable repositories; the missing repository is
+never encoded as zero findings. GitLeaks completed for all 206 analyzable
+repositories. The 108,757 ansible-lint occurrences across all outputs include
+partial runs; the provider-comparable subset contains 83,419 occurrences on
+the 171 complete repositories.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \fill[anspaper,rounded corners=4pt] (0,0) rectangle (13.3,4.25);
+  \node[anchor=west,text=ansnavy,font=\bfseries\large] at (.45,3.75)
+    {207 frozen repositories};
+  \node[anchor=west,text=ansgray,font=\small] at (.45,3.28)
+    {Production v0.0.7 execution state};
+  \fill[ansblue!80] (.45,2.45) rectangle (11.04,2.94);
+  \fill[ansgold!88] (11.04,2.45) rectangle (13.20,2.94);
+  \fill[ansred!78] (13.20,2.45) rectangle (13.26,2.94);
+  \node[anchor=west,text=white,font=\bfseries] at (.65,2.70) {171 complete};
+  \node[anchor=east,text=ansnavy,font=\bfseries\small] at (13.08,2.70) {35 partial};
+  \draw[ansred,thick] (13.23,2.35)--(12.53,1.82);
+  \node[anchor=east,text=ansred,font=\small\bfseries] at (12.48,1.82)
+    {1 timed out};
+  \node[anchor=west,font=\small,text=ansnavy] at (.45,1.32)
+    {206 analyzable outputs};
+  \node[anchor=west,font=\small,text=ansgray] at (.45,.83)
+    {Partial provider evidence stays visible and is excluded from comparable estimates.};
+\end{tikzpicture}
+\caption{Repository health in the v0.0.7 production scan. The failed
+repository is missing data, not an observed zero.}
+\label{fig:v007_health}
+\end{figure}
+
+The internal selected-source population contributes 265,586 occurrences in
+the study report. Three rules account for 174,847, or 65.8\% of that internal
+population: \code{missing-tags} (98,005), \code{unguarded-variable}
+(52,721), and \code{variable-naming-convention} (24,121). The first is an
+optional, low-confidence policy signal. A large count from a permissive rule
+does not imply the same number of confirmed defects. The Git-history review
+population contributes 494 occurrences under a different unit and denominator;
+it is excluded from selected-source rates. A single repository contributes
+2,776 \code{yaml[quoted-strings]} ansible-lint findings, illustrating why
+pooled totals must be accompanied by repository prevalence.
+
+\section{Paired role-contract correction}
+The candidate semantic run adds explicit handling of required role arguments.
+It reduced canonical occurrences from 376,271 to 376,024 and uncertain
+occurrences from 54,443 to 54,196. Ansible-lint and GitLeaks totals remained
+unchanged. Comparison identities initially marked 568 fixed and 321
+introduced; 320 of the internal ``introduced'' records share repository,
+file, and line with a fixed record and represent a change from
+\code{unresolved-runtime-input} to \code{undeclared-input-contract}. After
+pairing those reclassifications, the net detector effect is exactly 247
+suppressed \code{unguarded-variable} occurrences. One further fixed/introduced
+pair belongs to an ansible-lint \code{warning[outdated-tag]} identity change.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \fill[anspaper,rounded corners=4pt] (0,0) rectangle (13.3,4.3);
+  \node[anchor=west,text=ansnavy,font=\bfseries\large] at (.45,3.76)
+    {What changed in variable findings};
+  \node[draw=ansblue,fill=white,rounded corners=3pt,minimum width=3cm,
+    minimum height=1.15cm,align=center] (old) at (2.2,2.33)
+    {567 old identities\\marked fixed};
+  \node[draw=ansteal,fill=white,rounded corners=3pt,minimum width=3cm,
+    minimum height=1.15cm,align=center] (reclass) at (7.7,2.95)
+    {320 reclassified\\same source lines};
+  \node[draw=ansgold,fill=white,rounded corners=3pt,minimum width=3cm,
+    minimum height=1.15cm,align=center] (removed) at (7.7,1.58)
+    {247 suppressed\\required inputs};
+  \draw[-{Latex[length=2.2mm]},thick,ansnavy] (old.east)--(reclass.west);
+  \draw[-{Latex[length=2.2mm]},thick,ansnavy] (old.east)--(removed.west);
+  \node[anchor=west,font=\small,text=ansgray] at (.48,.72)
+    {Net canonical change: 376,271 $\rightarrow$ 376,024 on the same 206 analyzable repositories.};
+\end{tikzpicture}
+\caption{Reconciliation of comparison identities with source-level semantic
+changes. The 320 relabelled cases are existing findings.}
+\label{fig:v007_variable_change}
+\end{figure}
+
+The 247 suppressions occur in seven repositories, including 121 in
+Linuxfabrik/lfops, 44 in redhatci/ansible-collection-redhatci-ocp, 33 in
+Dell's OpenManage collection, and 32 in Alfresco's deployment repository.
+Source inspection confirms the intended boundary: a \code{required: true}
+role argument is treated as guaranteed at direct role entry; optional
+arguments stay visible with an uncertainty reason. The candidate retains 997
+\code{missing-internal-variable} occurrences, changes
+\code{undeclared-input-contract} from 34,006 to 34,326, and changes
+\code{unresolved-runtime-input} from 17,718 to 17,151. These are semantic
+classes, not manual correctness labels.
+
+\section{Variable-resolution review}
+The frozen primary review has 847 units: a census of 247 removed required
+argument findings, three 150-occurrence samples for candidate missing,
+external-input uncertainty, and runtime-context uncertainty, plus 150
+source-first files. The single agent reviewer verified 247 safe suppressions.
+For \code{CANDIDATE_MISSING}, it labelled 84 true positives, 66 uncertain,
+and zero false positives. The decided-case ratio is 84/84, whereas the
+conservative true-positive yield across all 150 sampled candidates is 56.0\%.
+The apparent 100\% decided-case result must not be presented as independent
+human precision. Of 450 sampled classification cases, 366 received decided
+labels, and all 366 agreed with the proposed resolution class.
+
+Source-first review identified 11 supported issue occurrences and matched 10,
+an observed 10/11 occurrence ratio. Those issues came from only two
+repositories; one repository contained the unmatched case. Neither ratio is a
+general recall estimate. The missed \code{tarzan_proj_dir} use in Miarka's
+\code{roles/tarzan/defaults/main.yml}, beside a defined
+\code{tarzan_root_dir}, is a useful false-negative case for detector repair.
+The review used one agent and source context after sampling; independent
+human agreement, adjudication, and unseen-repository validation remain open.
+
+\section{Numerical threshold benchmark}
+The corrected benchmark extracts 2,986,459 unique scalar observations for 24
+metrics from all 207 frozen repositories, with zero scan failures and zero
+duplicate observation identities. Detector-relevant denominators differ by
+metric: 128,220 task observations come from 193 repositories, while 21,455
+playbook-family observations come from 197. The benchmark repaired duplicate
+manifest paths, excluded vars/metadata documents from playbook metrics,
+replayed complete composite detector decisions, and retained parser source
+positions for repeated task names. It generated 16,971 primary review rows
+and 75-row agreement pilots for each metric (1,800 rows per reviewer).
+
+Large-task size illustrates the method. Its distribution has Q1 = 4,
+median = 6, Q3 = 10, and Tukey upper fence = 19 lines. The current cutoff of
+15 is also the measured 90th percentile. Moving the cutoff to Q3 would
+produce 27,158 predictions, versus 12,202 at the current cutoff: 14,956 more
+review items, or 2.23 times the present workload. A threshold is therefore a
+review-cost decision requiring human labels; a box-plot fence alone cannot
+select it.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  xbar,width=.89\textwidth,height=7.2cm,
+  xmin=0,xmax=32000,bar width=12pt,
+  symbolic y coords={P95,Tukey,current,P80,Q3},ytick=data,
+  yticklabel style={font=\small},
+  xlabel={Predicted tasks among 128,220 eligible observations},
+  xmajorgrids=true,grid style={ansgray!20},
+  axis line style={ansnavy!50},tick style={ansnavy!50},
+  scaled x ticks=false,
+  xtick={0,8000,16000,24000,32000},
+  xticklabel style={/pgf/number format/fixed,/pgf/number format/1000 sep={,}},
+  nodes near coords,nodes near coords style={font=\scriptsize,anchor=west},
+  enlarge y limits=0.16]
+\addplot[fill=ansblue!75,draw=none] coordinates
+  {(27158,Q3) (22566,P80) (12202,current) (7738,Tukey) (6378,P95)};
+\end{axis}
+\end{tikzpicture}
+\caption{Large-task candidate workload. Q3 = 10 LOC, P80 = 11,
+current/P90 = 15, Tukey fence = 19, and P95 = 21. Candidate quality is
+unmeasured until independent labels are completed.}
+\label{fig:v007_threshold_sensitivity}
+\end{figure}
+
+The current production settings produce 11,124 complex-expression decisions,
+12,202 large-task decisions, 3,104 active large-playbook decisions, 1,451
+large-play decisions, and 52 special-character naming decisions in the
+corresponding benchmark populations. These are separate metric studies and
+must not be summed. The accepted \code{avg_task_playbook} cutoff is measured
+but does not affect the production large-playbook decision;
+\code{similarityPlays} is an accepted but unused configuration key. This
+inventory prevents a purported calibration of a threshold with no production
+effect.
+
+\section{Validation gate and interpretation}
+The threshold packets are prepared for two independent human reviewers.
+The agreement pilot records independent positive, negative, or uncertain
+labels; Cohen's kappa (target 0.80), Gwet's AC1, prevalence, and label-specific
+agreement are calculated before codebook freeze. The primary stratified
+sample carries inclusion probabilities and inverse-probability weights.
+After adjudication, candidates can be scored with weighted precision, recall,
+F1 and F0.5 and project-cluster bootstrap intervals. At present zero rows have
+two independent human labels, so those performance estimates and human--AI
+agreement are unavailable. The blinded AI comparison follows human consensus,
+not the reverse. The present results establish executable coverage, workload,
+and diagnostic mechanisms; they do not certify the quality of every rule.

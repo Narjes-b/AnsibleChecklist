@@ -1,0 +1,11 @@
+- name: play
+  hosts: all
+  tasks:
+    - name: install nginx one
+      apt:
+        name: nginx
+        state: present
+    - name: install nginx two
+      apt:
+        name: nginx
+        state: present

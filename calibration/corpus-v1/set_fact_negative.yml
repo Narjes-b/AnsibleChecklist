@@ -1,0 +1,10 @@
+- name: Used fact
+  hosts: all
+  tasks:
+    - name: Define used value
+      set_fact:
+        calibration_used_value: true
+    - name: Read used value
+      debug:
+        msg: enabled
+      when: calibration_used_value | bool

@@ -1,0 +1,1108 @@
+sample_id,rule_id,concept_id,review_family,tier,rule_total_occurrences,rule_cumulative_share_percent,repository,commit_sha,path,line,severity,message,occurrence_id,source_context,ai_semantic_label,ai_actionability_label,ai_context_sufficient,ai_requires_external_context,ai_external_context_type,ai_reason_code,ai_notes,ai_confidence,ai_model_identity,ai_review_protocol_version
+V007STRAT-LARGE-TASK-001,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,qld-gov-au/ckan-qld-infrastructure,4bd697b0fafe18c453bc96b61e70cc85c3130003,create-AMI.yml,83,warning,Task 'Create new ami' exceeds size thresholds,8700d53a8be43601982d9fb2ad2d2dd3bb83d2a4d5dc458c2e388f9bd4fd5bb3,"      69 |         done
+      70 |         if [ ""$STATUS"" != ""Success"" ]; then
+      71 |           echo ""Failed to deploy to instance {{ InstanceId }}, status $STATUS - aborting"" >&2
+      72 |           exit 2
+      73 |         fi
+      74 | 
+      75 |     - name: Stop instance
+      76 |       ec2:
+      77 |         instance_ids:
+      78 |           - ""{{ InstanceId }}""
+      79 |         region: ""{{ region }}""
+      80 |         state: stopped
+      81 |         wait: True
+      82 | 
+>>    83 |     - name: Create new ami
+      84 |       ec2_ami:
+      85 |         instance_id: ""{{ InstanceId }}""
+      86 |         region: ""{{ region }}""
+      87 |         wait: yes
+      88 |         name: ""{{ InstanceName }}-{{ timestamp | replace(':', '-') }}""
+      89 |         description: ""Base image for {{ Environment }} {{ service_name }} {{ layer }} layer""
+      90 |         tags:
+      91 |           Name: ""{{ InstanceName }}-{{ timestamp | replace(':', '-') }}""
+      92 |           Environment: ""{{ Environment }}""
+      93 |           Service: ""{{ service_name }}""
+      94 |           Layer: ""{{ layer | lower }}""
+      95 |           Division: ""{{ Division }}""
+      96 |           Owner: ""{{ Owner }}""
+      97 |           Version: ""{{ image_version | default('1.0') }}""",negative,not-applicable,yes,no,none,cohesive-or-manageable,"The anchored task is a single ec2_ami call with a flat tags dict (7 key/value pairs); no branching, loops, or repetition. Size comes from enumerating straightforward metadata fields, not from genuine logical complexity.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-002,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,playbooks/acs.yml,192,warning,Task 'Transformers Role import' exceeds size thresholds,113fce05387780cb1cc40ec28b2b65516b2b87dc8b9019af0f1bf16c1ecc6c3d,"     178 |     - name: Build keystore role argument
+     179 |       ansible.builtin.set_fact:
+     180 |         transformers_keystore:
+     181 |           path: ""{{ config_folder }}/pki/{{ inventory_hostname }}.keystore""
+     182 |           pass: ""{{ hostvars.localhost.certs_p12_passphrase }}""
+     183 |           type: JCEKS
+     184 |           cert_containers:
+     185 |             - path: ""{{ hostvars.localhost.pki_dir }}/certificates/{{ inventory_hostname }}.p12""
+     186 |               pass: ""{{ hostvars.localhost.certs_p12_passphrase }}""
+     187 |               add_to_trusted_ca: true
+     188 |       when:
+     189 |         - ats_mtls_required
+     190 |         - ats_mtls_capable
+     191 |   tasks:
+>>   192 |     - name: Transformers Role import
+     193 |       ansible.builtin.import_role:
+     194 |         name: ""../roles/transformers""
+     195 |       vars:
+     196 |         transformers_ats_keystore: ""{{ transformers_keystore | default({}) }}""
+     197 |         java_version: ""{{ acs_play_java_version }}"" # noqa: var-naming[no-role-prefix]
+     198 |         transformers_acs_is_enterprise: ""{{ acs_is_enterprise }}""
+     199 |         transformers_libreoffice_version: ""{{ acs_play_transformers_libreoffice_version }}""
+     200 |         transformers_libreoffice_archive_url: ""{{ acs_play_transformers_libreoffice_archive_url }}""
+     201 |         transformers_libreoffice_archive_checksum: ""{{ acs_play_transformers_libreoffice_archive_checksum }}""
+     202 |         transformers_pdf_version: ""{{ acs_play_transformers_pdf_version }}""
+     203 |         transformers_pdf_archive_url: ""{{ acs_play_transformers_pdf_archive_url }}""
+     204 |         transformers_pdf_archive_checksum: ""{{ acs_play_transformers_pdf_archive_checksum }}""
+     205 |         transformers_imagemagick_version: ""{{ acs_play_transformers_imagemagick_version }}""
+     206 |         transformers_imagemagick_repository: ""{{ acs_play_transformers_imagemagick_repository }}""",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Task is a single import_role call whose body is a flat vars mapping (~9 simple '{{ var }}' assignments) to parameterize the role. This is ordinary role-parameterization, not a maintainability burden.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-003,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,theopenlab/openlab-zuul-jobs,0d133dc0879296c0aacd0b70344515c94137a8ec,playbooks/bucardo-unitest/pre.yaml,13,warning,Task 'Setting PG upstream repo' exceeds size thresholds,26a6313d292c3f5f8cc65f9cac1636a55894ac42569e383b595ff738ea32320c,"       1 | - hosts: all
+       2 |   tasks:
+       3 |     - name: Clean the existing
+       4 |       become: yes
+       5 |       shell:
+       6 |         cmd: |
+       7 |           apt-get -y --purge remove postgresql libpq-dev libpq5 \
+       8 |             postgresql-client-common postgresql-common
+       9 |           rm -rf /var/lib/postgresql
+      10 |       args:
+      11 |         executable: /bin/bash
+      12 | 
+>>    13 |     - name: Setting PG upstream repo
+      14 |       become: yes
+      15 |       shell:
+      16 |         cmd: |
+      17 |           source /etc/lsb-release ;
+      18 |           echo ""deb http://apt.postgresql.org/pub/repos/apt/ $DISTRIB_CODENAME-pgdg main {{ global_env.PGVERSION }}"" > pgdg.list
+      19 |           mv pgdg.list /etc/apt/sources.list.d/
+      20 |           wget --quiet -O - https://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | apt-key add -
+      21 |       args:
+      22 |         executable: /bin/bash
+      23 |       environment: '{{ global_env }}'
+      24 | 
+      25 |     - name: Install deps
+      26 |       become: yes
+      27 |       shell:",positive,actionable,yes,no,none,complexity-supported,"The shell block bundles several distinct responsibilities in one task: sourcing /etc/lsb-release, building an apt source line, moving the file, and fetching+adding a GPG key via a curl|apt-key pipe. Combining config-file templating with key-fetching logic in raw shell is a genuine maintainability/complexity burden versus using apt_repository/apt_key modules.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-004,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,ergho/homelab-ops,973ea65aca62d259f296153f5f989cc2013f2294,ansible/roles/hardening/tasks/main.yaml,11,warning,Task 'Packages | Uninstall Snap' exceeds size thresholds,4829b56bffd23bfa1320688499d5b3973a6c91f1441074f4933172929b04e055,"       1 | ---
+       2 | - name: ""uninstall unneeded packages""
+       3 |   ansible.builtin.apt:
+       4 |     name: ""{{ item }}""
+       5 |     state: absent
+       6 |     autoremove: true
+       7 |   loop: ""{{ packages_to_remove_ubuntu }}""
+       8 | - name: Gather installed packages
+       9 |   ansible.builtin.package_facts:
+      10 |     manager: auto
+>>    11 | - name: Packages | Uninstall Snap
+      12 |   block:
+      13 |     - name: Packages | Uninstall Snap | Check if snap is installed
+      14 |       ansible.builtin.debug:
+      15 |         msg: ""snapd is installed""
+      16 |       register: snapd_check
+      17 |     - name: Packages | Uninstall Snap | Remove snap packages
+      18 |       ansible.builtin.command: snap remove {{ item }}
+      19 |       loop: [""lxd"", ""core20"", ""snapd""]
+      20 |       when: snapd_check.failed is defined
+      21 |     - name: Packages | Uninstall Snap | Remove snap from packages
+      22 |       ansible.builtin.apt:
+      23 |         name: snapd
+      24 |         state: absent
+      25 |         autoremove: true",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Block groups 3 tightly related sub-tasks (check snap, remove snap packages via loop, remove snapd package) all serving one stated purpose ('Uninstall Snap'); the block reads as a coherent, bounded sequence, not sprawl.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-005,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,konstruktoid/ansible-role-hardening,4dc09871ed38322eb6e4cdda8e2c77b79892d73d,tasks/aide.yml,2,warning,Task 'AIDE installation and configuration' exceeds size thresholds,f18193165153a964a75e4a49e888028c552c5c8753fd8e20d79c2bc4e2885d4a,"       1 | ---
+>>     2 | - name: AIDE installation and configuration
+       3 |   become: true
+       4 |   block:
+       5 |     - name: Debian family AIDE installation
+       6 |       ansible.builtin.apt:
+       7 |         name: aide-common
+       8 |         state: present
+       9 |         install_recommends: false
+      10 |       when:
+      11 |         - ansible_facts.os_family == ""Debian""
+      12 | 
+      13 |     - name: RedHat family AIDE package installation
+      14 |       ansible.builtin.dnf:
+      15 |         name: aide
+      16 |         state: present",uncertain,uncertain,no,no,none,insufficient-source-context,"Window shows only the first 2 of what the task name ('installation and configuration') implies are likely several more OS-family branches plus configuration steps (aide.conf, cron, db init). Cannot confirm whether the full task is genuinely large/complex or a reasonable per-OS branch set without seeing the remainder.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-006,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,halkeye/halkeye-ansible,f7b35cd20757522c17298cb2af67c8858ea30f6c,playbooks/tasks.yml,13,warning,Task 'Install docker repo' exceeds size thresholds,3c18303d50247ce26de1a52cccd4200770eb75c1ef6d9a2b8fc2d8053fa560c0,"       1 | - name: Install ubuntu ppas
+       2 |   become: true
+       3 |   with_items: ""{{ global_ubuntu_ppas }}""
+       4 |   when: ansible_facts[""os_family""] == ""Debian""
+       5 |   ansible.builtin.deb822_repository:
+       6 |     name: ""{{ item | regex_replace('^ppa:', '') | regex_replace('[^a-zA-Z0-9_-]', '_') }}""
+       7 |     types: deb
+       8 |     uris: ""{{ item }}""
+       9 |     suites: ""{{ ansible_facts['distribution_release'] }}""
+      10 |     components: main
+      11 |     state: present
+      12 | 
+>>    13 | - name: Install docker repo
+      14 |   when: ansible_facts[""os_family""] == ""Debian""
+      15 |   become: true
+      16 |   block:
+      17 |     - name: key
+      18 |       ansible.builtin.get_url:
+      19 |         url: https://download.docker.com/linux/ubuntu/gpg
+      20 |         dest: /etc/apt/keyrings/docker.asc
+      21 | 
+      22 |     - name: remove old style file
+      23 |       file:
+      24 |         path: ""/etc/apt/sources.list.d/download_docker_com_linux_ubuntu.list""
+      25 |         state: absent
+      26 | 
+      27 |     - name: create modern style sources",positive,actionable,yes,no,none,complexity-supported,"Visible sub-steps mix key retrieval, removal of a legacy repo-list file, and creation of a 'modern style' source -- i.e. the task is handling an old/new repo-format migration inline, which is genuine added complexity beyond a plain repo-install task, even though the window does not show the final steps.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-007,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,stuttgart-things/ansible,7f836ef7eb98edae0f4d6810943121bc9e6bce20,plays/base-os.yaml,98,warning,Task 'Send event notification to homerun' exceeds size thresholds,48d0cd47d7add901527989dbc479d52d7851eda0d9761b393a42313e9fec18a1,"      84 |       ansible.builtin.include_role:
+      85 |         name: install_configure_vault
+      86 |         tasks_from: install-ca-auth
+      87 |       vars:
+      88 |         vault_url: ""{{ vault_instance }}""
+      89 |       loop: ""{{ vault_ca_probe.results | default([])
+      90 |                 | selectattr('status', 'defined')
+      91 |                 | selectattr('status', 'equalto', 200)
+      92 |                 | map(attribute='vault_instance') | list }}""
+      93 |       loop_control:
+      94 |         loop_var: vault_instance
+      95 | 
+      96 |     - name: Send event to homerun if enabled
+      97 |       block:
+>>    98 |         - name: Send event notification to homerun
+      99 |           ansible.builtin.uri:
+     100 |             url: ""{{ address }}""
+     101 |             method: POST
+     102 |             headers:
+     103 |               Content-Type: ""application/json""
+     104 |               X-Auth-Token: ""{{ auth_token }}""
+     105 |             body: >
+     106 |               {
+     107 |                 ""title"": ""{{ event_title }}"",
+     108 |                 ""message"": ""{{ event_message }}"",
+     109 |                 ""severity"": ""{{ event_severity }}"",
+     110 |                 ""author"": ""{{ event_author }}"",
+     111 |                 ""timestamp"": ""{{ event_timestamp }}"",
+     112 |                 ""system"": ""{{ event_system }}"",",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Single ansible.builtin.uri POST task; the many lines come from enumerating JSON body fields for one notification call, not from branching or repeated logic.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-008,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,rtdevx/homelab,a23266aa968127747db1aa91d544ab60ce402f55,ansible/site/roles/base/tasks/configure_linux_terminal.yml,3,warning,Task 'Configure Terminal for Linux hosts' exceeds size thresholds,d2163e69d6aa8c5f8c1d57071b28f61ee8609af786bedd26cb8167889cc4315b,"       1 | ---
+       2 | # info: Download Nerd Fonts
+>>     3 | - name: Configure Terminal for Linux hosts
+       4 | 
+       5 | # @high Should /tmp be changed to something else so the file is not lost after reboot and is only accessible by root?
+       6 | # @low Can the checksum of the downloaded file be verified to ensure integrity?
+       7 | 
+       8 |   block:
+       9 |     - name: Download Nerd Fonts
+      10 |       get_url:
+      11 |         url: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.tar.xz
+      12 |         dest: /tmp/nerd-fonts.tar.xz
+      13 |         mode: '0701'
+      14 | 
+      15 |     - name: Unarchive Nerd Fonts
+      16 |       unarchive:
+      17 |         src: /tmp/nerd-fonts.tar.xz",uncertain,uncertain,no,no,none,insufficient-source-context,"Only 'Download Nerd Fonts' and the start of 'Unarchive Nerd Fonts' are visible under a block literally named for configuring the whole terminal; inline reviewer-style comments ('@high', '@low') suggest a larger scope follows that is not in view.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-009,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,ansible/awx,54d6e576fb543c76f672603ca7f26913d58cf458,awx/playbooks/project_update.yml,225,warning,Task 'Fetch galaxy roles from roles/requirements.(yml/yaml)' exceeds size thresholds,9526f16823f90dac834f1f94931c5bee2c3636301236337cb209adb05b848b4f,"     211 |       when: not roles_enabled | bool and not collections_enabled | bool
+     212 |       tags:
+     213 |         - install_roles
+     214 |         - install_collections
+     215 |       block:
+     216 |         - name: Warn about disabled content sync
+     217 |           ansible.builtin.debug:
+     218 |             msg: >
+     219 |               Collection and role syncing disabled. Check the AWX_ROLES_ENABLED and
+     220 |               AWX_COLLECTIONS_ENABLED settings and Galaxy credentials on the project's organization.
+     221 |         - name: End play due to disabled content sync
+     222 |           ansible.builtin.meta: end_play
+     223 | 
+     224 |     - block:
+>>   225 |         - name: Fetch galaxy roles from roles/requirements.(yml/yaml)
+     226 |           ansible.builtin.command:
+     227 |             cmd: ""ansible-galaxy role install -r {{ req_file }} {{ verbosity }}""
+     228 |           register: galaxy_result
+     229 |           vars:
+     230 |             req_file: ""{{ lookup('ansible.builtin.first_found', req_candidates, skip=True) }}""
+     231 |             req_candidates:
+     232 |               files:
+     233 |                 - ""{{ project_path | quote }}/roles/requirements.yml""
+     234 |                 - ""{{ project_path | quote }}/roles/requirements.yaml""
+     235 |               skip: True
+     236 |           changed_when: ""'was installed successfully' in galaxy_result.stdout""
+     237 |           when:
+     238 |             - roles_enabled | bool
+     239 |             - req_file | length > 0",negative,not-applicable,yes,no,none,cohesive-or-manageable,Full task is visible: one ansible.builtin.command with a vars block resolving a requirements file via first_found and two when guards. Self-contained and not meaningfully convoluted despite its line count.,medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-010,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,FreiFunkMuenster/Ansible-Freifunk-Gateway,b04e8f81b2b010eaccd13a63271c7ce7eb6fb4b3,bird/tasks/main.yml,8,warning,Task 'calculate more specific routes for DHCP pools' exceeds size thresholds,94f10de64680e2e4426132d05b23dffbd6259596288bda564996534566344d21,"       1 | ---
+       2 | # Role for configure bird and bird6 for our gateway servers.
+       3 | - name: install bird and other required packets
+       4 |   apt:
+       5 |     name: ['bird', 'ipcalc']
+       6 |     cache_valid_time: 1800
+       7 | 
+>>     8 | - name: calculate more specific routes for DHCP pools
+       9 |   shell: |
+      10 |     set -o pipefail
+      11 |     ipcalc {{ domaenenliste[item].dhcp_start }} - {{ domaenenliste[item].dhcp_ende }} | \
+      12 |     grep -v ""deaggregate"" | sed -e 's/\(^.*$\)/route \1 via ""bat{{ item }}"";/g'
+      13 |   args:
+      14 |     executable: bash
+      15 |   check_mode: no
+      16 |   changed_when: false
+      17 |   register: more_specific_routes
+      18 |   with_items: ""{{ domaenenliste | default([]) }}""
+      19 |   when: domaenenliste is defined
+      20 | 
+      21 | - name: configure bird.conf
+      22 |   template:",positive,actionable,yes,no,none,complexity-supported,"Full task visible: a shell pipeline (ipcalc | grep | sed) performing ad-hoc network-range computation and regex text transformation inside a loop, with changed_when:false masking real side effects. This is genuine complexity that would normally belong in a filter/module rather than inline shell+sed.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-011,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,openshift/openshift-ansible,440ea65eb643090218c8b92556bd5afec83735bd,roles/openshift_node/tasks/apply_machine_config.yml,59,warning,Task 'Unknown' exceeds size thresholds,7249944049622a64a11b68f1afb724fcbf031f95139073461a253e8d75d5351e,"      45 |     --output=jsonpath='{.spec.template.spec.containers[?(@.name==""machine-config-daemon"")].image}'
+      46 |   delegate_to: localhost
+      47 |   register: oc_get
+      48 |   until:
+      49 |   - oc_get.stdout != ''
+      50 |   retries: 36
+      51 |   delay: 5
+      52 | 
+      53 | - name: Set l_mcd_image fact
+      54 |   set_fact:
+      55 |     l_mcd_image: ""{{ oc_get.stdout }}""
+      56 | 
+      57 | - import_tasks: proxy.yml
+      58 | 
+>>    59 | - block:
+      60 |   - name: Pull MCD image
+      61 |     command: ""podman pull --tls-verify={{ openshift_node_tls_verify }} --authfile /var/lib/kubelet/config.json {{ l_mcd_image }}""
+      62 |     register: podman_pull
+      63 |     until:
+      64 |       podman_pull.stdout != ''
+      65 |     retries: 12
+      66 |     delay: 10
+      67 | 
+      68 |   - name: Apply machine config
+      69 |     command: ""podman run {{ podman_mounts }} {{ podman_flags }} {{ mcd_command }}""
+      70 |     vars:
+      71 |       podman_flags: ""--pid=host --privileged --rm --entrypoint=/usr/bin/machine-config-daemon -ti {{ l_mcd_image }}""
+      72 |       podman_mounts: ""-v /:/rootfs""
+      73 |       mcd_command: ""start --node-name {{ ansible_nodename | lower }} --once-from {{ temp_dir.path }}/worker_ignition_config.json --skip-reboot""",uncertain,uncertain,no,no,none,insufficient-source-context,"Anchor is an anonymous 'block:' (detector could not resolve a name); only 2 of an unknown number of sub-tasks are visible, so the block's true total extent and composition cannot be confirmed from this window.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-012,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,trailofbits/algo,20e22a8715c198b38c01c1ca62d0953b93587a74,input.yml,109,warning,Task 'Set facts based on the input' exceeds size thresholds,2f122d1f22b2560ff1c6fbf9b8bc10452eef96e761d33c3709faf8809ff6b78a,"      95 |             prompt: |
+      96 |               Do you want to enable DNS ad blocking on this VPN server?
+      97 |               [y/N]
+      98 |           register: _dns_adblocking
+      99 |           when: dns_adblocking is undefined
+     100 | 
+     101 |         - name: SSH tunneling prompt
+     102 |           pause:
+     103 |             prompt: |
+     104 |               Do you want each user to have their own account for SSH tunneling?
+     105 |               [y/N]
+     106 |           register: _ssh_tunneling
+     107 |           when: ssh_tunneling is undefined
+     108 | 
+>>   109 |         - name: Set facts based on the input
+     110 |           set_fact:
+     111 |             algo_server_name: >-
+     112 |               {%- if server_name is defined -%}{% set _server = server_name %}{%-
+     113 |               elif _algo_server_name.user_input is defined and _algo_server_name.user_input | length > 0 -%}{%-
+     114 |               set _server = _algo_server_name.user_input -%}{%-
+     115 |               else -%}{% set _server = defaults['server_name'] %}{%-
+     116 |               endif -%}
+     117 |               {{ _server | regex_replace('(?!\.)(\W|_)', '-') }}
+     118 |             algo_ondemand_cellular: >-
+     119 |               {%- if ondemand_cellular is defined -%}{{ ondemand_cellular | bool }}{%-
+     120 |               elif _ondemand_cellular.user_input is defined -%}{{ booleans_map[_ondemand_cellular.user_input] | default(defaults['ondemand_cellular']) }}{%-
+     121 |               else -%}{{ false }}{%-
+     122 |               endif -%}
+     123 |             algo_ondemand_wifi: >-",positive,actionable,yes,no,none,complexity-supported,"Visible set_fact already defines two facts each built from multi-branch if/elif/else Jinja templates (algo_server_name, algo_ondemand_cellular), with a third fact beginning and cut off -- a clear, already-confirmed pattern of repeated nested conditional logic packed into one task.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-013,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,Ableton/ansible-role-jenkins-swarm-client,f9b3effc48230ff2404f07fcc9b6af3b4d1614c2,tasks/darwin/install.yml,44,warning,Task 'Unload and remove legacy Swarm Client launchd service' exceeds size thresholds,4496d77080ee2462aec87cccfa3ae909590995b5c0039a2c135b7da424f02185,"      30 | 
+      31 | - name: Override jenkins_swarm_client_log_dir for non-root installation
+      32 |   ansible.builtin.set_fact:
+      33 |     jenkins_swarm_client_log_dir: >-
+      34 |       /Users/{{ jenkins_config_owner }}/Library/Logs/{{ jenkins_swarm_client_ident }}
+      35 |   when: ""jenkins_config_owner != 'root'""
+      36 | 
+      37 | - name: Ensure that log directory exists
+      38 |   become: ""{{ 'true' if jenkins_config_owner == 'root' else 'false' }}""
+      39 |   ansible.builtin.file:
+      40 |     path: ""{{ jenkins_swarm_client_log_dir }}""
+      41 |     state: directory
+      42 |     mode: ""0755""
+      43 | 
+>>    44 | - name: Unload and remove legacy Swarm Client launchd service
+      45 |   when:
+      46 |     - jenkins_swarm_client_legacy_launchd_plist is defined
+      47 |     - jenkins_swarm_client_legacy_launchd_plist_file.stat.exists
+      48 |   block:
+      49 |     - name: Unload legacy Swarm Client service
+      50 |       become: true
+      51 |       ansible.builtin.command: >
+      52 |         launchctl bootout gui/{{ uid.stdout }}
+      53 |         {{ jenkins_swarm_client_legacy_launchd_plist }}
+      54 |       changed_when: true
+      55 |       # The service doesn't necessarily have to be running
+      56 |       ignore_errors: true  # noqa ignore-errors
+      57 | 
+      58 |     - name: Remove legacy Swarm Client launchd plist file",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Block is a short, guarded cleanup sequence (existence checks then unload + remove legacy launchd artifacts); the two visible steps read as a complete, coherent idiom for retiring a legacy service.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-014,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,anokfireball/homelab-as-code,d8fe576217e433a746fff052b772c949ee6f1e50,ansible/cluster/roles/k8s_cluster/tasks/join.yaml,16,warning,Task 'recreate kubeadm join commands' exceeds size thresholds,7865dc0002d8be9fb1b694803213650f0956dfb00894a2a9b149c9d0301eff06,"       2 | - name: check if kubeadm init/join has already been run
+       3 |   stat:
+       4 |     path: /etc/kubernetes/admin.conf
+       5 |   register: kubeadm_run_previously
+       6 | 
+       7 | - name: kubeadm init
+       8 |   command: >
+       9 |     kubeadm init
+      10 |     --control-plane-endpoint {{ vip }}:6443
+      11 |     --pod-network-cidr {{ pod_network_cidr_v4 }},{{ pod_network_cidr_v6 }}
+      12 |     --service-cidr {{ service_cidr_v4 }},{{ service_cidr_v6 }}
+      13 |   when: inventory_hostname == ""controlplane1"" and not kubeadm_run_previously.stat.exists
+      14 |   changed_when: true
+      15 | 
+>>    16 | - name: recreate kubeadm join commands
+      17 |   when: inventory_hostname == ""controlplane1""
+      18 |   block:
+      19 |     - name: create new kubeadm token
+      20 |       command: kubeadm token create --ttl 2h
+      21 |       register: kubeadm_token
+      22 |       changed_when: true
+      23 | 
+      24 |     - name: retrieve CA certificate hash
+      25 |       shell: >
+      26 |         set -o pipefail &&
+      27 |         openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt
+      28 |         | openssl rsa -pubin -outform der 2>/dev/null
+      29 |         | openssl dgst -sha256 -hex
+      30 |         | sed 's/^.* //'",positive,actionable,yes,no,none,complexity-supported,"Visible sub-tasks include a 4-stage shell pipe (openssl x509 | openssl rsa | openssl dgst | sed) to derive a CA cert hash inline -- a genuinely intricate, fragile piece of logic embedded in YAML, independent of whatever else the block contains.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-015,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,chkpwd/iac,9b789a76960f81aa13ecdb2c29fbcb799b5e4fcf,ansible/playbooks/cloud/gatus/pre_configuration.yml,15,warning,Task 'Create wireguard config' exceeds size thresholds,0e7c40458b78e055c2c48985c3c3f2837375421f92c6b8d31799a64532e232d6,"       1 | ---
+       2 | - name: Configure SWAG instance
+       3 |   hosts: ct-01-ec2
+       4 |   become: true
+       5 |   tasks:
+       6 |     - name: Create necessary directories
+       7 |       ansible.builtin.file: # noqa risky-file-permissions
+       8 |         path: ""{{ item }}""
+       9 |         state: directory
+      10 |       loop:
+      11 |         - ""{{ configuration_path }}/swag/dns-conf""
+      12 |         - ""{{ configuration_path }}/swag/nginx/site-confs""
+      13 |         - ""{{ configuration_path }}/wireguard/wg_confs/""
+      14 |         - ""{{ configuration_path }}/gatus""
+>>    15 |     - name: Create wireguard config
+      16 |       ansible.builtin.copy:
+      17 |         content: |
+      18 |           [Interface]
+      19 |           PrivateKey = {{ lookup('cloud.terraform.tf_output', 'gatus_wg_peer_privkey', project_path='../terraform/mikrotik') }}
+      20 |           Address = 10.6.6.4/24
+      21 |           DNS = 10.6.6.1, chkpwd.com
+      22 | 
+      23 |           [Peer]
+      24 |           PublicKey = {{ lookup('cloud.terraform.tf_output', 'wireguard_interface_pubkey', project_path='../terraform/mikrotik') }}
+      25 |           PresharedKey = {{ lookup('cloud.terraform.tf_output', 'gatus_wg_peer_preshared', project_path='../terraform/mikrotik' )}}
+      26 |           AllowedIPs = 10.6.6.0/24, 10.0.10.0/24
+      27 |           Endpoint = {{ lookup('cloud.terraform.tf_output', 'public_address', project_path='../terraform/mikrotik') }}:53834
+      28 |         dest: ""{{ configuration_path }}/wireguard/wg_confs/wg0.conf""
+      29 |         owner: root",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Single ansible.builtin.copy task with a flat multi-line content block templating a WireGuard config; no branching or repetition, just a longer literal payload.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-016,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,rcbops/rpc-openstack,f8fdb2ee2a7c66b3490c55513312e4fa3ff241b4,gating/check/collect_logs.yml,93,warning,Task 'Grab container data' exceeds size thresholds,e5a3226c65162374fee0a45acea40295384411bdff532cdb862ba18d8627b87f,"      79 |     - name: List containers
+      80 |       command: ""lxc-ls -1""
+      81 |       failed_when:
+      82 |         - containers.rc != 0
+      83 |         - containers.msg != '[Errno 2] No such file or directory'
+      84 |       changed_when: false
+      85 |       register: containers
+      86 | 
+      87 |     - name: Get container PIDs
+      88 |       command: ""lxc-info --name {{ item }} --no-humanize --pid""
+      89 |       with_items:
+      90 |         - ""{{ containers.stdout_lines | default([]) }}""
+      91 |       register: container_pids
+      92 | 
+>>    93 |     - name: Grab container data
+      94 |       command: >
+      95 |                rsync
+      96 |                --archive
+      97 |                --compress
+      98 |                --verbose
+      99 |                --rsh 'ssh -o StrictHostKeyChecking=no'
+     100 |                --ignore-missing-args
+     101 |                --safe-links
+     102 |                --no-perms
+     103 |                --no-owner
+     104 |                --no-group
+     105 |                {{ inventory_hostname }}:/proc/{{ item[0].stdout }}/root/{{ item[1] }}
+     106 |                {{ artifacts_dir }}/{{ inventory_hostname }}/containers/{{ item[0].item }}
+     107 |       when:",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Single command task whose length comes from enumerating ~10 rsync flags on separate lines; one cohesive operation, not repeated or branching logic.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-017,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,cisagov/ansible-role-clamav,5bf13d0855b37b229347cbd4c355d408ae87df4f,tasks/configure.yml,2,warning,Task 'Configure service and notify restart handler' exceeds size thresholds,e42a09e9205b196f9f839a3bc900c163ae3ff6cf8fdb66b53d6d556f553c427f,"       1 | ---
+>>     2 | - name: Configure service and notify restart handler
+       3 |   notify: Restart {{ task_conf_service }} service
+       4 |   block:
+       5 |     - name: Backup {{ task_conf_file }}
+       6 |       ansible.builtin.copy:
+       7 |         dest: ""{{ task_conf_file }}.{{ ansible_date_time.iso8601 }}""
+       8 |         mode: u=rwx,g=,o=
+       9 |         remote_src: true
+      10 |         src: ""{{ task_conf_file }}""
+      11 |       tags:
+      12 |         - molecule-idempotence-notest
+      13 |       when: clamav_configuration_backup
+      14 | 
+      15 |     - name: Configure single-valued entries in {{ task_conf_file }}
+      16 |       ansible.builtin.lineinfile:",uncertain,uncertain,no,no,none,insufficient-source-context,"Block name ('Configure service and notify restart handler') and the cut-off second sub-task ('Configure single-valued entries') strongly suggest additional lineinfile entries follow that are not shown, so the block's real scope/complexity cannot be confirmed.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-018,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,jon77p/infrastructure,0d592772c61f490541ce7ab77dffa29114f5bd03,ansible/playbooks/roles/dns/tasks/main.yml,55,warning,Task 'Create drop-in file for systemd-resolved for global DNS settings' exceeds size thresholds,f5016d422fe5987364901a225612f0b503bc4811f402a761406e7a305017a290,"      41 |       Domain: ""~.""
+      42 |       DNSSEC: ""no""
+      43 | 
+      44 | # Create /etc/systemd/resolved.conf.d if it doesn't exist
+      45 | - name: Create /etc/systemd/resolved.conf.d
+      46 |   become: true
+      47 |   ansible.builtin.file:
+      48 |     path: /etc/systemd/resolved.conf.d
+      49 |     state: directory
+      50 |     owner: root
+      51 |     group: root
+      52 |     mode: ""0755""
+      53 | 
+      54 | # Create drop-in file for systemd-resolved to set global DNS settings
+>>    55 | - name: Create drop-in file for systemd-resolved for global DNS settings
+      56 |   become: true
+      57 |   ansible.builtin.copy:
+      58 |     dest: /etc/systemd/resolved.conf.d/10-{{ primary_interface }}.conf
+      59 |     content: |
+      60 |       [Resolve]
+      61 |       DNS={{ dns_settings.DNS | join(' ') }}
+      62 |       FallbackDNS={{ dns_settings.FallbackDNS | join(' ') }}
+      63 |       Domains={{ dns_settings.Domain }}
+      64 |       DNSSEC={{ dns_settings.DNSSEC }}
+      65 |       DNSStubListener={{ dns_settings.DNSStubListener }}
+      66 |     owner: root
+      67 |     group: root
+      68 |     mode: ""0644""
+      69 | ",negative,not-applicable,yes,no,none,cohesive-or-manageable,Full task visible: one ansible.builtin.copy with a short templated content block for a systemd-resolved drop-in; flat and self-contained.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-019,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,trilioData/triliovault-cfg-scripts,30ca8d696541328662432c9e271c95bd3606771c,ansible/roles/ansible-datamover-api/tasks/create_endpoint.yml,2,warning,Task 'Unknown' exceeds size thresholds,2d7dfee34639da79c28341fd77bb47f51f8273a272535a1ff95237aa421df9ec,"       1 | ---
+>>     2 | - import_tasks: service_setup.yml
+       3 |   run_once: True
+       4 |   vars:
+       5 |     _service_adminuri_insecure: ""{{ keystone_service_adminuri_insecure }}""
+       6 |     _service_setup_host: ""{{ dmapi_service_setup_host }}""
+       7 |     _service_setup_host_python_interpreter: ""{{ dmapi_service_setup_host_python_interpreter }}""
+       8 |     _service_project_name: ""{{dmapi_service_project_name}}""
+       9 |     _service_region: ""{{ dmapi_service_region }}""
+      10 |     _service_users:
+      11 |       - name: ""{{ dmapi_service_user_name }}""
+      12 |         password: ""{{ dmapi_service_password }}""
+      13 |         role: ""{{ dmapi_service_role_name }}""
+      14 |     _service_endpoints:
+      15 |       - service: ""{{ dmapi_service_name }}""
+      16 |         interface: ""public""",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Task is an import_tasks call with a vars block assembling user/endpoint config (similar parameter-passing pattern to row 1); flat mapping, not branching logic, even though more list entries may follow.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-020,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,ansible/ansible-ai-connect-operator,6650e94d45aea6aa3afbc388f306577ead8a5170,roles/chatbot/tasks/deploy_chatbot_api.yml,14,warning,Task 'Check for Chatbot Pod' exceeds size thresholds,38c0b2569bf4b1008c82d0279e678b3055be93f0f27a89f4d883cd15bd0b9d59,"       1 | ---
+       2 | - name: Apply Chatbot deployment resources
+       3 |   kubernetes.core.k8s:
+       4 |     apply: yes
+       5 |     definition: ""{{ lookup('template', item + '.yaml.j2') }}""
+       6 |     wait: no
+       7 |   loop:
+       8 |     - chatbot.service
+       9 |     - chatbot.configmap_lightspeed_stack_config
+      10 |     - chatbot.configmap_llama_stack_config
+      11 |     - chatbot.configmap_system_prompt
+      12 |     - chatbot.deployment
+      13 | 
+>>    14 | - name: Check for Chatbot Pod
+      15 |   kubernetes.core.k8s_info:
+      16 |     kind: Pod
+      17 |     api_version: v1
+      18 |     namespace: ""{{ ansible_operator_meta.namespace }}""
+      19 |     label_selectors:
+      20 |       - ""app.kubernetes.io/name={{ ansible_operator_meta.name }}""
+      21 |       - ""app.kubernetes.io/managed-by={{ deployment_type }}-operator""
+      22 |       - ""app.kubernetes.io/component={{ deployment_type }}-chatbot-api""
+      23 |     field_selectors:
+      24 |       - status.phase=Running
+      25 |   register: chatbot_api_pod
+      26 |   until:
+      27 |     - ""chatbot_api_pod['resources'] | length""
+      28 |     - ""chatbot_api_pod['resources'][0]['status']['phase'] == 'Running'""",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Full task visible: a k8s_info lookup with label/field selectors and an until-retry; self-contained pod-readiness check, not excessively complex.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-021,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,vladgh/ansible-collection-vladgh-system,30ae05e5841fd001f70b3b80be8ea029f454e1f7,roles/access/tasks/main.yml,2,warning,Task 'Configure groups' exceeds size thresholds,c67ac5d1f4d9e714315bcb05984628d1cef69cc6880ee2c712267401bd344ceb,"       1 | ---
+>>     2 | - name: Configure groups
+       3 |   when: access_groups is defined and access_groups | length > 0
+       4 |   block:
+       5 |     - name: Create groups
+       6 |       ansible.builtin.group:
+       7 |         name: ""{{ item.name }}""
+       8 |         gid: ""{{ item.gid | default(omit) }}""
+       9 |         system: ""{{ item.system | default(omit) }}""
+      10 |         state: ""{{ item.state | default(omit) }}""
+      11 |       loop: ""{{ access_groups }}""
+      12 | 
+      13 |     - name: Add Groups to Sudoers
+      14 |       ansible.builtin.lineinfile:
+      15 |         path: ""/etc/sudoers.d/10_{{ item.name }}""
+      16 |         line: ""%{{ item.name }} ALL=(ALL) NOPASSWD: ALL""",uncertain,uncertain,no,no,none,insufficient-source-context,Only 'Create groups' (loop) and the start of 'Add Groups to Sudoers' are visible under a block named generically 'Configure groups'; cannot rule out further sub-tasks (e.g. user assignment) that would materially affect the size/complexity judgment.,low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-TASK-022,ansibleguard/large-task,large-task,Maintainability/complexity,B-major,3470,68.33,maksimkurb/home-ops,800c51d7a5fb5caa7301e0c221cd04b3bb5daddd,provision/ansible/playbooks/3x-ui-install.yaml,34,warning,Task '3x-ui / Create Container' exceeds size thresholds,7e91b2cc8f5e2a96ec7f5d8c933ed43791625e42e9ede21281b1c677b9f9ebbe,"      20 |         value: ""1""
+      21 |         state: present
+      22 |         sysctl_set: true
+      23 |         reload: true
+      24 |       loop:
+      25 |         - net.ipv4.ip_forward
+      26 |         - net.ipv6.conf.all.forwarding
+      27 | 
+      28 |     - name: 3x-ui / Pull Image
+      29 |       community.docker.docker_image:
+      30 |         name: ""ghcr.io/mhsanaei/3x-ui:latest""
+      31 |         source: pull
+      32 |         force_source: true
+      33 | 
+>>    34 |     - name: 3x-ui / Create Container
+      35 |       community.docker.docker_container:
+      36 |         name: ""3x-ui""
+      37 |         hostname: ""prx.{{ traefik_base_domain }}""
+      38 |         image: ""ghcr.io/mhsanaei/3x-ui:latest""
+      39 |         restart_policy: unless-stopped
+      40 |         capabilities:
+      41 |           - NET_ADMIN
+      42 |           - SYS_MODULE
+      43 |         sysctls:
+      44 |           net.ipv4.conf.all.src_valid_mark: ""1""
+      45 |         devices:
+      46 |           - /dev/net/tun
+      47 |         volumes:
+      48 |           - /opt/3x-ui/db/:/etc/x-ui/",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Single docker_container task; length comes from enumerating container parameters (capabilities, sysctls, devices, volumes) as flat lists/maps, not from branching or repeated logic.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-001,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,packit/deployment,0c6bf4b0fead603fc6872739b20a73c6858dcb83,playbooks/zuul-deploy.yml,24,warning,Jinja/conditional expression complexity is 6 (threshold 6).,34ee8d3cfeb1c0a685d2e0957b2d820a099232b585b55c6e8efd8bffc32aa777,"      10 |         name:
+      11 |           - ansible
+      12 |           - python-openshift
+      13 |           - python-pip
+      14 |           - python-passlib # for using htpasswd ansible module
+      15 |           - make
+      16 |       become: true
+      17 | 
+      18 |     # For the ""equalto"" test we need Jinja2>=2.8.x, there's 2.7.2 in centos7
+      19 |     # Needs to be installed before running the set-facts.yml playbook
+      20 |     - name: Install Jinja-2.8.1
+      21 |       ansible.builtin.pip:
+      22 |         name: Jinja2==2.8.1
+      23 |       become: true
+>>    24 |       when: (ansible_facts['distribution'] == ""CentOS"" and ansible_facts['distribution_major_version'] == ""7"")
+      25 | 
+      26 |     - name: Get token
+      27 |       ansible.builtin.command: oc whoami -t
+      28 |       register: kubeconfig_token
+      29 |       become: true
+      30 |       changed_when: false
+      31 | 
+      32 |     - name: Create packit/dev.yml
+      33 |       ansible.builtin.copy:
+      34 |         content: |
+      35 |           # See https://github.com/packit/deployment/blob/main/vars/packit/dev_template.yml
+      36 |           project: myproject
+      37 |           host: https://127.0.0.1:8443
+      38 |           api_key: {{ kubeconfig_token.stdout }}",negative,not-applicable,yes,no,none,threshold-only,Anchored condition is a single AND of two equality checks (distribution == CentOS and major_version == '7'); easy to read and reason about despite crossing the detector's numeric threshold.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-002,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,ansible-lockdown/RHEL7-STIG,a3d78cfc5c2cae8f8b344fbcd6664a35817dbad0,defaults/main.yml,555,warning,Jinja/conditional expression complexity is 15 (threshold 6).,d55bc285132e9c1ce31780fa4013ba09ba73470eea0f3e67a140f61fde5042db,"     541 |     notify_cmd: ' | /bin/mail -s ""$(hostname) - AIDE Integrity Check"" root@localhost'
+     542 | 
+     543 | rhel7stig_cron_special_disable: ""{{
+     544 |         rhel7stig_workaround_for_disa_benchmark or
+     545 |         rhel7stig_workaround_for_ssg_benchmark or
+     546 |         false }}""
+     547 | 
+     548 | rhel7stig_aide_conf:
+     549 |     file: /etc/aide.conf
+     550 | 
+     551 | # Set maximum number of simultaneous system logins (RHEL-07-040000)
+     552 | rhel7stig_maxlogins: 10
+     553 | 
+     554 | # Set the login banner settings
+>>   555 | rhel7stig_logon_banner: ""{{ rhel7stig_workaround_for_disa_benchmark | ternary(
+     556 |         rhel7stig_logon_banner_nice | regex_replace('(?s)(?<!\\n)\\n(?!(\n|$))', ' '),
+     557 |         rhel7stig_logon_banner_nice) }}""
+     558 | rhel7stig_logon_banner_nice: |
+     559 |     You are accessing a U.S. Government (USG) Information System (IS) that is
+     560 |     provided for USG-authorized use only.
+     561 | 
+     562 |     By using this IS (which includes any device attached to this IS), you consent
+     563 |     to the following conditions:
+     564 | 
+     565 |     -The USG routinely intercepts and monitors communications on this IS for
+     566 |     purposes including, but not limited to, penetration testing, COMSEC monitoring,
+     567 |     network operations and defense, personnel misconduct (PM), law enforcement
+     568 |     (LE), and counterintelligence (CI) investigations.
+     569 | ",positive,advisory,yes,no,none,complexity-supported,"rhel7stig_logon_banner combines a ternary with a regex_replace using a negative lookbehind/lookahead ((?<!\n)...(?!(\n|$))); the regex semantics alone require careful reasoning, a genuine readability burden.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-003,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,mfin/homelab,c4f80928f95da7b50a06a739968665e5547113f4,ansible/k3s/inventory/group_vars/all/k3s.yaml,6,warning,Jinja/conditional expression complexity is 8 (threshold 6).,4c202d500144c16ca0aa0c7f3bc744f18505c91c8501b913b926671a9dc4a63d,"       1 | ---
+       2 | # renovate: datasource=github-releases depName=k3s-io/k3s versioning=loose
+       3 | k3s_version: v1.35.0+k3s1
+       4 | ansible_user: mfin
+       5 | systemd_dir: /etc/systemd/system
+>>     6 | master_ip: ""{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}""
+       7 | extra_server_args: ""--flannel-backend=none --disable-network-policy --disable-kube-proxy --disable local-storage --disable traefik --disable servicelb --etcd-expose-metrics=true --kube-proxy-arg metrics-bind-address=0.0.0.0 --kube-controller-manager-arg bind-address=0.0.0.0 --kube-scheduler-arg bind-address=0.0.0.0""
+       8 | extra_agent_args: """"",positive,advisory,yes,no,none,complexity-supported,"master_ip resolves via a triple level of indirection: groups['master'][0] is used to index hostvars, whose result is itself indexed and defaulted -- nested indirection that is a real source of confusion, independent of its short textual length.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-004,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,stackhpc/stackhpc-release-train,3d2f5ac77d3aee42d3c2f206811a7eb8244c55f8,ansible/dev-pulp-container-tag-query-kayobe.yml,18,warning,Jinja/conditional expression complexity is 7 (threshold 6).,f04af985af56c9bbbe3ccc10abbd5824107ba0419c75006eb6a2b03a8c3ac175,"       4 | # the 'dev_pulp_repository_container_promotion_tags' tag map variable based
+       5 | # upon those tags, which defines the set of container image tags that
+       6 | # will be promoted when the dev-pulp-container-promote.yml playbook is run.
+       7 | 
+       8 | - name: Import kayobe-container-tag-query playbook
+       9 |   import_playbook: kayobe-container-tag-query.yml
+      10 | 
+      11 | - name: Set dev Pulp container image tags to promote from Kayobe config tags
+      12 |   hosts: localhost
+      13 |   gather_facts: true
+      14 |   tasks:
+      15 |     - name: Set a fact about container image tags to promote
+      16 |       ansible.builtin.set_fact:
+      17 |         dev_pulp_repository_container_promotion_tags: >-
+>>    18 |           {{ kayobe_kolla_image_tags |
+      19 |              dict2items |
+      20 |              selectattr('key', 'in', kolla_container_images_filtered) |
+      21 |              items2dict }}
+      22 | 
+      23 |     - name: Display container promotion tags facts
+      24 |       ansible.builtin.debug:
+      25 |         var: dev_pulp_repository_container_promotion_tags
+      26 | 
+      27 |     - name: Assert that tags variable is populated
+      28 |       ansible.builtin.assert:
+      29 |         that:
+      30 |           - dev_pulp_repository_container_promotion_tags | length > 0
+      31 |         msg: >-
+      32 |           Distribution promotion tag variable",positive,advisory,yes,no,none,complexity-supported,Expression chains three filters (dict2items | selectattr | items2dict) to rebuild a filtered dict -- a genuine small functional pipeline that takes real effort to trace.,medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-005,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,ansible-collections/ibm_zos_core,f0cc9ddc4402424c1f91d920ca9455d4133c9d21,roles/gather_diagnostics/defaults/main.yml,34,warning,Jinja/conditional expression complexity is 14 (threshold 6).,3a91c8a96e41653a650cbebc7bde2c5a72d63b80e697ce3c09b024f8630dd2fb,"      20 | 
+      21 | # Save managed node diagnostics to file (vs console only)
+      22 | gather_diagnostics_save_managed_node_log: true
+      23 | 
+      24 | # Run operator commands for system activity and OMVS info (requires operator authority)
+      25 | gather_diagnostics_gather_syslog: true
+      26 | 
+      27 | # Gather SSH configuration files from managed node (~/.ssh/rc, /etc/ssh/sshrc, /etc/ssh/ssh_config, /etc/ssh/sshd_config)
+      28 | gather_diagnostics_gather_ssh_config: false
+      29 | 
+      30 | # Directory to write diagnostic reports
+      31 | # In AAP: Uses artifacts directory (accessible via UI)
+      32 | # Standalone: Uses control node's home directory
+      33 | gather_diagnostics_output_dir: >-
+>>    34 |   {{
+      35 |     (playbook_dir + '/artifacts')
+      36 |     if (lookup('env', 'TOWER_JOB_ID') | default('') != '' or
+      37 |         lookup('env', 'CONTROLLER_JOB_ID') | default('') != '')
+      38 |     else lookup('env', 'HOME')
+      39 |   }}
+      40 | 
+      41 | # Environment variables for z/OS tasks (empty by default so that the test case and local host can take their own defined vars)
+      42 | gather_diagnostics_environment_vars: {}",positive,advisory,yes,no,none,complexity-supported,"Ternary condition ORs two separate lookup('env', ...) | default('') != '' checks before selecting a path; the duplicated lookup/default/compare pattern and ternary nesting is a real (if modest) readability cost.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-006,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,vndmtrx/k8s-in-a-box,1031c616283a0badf1f94e3716cd8c7d91e0f972,ansible/infra-pki/tasks/101-root-ca.yml,25,warning,Jinja/conditional expression complexity is 22 (threshold 6).,a89cad6fd9885eb2defab0adde7378c2c57e26fa3e91b8f5d80f377abdc83565,"      11 |     label: ""{{ arquivo | relpath(playbook_dir) }}""
+      12 |   register: ca_root_arquivos
+      13 |   delegate_to: localhost
+      14 | 
+      15 | - name: Verificar informações do Root CA existente
+      16 |   community.crypto.x509_certificate_info:
+      17 |     path: ""{{ pki_root_ca.path_cert }}""
+      18 |   register: root_ca_info
+      19 |   when: ca_root_arquivos.results[1].stat.exists
+      20 |   delegate_to: localhost
+      21 | 
+      22 | - name: Decidir se Root CA deve ser gerado
+      23 |   ansible.builtin.set_fact:
+      24 |     pki_deve_gerar_root_ca: >-
+>>    25 |       {{
+      26 |         not ca_root_arquivos.results[0].stat.exists
+      27 |         or not ca_root_arquivos.results[1].stat.exists
+      28 |         or (root_ca_info.expired | default(false))
+      29 |         or (root_ca_info.not_after is defined and
+      30 |             ((root_ca_info.not_after | to_datetime('%Y%m%d%H%M%SZ')) - now()).days
+      31 |             < pki_validade.alerta | int)
+      32 |       }}
+      33 |   delegate_to: localhost
+      34 | 
+      35 | - name: Criar chave privada do Root CA
+      36 |   community.crypto.openssl_privatekey:
+      37 |     path: ""{{ pki_root_ca.path_chave }}""
+      38 |     type: ""{{ pki_cifra_tipo }}""
+      39 |     curve: ""{{ pki_cifra_algo }}""",positive,actionable,yes,no,none,complexity-supported,"pki_deve_gerar_root_ca ORs four conditions, one of which does certificate-expiry date arithmetic (to_datetime subtraction, .days, comparison against a configured threshold) -- genuinely intricate decision logic, not an artifact of the line-count threshold.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-007,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,ansible-collections/azure,45e49bd7cc781b6324b2c726ea5cde3cbe1d0f93,roles/azure_arc/tasks/linux_install.yml,78,warning,Jinja/conditional expression complexity is 17 (threshold 6).,ad317af46ab2e64b36e1ecb99c2ff5bb2f14cef43c34d27ce3d8cfe318e14ddc,"      64 |   when:
+      65 |     - not azure_arc_azcmagent_installed
+      66 |     - azure_arc_altdownload is defined
+      67 |   ansible.builtin.set_fact:
+      68 |     azure_arc_azcmagent_install_script_argv: ""{{ azure_arc_azcmagent_install_script_argv + ['--altdownload', azure_arc_altdownload] }}""
+      69 | 
+      70 | - name: Run azcmagent install script
+      71 |   when: not azure_arc_azcmagent_installed
+      72 |   become: true
+      73 |   ansible.builtin.command:
+      74 |     argv: ""{{ azure_arc_azcmagent_install_script_argv }}""
+      75 |   # The install script's log_failure reads these as environment variables, so
+      76 |   # its failure telemetry is correlated with the rest of this run.
+      77 |   environment: >-
+>>    78 |     {{
+      79 |       (azure_arc_proxy_environment | default({})) | combine({
+      80 |         'correlationId': azure_arc_correlation_id,
+      81 |         'subscriptionId': azure_arc_subscription_id | default(''),
+      82 |         'resourceGroup': azure_arc_resource_group | default(''),
+      83 |         'tenantId': azure_arc_tenant_id | default(''),
+      84 |         'location': azure_arc_location | default(''),
+      85 |         'cloud': azure_arc_cloud | default('')
+      86 |       })
+      87 |     }}
+      88 |   register: azure_arc_azcmagent_install_cmd
+      89 |   changed_when: false
+      90 |   failed_when: azure_arc_azcmagent_install_cmd.rc != 0
+      91 | 
+      92 | - name: Log successful agent installation",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Expression is a combine() merging a default-filtered dict with a literal dict of ~6 keys, each independently defaulted; it is a flat enumeration of environment keys, not nested branching logic.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-008,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,ansible-lockdown/RHEL8-CIS,97a6a9aa80506900009129aa389759d6884d5ec5,tasks/LE_audit_setup.yml,11,warning,Jinja/conditional expression complexity is 6 (threshold 6).,97539bbf7574e7131f357d777b8e153f7074126499ad2d5e6a4ebaf8728a7639,"       1 | ---
+       2 | 
+       3 | - name: Pre Audit Setup | Set audit package name
+       4 |   block:
+       5 |     - name: Pre Audit Setup | Set audit package name | 64bit
+       6 |       when: ansible_facts['machine'] == ""x86_64""
+       7 |       ansible.builtin.set_fact:
+       8 |         audit_pkg_arch_name: AMD64
+       9 | 
+      10 |     - name: Pre Audit Setup | Set audit package name | ARM64
+>>    11 |       when: (ansible_facts['machine'] == ""arm64"" or ansible_facts['machine'] == ""aarch64"")
+      12 |       ansible.builtin.set_fact:
+      13 |         audit_pkg_arch_name: ARM64
+      14 | 
+      15 | - name: Pre Audit Setup | Download audit binary
+      16 |   when: get_audit_binary_method == 'download'
+      17 |   ansible.builtin.get_url:
+      18 |     url: ""{{ audit_bin_url }}{{ audit_pkg_arch_name }}""
+      19 |     dest: ""{{ audit_bin }}""
+      20 |     owner: root
+      21 |     group: root
+      22 |     checksum: ""{{ audit_bin_version[audit_pkg_arch_name + '_checksum'] }}""
+      23 |     mode: 'u+x,go-w'
+      24 |     validate_certs: ""{{ audit_bin_validate_certs }}""
+      25 |     url_username: ""{{ audit_bin_url_username | default(omit) }}""",negative,not-applicable,yes,no,none,threshold-only,Condition is a simple OR of two equality checks on ansible_facts['machine']; straightforward to read despite the numeric score.,high,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-009,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,tasks/LE_audit_setup.yml,11,warning,Jinja/conditional expression complexity is 6 (threshold 6).,97539bbf7574e7131f357d777b8e153f7074126499ad2d5e6a4ebaf8728a7639,"       1 | ---
+       2 | 
+       3 | - name: Pre Audit Setup | Set audit package name
+       4 |   block:
+       5 |     - name: Pre Audit Setup | Set audit package name | 64bit
+       6 |       when: ansible_facts['machine'] == ""x86_64""
+       7 |       ansible.builtin.set_fact:
+       8 |         audit_pkg_arch_name: AMD64
+       9 | 
+      10 |     - name: Pre Audit Setup | Set audit package name | ARM64
+>>    11 |       when: (ansible_facts['machine'] == ""arm64"" or ansible_facts['machine'] == ""aarch64"")
+      12 |       ansible.builtin.set_fact:
+      13 |         audit_pkg_arch_name: ARM64
+      14 | 
+      15 | - name: Pre Audit Setup | Download audit binary
+      16 |   when: get_audit_binary_method == 'download'
+      17 |   ansible.builtin.get_url:
+      18 |     url: ""{{ audit_bin_url }}{{ audit_pkg_arch_name }}""
+      19 |     dest: ""{{ audit_bin }}""
+      20 |     owner: root
+      21 |     group: root
+      22 |     checksum: ""{{ audit_bin_version[audit_pkg_arch_name + '_checksum'] }}""
+      23 |     mode: 'u+x,go-w'
+      24 |     validate_certs: ""{{ audit_bin_validate_certs }}""
+      25 |     url_username: ""{{ audit_bin_url_username | default(omit) }}""",negative,not-applicable,yes,no,none,threshold-only,"Same occurrence/content as the other LE_audit_setup.yml row: a simple two-term OR of equality checks on ansible_facts['machine'], easy to read.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-010,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,halkeye/halkeye-ansible,f7b35cd20757522c17298cb2af67c8858ea30f6c,roles/halkeye.software/tasks/main.yml,223,warning,Jinja/conditional expression complexity is 9 (threshold 6).,ad692c3f64c982106e74d70f6d0709956a27314318a88909cf62ff722b5a713b,"     209 |     # use deb
+     210 |     - org.mozilla.firefox
+     211 |     # meh, i've been using discover mostly
+     212 |     - io.github.kolunmi.Bazaar
+     213 |     # got the system install
+     214 |     - io.kinvolk.Headlamp
+     215 |     # apparently no longer updated
+     216 |     - org.raspberrypi.rpi-imager
+     217 |     # Using native chrome these days
+     218 |     - com.google.Chrome
+     219 |     # not free and i don't need it enough, db beaver works well enough for the few non cli dbs
+     220 |     - com.jetbrains.DataGrip
+     221 | 
+     222 | - name: Install home flatpak packages
+>>   223 |   when: (install_flatpak_desktop|default(false)) == true and (install_flatpak_home|default(false)) == true
+     224 |   community.general.flatpak:
+     225 |     method: user
+     226 |     name: ""{{ item }}""
+     227 |   with_items:
+     228 |     - app.grayjay.Grayjay
+     229 |     - com.calibre_ebook.calibre
+     230 |     - com.discordapp.Discord
+     231 |     - com.heroicgameslauncher.hgl
+     232 |     - com.orcaslicer.OrcaSlicer
+     233 |     - com.yacreader.YACReader
+     234 |     - io.github.dweymouth.supersonic
+     235 |     - org.gimp.GIMP
+     236 |     - org.gnome.Boxes
+     237 |     - org.gnome.SimpleScan",negative,not-applicable,yes,no,none,threshold-only,"Condition is an AND of two default-filtered boolean comparisons; a standard double feature-flag guard, not genuinely hard to follow.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-011,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,TylerHendrickson/home-ops,d6e1beb5d968761d85c24d7b9c1036c418ed6a1c,ansible/playbooks/cluster-installation.yaml,37,warning,Jinja/conditional expression complexity is 6 (threshold 6).,50eb7b1a289d3cee805bdda8904335c51a940f9d5d952d8d4b15d843eb01de66,"      23 | 
+      24 |     - name: Install Kubernetes
+      25 |       ansible.builtin.include_role:
+      26 |         name: xanmanning.k3s
+      27 |         public: true
+      28 |       vars:
+      29 |         k3s_state: installed
+      30 | 
+      31 |     - name: Kubeconfig
+      32 |       ansible.builtin.include_tasks: tasks/kubeconfig.yaml
+      33 | 
+      34 |     - name: Wait for custom manifests to rollout
+      35 |       when:
+      36 |         - k3s_primary_control_node
+>>    37 |         - (k3s_server_manifests_templates | length > 0
+      38 |             or k3s_server_manifests_urls | length > 0)
+      39 |       kubernetes.core.k8s_info:
+      40 |         kubeconfig: /etc/rancher/k3s/k3s.yaml
+      41 |         kind: ""{{ item.kind }}""
+      42 |         name: ""{{ item.name }}""
+      43 |         namespace: ""{{ item.namespace | default('') }}""
+      44 |         wait: true
+      45 |         wait_sleep: 10
+      46 |         wait_timeout: 360
+      47 |       loop:
+      48 |         - { name: cilium, kind: HelmChart, namespace: kube-system }
+      49 |         - { name: coredns, kind: HelmChart, namespace: kube-system }
+      50 |         - { name: policy, kind: CiliumL2AnnouncementPolicy }
+      51 |         - { name: pool, kind: CiliumLoadBalancerIPPool }",negative,not-applicable,yes,no,none,cohesive-or-manageable,"Anchored when-list item ORs two length>0 checks on alternative manifest sources, combined via implicit AND with a sibling condition; a normal two-source existence guard.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-012,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,Checkmk/ansible-collection-checkmk.general,50be8bde935f94e4702f40c9a549f86ffe773db1,roles/agent/tasks/Debian.yml,33,warning,Jinja/conditional expression complexity is 10 (threshold 6).,42c740e7aadf65cbb747b87fc5546c7258344cf2a875094485d9f9fbb1b80b6a,"      19 |     state: present
+      20 |   when: |
+      21 |     checkmk_agent_edition | lower != ""community""
+      22 |     and checkmk_agent_folder_specific | bool
+      23 |   tags:
+      24 |     - install-package
+      25 | 
+      26 | - name: ""{{ ansible_facts['os_family'] }} Derivatives: Install Vanilla Agent.""
+      27 |   become: true
+      28 |   ansible.builtin.package:
+      29 |     deb: ""{{ __checkmk_agent_agent.file.community }}""
+      30 |     force: ""{{ checkmk_agent_force_install | bool }}""
+      31 |     state: present
+      32 |   when: |
+>>    33 |     checkmk_agent_edition | lower == ""community""
+      34 |     or not (checkmk_agent_host_specific | bool or checkmk_agent_folder_specific | bool)
+      35 |   tags:
+      36 |     - install-package
+      37 | 
+      38 | - name: ""{{ ansible_facts['os_family'] }} Derivatives: Allow access to the Checkmk agent on port {{ checkmk_agent_port }}/tcp.""
+      39 |   when: checkmk_agent_configure_firewall | bool and ""ufw.service"" in ansible_facts['services']
+      40 |   community.general.ufw:
+      41 |     rule: allow
+      42 |     proto: tcp
+      43 |     port: ""{{ checkmk_agent_port }}""
+      44 |     comment: ""Allow Checkmk Agent access from anywhere.""
+      45 |   become: true
+      46 |   tags:
+      47 |     - configure-firewall",positive,advisory,yes,no,none,complexity-supported,Condition combines an equality check with a negated OR of two booleans (not (A or B)); De Morgan-style negation over a disjunction is a known source of misreading and is non-trivial to verify at a glance.,medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-013,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,hyphacoop/cosmos-ansible,8a3a2afdc232bf3cf08e9b19cdb3055e008b0c29,roles/configure-prometheus/tasks/cleanup.yml,1,warning,Jinja/conditional expression complexity is 9 (threshold 6).,61e6521da2a00582570e31583667c9979433eaadb6c70fbb06347d1fbb16ba78,">>     1 | # CLEANUP STALE TARGETS
+       2 | - name: List existing Chain Node targets
+       3 |   find:
+       4 |     paths: /opt/prometheus/hosts
+       5 |     patterns: ""*.json""
+       6 |   register: existing_chain_targets
+       7 |   run_once: true
+       8 |   tags:
+       9 |     - prometheus
+      10 |     - monitoring
+      11 | 
+      12 | - name: Remove stale Chain Node targets
+      13 |   file:
+      14 |     path: ""{{ item.path }}""
+      15 |     state: absent",unreviewable,not-applicable,no,no,none,other,"The anchor (line 1) is a plain '# CLEANUP STALE TARGETS' comment with no Jinja or conditional expression on or near it in the supplied window; the condition the detector scored (complexity 9) cannot be located in the frozen context, so the anchor cannot be resolved to reviewable evidence.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-014,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,konstruktoid/ansible-role-docker-rootless,45f43781b7245948eb760a11b5e6648f3106e5ab,tasks/pre.yml,41,warning,Jinja/conditional expression complexity is 12 (threshold 6).,8d1f55a392b87e3655f87f832a51114cbe953142afc12118bac5ecc00acb3db5,"      27 |           - python3-pip
+      28 |           - python3-six
+      29 |           - slirp4netns
+      30 |           - uidmap
+      31 |         state: present
+      32 |         install_recommends: false
+      33 |         update_cache: true
+      34 | 
+      35 |     - name: Install fuse-overlayfs
+      36 |       ansible.builtin.apt:
+      37 |         name: fuse-overlayfs
+      38 |         state: present
+      39 |         install_recommends: false
+      40 |       when: >
+>>    41 |         ansible_facts.distribution == ""Debian"" and
+      42 |         (ansible_facts.kernel is version(""4.18"", "">="") and
+      43 |         ansible_facts.kernel is version(""5.11"", ""<=""))
+      44 | 
+      45 | - name: RedHat family dependencies
+      46 |   become: true
+      47 |   tags:
+      48 |     - privileged
+      49 |   when:
+      50 |     - ansible_facts.os_family == ""RedHat""
+      51 |     - install_dependencies
+      52 |   block:
+      53 |     - name: Install RedHat family packages
+      54 |       ansible.builtin.dnf:
+      55 |         name:",positive,advisory,yes,no,none,complexity-supported,"when-condition ANDs a distribution check with two 'is version()' comparisons bounding a kernel version range inside nested parentheses; more moving parts than a simple flag check, genuinely takes more effort to verify correctness of the range logic.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-015,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,anokfireball/homelab-as-code,d8fe576217e433a746fff052b772c949ee6f1e50,ansible/cluster/roles/k8s_cluster/tasks/main.yaml,45,warning,Jinja/conditional expression complexity is 15 (threshold 6).,5c3f3f60c127070bbb52f0a012e86844ce4c46fe0928e4ceb411b71174a70d28,"      31 |       when: ip_addr_show_result.stdout_lines | length > 0
+      32 |       changed_when: true
+      33 | 
+      34 | - name: determine node execution strategy
+      35 |   block:
+      36 |     - name: check installed version of kubelet
+      37 |       package_facts:
+      38 |         manager: apt
+      39 |     - name: check if kubelet has valid configuration
+      40 |       stat:
+      41 |         path: /etc/kubernetes/kubelet.conf
+      42 |       register: kubelet_conf_stat
+      43 |     - set_fact:
+      44 |         containerd_upgrade: |
+>>    45 |           {{
+      46 |             upgrade_cluster
+      47 |             and ansible_facts.packages['containerd.io'] is defined
+      48 |             and (ansible_facts.packages['containerd.io'][0].version | regex_replace(""^(\d+\.\d+\.\d+).*$"", ""\1"") is version(containerd_version, '<'))
+      49 |           }}
+      50 |         k8s_downgrade: |
+      51 |           {{
+      52 |             ansible_facts.packages['kubelet'] is defined
+      53 |             and (ansible_facts.packages['kubelet'][0].version | regex_replace(""^(\d+\.\d+\.\d+).*$"", ""\1"") is version(k8s_version, '>'))
+      54 |           }}
+      55 |         k8s_upgrade: |
+      56 |           {{
+      57 |             upgrade_cluster
+      58 |             and ansible_facts.packages['kubelet'] is defined
+      59 |             and (ansible_facts.packages['kubelet'][0].version | regex_replace(""^(\d+\.\d+\.\d+).*$"", ""\1"") is version(k8s_version, '<'))",positive,actionable,yes,no,none,complexity-supported,"containerd_upgrade combines a boolean flag, a 'defined' guard, and a regex_replace-then-'is version()' comparison on a package fact -- multiple chained operations whose correctness is hard to verify by inspection, and the pattern repeats across sibling facts in the same block.",high,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-016,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,playbooks/acs.yml,54,warning,Jinja/conditional expression complexity is 11 (threshold 6).,e9c33fa6aa1cfcf2b7bc3de0ee4ad14460d8e07ff4ffd29d0a4260c5a93fe05e,"      40 | 
+      41 | - name: Populate common facts
+      42 |   hosts: repository:identity:acc:adw
+      43 |   gather_facts: false
+      44 |   roles:
+      45 |     - role: ""../roles/common""
+      46 |   tasks:
+      47 |     - name: Set alfresco_url from first entry of known_urls
+      48 |       vars:
+      49 |         first_known_url: ""{{ acs_play_known_urls | first | default('http://' ~ nginx_host) }}""
+      50 |       ansible.builtin.set_fact:
+      51 |         alfresco_url: ""{{ first_known_url | urlsplit('scheme') }}://{{ first_known_url | urlsplit('hostname') }}""
+      52 |     - name: Populate identity_enabled
+      53 |       ansible.builtin.set_fact:
+>>    54 |         identity_enabled: ""{{ ((groups.identity | default([])) + (groups.external_identity | default([]))) | length > 0 }}""
+      55 |     - name: Populate identity_url when available
+      56 |       when: identity_enabled
+      57 |       ansible.builtin.set_fact:
+      58 |         identity_url: ""{{ alfresco_url }}/auth""
+      59 |         code_flow_pkce_supported: ""{{ acs_play_adw_version is version('4.5.0', 'ge') }}""
+      60 | 
+      61 | - name: Database Role
+      62 |   hosts: database[0]
+      63 |   gather_facts: false
+      64 |   vars:
+      65 |     pg_role: ""../roles/postgres""
+      66 |     create_repo_db: >-
+      67 |       {{ (acs_play_repo_db_url == """") | ansible.builtin.bool }}
+      68 |     create_sync_db: >-",negative,not-applicable,yes,no,none,cohesive-or-manageable,"identity_enabled checks whether the union of two default-filtered group lists is non-empty; a compact, idiomatic existence check rather than genuinely tangled logic.",medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-COMPLEX-EXPRESSION-017,ansibleguard/complex-expression,complex-expression,Maintainability/complexity,C-moderate,1691,85.66,ansible-lockdown/RHEL8-STIG,baa075468dfa59050141c99d99dcacd2e977248c,defaults/main.yml,612,warning,Jinja/conditional expression complexity is 15 (threshold 6).,8506bc7fd76df8d3e04c13c37ba2f7b574ba5a06d74a249f4a23c6d7ffb0d1b4,"     598 | # If aide already setup this forces a new DB to be created despite age
+     599 | rhel8stig_aide_db_recreate: false
+     600 | 
+     601 | # New db file
+     602 | rhel8stig_aide_db_new_file: /var/lib/aide/aide.db.new.gz
+     603 | # Active db file
+     604 | rhel8stig_aide_db_file: /var/lib/aide/aide.db.gz
+     605 | 
+     606 | rhel8stig_workaround_for_disa_benchmark: true
+     607 | 
+     608 | rhel8stig_cron_special_disable: ""{{ rhel8stig_workaround_for_disa_benchmark or rhel8stig_workaround_for_ssg_benchmark or false }}""
+     609 | 
+     610 | # Set maximum number of simultaneous system logins (RHEL-08-040000)
+     611 | rhel8stig_maxlogins: 10
+>>   612 | rhel8stig_logon_banner: ""{{ rhel8stig_workaround_for_disa_benchmark | ternary( rhel8stig_logon_banner_nice | regex_replace('(?s)(?<!\\n)\\n(?!(\n|$))', ' '), rhel8stig_logon_banner_nice)
+     613 |   }}""
+     614 | rhel8stig_logon_banner_nice: |
+     615 |   You are accessing a U.S. Government (USG) Information System (IS) that is
+     616 |   provided for USG-authorized use only.
+     617 | 
+     618 |   By using this IS (which includes any device attached to this IS), you consent
+     619 |   to the following conditions:
+     620 | 
+     621 |   -The USG routinely intercepts and monitors communications on this IS for
+     622 |   purposes including, but not limited to, penetration testing, COMSEC monitoring,
+     623 |   network operations and defense, personnel misconduct (PM), law enforcement
+     624 |   (LE), and counterintelligence (CI) investigations.
+     625 | 
+     626 |   -At any time, the USG may inspect and seize data stored on this IS.",positive,advisory,yes,no,none,complexity-supported,rhel8stig_logon_banner uses the same ternary + regex_replace-with-lookbehind/lookahead pattern as row 23 (CE-002); the regex semantics require real effort to parse correctly.,medium,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-PLAYBOOK-001,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,StackStorm/ansible-st2,b321d87078a28e218bc66e072b5b27c3b545c26a,roles/StackStorm.rabbitmq/tasks/rabbitmq_debian.yml,1,warning,Playbook exceeds size thresholds (count=1),b25d8402dc4b9cea855bb84ad96b9adb2d91f12e2bcdd2cd03f9ec13ed682744,">>     1 | ---
+       2 | - name: apt | Add rabbitmq key
+       3 |   become: yes
+       4 |   apt_key:
+       5 |     keyserver: ""hkp://keyserver.ubuntu.com:80""
+       6 |     id: ""0A9AF2115F4687BD29803A206B73A36E6026DFCA""
+       7 |     state: present
+       8 |   register: _task
+       9 |   retries: 5
+      10 |   delay: 3
+      11 |   until: _task is succeeded
+      12 |   tags: rabbitmq
+      13 | 
+      14 | - name: Ensure pre-requisites are installed
+      15 |   become: yes",uncertain,uncertain,no,no,none,insufficient-source-context,"Rule measures whole-playbook/file size; anchor is line 1 and the window shows only the opening ~15 lines of the file, which is not sufficient to confirm the file's true total size or whether its content is genuinely unwieldy.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-PLAYBOOK-002,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,trilioData/triliovault-cfg-scripts,30ca8d696541328662432c9e271c95bd3606771c,ansible/roles/ansible-datamover-api/tasks/service_setup.yml,1,warning,Playbook exceeds size thresholds (count=1),991dff1781c00908897889efeac3acae52470593a842658da5a2ec2f7b30f109,">>     1 | ---
+       2 | - name: Setup the OS service
+       3 |   delegate_to: ""{{ _service_setup_host }}""
+       4 |   vars:
+       5 |     ansible_python_interpreter: ""{{ _service_setup_host_python_interpreter }}""
+       6 |   block:
+       7 |     - name: Add keystone domain
+       8 |       os_keystone_domain:
+       9 |         cloud: default
+      10 |         state: present
+      11 |         name: ""{{ _domain_name }}""
+      12 |         endpoint_type: admin
+      13 |         verify: ""{{ not _service_adminuri_insecure }}""
+      14 |       register: add_domain
+      15 |       when: _domain_name is defined",uncertain,uncertain,no,no,none,insufficient-source-context,"Same whole-file size claim as the other large-playbook rows; only the first task of the file (a delegated OS-service setup block) is visible, not the full file needed to judge total size/complexity.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-PLAYBOOK-003,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,NLNOG/ring-ansible,b8a7aede6730b3fa3fc3065e187ace979ceedd01,playbook.yml,1,warning,Playbook exceeds size thresholds (count=1),2f0d7b5af30fc6ca3f8a80bf837c2a676c7ba3b367530817ebcfb714727cd56b,">>     1 | - hosts: ringnode
+       2 |   tasks:
+       3 |     - include_vars: ""vault/ringnode.yml""
+       4 |   tags:
+       5 |     - always
+       6 | 
+       7 | - hosts: infranode
+       8 |   tasks:
+       9 |     - include_vars: ""{{ item }}""
+      10 |       with_first_found:
+      11 |         - ""vault/{{ inventory_hostname}}.yml""
+      12 |         - ""vault/infranode.yml""
+      13 |   tags:
+      14 |     - always
+      15 | ",uncertain,uncertain,no,no,none,insufficient-source-context,"Only the first two host blocks (vault var includes) are visible; cannot confirm whether this is the whole, short file or a small fragment of a much larger playbook.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-PLAYBOOK-004,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,compscidr/iac,350e7b8162778ad7beab8e2da8be53ea24a1127a,ansible/hermes.yml,1,warning,Playbook exceeds size thresholds (count=1),75d0052fb6d87c0ef2e9bdba710104e90b25f441018d80fadf24c03827c12002,">>     1 | ---
+       2 | # Hermes playbook - AI agent deployment
+       3 | #
+       4 | # Targets the `hermes` host (hermes.tail21090.ts.net via MagicDNS).
+       5 | #
+       6 | # Prerequisites (personal 1P account ernstjason1@gmail.com):
+       7 | #   1. Droplet created via Terraform (Tailscale joined via cloud-init).
+       8 | #   2. Node tagged as agent (one-time, grants ollama/exo access to
+       9 | #      ubuntu-beast per tailscale-acl.hujson):
+      10 | #        ssh root@hermes 'tailscale up --advertise-tags=tag:agent --ssh --hostname=hermes'
+      11 | #   3. Bootstrap run: ansible-playbook -i inventory.yml bootstrap.yml --limit hermes -u root
+      12 | #   4. `hermes` vault holding the `discord hermes` item:
+      13 | #            credential            = bot token
+      14 | #            allowed user ids      = Jason's *numeric* Discord user ID
+      15 | #                                    (Developer Mode -> right-click ->",uncertain,uncertain,no,no,none,insufficient-source-context,"Window shows only header comments/documentation at the top of the file; no play or task content is visible at all, so the playbook's real size/complexity cannot be assessed.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-PLAYBOOK-005,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,azimuth-cloud/ansible-collection-azimuth-ops,396972118edcecb213e69497f9f2c70e7abd0611,playbooks/deploy.yml,1,warning,Playbook exceeds size thresholds (count=1),2ecd9d842f0526e7616b441df45e24239782a0f10fff9c3a8a255cab1d1bd25a,">>     1 | ---
+       2 | #####
+       3 | # This playbook deploys the portal onto an existing Kubernetes cluster
+       4 | #####
+       5 | 
+       6 | - name: Deploy Azimuth
+       7 |   hosts: azimuth_deploy
+       8 |   roles:
+       9 |     - role: azimuth_cloud.azimuth_ops.preflight_checks
+      10 |     # Configure alerting
+      11 |     - role: azimuth_cloud.azimuth_ops.alertmanager_config
+      12 |       when: >-
+      13 |         (alertmanager_config_slack_webhook_url is defined and
+      14 |         alertmanager_config_slack_webhook_url) or
+      15 |         (alertmanager_config_slack_critical_webhook_url is defined and",uncertain,uncertain,no,no,none,insufficient-source-context,"Only the first play header and the start of its roles list are visible; the rest of the playbook (likely many more roles/tasks, matching 'exceeds size thresholds') is outside the window.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-PLAYBOOK-006,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,packit/deployment,0c6bf4b0fead603fc6872739b20a73c6858dcb83,playbooks/deploy.yml,1,warning,Playbook exceeds size thresholds (count=1),2ecd9d842f0526e7616b441df45e24239782a0f10fff9c3a8a255cab1d1bd25a,">>     1 | # Copyright Contributors to the Packit project.
+       2 | # SPDX-License-Identifier: MIT
+       3 | 
+       4 | ---
+       5 | - name: Packit Service deployment
+       6 |   hosts: all
+       7 |   # feel free to override these in vars/
+       8 |   vars:
+       9 |     validate_certs: true
+      10 |     service: ""{{ lookup('env', 'SERVICE') | default('packit', True) }}""
+      11 |     deployment: ""{{ lookup('env', 'DEPLOYMENT') }}""
+      12 |     tenant: packit # MP+ tenant
+      13 |     with_tokman: true
+      14 |     with_fedmsg: true
+      15 |     kv_database: ""redict""",uncertain,uncertain,no,no,none,insufficient-source-context,"Only the file header, play name, and the start of a vars block are visible; the bulk of the playbook that would justify or contradict the size claim is not shown.",low,claude-sonnet-5,stratified-v2-400
+V007STRAT-LARGE-PLAYBOOK-007,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,ome/prod-playbooks,1e935ebbd3344066db3a175fbe4e89c55ffc930b,playbooks/ome-demoserver.yml,1,warning,Playbook exceeds size thresholds (count=1),3887bca97ca5b8592beace1e80c6f014b01aa2ee0a3fd843c41544eadca4a891,">>     1 | # Install OMERO.server, OMERO.web and prepare the OME (UoD/SLS) prerequisites
+       2 | 
+       3 | # To allow the OMERO.web plugins to upgrade
+       4 | # also pass `--extra-vars upgrade_webapps=True`
+       5 | 
+       6 | - name: Demo server playbook
+       7 |   hosts: ome-demoservers
+       8 |   pre_tasks:
+       9 |     - name: Install open-vm-tools if system is a VMware vm
+      10 |       become: true
+      11 |       ansible.builtin.dnf:
+      12 |         name: open-vm-tools
+      13 |         state: installed
+      14 |       when: >
+      15 |            ((ansible_virtualization_type is defined)",uncertain,uncertain,no,no,none,insufficient-source-context,Only header comments and the first pre_task are visible; the full playbook content needed to judge genuine size/complexity is outside the supplied window.,low,claude-sonnet-5,stratified-v2-400

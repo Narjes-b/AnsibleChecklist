@@ -1,0 +1,4 @@
+provider,findings,eligible_findings,share_percent,eligible_repositories,missing_repositories,repositories_affected,repository_prevalence_percent,median_per_repository,q1_per_repository,q3_per_repository,findings_per_1000_selected_loc
+ansibleguard,64371,64371,68.91,127,0,127,100.0,,,,
+ansible-lint,28066,8055,30.05,65,62,41,63.08,,,,
+gitleaks,975,975,1.04,127,0,50,39.37,,,,

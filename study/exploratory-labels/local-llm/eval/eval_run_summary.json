@@ -1,0 +1,112 @@
+[
+  {
+    "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-005",
+    "rule_id": "ansibleguard/high-coupling",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 4.878,
+    "existing_label": "uncertain",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-011",
+    "rule_id": "ansibleguard/undocumented-complex-task",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 6.297,
+    "existing_label": "positive",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-012",
+    "rule_id": "ansibleguard/unused-handler",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 4.824,
+    "existing_label": "uncertain",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-016",
+    "rule_id": "ansibleguard/excessive-nesting",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 7.398,
+    "existing_label": "positive",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-OBJECTIVE_CORRECTNESS-001",
+    "rule_id": "ansibleguard/invalid-task-attribute-type",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 5.356,
+    "existing_label": "uncertain",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-OBJECTIVE_CORRECTNESS-004",
+    "rule_id": "ansibleguard/non-idempotent-command",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 7.105,
+    "existing_label": "negative",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-001",
+    "rule_id": "ansibleguard/missing-bool-filters",
+    "status": "error",
+    "warnings": [
+      "connection error: HTTP Error 500: Internal Server Error"
+    ],
+    "duration_s": 3.194,
+    "existing_label": "positive",
+    "model_confidence": null
+  },
+  {
+    "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-002",
+    "rule_id": "ansibleguard/overriding-facts",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 5.896,
+    "existing_label": "negative",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-004",
+    "rule_id": "ansibleguard/role-variable-precedence-collision",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 4.277,
+    "existing_label": "positive",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-005",
+    "rule_id": "ansibleguard/unguarded-variable",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 19.906,
+    "existing_label": "negative",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-007",
+    "rule_id": "ansibleguard/unscoped-shell-variable",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 5.432,
+    "existing_label": "negative",
+    "model_confidence": "high"
+  },
+  {
+    "issue_id": "V007PILOT-VARIABLE_REFERENCE_REASONING-014",
+    "rule_id": "ansibleguard/unguarded-variable",
+    "status": "ok",
+    "warnings": [],
+    "duration_s": 6.137,
+    "existing_label": "negative",
+    "model_confidence": "high"
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "purpose": "hash and row reconciliation of development allocation comparison; not measured accuracy",
+  "eligible_for_performance_scoring": false,
+  "final_method_accepted": false,
+  "plan_sha256": "d6c8693c16f1be0528a249e1c992aac824401da0d30e5150256b304357a17e22",
+  "source_manifest_sha256": {
+    "study/sampling-uncertainty-2026-10-23/groups-3/uncertainty-manifest.json": "e39e667d11b7438191f6cf5fd831c3316394d884a0905543d41c6870c7338848",
+    "study/sampling-bounds-2026-10-23/groups-3/bound-manifest.json": "7b32f069243b5cdd9f50ae39bf12220f470ca0df4a53c323aaf13ea751746bfb",
+    "study/sampling-uncertainty-2026-10-23/groups-5/uncertainty-manifest.json": "1432872fa6847e494ee037cc4a36f51f6f39d06ef9825130a086ae619311ba52",
+    "study/sampling-bounds-2026-10-23/groups-5/bound-manifest.json": "a0f67cb17a74d61e9bdc87d63c70b4602ba423a41cc96eff768984c3995088dc",
+    "study/sampling-allocation-2026-10-23/groups-3-within-5/uncertainty-manifest.json": "e8793b7cd7955a703fc497180780ecc449c04c025a858e3383e412c91dca8f12",
+    "study/sampling-allocation-2026-10-23/bounds-3-within-5/bound-manifest.json": "6b63352072078fb4d16b8dd318c55d6fc66b31dda958984247b8da131c05a565",
+    "study/sampling-allocation-2026-10-23/groups-5-within-5/uncertainty-manifest.json": "c5da9cd874881a2405954ca55194e489d50110a705c4fad85210ff015fdc5b96",
+    "study/sampling-allocation-2026-10-23/bounds-5-within-5/bound-manifest.json": "3e04fb88a7498cde7a604527a4eb1bbee1ab8362c3f8581f3587b4ff4e13dd2b",
+    "study/sampling-allocation-2026-10-23/groups-10-within-2/uncertainty-manifest.json": "35d3aa8cb8aa33a38d43a603b571379bd1fe45251c70bf29a17781f3fadd6fa9",
+    "study/sampling-allocation-2026-10-23/bounds-10-within-2/bound-manifest.json": "86c1911b0be7114c2ac2ae5ef6c1cf5e7cb5621413bc185413d76332afb1c84f",
+    "study/sampling-allocation-2026-10-23/groups-10-within-5/uncertainty-manifest.json": "11076f3967b1b3940657116ce35dd88c7cbc44f600db902711697a29ee2dfb72",
+    "study/sampling-allocation-2026-10-23/bounds-10-within-5/bound-manifest.json": "14f9fce9bc0c256b7425cbfc4641c59d0931894d80cfbdc2ed8f345da8d38c89"
+  },
+  "uncertainty_summary_rows": 72,
+  "estimator_draw_rows": 28800,
+  "bound_summary_rows": 36,
+  "bound_draw_rows": 14400,
+  "checks": [
+    "All original output hashes match manifests",
+    "Same frame, occurrences, seeds, scenarios and 400 draws per scenario",
+    "Design configurations match previously recorded plan",
+    "Complete unique scenario/replication/estimator keys",
+    "Synthetic truth fractions identical across configurations",
+    "Conservative benchmark linked to exact source uncertainty manifest"
+  ],
+  "output_sha256": {
+    "allocation-comparison.csv": "87ae2b8b363b893ace1f647b82985e46a9c104232996ab4a7760b346cf2d1cd0",
+    "bound-comparison.csv": "4e37a97b02f1cf9c961a1a8cf60205b2454ad5320b5e9872982036176d87b16d"
+  }
+}

@@ -1,0 +1,274 @@
+\chapter{v0.0.6 Frozen Study}
+\label{chap:results}
+
+This chapter preserves the frozen 149-repository v0.0.6 study and its
+v0.0.5 paired comparator. The newer 207-repository v0.0.7 run, semantic
+validation, and numerical benchmark are evaluated in
+Chapter~\ref{chap:v007}; counts from the two populations are not pooled.
+
+\section{Population and Execution Health}
+All 149 repositories completed in v0.0.6. The frozen manifest contains 64,876
+YAML files and 4,254,017 lines; 27,709 files and 1,178,908 lines satisfied the
+Ansible selection criteria. AnsibleGuard and GitLeaks completed on all
+repositories. ansible-lint completed on 128 and was partial on 21. The 200
+diagnostics comprise 189 ansible-lint diagnostics and 11 YAML parse
+diagnostics; they are execution evidence rather than code smells.
+
+\begin{table}[H]
+\centering
+\caption{Frozen v0.0.6 population and execution outcomes.}
+\begin{tabular}{lr}
+\toprule
+Measure & Value \\
+\midrule
+Repositories completed & 149 / 149 \\
+Manifest YAML files / LOC & 64,876 / 4,254,017 \\
+Selected Ansible files / LOC & 27,709 / 1,178,908 \\
+Mean selected LOC per file & 42.55 \\
+ansible-lint completed / partial & 128 / 21 \\
+Diagnostics & 200 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Raw Findings and Canonical Evidence}
+v0.0.6 produced 328,385 raw provider findings and 307,951 canonical
+occurrences. The difference of 20,434 (6.22\% of raw findings) reflects
+canonical evidence merging and does not mean that 20,434 findings were false.
+The canonical density is 261.22 occurrences per KLOC, 11.11 per selected file,
+and a mean of 2,066.79 per repository. These are descriptive workload measures,
+not prevalence estimates for the wider Ansible ecosystem.
+
+\begin{table}[H]
+\centering
+\caption{Provider findings and canonical leadership.}
+\begin{tabular}{lrr}
+\toprule
+Provider & Raw findings & Canonical lead occurrences \\
+\midrule
+AnsibleGuard & 212,461 & 208,508 \\
+ansible-lint & 114,866 & 98,394 \\
+GitLeaks & 1,058 & 1,049 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[ybar,width=13.5cm,height=7cm,ylabel={Findings / occurrences},
+ symbolic x coords={AnsibleGuard,ansible-lint,GitLeaks},xtick=data,
+ ymajorgrids=true,bar width=17pt,legend style={at={(0.5,-0.17)},anchor=north,
+ legend columns=2},scaled y ticks=false,
+ yticklabel style={/pgf/number format/fixed,/pgf/number format/1000 sep={,}}]
+\addplot[fill=ansblue!75] coordinates {(AnsibleGuard,212461)
+ (ansible-lint,114866) (GitLeaks,1058)};
+\addplot[fill=ansorange!75] coordinates {(AnsibleGuard,208508)
+ (ansible-lint,98394) (GitLeaks,1049)};
+\legend{Raw provider findings,Canonical lead occurrences}
+\end{axis}
+\end{tikzpicture}
+\caption{Raw contribution and canonical leadership by provider. GitLeaks is
+small on this linear scale; its exact values remain visible in the table.}
+\label{fig:provider_results}
+\end{figure}
+
+\section{Semantic Status and Severity}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[ybar,width=14cm,height=7cm,ylabel={Canonical occurrences},
+ symbolic x coords={CONFIRMED,UNCERTAIN,EXPOSED,UNRESOLVED,ORDERED},
+ xtick=data,x tick label style={rotate=25,anchor=east},nodes near coords,
+ nodes near coords style={font=\scriptsize},bar width=16pt,ymin=0]
+\addplot[fill=ansblue!70] coordinates {
+ (CONFIRMED,257850) (UNCERTAIN,43669) (EXPOSED,4626)
+ (UNRESOLVED,1684) (ORDERED,122)};
+\end{axis}
+\end{tikzpicture}
+\caption{Semantic-state distribution. Small specialised states are reported
+numerically because a pie chart would visually erase them.}
+\end{figure}
+
+\code{CONFIRMED} is the default state for a satisfied detector predicate, not
+a manual true-positive label. \code{UNCERTAIN} records positive evidence plus
+a named limitation. \code{EXPOSED} is used for credential-log analysis where
+sensitive data is used and \code{no_log} is not known true.
+\code{UNRESOLVED} denotes a variable use without a visible definition, guard,
+producer, or uncertainty source. \code{ORDERED_CONFLICT} denotes a use before a
+later modelled runtime definition.
+
+Severity totals are 184,323 warnings (59.85\%), 116,729 notes (37.91\%), and
+6,899 errors (2.24\%). Severity controls policy impact; diagnostics independently
+control reactions to parser and provider health.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[xbar,width=12.5cm,height=5.7cm,xlabel={Canonical occurrences},
+ symbolic y coords={Error,Note,Warning},ytick=data,xmajorgrids=true,
+ nodes near coords,nodes near coords style={font=\scriptsize},
+ xmin=0,xtick={0,50000,100000,150000,200000},scaled x ticks=false,
+ xticklabel style={/pgf/number format/fixed,/pgf/number format/1000 sep={,}}]
+\addplot[fill=ansblue!70] coordinates {(6899,Error) (116729,Note)
+ (184323,Warning)};
+\end{axis}
+\end{tikzpicture}
+\caption{Severity distribution. Error is intentionally retained on the same
+linear scale to show its small share rather than exaggerating it.}
+\label{fig:severity_results}
+\end{figure}
+
+\section{Category and Concept Distribution}
+\begin{table}[H]
+\centering
+\caption{Canonical occurrences by category.}
+\small
+\begin{tabular}{lrr@{\hspace{8mm}}lrr}
+\toprule
+Category & Count & \% & Category & Count & \% \\
+\midrule
+Style & 127,420 & 41.38 & Security & 10,938 & 3.55 \\
+Correctness & 56,653 & 18.40 & Documentation & 3,928 & 1.28 \\
+Lint & 35,869 & 11.65 & Reliability & 3,667 & 1.19 \\
+Compatibility & 34,104 & 11.07 & Testing & 1,771 & 0.58 \\
+Maintainability & 31,727 & 10.30 & Structure & 1,417 & 0.46 \\
+Dependencies & 457 & 0.15 & & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[xbar,width=13.5cm,height=9cm,xlabel={Canonical occurrences},
+ symbolic y coords={Dependencies,Structure,Testing,Reliability,Documentation,
+ Security,Maintainability,Compatibility,Lint,Correctness,Style},ytick=data,
+ xmajorgrids=true,bar width=7pt,scaled x ticks=false,
+ xticklabel style={/pgf/number format/fixed,/pgf/number format/1000 sep={,}}]
+\addplot[fill=ansblue!70] coordinates {(457,Dependencies) (1417,Structure)
+ (1771,Testing) (3667,Reliability) (3928,Documentation) (10938,Security)
+ (31727,Maintainability) (34104,Compatibility) (35869,Lint)
+ (56653,Correctness) (127420,Style)};
+\end{axis}
+\end{tikzpicture}
+\caption{Category composition of the canonical result set. The chart measures
+rule composition in this corpus, not category defect prevalence.}
+\label{fig:category_results}
+\end{figure}
+
+The five dominant concepts are \code{missing-tags} (83,446),
+\code{unguarded-variable} (43,035), ansible-lint issues (35,869), FQCN
+(27,913), and YAML formatting (16,124). Together they account for 67.02\% of
+canonical occurrences. This concentration means that any headline total must
+be interpreted through rule composition, not as 307,951 independent severe
+defects.
+
+\section{Controlled Comparator: v0.0.5--v0.0.6}
+v0.0.6 is the primary evaluated artifact. v0.0.5 appears only as a controlled
+comparator needed to attribute semantic-engine changes. The comparison uses
+the same 149 repositories, 27,709 selected files, and 1,178,908 selected LOC;
+it is not a second prevalence study.
+\begin{table}[H]
+\centering
+\caption{Paired frozen-population comparison.}
+\begin{tabular}{lrrr}
+\toprule
+Version & Raw & Canonical & Uncertain / non-uncertain \\
+\midrule
+v0.0.5 & 331,123 & 297,557 & 19,431 / 278,126 \\
+v0.0.6 & 328,385 & 307,951 & 43,669 / 264,282 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[ybar,width=13cm,height=7cm,ylabel={Occurrences},
+ symbolic x coords={Raw,Canonical,Uncertain,Non-uncertain},xtick=data,
+ x tick label style={rotate=15,anchor=east},bar width=14pt,ymajorgrids=true,
+ legend style={at={(0.5,-0.2)},anchor=north,legend columns=2},
+ scaled y ticks=false,
+ yticklabel style={/pgf/number format/fixed,/pgf/number format/1000 sep={,}}]
+\addplot[fill=ansgray!65] coordinates {(Raw,331123) (Canonical,297557)
+ (Uncertain,19431) (Non-uncertain,278126)};
+\addplot[fill=ansblue!75] coordinates {(Raw,328385) (Canonical,307951)
+ (Uncertain,43669) (Non-uncertain,264282)};
+\legend{v0.0.5,v0.0.6}
+\end{axis}
+\end{tikzpicture}
+\caption{Paired version behavior on identical repositories, files and LOC.
+The four bars are different measures and must not be summed.}
+\label{fig:paired_versions}
+\end{figure}
+
+Canonical occurrences rise while raw findings fall because v0.0.6 restores
+safer occurrence identities, retains repeated assignment evidence, and moves
+cases with identifiable dynamic/runtime limitations into \code{UNCERTAIN}.
+Therefore the canonical delta cannot be interpreted as a simple regression or
+precision change.
+
+\section{Unguarded-Variable Mechanism Analysis}
+Of 43,035 canonical \code{unguarded-variable} occurrences, 41,351 are
+\code{UNCERTAIN} and 1,684 are \code{UNRESOLVED}. Five repositories dominate
+the strict unresolved set:
+\begin{table}[H]
+\centering
+\caption{Largest concentrations of unresolved variable uses.}
+\begin{tabular}{lrp{7cm}}
+\toprule
+Repository group & Count & Dominant mechanism \\
+\midrule
+SAP & 630 & Dynamic operating-system/version \code{include_vars} \\
+Linuxfabrik & 323 & Shared role pre-task and role-entry variables \\
+Infrared & 165 & Composed variables and plugin inputs \\
+Forklift & 134 & Documented command-line extra variables \\
+CMS & 62 & Derived and external variables \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[xbar,width=12.5cm,height=6.5cm,xlabel={Unresolved occurrences},
+ symbolic y coords={CMS,Forklift,Infrared,Linuxfabrik,SAP},ytick=data,
+ xmajorgrids=true,nodes near coords,nodes near coords style={font=\scriptsize},
+ xmin=0]
+\addplot[fill=ansorange!75] coordinates {(62,CMS) (134,Forklift)
+ (165,Infrared) (323,Linuxfabrik) (630,SAP)};
+\end{axis}
+\end{tikzpicture}
+\caption{Concentration of strict unresolved-variable occurrences in the five
+dominant repository groups.}
+\label{fig:unresolved_concentration}
+\end{figure}
+The first four account for 74.3\% and all five for 78.0\% of unresolved
+occurrences. This is evidence of a small number of missing provenance
+mechanisms, not evidence that all 1,684 are runtime failures.
+
+\section{Manual Anomaly Samples}
+All 1,753 \code{set_fact} findings are \code{UNCERTAIN}. The RHEL8-CIS change
+from 13 to 32 reflects restored identity for repeated assignments; sampled
+flags were assignment-only. Dell samples contained template or cross-file
+consumers, supporting uncertainty rather than unconditional removal.
+
+Eleven shell findings disappeared because the source explicitly used an
+ansible-lint \code{noqa} suppression for the
+\code{command-instead-of-module} rule. Source sampling confirmed that the
+suppression, rather than a parser loss, caused the change.
+
+Everpure contributes 295 canonical GitLeaks occurrences. Of these, 268 repeat
+one UUID-shaped example token across 61 files, primarily module examples and
+documentation. All 1,049 canonical GitLeaks occurrences have
+\code{secret_context=uncertain_secret}; semantic \code{CONFIRMED} means the
+provider pattern matched, not that the value is an active credential.
+
+\section{Threats to Validity}
+\textbf{Construct validity:} static predicates and semantic states are not
+human defect labels. \textbf{Internal validity:} paired SHAs/files/LOC reduce
+population drift, but provider versions and environments must still be recorded.
+\textbf{External validity:} 149 frozen repositories do not represent every
+private or industrial Ansible codebase. \textbf{Conclusion validity:} no
+precision or recall inference is made without a published labelled benchmark.

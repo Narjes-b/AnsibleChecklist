@@ -1,0 +1,7 @@
+project,commit_sha,selected_files,raw_findings,canonical_occurrences,grouped_reduction,errors,warnings,notes,diagnostics,gitleaks_status,ansible_lint_status
+openstack/ansible-collection-kolla,785982d7c09dda3d8e46f6c9b09597ca14820497,42,377,347,30,2,118,227,0,completed,completed
+openstack/kayobe,9a6e4333b2aa2fbe8dc80a93cd5aa3e2f1872970,342,3711,3130,581,211,1374,1545,0,completed,completed
+openstack/kolla-ansible,9c41bdca79d4c7267beeece141909e679f70dea8,1228,7817,6525,1292,235,2273,4017,0,completed,completed
+openstack/openstack-ansible,b7c10cbcc04a06207c2344a312d4f612a0810939,216,733,452,281,2,278,172,0,completed,completed
+openstack/openstack-ansible-os_nova,e06c7bceef3f7c365828116b7aadea6fc2d3e22b,28,801,473,328,45,295,133,0,completed,completed
+TOTAL,,1856,13439,10927,2512,495,4338,6094,0,completed,completed

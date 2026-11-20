@@ -1,0 +1,5 @@
+measure,before,after,denominator,before_percent,after_percent,percentage_point_change
+Accepted output,47,47,48,97.92,97.92,0.0
+Decision agrees with unchanged AI source reference,44,44,48,91.67,91.67,0.0
+Adequate complete explanation,41,44,48,85.42,91.67,6.25
+Adequate explanation plus supporting citations,38,44,48,79.17,91.67,12.5

@@ -1,0 +1,24 @@
+{
+  "files": 3197,
+  "high_coupling": {
+    "4": 150,
+    "6": 119,
+    "8": 93
+  },
+  "high_coupling_candidate_rates": {
+    "4": 0.046919,
+    "6": 0.037222,
+    "8": 0.02909
+  },
+  "not_applicable_or_unreadable_files": 440,
+  "undocumented_complex_task": {
+    "3": 389,
+    "4": 211,
+    "5": 124
+  },
+  "undocumented_complex_task_candidate_rates": {
+    "3": 0.121677,
+    "4": 0.065999,
+    "5": 0.038786
+  }
+}

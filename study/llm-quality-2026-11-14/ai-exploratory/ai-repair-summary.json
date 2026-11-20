@@ -1,0 +1,20 @@
+{
+  "producer": "Single AI assistant; post hoc exploratory review, not independent human validation",
+  "cases": 12,
+  "available": 12,
+  "structured_decision_matches_ai_reference": 12,
+  "repair_eligible_under_ai_review": 8,
+  "eligible_cases_marked_actionable": 0,
+  "raw_code_fix_proposals": 0,
+  "raw_text_fix_proposals": 0,
+  "delivered_code_fixes": 0,
+  "semantic_fix_correctness": null,
+  "semantic_fix_correctness_reason": "No generated code fixes to test; zero proposal coverage does not imply zero correctness or safe fixes.",
+  "backend_constraint_note": "All structured states were constrained by verified predicates or required abstention.",
+  "notable_errors": [
+    "Logging case 3 incorrectly claims suppressing controller output would compromise the registered result; authored behavior controls demonstrate preserved registered msg.",
+    "TLS already-correct case invents dependence on verify_tls although validate_certs is literal true.",
+    "Eight repair-eligible cases were all classified not-actionable despite supplied intent."
+  ],
+  "candidate_unchanged": true
+}

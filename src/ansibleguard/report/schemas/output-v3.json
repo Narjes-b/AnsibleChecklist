@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ansibleguard://schemas/output-v3.json",
+  "title": "AnsibleGuard output contract v3",
+  "description": "Versioned envelopes for v0.0.5 semantic findings, provider evidence, diagnostics, health, and comparison artifacts.",
+  "type": "object",
+  "required": ["schema_version", "contract", "kind"],
+  "properties": {
+    "schema_version": {"const": 3},
+    "contract": {"const": "ansibleguard://schemas/output-v3.json"},
+    "kind": {
+      "enum": [
+        "contract-manifest",
+        "run-metadata",
+        "file-selection",
+        "raw-findings",
+        "suppressed-external-findings",
+        "canonical-occurrences",
+        "diagnostics",
+        "review-metrics",
+        "file-metrics",
+        "file-report",
+        "run-report",
+        "legacy-layout",
+        "diff-report",
+        "pr-comparison",
+        "introduced-occurrences",
+        "fixed-occurrences",
+        "playbook-summary"
+      ]
+    },
+    "items": {"type": "array"},
+    "counts": {"type": "object"},
+    "artifacts": {"type": "object"},
+    "comparison": {"type": "object"},
+    "policy": {"type": "object"},
+    "analysis_health": {"$ref": "#/$defs/analysis_health"}
+  },
+  "$defs": {
+    "provider_evidence": {
+      "type": "object",
+      "required": ["provider"],
+      "properties": {
+        "finding_id": {"type": "string"},
+        "provider": {"type": "string", "minLength": 1},
+        "rule_id": {"type": "string"},
+        "native_rule_id": {"type": "string"},
+        "native_fingerprint": {"type": "string"},
+        "message": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "finding": {
+      "type": "object",
+      "required": [
+        "finding_id", "rule_id", "provider", "file", "line", "severity", "message"
+      ],
+      "properties": {
+        "finding_id": {"type": "string", "minLength": 1},
+        "rule_id": {"type": "string", "minLength": 1},
+        "concept_id": {"type": "string"},
+        "variable_classification": {
+          "enum": [
+            "missing-internal-variable",
+            "undeclared-input-contract",
+            "unresolved-runtime-input"
+          ]
+        },
+        "legacy_concept_id": {"type": "string"},
+        "provider": {"type": "string", "minLength": 1},
+        "file": {"type": "string"},
+        "line": {"type": "integer", "minimum": 1},
+        "severity": {"enum": ["error", "warning", "note"]},
+        "message": {"type": "string"},
+        "analysis_population": {"type": "string"},
+        "source_population": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "occurrence": {
+      "type": "object",
+      "required": [
+        "occurrence_id", "concept_id", "file", "line", "scan_mode", "severity",
+        "message", "semantic_key", "content_semantic_key", "semantic_subject",
+        "provider_evidence_fingerprint", "detectors"
+      ],
+      "properties": {
+        "occurrence_id": {"type": "string", "minLength": 1},
+        "concept_id": {"type": "string", "minLength": 1},
+        "variable_classification": {
+          "enum": [
+            "missing-internal-variable",
+            "undeclared-input-contract",
+            "unresolved-runtime-input"
+          ]
+        },
+        "legacy_concept_id": {"type": "string"},
+        "file": {"type": "string"},
+        "line": {"type": "integer", "minimum": 1},
+        "scan_mode": {"type": "string"},
+        "severity": {"enum": ["error", "warning", "note"]},
+        "message": {"type": "string"},
+        "semantic_key": {"type": "string", "minLength": 1},
+        "content_semantic_key": {"type": "string", "minLength": 1},
+        "semantic_subject": {"type": "string", "minLength": 1},
+        "task_fingerprint": {"type": "string", "minLength": 1},
+        "provider_evidence_fingerprint": {"type": "string", "minLength": 1},
+        "analysis_population": {"type": "string"},
+        "source_population": {"type": "string"},
+        "detectors": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/provider_evidence"}
+        }
+      },
+      "additionalProperties": true
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": ["file", "stage", "status", "message"],
+      "properties": {
+        "file": {"type": "string"},
+        "stage": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "minLength": 1},
+        "category": {"type": "string"},
+        "failure_nature": {"type": "string"},
+        "message": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "analysis_health": {
+      "type": "object",
+      "required": ["status", "complete"],
+      "properties": {
+        "status": {"type": "string"},
+        "complete": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"enum": ["raw-findings", "suppressed-external-findings"]}}},
+      "then": {"required": ["items"], "properties": {"items": {"items": {"$ref": "#/$defs/finding"}}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "canonical-occurrences"}}},
+      "then": {"required": ["items"], "properties": {"items": {"items": {"$ref": "#/$defs/occurrence"}}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "diagnostics"}}},
+      "then": {"required": ["items"], "properties": {"items": {"items": {"$ref": "#/$defs/diagnostic"}}}}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "run-metadata"}}},
+      "then": {"required": ["analysis_health", "profile", "reproducibility"]}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "run-report"}}},
+      "then": {"required": ["status", "profile", "counts", "artifacts", "analysis_health"]}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "pr-comparison"}}},
+      "then": {"required": ["comparison", "policy"]}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "file-metrics"}}},
+      "then": {"required": ["file", "counts"]}
+    },
+    {
+      "if": {"properties": {"kind": {"const": "file-report"}}},
+      "then": {"required": ["file", "status", "counts", "artifacts"]}
+    }
+  ],
+  "additionalProperties": true
+}

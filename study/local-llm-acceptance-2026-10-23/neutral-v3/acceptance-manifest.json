@@ -1,0 +1,73 @@
+{
+  "purpose": "synthetic contract acceptance; not human labels or measured real-project accuracy",
+  "eligible_for_performance_scoring": false,
+  "started_utc": "2026-10-23T17:16:04.055721+00:00",
+  "status": "completed",
+  "case_count": 4,
+  "completed_cases": 4,
+  "model_calls": 3,
+  "pending_case_ids": [],
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+    "size": 4683087561,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen2",
+      "families": [
+        "qwen2"
+      ],
+      "parameter_size": "7.6B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 32768,
+      "embedding_length": 3584
+    }
+  },
+  "response_schema_version": 3,
+  "prompt_version": "local-review-v3",
+  "timeout_per_call": 60.0,
+  "overall_budget_seconds": 180.0,
+  "generation_options": {
+    "num_ctx": 8192,
+    "num_predict": 1024,
+    "temperature": 0.1
+  },
+  "implementation_sha256": "8c51d87bb684af935e6c49b195b5b5d80fd4c677479f6a303213e7c9943582b2",
+  "backend_sha256": "b9cc0c6fd7225614d7604b6c2c11e199f8055e74b7cd85c260e67d511b8f318a",
+  "system_prompt_sha256": "7d26a8d102c945a3ae21aa12f7936889ab9bc611c9c9d8935b1f2f8a845b16d9",
+  "response_schema_sha256": "42daeb06377d263afefa395abd336cda67395744121503d1848588594cdbc640",
+  "generation_schema_sha256": "80faa43a5948d4fefd3bbc7ff6058b0e67cf52c7ac0fa2068d37d38ab2675c26",
+  "cases_sha256": "972394ae4e09a63d4c3a06e432f930cc2077d943e55953ba4fb8811d82b48fe1",
+  "attempts_per_case": 1,
+  "output_sha256": {
+    "explicit-false.json": "f9cd7e450f0af85d4e819797854bbff1e3e1e88c1197ebaf692d5f4597731d5b",
+    "contradicted-boolean.json": "2cb5b6635b9a1d9bb12a5478f02be53459d15032c44ddd937aa924dbab3573c8",
+    "missing-runtime-input.json": "3ee0c99e74544cc37486fcb4fb6be05f05af9206d8c8ae4f625a48e67c884d22",
+    "invalid-anchor.json": "525e4aeb5eef2d1327d718819f0b6dc6a2fd2974f1e4cbe4fddd35ba13f01e35"
+  },
+  "expectation_matches": 3,
+  "status_counts": {
+    "ok": 3,
+    "insufficient-context": 1
+  },
+  "duration_seconds": 18.125,
+  "model_identity_after": {
+    "name": "qwen2.5-coder:7b",
+    "digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+    "size": 4683087561,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen2",
+      "families": [
+        "qwen2"
+      ],
+      "parameter_size": "7.6B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 32768,
+      "embedding_length": 3584
+    }
+  },
+  "model_digest_stable": true
+}

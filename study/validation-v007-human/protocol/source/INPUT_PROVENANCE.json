@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "user_supplied_sources": [
+    {
+      "download_names": [
+        "LUNA6_XHIGH_V007_HUMAN_VALIDATION_EXECUTION_PLAN (4).md",
+        "LUNA6_XHIGH_V007_HUMAN_VALIDATION_EXECUTION_PLAN (5).md"
+      ],
+      "repository_copy": "EXECUTION_PLAN.md",
+      "sha256": "0ad90df2988431f9d8d476bf806cae41c083537bba47abc8bd19b8191bfeb838",
+      "copies_byte_identical": true
+    },
+    {
+      "download_name": "LUNA6_XHIGH_V007_EXACT_SAMPLING_SPEC (2).md",
+      "repository_copy": "EXACT_SAMPLING_SPEC.md",
+      "sha256": "9c4a9004ea5e97652fc240904c9035665ffbcd59967eedce08e1bb6d9c094aa8"
+    },
+    {
+      "download_name": "V007_HUMAN_VALIDATION_RULE_ALLOCATION_MATRIX (2).csv",
+      "repository_copy": "../../mappings/source-rule-allocation-matrix.csv",
+      "sha256": "657759e3d5cf76e79ce3dacc9afcd7f2b0986fa5d86a43a8c7787d1ee1596c2f"
+    }
+  ],
+  "note": "Copies preserve original bytes. Family decisions are recorded separately in mappings/rule-family-map.csv and codebooks/RULE_OVERRIDES.md."
+}

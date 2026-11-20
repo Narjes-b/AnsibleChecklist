@@ -1,0 +1,6 @@
+ansible: unavailable: CalledProcessError: Command '['/home/aymmzn/Documents/AnsibleChecklist/.venv/bin/python', '-m', 'ansible', '--version']' returned non-zero exit status 2.
+ansible-lint: ansible-lint [1;36m26.4.0[0m using[2m ansible-core:[1;36m2.21.0[0m ansible-compat:[1;36m26.3.0[0m ruamel-yaml:[1;36m0.19.1[0m ruamel-yaml-clib:[1;36mNone[0m[0m
+[33mA new release of ansible-lint is available: [33m26.4.0[0m → [32m[34m]8;;https://github.com/ansible/ansible-lint/releases/tag/v26.10.1\26.10.1]8;;\[0m[/][0m Upgrade by running: [34mpip install --upgrade ansible-lint[0m[0m
+docker: Docker version 29.2.1, build a5c7197
+gitleaks: version is set by build process
+python: Python 3.14.8

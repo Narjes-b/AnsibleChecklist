@@ -1,0 +1,80 @@
+name: Test AnsibleGuard
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install package and test dependencies
+        run: pip install -e '.[dev]'
+      - name: Install semantic analysis data
+        run: |
+          pip install --retries 10 --timeout 60 \
+            'en_core_web_lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0-py3-none-any.whl#sha256=293e9547a655b25499198ab15a525b05b9407a75f10255e405e8c3854329ab63'
+          python -c "import nltk; nltk.download('wordnet', quiet=True)"
+      - name: Run tests
+        env:
+          # Installed ansible-doc integration is environment-sensitive and is
+          # covered by mocked metadata tests; avoid collection discovery in
+          # unrelated parser regressions.
+          ANSIBLEGUARD_DISABLE_ANSIBLE_DOC: "1"
+        run: pytest -q
+      - name: Check generated documentation
+        run: python scripts/generate_docs.py --check
+      - name: Compile package and scripts
+        run: python -m compileall -q src scripts
+      - name: Validate labeled detector corpus
+        run: >-
+          python scripts/calibrate_detectors.py
+          calibration/corpus-v1 calibration/labels-v1.csv
+          --output /tmp/ansibleguard-calibration-v1
+      - name: Package import smoke test
+        run: python -c "import ansibleguard; from ansibleguard.cli import main"
+
+  research-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify committed release evidence
+        working-directory: study/releases/v004
+        run: sha256sum --check checksums.sha256
+      - name: Build frozen research environment
+        run: >-
+          docker build
+          --build-arg ANSIBLEGUARD_BUILD_GIT_SHA="$GITHUB_SHA"
+          -f Dockerfile.research
+          -t ansibleguard-research:ci .
+
+  remote-equivalence:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install package and test dependencies
+        run: pip install -e '.[dev]'
+      - name: Run pinned public local/archive/Git equivalence gate
+        env:
+          ANSIBLEGUARD_DISABLE_ANSIBLE_DOC: "1"
+          ANSIBLEGUARD_RUN_REMOTE_INTEGRATION: "1"
+        run: pytest -q tests/test_remote_integration.py

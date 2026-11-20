@@ -1,0 +1,22 @@
+{
+  "purpose": "Provisional V4.3 development candidate; prose quality not certified",
+  "prompt_version": "local-review-v4.3",
+  "response_schema_version": 3,
+  "packet_contract_version": 3,
+  "model_digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+  "full_tests": {
+    "passed": 1609,
+    "skipped": 2,
+    "exit_code": 0,
+    "log": "study/icpc2027-development-2026-11-10/pytest-v43.log"
+  },
+  "offline_wheel_import": "passed",
+  "artifacts": {
+    "study/runs/icpc2027-build-v43-20261110/ansibleguard-0.0.7.1-py3-none-any.whl": "5a3db1b12b3689507309b5353464d952b7a5a14cf898468ab53fb595cc370128",
+    "study/runs/icpc2027-development-v43-pass3-20261110/implementation-v43.tar.gz": "e65c7edf3b51ceca16b5b0c3709e603f2e9f3a3edd29a6b46cf4ff97d483543d",
+    "study/icpc2027-development-2026-11-10/source-files.sha256": "4d3df5423d4bee96c70fc905b7acf2438ab96ae83c54060b79e02ddc53442af7"
+  },
+  "evaluation_panel": "No inference or scoring; original manifest and reviewer forms checksums passed",
+  "human_review": "pending",
+  "release_status": "not a validated final release"
+}

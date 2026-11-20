@@ -1,0 +1,53 @@
+{
+  "algorithm": {
+    "assignment_score": "mean normalized deficit over the candidate repository's tokens",
+    "assignment_tie_break": "candidate hash first hex digit 0-4 -> heldout; 5-f -> calibration",
+    "calibration_capacity": 144,
+    "candidate_order": "SHA256(seed + '|' + repository), ascending",
+    "ecosystem_family": "not used; no non-subjective frozen family field was available",
+    "hard_capacities_enforced_during_assignment": true,
+    "heldout_capacity": 62,
+    "name": "deterministic rarest-token iterative stratification with hard capacities",
+    "quartiles": "equal-count rank bins over log1p(feature), ties by repository hash rank",
+    "target_heldout_per_token": "round(0.30 * token_population)",
+    "token_order": "smallest remaining unassigned carrier count, then token name",
+    "tokens": "SIZE_Q1..Q4; DENSITY_Q1..Q4; RULE_PRESENT for top 15 rules",
+    "version": "v1"
+  },
+  "calibration_count": 144,
+  "heldout_count": 62,
+  "heldout_occurrence_samples_generated": false,
+  "human_labels_used": false,
+  "repository_split_balance_csv_sha256": "447c0d04047f888f76620a66fd3e1f82c8a273e02b5e6dafffda3f9a1e71d2a2",
+  "repository_split_balance_md_sha256": "3eb1c4a267524120ffc6eaddf370a869ca764ed741cf69a3dd707c71bfcfd3a2",
+  "repository_split_csv_sha256": "c6f50da3bd52130cd0a32ab48e322dfa666419d12bccdb1e7a4796d885260f65",
+  "repository_split_summary_csv_sha256": "8a4d840674eda9ff003c67b3844bd8265fcbe94f0458425890b48b7fa50d352f",
+  "rule_prevalence_flags_over_10_percentage_points": [],
+  "schema_version": 1,
+  "seed": "v007-human-repo-split-20261005",
+  "source_hashes": {
+    "all_internal_source_occurrences_csv_sha256": "7ea8943bf40a6b05f2e33c4140446757c45b6d218e81a75096591f046a81978b",
+    "repository_execution_status_csv_sha256": "174b290d0e4c6c535a0eeea60ab8e3832ab5dee2c5b905d276c406b22e7103ab",
+    "repository_summary_csv_sha256": "01b60004f75d754a4a26ea788f7a32090097c7863148a6a70b56b3cd1164c5a9",
+    "static_source_candidate_table_sha256": "2b70672c1f89039386f6cfb4bb73460059f05014a6b7248e4865f951150c7d6b",
+    "static_source_identity_manifest_sha256": "e6f5b6ba1e503f567e89edebf4c8b3d5d404cce22f8ce7596e29561d91e78fbe"
+  },
+  "source_run": "v007-full-repro-2026",
+  "top_15_rules": [
+    "ansibleguard/missing-tags",
+    "ansibleguard/unguarded-variable",
+    "ansibleguard/variable-naming-convention",
+    "ansibleguard/large-task",
+    "ansibleguard/complex-expression",
+    "ansibleguard/unnamed-task",
+    "ansibleguard/credentials-leaking-in-log",
+    "ansibleguard/loop-legacy-syntax",
+    "ansibleguard/long-statement",
+    "ansibleguard/long-task-name",
+    "ansibleguard/role-readme-absent",
+    "ansibleguard/large-playbook",
+    "ansibleguard/complex-playbook",
+    "ansibleguard/unnecessary-set-fact",
+    "ansibleguard/silent-error-suppression"
+  ]
+}

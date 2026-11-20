@@ -1,0 +1,879 @@
+sample_id,rule_id,concept_id,review_family,tier,rule_total_occurrences,rule_cumulative_share_percent,repository,commit_sha,path,line,severity,message,occurrence_id,source_context,ai_semantic_label,ai_actionability_label,ai_context_sufficient,ai_requires_external_context,ai_external_context_type,ai_reason_code,ai_notes,ai_confidence,ai_model_identity,ai_review_protocol_version
+V007STRAT-LARGE-PLAYBOOK-008,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,ansible-lockdown/RHEL7-STIG,a3d78cfc5c2cae8f8b344fbcd6664a35817dbad0,handlers/main.yml,1,warning,Playbook exceeds size thresholds (count=1),d925a1693de61e2c9fe7c8ef3d8e16fc64f32594d4ee98220d962bfa8ec5b4b0,">>     1 | ---
+       2 | - name: restart sshd
+       3 |   ansible.builtin.service:
+       4 |       name: sshd
+       5 |       state: restarted
+       6 |   when:
+       7 |       - not rhel7stig_system_is_chroot
+       8 | 
+       9 | - name: reboot system
+      10 |   ansible.builtin.shell: sleep 3; reboot
+      11 |   async: 15
+      12 |   poll: 0
+      13 | 
+      14 | - name: restart snmpd
+      15 |   ansible.builtin.service:",,,,,,,,,,
+V007STRAT-LARGE-PLAYBOOK-009,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,ansible-lockdown/RHEL8-CIS,97a6a9aa80506900009129aa389759d6884d5ec5,handlers/main.yml,1,warning,Playbook exceeds size thresholds (count=1),d925a1693de61e2c9fe7c8ef3d8e16fc64f32594d4ee98220d962bfa8ec5b4b0,">>     1 | ---
+       2 | # handlers file for RHEL8-CIS
+       3 | 
+       4 | - name: Update authselect
+       5 |   ansible.builtin.command: authselect apply-changes
+       6 |   changed_when: true
+       7 | 
+       8 | - name: ""Adding options for /tmp""
+       9 |   when: not rhel8cis_tmp_svc
+      10 |   vars:
+      11 |     mount_point: '/tmp'
+      12 |   ansible.posix.mount:
+      13 |     path: ""{{ mount_point }}""
+      14 |     src: ""{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}""
+      15 |     state: present",,,,,,,,,,
+V007STRAT-LARGE-PLAYBOOK-010,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,ansible-lockdown/RHEL8-STIG,baa075468dfa59050141c99d99dcacd2e977248c,handlers/main.yml,1,warning,Playbook exceeds size thresholds (count=1),d925a1693de61e2c9fe7c8ef3d8e16fc64f32594d4ee98220d962bfa8ec5b4b0,">>     1 | ---
+       2 | 
+       3 | - name: Change_requires_reboot
+       4 |   ansible.builtin.set_fact:
+       5 |     change_requires_reboot: true
+       6 | 
+       7 | - name: Systemctl daemon-reload
+       8 |   when: not system_is_container
+       9 |   ansible.builtin.systemd:
+      10 |     daemon_reload: true
+      11 | 
+      12 | - name: Remount_tmp
+      13 |   ansible.posix.mount:
+      14 |     name: /tmp
+      15 |     state: remounted",,,,,,,,,,
+V007STRAT-LARGE-PLAYBOOK-011,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,handlers/main.yml,1,warning,Playbook exceeds size thresholds (count=1),d925a1693de61e2c9fe7c8ef3d8e16fc64f32594d4ee98220d962bfa8ec5b4b0,">>     1 | ---
+       2 | 
+       3 | # handlers file for RHEL9-CIS
+       4 | 
+       5 | - name: ""Remount tmp filesystem""
+       6 |   ansible.builtin.import_tasks:
+       7 |     file: remount_tmp.yml
+       8 |   listen: ""Remount /tmp""
+       9 | 
+      10 | - name: ""Adding options for /dev/shm""
+      11 |   vars:
+      12 |     mount_point: '/dev/shm'
+      13 |   ansible.posix.mount:
+      14 |     path: ""{{ mount_point }}""
+      15 |     src: ""{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}""",,,,,,,,,,
+V007STRAT-LARGE-PLAYBOOK-012,ansibleguard/large-playbook,large-playbook,Maintainability/complexity,C-moderate,799,88.57,konstruktoid/ansible-role-hardening,4dc09871ed38322eb6e4cdda8e2c77b79892d73d,handlers/main.yml,1,warning,Playbook exceeds size thresholds (count=1),d925a1693de61e2c9fe7c8ef3d8e16fc64f32594d4ee98220d962bfa8ec5b4b0,">>     1 | ---
+       2 | - name: Enable auditd
+       3 |   become: true
+       4 |   ansible.builtin.service:
+       5 |     name: auditd
+       6 |     enabled: true
+       7 |   when:
+       8 |     - ansible_facts.virtualization_type not in [""container"", ""docker"", ""podman""]
+       9 | 
+      10 | - name: Generate auditd rules
+      11 |   become: true
+      12 |   ansible.builtin.command:
+      13 |     cmd: augenrules
+      14 |   register: augenrules_handler
+      15 |   changed_when:",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-001,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,roots/trellis,cd8e671076918a82efb43d5a313451f4e71da318,dev.yml,1,warning,Playbook exceeds complexity thresholds (count=1),bf01b9f0ab7ce7e0c31a0a9d13fad7bac424586bbe1b9f11f2631ea943bf0846,">>     1 | ---
+       2 | - name: ""WordPress Server: Install LEMP Stack with PHP and MariaDB MySQL""
+       3 |   hosts: web:&development
+       4 |   become: yes
+       5 | 
+       6 |   roles:
+       7 |     - { role: common, tags: [common] }
+       8 |     - { role: fail2ban, tags: [fail2ban] }
+       9 |     - { role: ferm, tags: [ferm] }
+      10 |     - { role: hosts, tags: [hosts] }
+      11 |     - { role: ntp, tags: [ntp] }
+      12 |     - { role: sshd, tags: [sshd] }
+      13 |     - { role: mariadb, tags: [mariadb] }
+      14 |     - { role: mailpit, tags: [mailpit, mailhog, mail] }
+      15 |     - { role: php, tags: [php] }",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-002,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,IDR/deployment,77f7a7e438a41ca775e85b629c0f84cc636ffad7,ansible/decommission/archive-logs.yml,1,warning,Playbook exceeds complexity thresholds (count=1),5eb4c6508f162f55956e7b9b18606361dab2d7f6c205d697e067de3713d42dbf,">>     1 | # Run this before decommission a deployment
+       2 | 
+       3 | - hosts: >
+       4 |     {{ idr_environment | default('idr') }}-proxy-hosts
+       5 |     {{ idr_environment | default('idr') }}-management-hosts
+       6 |     {{ idr_environment | default('idr') }}-searchengine-hosts
+       7 | 
+       8 |   tasks:
+       9 |   - name: Get archive prefix
+      10 |     set_fact:
+      11 |       decommission_archive_prefix: ""{{ ansible_hostname }}-{{ ansible_date_time.date | replace('-', '') }}""
+      12 | 
+      13 | - hosts: ""{{ idr_environment | default('idr') }}-proxy-hosts""
+      14 |   vars:
+      15 |     logs:",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-003,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,telekom-mms/ansible-collection-icinga-director,c9cc0aa61a019ef9f7b9e227b6ef2f6454c6c994,roles/ansible_icinga/tasks/main.yml,1,warning,Playbook exceeds complexity thresholds (count=1),ed601a1009a05b735b78caf2da9dacfdb3c02ff76cf37269734e76cb1c031015,">>     1 | ---
+       2 | - name: Icinga timeperiod configuration
+       3 |   ansible.builtin.include_tasks: icinga_timeperiod.yml
+       4 |   when: icinga_timeperiods is defined
+       5 |   tags: timeperiod
+       6 | 
+       7 | - name: Icinga user_template configuration
+       8 |   ansible.builtin.include_tasks: icinga_user_template.yml
+       9 |   when: icinga_user_templates is defined
+      10 |   tags: user_template
+      11 | 
+      12 | - name: Icinga user configuration
+      13 |   ansible.builtin.include_tasks: icinga_user.yml
+      14 |   when: icinga_users is defined
+      15 |   tags: user",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-004,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,ansible-lockdown/RHEL8-CIS,97a6a9aa80506900009129aa389759d6884d5ec5,handlers/main.yml,1,warning,Playbook exceeds complexity thresholds (count=1),a613b432e6e0485e5119f9d76723381347b6dd7858020887a587b16d81546786,">>     1 | ---
+       2 | # handlers file for RHEL8-CIS
+       3 | 
+       4 | - name: Update authselect
+       5 |   ansible.builtin.command: authselect apply-changes
+       6 |   changed_when: true
+       7 | 
+       8 | - name: ""Adding options for /tmp""
+       9 |   when: not rhel8cis_tmp_svc
+      10 |   vars:
+      11 |     mount_point: '/tmp'
+      12 |   ansible.posix.mount:
+      13 |     path: ""{{ mount_point }}""
+      14 |     src: ""{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}""
+      15 |     state: present",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-005,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,ansible-lockdown/RHEL8-STIG,baa075468dfa59050141c99d99dcacd2e977248c,handlers/main.yml,1,warning,Playbook exceeds complexity thresholds (count=1),a613b432e6e0485e5119f9d76723381347b6dd7858020887a587b16d81546786,">>     1 | ---
+       2 | 
+       3 | - name: Change_requires_reboot
+       4 |   ansible.builtin.set_fact:
+       5 |     change_requires_reboot: true
+       6 | 
+       7 | - name: Systemctl daemon-reload
+       8 |   when: not system_is_container
+       9 |   ansible.builtin.systemd:
+      10 |     daemon_reload: true
+      11 | 
+      12 | - name: Remount_tmp
+      13 |   ansible.posix.mount:
+      14 |     name: /tmp
+      15 |     state: remounted",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-006,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,ansible-lockdown/RHEL9-CIS,9e1610648f6e434877ef7323a94b89f31bc49872,handlers/main.yml,1,warning,Playbook exceeds complexity thresholds (count=1),a613b432e6e0485e5119f9d76723381347b6dd7858020887a587b16d81546786,">>     1 | ---
+       2 | 
+       3 | # handlers file for RHEL9-CIS
+       4 | 
+       5 | - name: ""Remount tmp filesystem""
+       6 |   ansible.builtin.import_tasks:
+       7 |     file: remount_tmp.yml
+       8 |   listen: ""Remount /tmp""
+       9 | 
+      10 | - name: ""Adding options for /dev/shm""
+      11 |   vars:
+      12 |     mount_point: '/dev/shm'
+      13 |   ansible.posix.mount:
+      14 |     path: ""{{ mount_point }}""
+      15 |     src: ""{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}""",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-007,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,konstruktoid/ansible-role-hardening,4dc09871ed38322eb6e4cdda8e2c77b79892d73d,handlers/main.yml,1,warning,Playbook exceeds complexity thresholds (count=1),a613b432e6e0485e5119f9d76723381347b6dd7858020887a587b16d81546786,">>     1 | ---
+       2 | - name: Enable auditd
+       3 |   become: true
+       4 |   ansible.builtin.service:
+       5 |     name: auditd
+       6 |     enabled: true
+       7 |   when:
+       8 |     - ansible_facts.virtualization_type not in [""container"", ""docker"", ""podman""]
+       9 | 
+      10 | - name: Generate auditd rules
+      11 |   become: true
+      12 |   ansible.builtin.command:
+      13 |     cmd: augenrules
+      14 |   register: augenrules_handler
+      15 |   changed_when:",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-008,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,compscidr/iac,350e7b8162778ad7beab8e2da8be53ea24a1127a,ansible/nas.yml,1,warning,Playbook exceeds complexity thresholds (count=1),3633fc864619f06478604bed1ed85e5bdd6868709e11fb0d43cc1f3def7f7689,">>     1 | ---
+       2 | - name: Services for nas.local
+       3 |   hosts: nas.local
+       4 |   vars_files:
+       5 |     - vars/deb_arch.yml
+       6 |     - vars/user.yml
+       7 |     - vars/secrets.yml
+       8 |   pre_tasks:
+       9 |     # nas.local itself is reached over LAN mDNS regardless of Tailscale
+      10 |     # state, but rustd_backup_nas's whole job is putting the nas ON the
+      11 |     # tailnet (see that role's tasks/main.yml) for the rustd_xyz droplet to
+      12 |     # reach it - so the controller having a working Tailscale CLI is worth
+      13 |     # checking up front, same as any other Tailscale-touching play here.
+      14 |     #
+      15 |     # Tagged 'always' (matches jasonernst_com.yml) so the connectivity check",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-009,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,cisco-en-programmability/dnacenter-ansible,33276c6275a666371b085bea241441cf4f6a29d2,playbooks/device_configs_backup_workflow_manager.yml,1,warning,Playbook exceeds complexity thresholds (count=1),bde35bbadeb017c0ca76092c752694cb53ad33935aa2f096806e186c56dc2de9,">>     1 | ---
+       2 | - name: Sample playbook for Device Configs Backup Module
+       3 |   hosts: dnac_servers
+       4 |   gather_facts: false
+       5 | 
+       6 |   vars_files:
+       7 |     - vars/credentials.yml
+       8 | 
+       9 |   vars:
+      10 |     dnac_login: &dnac_login
+      11 |       dnac_host: ""{{ dnac_host }}""
+      12 |       dnac_username: ""{{ dnac_username }}""
+      13 |       dnac_password: ""{{ dnac_password }}""
+      14 |       dnac_verify: ""{{ dnac_verify }}""
+      15 |       dnac_port: ""{{ dnac_port }}""",,,,,,,,,,
+V007STRAT-COMPLEX-PLAYBOOK-010,ansibleguard/complex-playbook,complex-playbook,Maintainability/complexity,C-moderate,617,91.6,halkeye/halkeye-ansible,f7b35cd20757522c17298cb2af67c8858ea30f6c,main.yml,1,warning,Playbook exceeds complexity thresholds (count=1),d3d25a22f509ce5a94ae49a2c2061a208374fa0f592e8475191a3fdb4998d92a,">>     1 | ---
+       2 | - hosts: all
+       3 |   pre_tasks:
+       4 |     - import_tasks: playbooks/tasks.yml
+       5 |       tags:
+       6 |         - software
+       7 |     - import_tasks: playbooks/archlinux.yml
+       8 |       when: ansible_facts[""os_family""] == ""Archlinux""
+       9 |       tags:
+      10 |         - software
+      11 |     - import_tasks: playbooks/directories.yml
+      12 |       tags:
+      13 |         - directories
+      14 |     - name: Create git excludes
+      15 |       ansible.builtin.copy:",,,,,,,,,,
+V007STRAT-LARGE-PLAY-001,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,ConnectBox/connectbox-pi,e69eabdecfa2e39b2751acdb928bfafb2f8f28f6,ansible/roles/mikegleasonjr.firewall/tests.yml,2,warning,Play 'unknown' exceeds size thresholds,50aff9f14f9c0009be32611c32df887782c68ddbf9e8424c38b7dc6107db3951,"       1 | ---
+>>     2 | - hosts: all
+       3 |   become: true
+       4 | 
+       5 |   roles:
+       6 |     - role: '{{playbook_dir}}'
+       7 |       firewall_v6_configure: true
+       8 | 
+       9 |       firewall_v4_flush_rules:
+      10 |         - -F
+      11 |         - -X
+      12 |         - -t raw -F
+      13 |         - -t raw -X
+      14 |         - -t mangle -F
+      15 |         - -t mangle -X
+      16 | ",,,,,,,,,,
+V007STRAT-LARGE-PLAY-002,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,openfun/arnold,f19ea6d060de69f01e750fab289b9fb7a991e27d,create_databases_vault.yml,2,warning,Play 'Create databases vault' exceeds size thresholds,489f5007505ad0ea2068e42eedba2137a522ece8feb0b480a55946279ba32749,"       1 | ---
+>>     2 | - name: Create databases vault
+       3 |   hosts: local
+       4 |   gather_facts: false
+       5 | 
+       6 |   tasks:
+       7 |     - name: Display playbook name
+       8 |       ansible.builtin.debug: msg=""==== Starting create_databases_vault playbook ====""
+       9 | 
+      10 |     - name: Set vars
+      11 |       ansible.builtin.import_tasks: tasks/set_vars.yml
+      12 | 
+      13 |     - name: Set databases vault destination path
+      14 |       ansible.builtin.set_fact:
+      15 |         databases_vault_path: ""group_vars/customer/{{ customer }}/{{ env_type }}/secrets/databases.vault.yml""
+      16 | ",,,,,,,,,,
+V007STRAT-LARGE-PLAY-003,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,NationalGenomicsInfrastructure/miarka-provision,52daa7027450753c62cb0f38a2b5ef546cae7ede,install.yml,3,warning,Play 'Deploy miarka software' exceeds size thresholds,2dd34d092e762f9643e4ad6e50a268581a42467814692a93edc6341cae474347,"       1 | ---
+       2 | 
+>>     3 | - name: Deploy miarka software
+       4 |   hosts: deploy
+       5 |   connection: local
+       6 | 
+       7 |   # These three variables needs to be overriden when calling ansible-playbook.
+       8 |   #
+       9 |   # Call with e.g. ""ansible-playbook install.yml -e deployment_environment=staging -e deployment_version=foo"".
+      10 |   # If devel then the version will always be set to USERNAME_BRANCHNAME.
+      11 |   # If staging or production then the playbook will halt if the folder version already exists.
+      12 |   # I.e. the user will then manually have to remove the directory, OR add ""-e deployment_override=true""
+      13 |   # to deploy into an already existing folder.
+      14 |   #
+      15 |   # /vulpes/ngi/production/<latest|current> will link to /vulpes/ngi/production/<github release>
+      16 |   # /vulpes/ngi/staging/ will contain a folder wild-wild-west which will be world writeable ON THE RECIEVING end. I.e. the
+      17 |   # sync script will change the permissions? This is to make sure that not everyone that is able to login to miarka3 can",,,,,,,,,,
+V007STRAT-LARGE-PLAY-004,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,playbooks/acs.yml,61,warning,Play 'Database Role' exceeds size thresholds,5c8d1bb4e770d3f0d1dda71a0612dd5687cba909a4d4e33fcb084717e1b0f146,"      47 |     - name: Set alfresco_url from first entry of known_urls
+      48 |       vars:
+      49 |         first_known_url: ""{{ acs_play_known_urls | first | default('http://' ~ nginx_host) }}""
+      50 |       ansible.builtin.set_fact:
+      51 |         alfresco_url: ""{{ first_known_url | urlsplit('scheme') }}://{{ first_known_url | urlsplit('hostname') }}""
+      52 |     - name: Populate identity_enabled
+      53 |       ansible.builtin.set_fact:
+      54 |         identity_enabled: ""{{ ((groups.identity | default([])) + (groups.external_identity | default([]))) | length > 0 }}""
+      55 |     - name: Populate identity_url when available
+      56 |       when: identity_enabled
+      57 |       ansible.builtin.set_fact:
+      58 |         identity_url: ""{{ alfresco_url }}/auth""
+      59 |         code_flow_pkce_supported: ""{{ acs_play_adw_version is version('4.5.0', 'ge') }}""
+      60 | 
+>>    61 | - name: Database Role
+      62 |   hosts: database[0]
+      63 |   gather_facts: false
+      64 |   vars:
+      65 |     pg_role: ""../roles/postgres""
+      66 |     create_repo_db: >-
+      67 |       {{ (acs_play_repo_db_url == """") | ansible.builtin.bool }}
+      68 |     create_sync_db: >-
+      69 |       {{ (acs_play_sync_db_url == """" and groups.syncservice | default([]) | length > 0) | ansible.builtin.bool }}
+      70 |   tasks:
+      71 |     - name: Install Postgres
+      72 |       ansible.builtin.include_role:
+      73 |         name: ""{{ pg_role }}""
+      74 |       vars:
+      75 |         postgres_major_version: ""{{ acs_play_postgres_major_version }}""",,,,,,,,,,
+V007STRAT-LARGE-PLAY-005,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,sebdanielsson/infra,abc768b1d6cd78d1e2feef1262645bb2769fb5df,ansible/bpi-r4.yml,2,warning,Play 'Configure home gateway' exceeds size thresholds,ca66b7e1ce0630e122d9278dfb9ada581d7821c151e33e4f958da60b0d9c5d20,"       1 | ---
+>>     2 | - name: Configure home gateway
+       3 |   hosts: bpi-r4
+       4 |   become: true
+       5 | 
+       6 |   vars:
+       7 |     ansible_python_interpreter: /usr/bin/python3
+       8 |     service_account_token: ""{{ lookup('env', 'OP_SERVICE_ACCOUNT_TOKEN') }}""
+       9 | 
+      10 |   handlers:
+      11 |     - name: Import handlers
+      12 |       ansible.builtin.import_tasks: handlers/main.yml
+      13 | 
+      14 |   tasks:
+      15 |     - name: Remove `ra_slaac` from DHCP configuration if it exists
+      16 |       ansible.builtin.shell: |",,,,,,,,,,
+V007STRAT-LARGE-PLAY-006,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,cisco-en-programmability/dnacenter-ansible,33276c6275a666371b085bea241441cf4f6a29d2,playbooks/PnP.yml,2,warning,"Play 'Manage operations - Add, claim, and delete devices of Onboarding Configuration (PnP)' exceeds size thresholds",9129da61625045b2ae2414eab638cf9d963230bb7f93a440a102237afdd36a83,"       1 | ---
+>>     2 | - name: Manage operations - Add, claim, and delete devices of Onboarding Configuration (PnP)
+       3 |   hosts: localhost
+       4 |   connection: local
+       5 |   gather_facts: false  # This space must be ""no"". It was set to false due to formatting errors.but the correct value is ""no"".
+       6 |   vars_files:
+       7 |     - ""{{ CLUSTERFILE }}""
+       8 | 
+       9 |   vars:
+      10 |     dnac_login: &dnac_login
+      11 |       dnac_host: ""{{ dnac_host }}""
+      12 |       dnac_username: ""{{ dnac_username }}""
+      13 |       dnac_password: ""{{ dnac_password }}""
+      14 |       dnac_verify: ""{{ dnac_verify }}""
+      15 |       dnac_port: ""{{ dnac_port }}""
+      16 |       dnac_version: ""{{ dnac_version }}""",,,,,,,,,,
+V007STRAT-LARGE-PLAY-007,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,clusterinthecloud/ansible,a378fceff7cd03dbd36da1fc4bd5a4ed09270c60,management.yml,33,warning,Play 'Common' exceeds size thresholds,cf4b2464cd18f1a87105f9cfaae757e0e0b88a43eec7f1be2bfdbaaaee8cdb7b,"      19 |         dest: /usr/local/bin/finish
+      20 |         mode: ""0755""
+      21 |     - name: Set motd
+      22 |       ansible.builtin.copy:
+      23 |         content: |
+      24 |           ######################
+      25 | 
+      26 |           Welcome to the cluster
+      27 |           Please now create users and define the number of nodes you want.
+      28 | 
+      29 |           ######################
+      30 |         dest: /etc/motd
+      31 |         mode: u=rw,g=r,o=r
+      32 | 
+>>    33 | - name: Common
+      34 |   hosts: all
+      35 |   tags: common
+      36 |   roles:
+      37 |     - citc_user
+      38 |     - ldap
+      39 |     - mysql
+      40 |     - filesystem
+      41 |     - slurm
+      42 |     - packer
+      43 |     - ssh
+      44 |     - security_updates
+      45 |     - ntp
+      46 |     - sssd
+      47 |     - users",,,,,,,,,,
+V007STRAT-LARGE-PLAY-008,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,compscidr/iac,350e7b8162778ad7beab8e2da8be53ea24a1127a,ansible/hermes.yml,47,warning,Play 'Deploy Hermes Agent' exceeds size thresholds,84d458c67f4da7990702f663961ed3fce58062108c690f449e4315a8e5d8e5a2,"      33 | #      grant on the agent vault.
+      34 | #
+      35 | # Cloud model rungs (all dormant): to activate Anthropic / Kimi /
+      36 | # OpenAI / xAI / Gemini, add the key to the `hermes` vault, wire a
+      37 | # lookup for the matching hermes_*_api_key var below, and re-run.
+      38 | #
+      39 | # Usage:
+      40 | #   ansible-playbook -i inventory.yml hermes.yml
+      41 | #
+      42 | # Post-run on a fresh install (one-time): seed kai's persona —
+      43 | # copy/adapt IDENTITY.md + MEMORY.md from ~/.hermes/workspace into
+      44 | # ~/.hermes/SOUL.md on the host, then send a test message in
+      45 | # #hermes-agent.
+      46 | 
+>>    47 | - name: Deploy Hermes Agent
+      48 |   hosts: hermes
+      49 |   vars_files:
+      50 |     - vars/user.yml
+      51 |   pre_tasks:
+      52 |     - name: Verify Tailscale reachability to hermes host
+      53 |       ansible.builtin.include_tasks: tailscale_check.yml
+      54 | 
+      55 |     # Secrets are fetched ONCE into facts rather than declared as play
+      56 |     # vars. A play var holding a lookup is lazily re-evaluated at every
+      57 |     # reference — each task that touches one, and each `when` that
+      58 |     # tests one — and every agent-vault lookup re-runs the
+      59 |     # service-account lookup feeding it. That turned ~8 secrets into
+      60 |     # dozens of `op` invocations per run and got the service account
+      61 |     # rate-limited mid-play. set_fact evaluates each exactly once.",,,,,,,,,,
+V007STRAT-LARGE-PLAY-009,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,stackhpc/stackhpc-release-train,3d2f5ac77d3aee42d3c2f206811a7eb8244c55f8,ansible/dev-pulp-distribution-list.yml,2,warning,"Play 'Display Pulp distributions, publications & repositories' exceeds size thresholds",39910e17af7dec56cd0954a46325852ca7863758bd6699fabf7eb3398e6f60d6,"       1 | ---
+>>     2 | - name: Display Pulp distributions, publications & repositories
+       3 |   hosts: localhost
+       4 |   gather_facts: true
+       5 |   vars:
+       6 |     pulp_url: ""{{ dev_pulp_url }}""
+       7 |     pulp_username: ""{{ dev_pulp_username }}""
+       8 |     pulp_password: ""{{ dev_pulp_password }}""
+       9 |   tasks:
+      10 |     - name: Query Deb repositories
+      11 |       pulp.squeezer.deb_repository:
+      12 |         pulp_url: ""{{ pulp_url }}""
+      13 |         username: ""{{ pulp_username }}""
+      14 |         password: ""{{ pulp_password }}""
+      15 |       register: pulp_deb_repos_list
+      16 | ",,,,,,,,,,
+V007STRAT-LARGE-PLAY-010,ansibleguard/large-play,large-play,Maintainability/complexity,C-moderate,569,93.37,vrk-kpa/api-catalog,e81b1cb5a261a290a78eafae67f853efc8f5f7a3,ansible/deploy-all.yml,7,warning,Play 'unknown' exceeds size thresholds,47c3590b0f8e65b92001e647726082a7f62e5b6a5849263730bf2e9714d38aba,"       1 | ---
+       2 | 
+       3 | # To run:
+       4 | # ansible-playbook -v -i inventories/vagrant deploy-all.yml
+       5 | # ansible-playbook --ask-vault-pass -v -i inventories/qa deploy-all.yml
+       6 | 
+>>     7 | - hosts: mainserver
+       8 |   become: true
+       9 |   vars_files:
+      10 |     - ""vars/common.yml""
+      11 |     - ""vars/environment-specific/{{ deployment_environment_id }}.yml""
+      12 |     - ""{{ secrets_file_path }}""
+      13 | 
+      14 |   pre_tasks:
+      15 |     - import_role:
+      16 |         name: mailhog
+      17 |       when: deployment_environment_id == 'vagrant'
+      18 |       tags: mailhog
+      19 |   roles:
+      20 |     - os-base
+      21 |     - python",,,,,,,,,,
+V007STRAT-SHELL-INSTEAD-OF-MODULE-001,ansibleguard/shell-instead-of-module,shell-module-migration,Maintainability/complexity,D-long-tail,168,97.45,clusterinthecloud/ansible,a378fceff7cd03dbd36da1fc4bd5a4ed09270c60,roles/security_updates/tasks/main.yml,2,warning,"Task 'Install security updates': Use the 'dnf' or 'package' module instead of dnf. (module: dnf, command: dnf update -y --security --exclude 'kernel*' --exclude 'slurm*')",e9fd35cebcc099eeac9c9cae61130a0d8f03eec25307e42d388bf9f94d15fb24,"       1 | ---
+>>     2 | - name: Install security updates
+       3 |   ansible.builtin.command: dnf update -y --security --exclude 'kernel*' --exclude 'slurm*'  # noqa no-changed-when command-instead-of-module",,,,,,,,,,
+V007STRAT-SHELL-INSTEAD-OF-MODULE-002,ansibleguard/shell-instead-of-module,shell-module-migration,Maintainability/complexity,D-long-tail,168,97.45,bitsy-ai/ansible-collection-printnanny,cb65e1ded5bd974c65efa2ab97e3cc58c5ed79d4,roles/common/tasks/clean_image.yml,13,warning,"Task 'Remove package lists': Use the 'file' module with state=absent instead of rm. (module: file, command: rm -rf /var/lib/apt/lists/*)",8b025c4b2271bf4c2945aa95a93620f816b9cc1187cf3c615845d5c0be47f417,"       1 | - name: Remove dependencies that are no longer required
+       2 |   ansible.builtin.apt:
+       3 |     autoremove: true
+       4 |   tags:
+       5 |     - packer
+       6 | 
+       7 | - name: Clean apt cache
+       8 |   become: true
+       9 |   ansible.builtin.command: apt clean
+      10 |   tags:
+      11 |     - packer
+      12 | 
+>>    13 | - name: Remove package lists
+      14 |   become: true
+      15 |   ansible.builtin.shell: rm -rf /var/lib/apt/lists/*
+      16 |   tags:
+      17 |     - packer
+      18 | 
+      19 | - name: Ensure machine-id uninitialized
+      20 |   become: true
+      21 |   ansible.builtin.copy:
+      22 |     content: ""uninitialized\n""
+      23 |     mode: '0444'
+      24 |     dest: /etc/machine-id
+      25 |   tags:
+      26 |     - packer
+      27 | ",,,,,,,,,,
+V007STRAT-SHELL-INSTEAD-OF-MODULE-003,ansibleguard/shell-instead-of-module,shell-module-migration,Maintainability/complexity,D-long-tail,168,97.45,gdcc/dataverse-ansible,ae29ce65dd4cddd5187c2bc00aefd319b6bb4484,tasks/custom_sampledata.yml,17,warning,"Task 'publish root dataverse': Use the 'uri' or 'get_url' module instead of curl. (module: uri, command: curl -s --insecure -u {{ api_token }}: -X POST -H ""In-Progress: false"" --data-bi...)",4a644994a91d6b11916f8906af7c48ae34bbf2bff3f2ecc8a2dc590672ed13d6,"       3 | - name: begin custom sampledata task
+       4 |   debug:
+       5 |     msg: '##### CUSTOM SAMPLEDATA #####'
+       6 | 
+       7 | - name: does the sampledata directory exist?
+       8 |   stat:
+       9 |     path: ""{{ dataverse.custom_sampledata.custom_sampledir }}""
+      10 |   register: sampledir_exists
+      11 | 
+      12 | - ansible.builtin.import_tasks: dataverse-sampledata-examples.yml
+      13 |   when: sampledir_exists.stat.exists == false
+      14 | 
+      15 | - ansible.builtin.import_tasks: dataverse-apitoken.yml
+      16 |     
+>>    17 | - name: publish root dataverse
+      18 |   shell: 'curl -s --insecure -u {{ api_token }}: -X POST -H ""In-Progress: false"" --data-binary @- http://localhost:8080/dvn/api/data-deposit/v1.1/swordv2/edit/dataverse/root'
+      19 |   ignore_errors: yes
+      20 | 
+      21 | - name: get dv-root.json
+      22 |   get_url:
+      23 |     url: '{{ dataverse_raw_repo }}/develop/scripts/api/data/dv-root.json'
+      24 |     dest: ""{{ playbook_dir }}/""
+      25 | 
+      26 | - name: grant authusers add-on-root
+      27 |   uri:
+      28 |     url: 'http://localhost:8080/api/dataverses/root/assignments?key={{ api_token }}'
+      29 |     method: POST
+      30 |     headers:
+      31 |       Content-Type: ""application/json""",,,,,,,,,,
+V007STRAT-SHELL-INSTEAD-OF-MODULE-004,ansibleguard/shell-instead-of-module,shell-module-migration,Maintainability/complexity,D-long-tail,168,97.45,Kubeinit/kubeinit,da6fec314d5594b6bd97ef2e4e71f9098a85e63c,kubeinit/roles/kubeinit_k8s/tasks/prepare_cluster.yml,56,warning,"Task 'Install requirements': Use the 'dnf' or 'package' module instead of dnf. (module: dnf, command: dnf install -y kubectl-{{ kubeinit_k8s_kubernetes_version }}.* --disableexcludes...)",d1f0d5d76f847ca0a76320c8ca65cba0a952077b52a8f175c5e9585f92f7070f,"      42 |             mode: '0644'
+      43 | 
+      44 |         - name: Adding repository details in Kubernetes repo file.
+      45 |           ansible.builtin.blockinfile:
+      46 |             block: |
+      47 |               [kubernetes]
+      48 |               name=Kubernetes
+      49 |               baseurl=https://pkgs.k8s.io/core:/stable:/v{{ kubeinit_k8s_kubernetes_version }}/rpm/
+      50 |               enabled=1
+      51 |               gpgcheck=1
+      52 |               gpgkey=https://pkgs.k8s.io/core:/stable:/v{{ kubeinit_k8s_kubernetes_version }}/rpm/repodata/repomd.xml.key
+      53 |               exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+      54 |             path: /etc/yum.repos.d/kubernetes.repo
+      55 | 
+>>    56 |         - name: Install requirements
+      57 |           ansible.builtin.command: dnf install -y kubectl-{{ kubeinit_k8s_kubernetes_version }}.* --disableexcludes=kubernetes
+      58 |           register: _result
+      59 |           changed_when: ""_result.rc == 0""
+      60 | 
+      61 |     - when: hostvars[kubeinit_provision_service_node].os == 'debian'
+      62 |       block:
+      63 | 
+      64 |         - name: Add kubernetes repo for latest kubectl (Debian)
+      65 |           ansible.builtin.shell: |
+      66 |             set -eo pipefail
+      67 |             apt-get install -y apt-transport-https ca-certificates curl gpg
+      68 |             mkdir -p /etc/apt/keyrings
+      69 |             curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      70 |             echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list",,,,,,,,,,
+V007STRAT-SHELL-INSTEAD-OF-MODULE-005,ansibleguard/shell-instead-of-module,shell-module-migration,Maintainability/complexity,D-long-tail,168,97.45,hyphacoop/cosmos-ansible,8a3a2afdc232bf3cf08e9b19cdb3055e008b0c29,roles/bigdipper/tasks/hasura.yml,22,warning,"Task 'Set up hasura CLI': Use the 'npm' module (community.general.npm) instead. (module: npm, command: npm install --unsafe-perm --global hasura-cli@{{hasura_cli_version}})",25f32e04779613e9866368f7b776f90b499513018aabd05e2f56f2d06022f782,"       8 |     network_mode: host
+       9 |     restart_policy: ""always""
+      10 |     env:
+      11 |       HASURA_GRAPHQL_DATABASE_URL: ""{{bigdipper_db_url}}""
+      12 |       HASURA_GRAPHQL_SERVER_PORT: ""{{ hasura_port | string }}""
+      13 |       HASURA_GRAPHQL_SERVER_HOST: ""127.0.0.1""
+      14 |       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: ""anonymous""
+      15 |       ACTION_BASE_URL: ""http://localhost:{{bdjuno_hasura_actions_port}}""
+      16 |       HASURA_GRAPHQL_ADMIN_SECRET: ""{{hasura_admin_secret}}""
+      17 | 
+      18 | - name: ""Set up node+npm""
+      19 |   include_role:
+      20 |     name: geerlingguy.nodejs
+      21 | 
+>>    22 | - name: ""Set up hasura CLI""
+      23 |   shell: ""npm install --unsafe-perm --global hasura-cli@{{hasura_cli_version}}""
+      24 | 
+      25 | - name: Wait for docker to be ready
+      26 |   wait_for:
+      27 |     port: ""{{hasura_port}}""
+      28 |     delay: 10
+      29 | 
+      30 | - name: ""Apply metadata to hasura""
+      31 |   become_user: ""{{bigdipper_user}}""
+      32 |   shell: |
+      33 |     hasura metadata apply --endpoint http://localhost:{{hasura_port}} --admin-secret ""{{hasura_admin_secret}}""
+      34 |   args:
+      35 |     chdir: ""{{bdjuno_dir}}/hasura""
+      36 |   async: 30",,,,,,,,,,
+V007STRAT-UNDOCUMENTED-COMPLEX-TASK-001,ansibleguard/undocumented-complex-task,undocumented-complex-task,Maintainability/complexity,D-long-tail,154,97.92,SkynetLabs/ansible-playbooks,2340b81e8ef10cd387c8669c4bd14dab1c328130,playbooks/tasks/portal-role-task-mongo-replicaset-get-status-subtask2.yml,56,note,Highly complex task lacks a preceding rationale comment (4 Jinja filters).,a0d4099c507cb23c2d04f9acec446b0b9fe4a00ce2b4040043216bd7d0a6e605,"      42 | - name: Include getting mongo replicaset primary member
+      43 |   include_tasks: tasks/portal-role-task-mongo-shell-eval-on-delegated-host.yml
+      44 |   vars:
+      45 |     mongodb_shell_delegated:
+      46 |       host: ""{{ host_item }}""
+      47 |       # In the following eval do not use simpler command:
+      48 |       # ""rs.isMaster().primary""
+      49 |       # because the above command doesn't fail if the replicaset is not yet
+      50 |       # configured so giving us a false replicaset is ok status.
+      51 |       eval: ""rs.status().members.forEach(m => {if (m.stateStr == 'PRIMARY') {print(m.name)}})""
+      52 |       ignore_errors: True
+      53 |   register: mongo_getting_primary_result
+      54 |   when: mongo_container_ok
+      55 | 
+>>    56 | - name: Set mongo primary host
+      57 |   set_fact:
+      58 |     mongo_primary_host: ""{{ item }}""
+      59 |   when: >-
+      60 |     not (mongo_getting_primary_result.skipped | default(False)) and
+      61 |     not (mongo_shell_delegated_result.failed | default(False)) and
+      62 |     hostvars[item].ansible_host + ':' + (hostvars[item].custom_mongo_port | default(default_mongo_port | string)) == mongo_shell_delegated_result.transformed_output
+      63 |   loop: ""{{ mongo_cluster_hosts }}""
+      64 | 
+      65 | - name: Set mongo replicaset is online
+      66 |   set_fact:
+      67 |     mongo_replicaset_online: >-
+      68 |       {{
+      69 |         mongo_replicaset_online | default(False)
+      70 |         or",,,,,,,,,,
+V007STRAT-UNDOCUMENTED-COMPLEX-TASK-002,ansibleguard/undocumented-complex-task,undocumented-complex-task,Maintainability/complexity,D-long-tail,154,97.92,Alfresco/alfresco-ansible-deployment,0f25fad44e8c3bc0a5113a2bad46b5f90a2947be,playbooks/acs.yml,772,note,Highly complex task lacks a preceding rationale comment (4 Jinja filters).,ce34cd5654bdfa4648ca549252f54fec9395cd381678a98d3aca56a207371fb6,"     758 |         mode: ""0755""
+     759 |   tags:
+     760 |     - sync
+     761 | 
+     762 | - name: Audit Storage Role
+     763 |   hosts: audit_storage
+     764 |   gather_facts: false
+     765 |   vars:
+     766 |     acs_version_requirement: ""{{ acs_play_repository_acs_version is version('23.4', 'ge') }}""
+     767 |   pre_tasks:
+     768 |     - name: Assert that the required version is met
+     769 |       ansible.builtin.fail:
+     770 |         msg: ""Audit Storage requires ACS 23.4 or later""
+     771 |       when: not acs_version_requirement
+>>   772 |     - name: Assert Audit Storage is not combined with aws-iam Elasticsearch auth
+     773 |       ansible.builtin.fail:
+     774 |         msg: >-
+     775 |           Audit Storage does not support AWS IAM (SigV4) Elasticsearch auth.
+     776 |           Set elasticsearch_auth_mode to basic or disable Audit Storage.
+     777 |       when:
+     778 |         - acs_is_enterprise and acs_version_requirement
+     779 |         - (groups.external_elasticsearch | default([]) | map('extract', hostvars, ['elasticsearch_auth_mode']) | first | default('basic')) == 'aws-iam'
+     780 |   roles:
+     781 |     - role: ""../roles/java""
+     782 |       when: acs_is_enterprise and acs_version_requirement
+     783 |       java_version: ""{{ acs_play_java_version }}""
+     784 |     - role: alfresco.platform.audit_storage
+     785 |       when: acs_is_enterprise and acs_version_requirement
+     786 |       audit_storage_java_home_path: ""/opt/openjdk-{{ acs_play_java_core }}""",,,,,,,,,,
+V007STRAT-UNDOCUMENTED-COMPLEX-TASK-003,ansibleguard/undocumented-complex-task,undocumented-complex-task,Maintainability/complexity,D-long-tail,154,97.92,ansible-lockdown/RHEL7-STIG,a3d78cfc5c2cae8f8b344fbcd6664a35817dbad0,handlers/main.yml,34,note,Highly complex task lacks a preceding rationale comment (4 boolean operators).,a267aa37e328e0807bed707b078b25523e72c229c48e0f81232c4d0c0e3214d4,"      20 | 
+      21 | - name: confirm grub2 user cfg
+      22 |   ansible.builtin.stat:
+      23 |       path: /boot/grub2/user.cfg
+      24 |   register: rhel7stig_grub2_user_cfg
+      25 |   notify: make grub2 config
+      26 | 
+      27 | - name: make grub2 config
+      28 |   ansible.builtin.shell: /usr/sbin/grub2-mkconfig --output={{ rhel7stig_bootloader_path }}grub.cfg
+      29 |   when:
+      30 |       - (rhel7stig_grub2_user_cfg is defined) and (rhel7stig_grub2_user_cfg.stat.exists)
+      31 |       - not rhel7stig_skip_for_travis
+      32 |       - not rhel7stig_system_is_container
+      33 | 
+>>    34 | - name: copy grub2 config to BIOS/UEFI to satisfy benchmark
+      35 |   listen: make grub2 config
+      36 |   ansible.builtin.copy:
+      37 |       src: ""{{ rhel7stig_bootloader_path }}/{{ item }}""
+      38 |       dest: ""{{ rhel7stig_not_boot_path }}/{{ item }}""
+      39 |       remote_src: true
+      40 |       mode: '0600'
+      41 |   with_items:
+      42 |       - grub.cfg
+      43 |       - user.cfg
+      44 |   when:
+      45 |       - (rhel7stig_grub2_user_cfg is defined) and (rhel7stig_grub2_user_cfg.stat.exists)
+      46 |       - rhel7stig_workaround_for_disa_benchmark
+      47 |       - not rhel7stig_skip_for_travis
+      48 |       - not rhel7stig_system_is_container",,,,,,,,,,
+V007STRAT-UNDOCUMENTED-COMPLEX-TASK-004,ansibleguard/undocumented-complex-task,undocumented-complex-task,Maintainability/complexity,D-long-tail,154,97.92,Checkmk/ansible-collection-checkmk.general,50be8bde935f94e4702f40c9a549f86ffe773db1,roles/agent/tasks/Linux.yml,136,note,"Highly complex task lacks a preceding rationale comment (7 boolean operators, 4 Jinja filters).",b2cbcc86ddb9ee8abd67f14103458a489a9524f1cee726783e2096c6e374bf70,"     122 |   tags:
+     123 |     - register-agent
+     124 | 
+     125 | - name: ""{{ ansible_facts['system'] }}: Read Agent Controller State.""
+     126 |   become: true
+     127 |   ansible.builtin.command: cat /var/lib/cmk-agent/registered_connections.json
+     128 |   register: __checkmk_agent_registered_connections
+     129 |   changed_when: false
+     130 |   failed_when: |
+     131 |     not __checkmk_agent_registered_connections.rc == 0
+     132 |     and not __checkmk_agent_registered_connections.rc == 1
+     133 |   tags:
+     134 |     - register-agent
+     135 | 
+>>   136 | - name: ""{{ ansible_facts['system'] }}: Register Agent for automatic Updates using User Password.""
+     137 |   become: true
+     138 |   ansible.builtin.shell: |
+     139 |     cmk-update-agent register -H {{ checkmk_agent_host_name }} \
+     140 |     -s {{ checkmk_agent_registration_server }} -i {{ checkmk_agent_registration_site }} -p {{ checkmk_agent_registration_server_protocol }} \
+     141 |     -U {{ checkmk_agent_user }} -P {{ __checkmk_agent_auth | ansible.builtin.quote }}
+     142 |   no_log: ""{{ checkmk_agent_no_log | bool }}""
+     143 |   register: __checkmk_agent_update_state
+     144 |   when: |
+     145 |     checkmk_agent_edition | lower != ""community""
+     146 |     and __checkmk_agent_updater_binary.stat.exists | bool
+     147 |     and checkmk_agent_update | bool
+     148 |     and (checkmk_agent_pass is defined and checkmk_agent_pass | length > 0)
+     149 |     and (checkmk_agent_secret is not defined)
+     150 |     and not ((checkmk_agent_registration_server + '/' + checkmk_agent_registration_site in __checkmk_agent_updater_state.stdout)",,,,,,,,,,
+V007STRAT-UNDOCUMENTED-COMPLEX-TASK-005,ansibleguard/undocumented-complex-task,undocumented-complex-task,Maintainability/complexity,D-long-tail,154,97.92,FreiFunkMuenster/Ansible-Freifunk-Gateway,b04e8f81b2b010eaccd13a63271c7ce7eb6fb4b3,gateways_fastd/tasks/main.yml,26,note,Highly complex task lacks a preceding rationale comment (4 boolean operators).,227d3c54760142245252df1e4f8073b7690966dfc0334463bdaf2ed50da35855,"      12 |     state: present
+      13 |   when: fastd_on_this_gw is defined and fastd_on_this_gw
+      14 | 
+      15 | - name: Get all enabled fastd instances
+      16 |   shell: |
+      17 |     set -o pipefail
+      18 |     /bin/ls -1 /etc/systemd/system/multi-user.target.wants/fastd@* | sed -n 's/fastd@\([0-9][0-9]*\)\.service/\1/p'
+      19 |   args:
+      20 |     executable: bash
+      21 |   changed_when: False
+      22 |   failed_when: False
+      23 |   check_mode: no
+      24 |   register: _fastd_domain_instances
+      25 | 
+>>    26 | - name: Stop and disable obsolete fastd instances
+      27 |   service:
+      28 |     name: ""fastd@{{ item }}.service""
+      29 |     enabled: no
+      30 |     state: stopped
+      31 |   with_items: ""{{ _fastd_domain_instances.stdout_lines }}""
+      32 |   when: domaenenliste is defined and item not in domaenenliste or
+      33 |         (domaenenliste[item].fastd is defined and not domaenenliste[item].fastd) or
+      34 |         (domaenenliste[item].fastd is undefined)
+      35 | 
+      36 | - name: remove fastd (vpn daemon) and haveged (entropy daemon)
+      37 |   apt:
+      38 |     name: ['fastd', 'haveged']
+      39 |     state: absent
+      40 |   when: fastd_on_this_gw is not defined or not fastd_on_this_gw",,,,,,,,,,
+V007STRAT-HIGH-COUPLING-001,ansibleguard/high-coupling,high-coupling,Maintainability/complexity,D-long-tail,88,98.79,easzlab/kubeasz,fcb46a47a7fcd3bbc97498ea4aefdd564e16b383,playbooks/22.addnode.yml,1,warning,"Coupling evidence: imports=0 (threshold=None), roles=11 (threshold=None).",9fd0a9ddb6cadeed9d796d55242c3ec325ef29b312fd4f4e296cba34704757d3,">>     1 | # Note: this playbook can not run independently
+       2 | 
+       3 | - hosts: ""{{ NODE_TO_ADD }}"" 
+       4 |   roles:
+       5 |   - { role: os-harden, when: ""OS_HARDEN|bool"" }
+       6 |   - { role: chrony, when: ""groups['chrony']|length > 0"" } 
+       7 |   - prepare
+       8 |   - { role: docker, when: ""CONTAINER_RUNTIME == 'docker'"" }
+       9 |   - { role: containerd, when: ""CONTAINER_RUNTIME == 'containerd'"" }
+      10 |   - kube-lb
+      11 |   - kube-node
+      12 |   - { role: calico, when: ""CLUSTER_NETWORK == 'calico'"" }
+      13 |   - { role: cilium, when: ""CLUSTER_NETWORK == 'cilium'"" }
+      14 |   - { role: flannel, when: ""CLUSTER_NETWORK == 'flannel'"" }
+      15 |   - { role: kube-router, when: ""CLUSTER_NETWORK == 'kube-router'"" }",,,,,,,,,,
+V007STRAT-HIGH-COUPLING-002,ansibleguard/high-coupling,high-coupling,Maintainability/complexity,D-long-tail,88,98.79,gantsign/development-environment,eeffd50b7a2a5b2a6c218bc1ff9ecb93789968d4,provisioning/playbook.yml,1,warning,"Coupling evidence: imports=0 (threshold=None), roles=58 (threshold=None).",913ce1f5f2eee751617c28258ed420695f890a225b5f3e4daed0f6b550a17bd2,">>     1 | ---
+       2 | - hosts: all
+       3 |   become: true
+       4 | 
+       5 |   vars:
+       6 |     x_ansible_download_dir: /usr/local/src/ansible/data
+       7 |     intellij_edition: community
+       8 |     my_user: dev
+       9 | 
+      10 |   pre_tasks:
+      11 |     - name: Update apt cache
+      12 |       ansible.builtin.apt: update_cache=true cache_valid_time=86400
+      13 | 
+      14 |     - name: Update all packages to the latest version
+      15 |       ansible.builtin.apt:",,,,,,,,,,
+V007STRAT-HIGH-COUPLING-003,ansibleguard/high-coupling,high-coupling,Maintainability/complexity,D-long-tail,88,98.79,StackStorm/ansible-st2,b321d87078a28e218bc66e072b5b27c3b545c26a,stackstorm.yml,1,warning,"Coupling evidence: imports=0 (threshold=None), roles=10 (threshold=None).",9b5bd57ae4ae189f236f4de8cf866451adde29e21b6d0e061c4730bc9ebd0bb4,">>     1 | ---
+       2 | - name: Install st2
+       3 |   hosts: all
+       4 |   environment: ""{{ st2_proxy_env | default({}) }}""
+       5 |   roles:
+       6 |     - StackStorm.mongodb
+       7 |     - StackStorm.rabbitmq
+       8 |     - StackStorm.redis
+       9 |     - StackStorm.st2repo
+      10 |     - StackStorm.st2
+      11 |     - StackStorm.nginx
+      12 |     - StackStorm.st2web
+      13 |     - StackStorm.nodejs
+      14 |     - StackStorm.st2chatops
+      15 |     - StackStorm.st2smoketests",,,,,,,,,,
+V007STRAT-HIGH-COUPLING-004,ansibleguard/high-coupling,high-coupling,Maintainability/complexity,D-long-tail,88,98.79,carnivuth/labcraft,3547209dd2823344c728f8054eff0074675e6558,playbooks/site.yml,1,warning,"Coupling evidence: imports=0 (threshold=None), roles=10 (threshold=None).",3b902c4173ee1c2521ed5e6cef23bb81bde450e4e07895b778333bd57962d106,">>     1 | ---
+       2 | - name: Run torterra site configuration
+       3 |   hosts:
+       4 |     - docker_clouds
+       5 |   roles:
+       6 |     - role: enforce_policies
+       7 |       tags: system
+       8 |     - role: cronjobs
+       9 |       tags: system
+      10 | 
+      11 |     - role: update
+      12 |       tags:
+      13 |         - system
+      14 |         - update
+      15 | ",,,,,,,,,,
+V007STRAT-DEPRECATED-MODULES-001,ansibleguard/deprecated-modules,module-deprecation,Maintainability/complexity,D-long-tail,87,98.92,rcbops/rpc-openstack,f8fdb2ee2a7c66b3490c55513312e4fa3ff241b4,playbooks/site-logging.yml,16,warning,Task 'Unnamed task': Module 'include' is deprecated. Use 'include_tasks or import_tasks' instead.,1526f60f25e099690a7119a65f8302cce8d3527768995a9f0ef3843aa1531444,"       2 | # Copyright 2015, Rackspace US, Inc.
+       3 | #
+       4 | # Licensed under the Apache License, Version 2.0 (the ""License"");
+       5 | # you may not use this file except in compliance with the License.
+       6 | # You may obtain a copy of the License at
+       7 | #
+       8 | #     http://www.apache.org/licenses/LICENSE-2.0
+       9 | #
+      10 | # Unless required by applicable law or agreed to in writing, software
+      11 | # distributed under the License is distributed on an ""AS IS"" BASIS,
+      12 | # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      13 | # See the License for the specific language governing permissions and
+      14 | # limitations under the License.
+      15 | 
+>>    16 | - include: openstack-ansible-ops-get.yml
+      17 | - include: deployment-osquery.yml
+      18 |   when: groups['log_hosts'] is defined and (groups['log_hosts'] | length>0)
+      19 | - include: deployment-elk.yml
+      20 |   when: groups['log_hosts'] is defined and (groups['log_hosts'] | length>0)",,,,,,,,,,
+V007STRAT-DEPRECATED-MODULES-002,ansibleguard/deprecated-modules,module-deprecation,Maintainability/complexity,D-long-tail,87,98.92,jr0dd/home-ops,0e76c37818159bea648890d4ee132616f6ed6499,infrastructure/ansible/roles/k3s/tasks/main.yml,2,warning,Task 'Unnamed task': Module 'include' is deprecated. Use 'include_tasks or import_tasks' instead.,0a44850372458da7b815552190b656842c59585a30641d5b5838d22e25503a6a,"       1 | ---
+>>     2 | - include: checks.yml
+       3 |   tags:
+       4 |     - checks
+       5 | 
+       6 | - name: Install Kubernetes
+       7 |   include_role:
+       8 |     name: xanmanning.k3s
+       9 |     public: true
+      10 | 
+      11 | - include: network.yml
+      12 |   tags:
+      13 |     - network
+      14 | 
+      15 | - include: cleanup.yml
+      16 |   tags:",,,,,,,,,,
+V007STRAT-DEPRECATED-MODULES-003,ansibleguard/deprecated-modules,module-deprecation,Maintainability/complexity,D-long-tail,87,98.92,pjbriggs/ansible-palfinder-galaxy,e77a4b2ccc9ade57dcbb71f2c2d3e25db01d2169,roles/export-galaxy-for-cluster/tasks/main.yml,4,warning,Task 'Unnamed task': Module 'include' is deprecated. Use 'include_tasks or import_tasks' instead.,55c05336f2d967e8b64a2c1c3b085cd69452bf9e165719891953adaa0036009c,"       1 | # Install Galaxy
+       2 | ---
+       3 | 
+>>     4 | - include: dependencies.yml
+       5 | 
+       6 | - include: galaxy_user.yml
+       7 | 
+       8 | - include: python.yml
+       9 |   become: yes
+      10 |   become_user: ""{{ galaxy_user }}""
+      11 | 
+      12 | - include: galaxy.yml
+      13 |   become: yes
+      14 |   become_user: ""{{ galaxy_user }}""
+      15 | 
+      16 | - include: export.yml
+      17 |   become: yes
+      18 |   become_user: ""{{ galaxy_user }}""",,,,,,,,,,
+V007STRAT-DEPRECATED-MODULES-004,ansibleguard/deprecated-modules,module-deprecation,Maintainability/complexity,D-long-tail,87,98.92,ansible/zuul-config,82f3415452ef899524f4257b3cdae20b13692c87,roles/configure-mirrors-fork/tasks/main.yaml,8,warning,Task 'Set up infrastructure mirrors': Module 'include' is deprecated. Use 'include_tasks or import_tasks' instead.,de1e5f84bb14249f4b53fa0b5f81494b53e565dd8f469c3c81f7ee38e38dcca4,"       1 | ---
+       2 | - name: gather needed facts
+       3 |   when: ansible_pkg_mgr is not defined
+       4 |   setup:
+       5 |     gather_subset: pkg_mgr
+       6 | 
+       7 | - name: Set up infrastructure mirrors
+>>     8 |   include: mirror.yaml
+       9 |   when: mirror_fqdn is defined
+      10 |   static: false",,,,,,,,,,
+V007STRAT-INCOMPLETE-TASK-001,ansibleguard/incomplete-task,incomplete-task,Maintainability/complexity,D-long-tail,13,99.89,sgaunet/conf-linux,95a2f4f71c0a55dfe9b4d3e2b4e53e408bc83da3,src/roles/bash_formatter/tasks/redhat.yml,3,warning,Unresolved TODO marker in task name.,9f659539567b037b158f7b946295a8c56e2d8b825a3556db83b776e3f8333b10,"       1 | ---
+       2 | 
+>>     3 | - name: TODO
+       4 |   ansible.builtin.debug:
+       5 |     msg: ""TODO !""",,,,,,,,,,
+V007STRAT-EXCESSIVE-NESTING-001,ansibleguard/excessive-nesting,excessive-nesting,Maintainability/complexity,D-long-tail,10,99.92,zephyros-dev/media-server,f80b182bd1ff8489b67e9342f391ae682ddda0fc,roles/application/tasks/container.yaml,30,warning,Task nesting depth is 4 (threshold 3).,4da86a7ef1ef7c9eff7b3c98af06068ce63ce9cd2921fac8641c2b3fe62b0763,"      16 |       ansible.builtin.set_fact:
+      17 |         container_quadlet_path: /etc/containers/systemd
+      18 |         container_systemd_scope: system
+      19 |       when: application_item.value.param.become
+      20 | 
+      21 |     - name: Setup systemd container {{ application_name }}
+      22 |       become: ""{{ application_item.value.param.become }}""
+      23 |       block:
+      24 |         - name: Setup podman container {{ application_name }}
+      25 |           when: application_item.value.transform.state == ""started""
+      26 |           block:
+      27 |             - name: Setup volumes {{ application_name }}
+      28 |               when: application_item.value.param.volumes is defined
+      29 |               block:
+>>    30 |                 - name: Get volume list for {{ application_name }}
+      31 |                   # We have to use set_fact since vars make the tasks unable to be skipped
+      32 |                   ansible.builtin.set_fact:
+      33 |                     volume_list: ""{{ application | json_query(volume_list_query) }}""
+      34 |                   vars:
+      35 |                     volume_list_query: ""{{ application_item.key }}.transform.volumes.*""
+      36 |                 - name: Check if volume exists {{ application_name }}
+      37 |                   when: ""'/dev/' not in item or application_name == 'netdata'""
+      38 |                   ansible.builtin.stat:
+      39 |                     path: ""{{ item }}""
+      40 |                   vars:
+      41 |                     volume_query: ""[?type == `relativePathDir` || type == `absolutePathDir`].value""
+      42 |                   loop: ""{{ volume_list | json_query(volume_query) }}""
+      43 |                   register: container_volume_state
+      44 |                 - name: Prepare volume {{ application_name }}",,,,,,,,,,
+V007STRAT-UNUSED-HANDLER-001,ansibleguard/unused-handler,unused-handler,Maintainability/complexity,D-long-tail,10,99.93,sdwilsh/ansible-playbooks,40be40030f481071eceb674509623b21986a04b5,plays/groups/hogsflixplus.yml,22,warning,Handler 'systemd-sysctl.service': Handler 'systemd-sysctl.service' is defined but never notified. It will never execute.,b8191270b5b29275aea2c8648ce2c2ff48bc15eb5b7f781b700c100ebbf0ba92,"       8 |       ansible.builtin.systemd_service:
+       9 |         daemon_reload: true
+      10 |     - name: alloy.service
+      11 |       ansible.builtin.systemd_service:
+      12 |         name: alloy.service
+      13 |         state: restarted
+      14 |     - name: systemd-journald.service
+      15 |       ansible.builtin.systemd_service:
+      16 |         name: systemd-journald.service
+      17 |         state: restarted
+      18 |     - name: systemd-modules-load.service
+      19 |       ansible.builtin.systemd_service:
+      20 |         name: systemd-modules-load.service
+      21 |         state: restarted
+>>    22 |     - name: systemd-sysctl.service
+      23 |       ansible.builtin.systemd_service:
+      24 |         name: systemd-sysctl.service
+      25 |         state: restarted
+      26 |     - name: reload hfp network
+      27 |       ansible.builtin.nmcli:
+      28 |         conn_name: hfp
+      29 |         conn_reload: true
+      30 |         state: up
+      31 |     - name: hfp-proxy.service
+      32 |       ansible.builtin.systemd_service:
+      33 |         name: hfp-proxy.service
+      34 |         state: restarted
+      35 |     - name: reboot
+      36 |       ansible.builtin.reboot:",,,,,,,,,,

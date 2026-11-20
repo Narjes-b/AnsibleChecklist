@@ -1,0 +1,2157 @@
+{
+  "scheduled": 96,
+  "human_quality": "pending independent review",
+  "rows": [
+    {
+      "case_id": "real-unguarded-variable-1",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 8.468256485999973,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5369,
+        "context_limit": 8192,
+        "eval_count": 218,
+        "output_reserve": 1024,
+        "prompt_eval_count": 924
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-1",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 7.101742793000085,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5447,
+        "context_limit": 8192,
+        "eval_count": 179,
+        "output_reserve": 1024,
+        "prompt_eval_count": 872
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-5",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 5.065946445999998,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4393,
+        "context_limit": 8192,
+        "eval_count": 134,
+        "output_reserve": 1024,
+        "prompt_eval_count": 618
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-5",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 7.375284678999833,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3940,
+        "context_limit": 8192,
+        "eval_count": 202,
+        "output_reserve": 1024,
+        "prompt_eval_count": 546
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-0",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 8.573253149000038,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5406,
+        "context_limit": 8192,
+        "eval_count": 219,
+        "output_reserve": 1024,
+        "prompt_eval_count": 935
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-0",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 7.055382509000083,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5447,
+        "context_limit": 8192,
+        "eval_count": 175,
+        "output_reserve": 1024,
+        "prompt_eval_count": 872
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-5",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 6.814732583000023,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4946,
+        "context_limit": 8192,
+        "eval_count": 178,
+        "output_reserve": 1024,
+        "prompt_eval_count": 716
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-5",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 7.56633852899995,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4332,
+        "context_limit": 8192,
+        "eval_count": 203,
+        "output_reserve": 1024,
+        "prompt_eval_count": 674
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-4",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.753782056000091,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3987,
+        "context_limit": 8192,
+        "eval_count": 183,
+        "output_reserve": 1024,
+        "prompt_eval_count": 558
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-4",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 6.794147043000066,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5193,
+        "context_limit": 8192,
+        "eval_count": 177,
+        "output_reserve": 1024,
+        "prompt_eval_count": 765
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-0",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 6.6517760430001545,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4770,
+        "context_limit": 8192,
+        "eval_count": 176,
+        "output_reserve": 1024,
+        "prompt_eval_count": 648
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-0",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.020308586999818,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3923,
+        "context_limit": 8192,
+        "eval_count": 165,
+        "output_reserve": 1024,
+        "prompt_eval_count": 533
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-4",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 8.488151857000048,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4321,
+        "context_limit": 8192,
+        "eval_count": 235,
+        "output_reserve": 1024,
+        "prompt_eval_count": 660
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-4",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.5622777390001374,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5637,
+        "context_limit": 8192,
+        "eval_count": 139,
+        "output_reserve": 1024,
+        "prompt_eval_count": 943
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-3",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 7.269396384000174,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5145,
+        "context_limit": 8192,
+        "eval_count": 193,
+        "output_reserve": 1024,
+        "prompt_eval_count": 778
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-3",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.564443111999935,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4288,
+        "context_limit": 8192,
+        "eval_count": 178,
+        "output_reserve": 1024,
+        "prompt_eval_count": 697
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-1",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.764285257999745,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4335,
+        "context_limit": 8192,
+        "eval_count": 154,
+        "output_reserve": 1024,
+        "prompt_eval_count": 649
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-1",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 8.41643932299985,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4641,
+        "context_limit": 8192,
+        "eval_count": 137,
+        "output_reserve": 1024,
+        "prompt_eval_count": 640
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-0",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.456057026000053,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5538,
+        "context_limit": 8192,
+        "eval_count": 135,
+        "output_reserve": 1024,
+        "prompt_eval_count": 907
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-0",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 9.677384433000043,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4288,
+        "context_limit": 8192,
+        "eval_count": 174,
+        "output_reserve": 1024,
+        "prompt_eval_count": 655
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-1",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 8.18111140200017,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3926,
+        "context_limit": 8192,
+        "eval_count": 133,
+        "output_reserve": 1024,
+        "prompt_eval_count": 543
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-1",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 4.688782158999857,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4444,
+        "context_limit": 8192,
+        "eval_count": 122,
+        "output_reserve": 1024,
+        "prompt_eval_count": 624
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-5",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 8.8851652809999,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4670,
+        "context_limit": 8192,
+        "eval_count": 148,
+        "output_reserve": 1024,
+        "prompt_eval_count": 646
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-5",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 9.407340118999855,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3917,
+        "context_limit": 8192,
+        "eval_count": 186,
+        "output_reserve": 1024,
+        "prompt_eval_count": 528
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-5",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 9.36544414500031,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4104,
+        "context_limit": 8192,
+        "eval_count": 192,
+        "output_reserve": 1024,
+        "prompt_eval_count": 570
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-5",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 8.769127280999783,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4408,
+        "context_limit": 8192,
+        "eval_count": 164,
+        "output_reserve": 1024,
+        "prompt_eval_count": 592
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-2",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 7.865856691000317,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4656,
+        "context_limit": 8192,
+        "eval_count": 148,
+        "output_reserve": 1024,
+        "prompt_eval_count": 641
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-2",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 7.382768089000365,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3937,
+        "context_limit": 8192,
+        "eval_count": 206,
+        "output_reserve": 1024,
+        "prompt_eval_count": 536
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-4",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.655893556000137,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3954,
+        "context_limit": 8192,
+        "eval_count": 155,
+        "output_reserve": 1024,
+        "prompt_eval_count": 550
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-4",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.874824314999842,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4844,
+        "context_limit": 8192,
+        "eval_count": 154,
+        "output_reserve": 1024,
+        "prompt_eval_count": 718
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-3",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.818888161000359,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4784,
+        "context_limit": 8192,
+        "eval_count": 154,
+        "output_reserve": 1024,
+        "prompt_eval_count": 653
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-3",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.5336297920002835,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3903,
+        "context_limit": 8192,
+        "eval_count": 182,
+        "output_reserve": 1024,
+        "prompt_eval_count": 525
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-3",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 10.179165265999927,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4229,
+        "context_limit": 8192,
+        "eval_count": 204,
+        "output_reserve": 1024,
+        "prompt_eval_count": 650
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-3",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 9.359818554999947,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4881,
+        "context_limit": 8192,
+        "eval_count": 175,
+        "output_reserve": 1024,
+        "prompt_eval_count": 755
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-2",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 6.57023017199981,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5330,
+        "context_limit": 8192,
+        "eval_count": 169,
+        "output_reserve": 1024,
+        "prompt_eval_count": 856
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-2",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 10.466214807000142,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4822,
+        "context_limit": 8192,
+        "eval_count": 286,
+        "output_reserve": 1024,
+        "prompt_eval_count": 783
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-0",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.044087785999636,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3927,
+        "context_limit": 8192,
+        "eval_count": 137,
+        "output_reserve": 1024,
+        "prompt_eval_count": 543
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-0",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 4.660207107000133,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4483,
+        "context_limit": 8192,
+        "eval_count": 122,
+        "output_reserve": 1024,
+        "prompt_eval_count": 624
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-3",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 6.0811774089997925,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4408,
+        "context_limit": 8192,
+        "eval_count": 164,
+        "output_reserve": 1024,
+        "prompt_eval_count": 592
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-3",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 6.614258557999619,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3797,
+        "context_limit": 8192,
+        "eval_count": 184,
+        "output_reserve": 1024,
+        "prompt_eval_count": 496
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-5",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.445438220000142,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3968,
+        "context_limit": 8192,
+        "eval_count": 178,
+        "output_reserve": 1024,
+        "prompt_eval_count": 549
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-5",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 6.84238711099988,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4884,
+        "context_limit": 8192,
+        "eval_count": 180,
+        "output_reserve": 1024,
+        "prompt_eval_count": 699
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-0",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.933906581999963,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4869,
+        "context_limit": 8192,
+        "eval_count": 155,
+        "output_reserve": 1024,
+        "prompt_eval_count": 716
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-0",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.100719598000069,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3950,
+        "context_limit": 8192,
+        "eval_count": 170,
+        "output_reserve": 1024,
+        "prompt_eval_count": 550
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-0",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 6.458773321000081,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3797,
+        "context_limit": 8192,
+        "eval_count": 180,
+        "output_reserve": 1024,
+        "prompt_eval_count": 496
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-0",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 6.06392316199981,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4408,
+        "context_limit": 8192,
+        "eval_count": 164,
+        "output_reserve": 1024,
+        "prompt_eval_count": 592
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-4",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 4.663883227000042,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4444,
+        "context_limit": 8192,
+        "eval_count": 122,
+        "output_reserve": 1024,
+        "prompt_eval_count": 624
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-4",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.34275731400021,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3926,
+        "context_limit": 8192,
+        "eval_count": 147,
+        "output_reserve": 1024,
+        "prompt_eval_count": 543
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-2",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 6.346034459000293,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4104,
+        "context_limit": 8192,
+        "eval_count": 175,
+        "output_reserve": 1024,
+        "prompt_eval_count": 570
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-2",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 6.100179002999994,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4408,
+        "context_limit": 8192,
+        "eval_count": 164,
+        "output_reserve": 1024,
+        "prompt_eval_count": 592
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-5",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 10.407065028000034,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4672,
+        "context_limit": 8192,
+        "eval_count": 178,
+        "output_reserve": 1024,
+        "prompt_eval_count": 669
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-5",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 11.679109069999868,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4330,
+        "context_limit": 8192,
+        "eval_count": 217,
+        "output_reserve": 1024,
+        "prompt_eval_count": 674
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-2",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.531654228000207,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3940,
+        "context_limit": 8192,
+        "eval_count": 181,
+        "output_reserve": 1024,
+        "prompt_eval_count": 546
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-2",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 5.423818108999967,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4393,
+        "context_limit": 8192,
+        "eval_count": 145,
+        "output_reserve": 1024,
+        "prompt_eval_count": 618
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-2",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.400326348999897,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4789,
+        "context_limit": 8192,
+        "eval_count": 139,
+        "output_reserve": 1024,
+        "prompt_eval_count": 748
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-2",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.394333297999765,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4256,
+        "context_limit": 8192,
+        "eval_count": 169,
+        "output_reserve": 1024,
+        "prompt_eval_count": 683
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-1",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.81090770999981,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3950,
+        "context_limit": 8192,
+        "eval_count": 189,
+        "output_reserve": 1024,
+        "prompt_eval_count": 550
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-1",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.898304579000069,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4838,
+        "context_limit": 8192,
+        "eval_count": 155,
+        "output_reserve": 1024,
+        "prompt_eval_count": 716
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-5",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.587504222999996,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5225,
+        "context_limit": 8192,
+        "eval_count": 141,
+        "output_reserve": 1024,
+        "prompt_eval_count": 820
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-5",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 10.10385648700003,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4353,
+        "context_limit": 8192,
+        "eval_count": 276,
+        "output_reserve": 1024,
+        "prompt_eval_count": 658
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-4",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.49746867299973,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4335,
+        "context_limit": 8192,
+        "eval_count": 148,
+        "output_reserve": 1024,
+        "prompt_eval_count": 649
+      }
+    },
+    {
+      "case_id": "evaluation-unguarded-variable-4",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.42539696599988,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4641,
+        "context_limit": 8192,
+        "eval_count": 143,
+        "output_reserve": 1024,
+        "prompt_eval_count": 640
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-1",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 8.915451242000017,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 6637,
+        "context_limit": 8192,
+        "eval_count": 233,
+        "output_reserve": 1024,
+        "prompt_eval_count": 1080
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-1",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 6.915085396999984,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4179,
+        "context_limit": 8192,
+        "eval_count": 190,
+        "output_reserve": 1024,
+        "prompt_eval_count": 586
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-0",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 7.865041938000104,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4541,
+        "context_limit": 8192,
+        "eval_count": 212,
+        "output_reserve": 1024,
+        "prompt_eval_count": 727
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-0",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 7.378252691999933,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5810,
+        "context_limit": 8192,
+        "eval_count": 188,
+        "output_reserve": 1024,
+        "prompt_eval_count": 939
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-2",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 9.878070177000154,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 6657,
+        "context_limit": 8192,
+        "eval_count": 257,
+        "output_reserve": 1024,
+        "prompt_eval_count": 1110
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-2",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 7.237721945999965,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4470,
+        "context_limit": 8192,
+        "eval_count": 193,
+        "output_reserve": 1024,
+        "prompt_eval_count": 680
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-3",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.477457328000128,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4247,
+        "context_limit": 8192,
+        "eval_count": 171,
+        "output_reserve": 1024,
+        "prompt_eval_count": 680
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-3",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.593088637999699,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5322,
+        "context_limit": 8192,
+        "eval_count": 136,
+        "output_reserve": 1024,
+        "prompt_eval_count": 966
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-3",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.924145024999689,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4875,
+        "context_limit": 8192,
+        "eval_count": 154,
+        "output_reserve": 1024,
+        "prompt_eval_count": 718
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-3",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.970903589000045,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3954,
+        "context_limit": 8192,
+        "eval_count": 164,
+        "output_reserve": 1024,
+        "prompt_eval_count": 550
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-3",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 7.754977265999969,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4474,
+        "context_limit": 8192,
+        "eval_count": 208,
+        "output_reserve": 1024,
+        "prompt_eval_count": 720
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-3",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 11.812269090999962,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 7084,
+        "context_limit": 8192,
+        "eval_count": 307,
+        "output_reserve": 1024,
+        "prompt_eval_count": 1195
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-4",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 9.447165882999798,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4881,
+        "context_limit": 8192,
+        "eval_count": 175,
+        "output_reserve": 1024,
+        "prompt_eval_count": 755
+      }
+    },
+    {
+      "case_id": "real-unguarded-variable-4",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 10.55509284200025,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4286,
+        "context_limit": 8192,
+        "eval_count": 209,
+        "output_reserve": 1024,
+        "prompt_eval_count": 662
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-4",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 7.0529330370000025,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4633,
+        "context_limit": 8192,
+        "eval_count": 188,
+        "output_reserve": 1024,
+        "prompt_eval_count": 731
+      }
+    },
+    {
+      "case_id": "real-credential-log-exposure-4",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 9.107850798000072,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5862,
+        "context_limit": 8192,
+        "eval_count": 238,
+        "output_reserve": 1024,
+        "prompt_eval_count": 927
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-1",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.844095474999904,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4638,
+        "context_limit": 8192,
+        "eval_count": 154,
+        "output_reserve": 1024,
+        "prompt_eval_count": 640
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-1",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.334267355000065,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3922,
+        "context_limit": 8192,
+        "eval_count": 144,
+        "output_reserve": 1024,
+        "prompt_eval_count": 533
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-1",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.547158399000182,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4159,
+        "context_limit": 8192,
+        "eval_count": 150,
+        "output_reserve": 1024,
+        "prompt_eval_count": 628
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-1",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 6.293884206999792,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5165,
+        "context_limit": 8192,
+        "eval_count": 162,
+        "output_reserve": 1024,
+        "prompt_eval_count": 812
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-2",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 6.726264884000102,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4880,
+        "context_limit": 8192,
+        "eval_count": 177,
+        "output_reserve": 1024,
+        "prompt_eval_count": 699
+      }
+    },
+    {
+      "case_id": "evaluation-insecure-permissions-2",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.659078831999977,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3964,
+        "context_limit": 8192,
+        "eval_count": 181,
+        "output_reserve": 1024,
+        "prompt_eval_count": 549
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-2",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 7.871756775000449,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4517,
+        "context_limit": 8192,
+        "eval_count": 212,
+        "output_reserve": 1024,
+        "prompt_eval_count": 711
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-2",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 7.45203599000024,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5529,
+        "context_limit": 8192,
+        "eval_count": 193,
+        "output_reserve": 1024,
+        "prompt_eval_count": 883
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-0",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 6.388529153000036,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5130,
+        "context_limit": 8192,
+        "eval_count": 163,
+        "output_reserve": 1024,
+        "prompt_eval_count": 794
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-0",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.46900178299984,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4012,
+        "context_limit": 8192,
+        "eval_count": 175,
+        "output_reserve": 1024,
+        "prompt_eval_count": 562
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-1",
+      "mode": "window",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.122400254999775,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4190,
+        "context_limit": 8192,
+        "eval_count": 165,
+        "output_reserve": 1024,
+        "prompt_eval_count": 667
+      }
+    },
+    {
+      "case_id": "real-missing-validate-certs-1",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.549814341000001,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4742,
+        "context_limit": 8192,
+        "eval_count": 142,
+        "output_reserve": 1024,
+        "prompt_eval_count": 717
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-5",
+      "mode": "scoped",
+      "kind": "real",
+      "status": "ok",
+      "assessment": "insufficient-evidence",
+      "wall_seconds": 7.352626523999788,
+      "required_abstention": true,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5240,
+        "context_limit": 8192,
+        "eval_count": 191,
+        "output_reserve": 1024,
+        "prompt_eval_count": 817
+      }
+    },
+    {
+      "case_id": "real-insecure-permissions-5",
+      "mode": "window",
+      "kind": "real",
+      "status": "error",
+      "assessment": null,
+      "wall_seconds": 7.336156222999762,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": null,
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4202,
+        "context_limit": 8192,
+        "eval_count": 199,
+        "output_reserve": 1024,
+        "prompt_eval_count": 639
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-3",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 5.259064062000107,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3927,
+        "context_limit": 8192,
+        "eval_count": 142,
+        "output_reserve": 1024,
+        "prompt_eval_count": 543
+      }
+    },
+    {
+      "case_id": "evaluation-missing-validate-certs-3",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "supported",
+      "wall_seconds": 5.065252457000042,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 5081,
+        "context_limit": 8192,
+        "eval_count": 124,
+        "output_reserve": 1024,
+        "prompt_eval_count": 871
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-4",
+      "mode": "scoped",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.394098098000086,
+      "required_abstention": false,
+      "backend_predicate": true,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 4652,
+        "context_limit": 8192,
+        "eval_count": 169,
+        "output_reserve": 1024,
+        "prompt_eval_count": 645
+      }
+    },
+    {
+      "case_id": "evaluation-credential-log-exposure-4",
+      "mode": "window",
+      "kind": "controlled",
+      "status": "ok",
+      "assessment": "unsupported",
+      "wall_seconds": 6.474810344999696,
+      "required_abstention": false,
+      "backend_predicate": false,
+      "raw_fix_proposed": false,
+      "returned_fix": false,
+      "suggestion_validation": {
+        "checks": [],
+        "status": "not-proposed"
+      },
+      "tokens": {
+        "conservative_prompt_token_ceiling": 3902,
+        "context_limit": 8192,
+        "eval_count": 178,
+        "output_reserve": 1024,
+        "prompt_eval_count": 525
+      }
+    }
+  ]
+}

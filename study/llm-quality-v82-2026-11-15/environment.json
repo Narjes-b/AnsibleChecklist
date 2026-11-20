@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-15",
+  "python": "3.14.9",
+  "platform": "Linux-7.2.14-arch1-1-x86_64-with-glibc2.44",
+  "packages": {
+    "ansible-core": "2.21.0",
+    "ansible-lint": "26.4.0",
+    "pytest": "9.1.1",
+    "PyYAML": "6.0.1"
+  },
+  "ollama": "ollama version is 0.31.1",
+  "model_digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+  "explanation_style": "verified-facts",
+  "full_suite": {
+    "passed": 1696,
+    "skipped": 2
+  }
+}

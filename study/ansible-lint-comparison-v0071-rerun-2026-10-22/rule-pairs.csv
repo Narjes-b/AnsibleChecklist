@@ -1,0 +1,10 @@
+ansibleguard_rule,ansible_lint_rule,ansibleguard_total,ansible_lint_total,both,both_merged_by_ansibleguard,ansibleguard_only,ansible_lint_only
+non-idempotent-command,no-changed-when,983,3717,530,530,453,3188
+shell-instead-of-module,command-instead-of-module,530,405,118,0,412,287
+silent-error-suppression,ignore-errors,1487,555,531,531,956,24
+unnamed-task,name[missing],7941,2970,2234,0,5707,751
+unnamed-play,name[play],1247,876,75,0,1172,801
+long-statement,yaml[line-length],6594,2341,2010,2010,4584,331
+deprecated-modules,deprecated-module,142,74,55,0,87,19
+credentials-leaking-in-log,no-log-password,5079,0,0,0,5079,0
+variable-naming-convention,var-naming[pattern],19441,742,293,0,19148,449

@@ -1,0 +1,212 @@
+{
+  "artifacts": {
+    "AI_REVIEW_PROMPT.md": "54c126b88481d4639064fc10b6c206f7b8507907b7375d6a7662eeb7d17ee5ec",
+    "ALL_THRESHOLDS_STUDY.md": "150c84a3b059d7a024e6787faa97d6c8f4023531df191510be38aa473723be74",
+    "BLINDED_AI_REVIEW_PROTOCOL.md": "32182a9f28701ddda309b3e5e4c6658f7b6717cc104136b2c998163e1334bf17",
+    "CLEANUP_AUDIT_AND_CORRECTED_RESULTS.md": "5d85b7e28294b47a8a1199044450ec301bcf8d1dc2a7a16973c308a1f24bf5c7",
+    "COMPLETE_THRESHOLD_INVENTORY.md": "3165f63294dde32ef0ad899a42e776d4f79b3a6c60d8437d2ccacdab66ac0d3e",
+    "CONTINUATION_LOG.md": "f824d2082b25e234f8a8afebc9534b081a62bb376b2ba6e7b8c44962beff4591",
+    "LABELING_CODEBOOK.md": "ce481cb722f2f4e391db2b4bfe944b5614b36d00f19316065a99eadc815543ee",
+    "PROTOCOL.md": "26a2e118b959b542848d0e66c1ee4b177e5170f7ab1e41212b3a0703e24cb646",
+    "RESULTS.md": "9fe051d24a6b01c634cb36cbed70c835d7edafb1143fd0efd4a2d2ddd01c81fd",
+    "SIMPLE_EXPLANATION.md": "446e2370bd47b66a2427f179f34aefbecf20208ef62da3c50d7de52883557c56",
+    "START_HERE_FILE_MAP_AND_PLAN.md": "340589b691d53095b03901eb8697b9644e3725d4fd5693bc235a87f45a19e516",
+    "THRESHOLD_WORK_QUEUE.md": "4f05b22464682f08b21744544d7d32754a9a988ac46002d933629fd7799ed21b",
+    "all-study-samples.json": "954f598c1a5114b2404ba57a3eddbb0abbac98d62a018f0ad1aad1baf79d2b1c",
+    "boxplots.svg": "a2a78724124d5285b9da692acb127e67583ee9fe06d370ca9062dece004b4aeb",
+    "candidate-sensitivity.csv": "64a0cd10e6c9856782b493f8fb6649f389ca60d3caf14da804d95f47c67b53b4",
+    "distribution-summary.csv": "1e42f399931f753b42c56bfafb0afc674d33fd37cd938928cc32ecef5a957b0b",
+    "large-task-agreement-pilot-manifest.json": "dfb60f48d01d94da4da22943ba08f4f15cca91ea8a30a897c883e34865086904",
+    "large-task-agreement-pilot.csv": "c9a658a795f3a9d8f8094cf92ccf5535c8335ebeeaeea4296d053e02b7e8027f",
+    "large-task-review-sample.csv": "189eb13d3689db73e49fb960292953bea4a2d9bcff08c1a4ed257b23d9294e44",
+    "observations.csv.gz": "3f4b35e1e0fbe7751ac394b1ce9113329f2548a8a071a50f166ee99f3765edb8",
+    "scan-failures.csv": "ff280bbd1c81717620e465eebb812c052f43ac1adc00993d63e6df895b570a3c"
+  },
+  "candidate_thresholds": {
+    "cohesion_playbook_score": [
+      0.4,
+      0.5,
+      1.0
+    ],
+    "complex_expression_length_chars": [
+      22.0,
+      33.0,
+      49.0,
+      55.0,
+      78.0,
+      89.5,
+      100.0,
+      108.0
+    ],
+    "complex_expression_score": [
+      0.0,
+      2.0,
+      4.0,
+      5.0,
+      6.0
+    ],
+    "complex_playbook_budget": [
+      0.3,
+      0.5894,
+      1.1758,
+      1.3851,
+      2.0,
+      2.2152,
+      2.4895,
+      3.197
+    ],
+    "excessive_nesting_depth": [
+      0.0,
+      1.0,
+      3.0
+    ],
+    "high_coupling_import_count": [
+      0.0,
+      4.0
+    ],
+    "high_coupling_role_count": [
+      0.0,
+      1.0,
+      5.0
+    ],
+    "large_play_avg_task_size": [
+      0.0,
+      6.4,
+      11.0,
+      12.0,
+      15.0,
+      17.0,
+      22.8875,
+      27.5
+    ],
+    "large_play_loc": [
+      9.0,
+      17.0,
+      37.0,
+      46.0,
+      50.0,
+      79.0,
+      82.0,
+      125.0
+    ],
+    "large_play_task_count": [
+      0.0,
+      1.0,
+      3.0,
+      4.0,
+      7.0,
+      7.5,
+      12.0
+    ],
+    "large_playbook_avg_play_size": [
+      0.0,
+      16.0,
+      38.0,
+      50.0
+    ],
+    "large_playbook_avg_task_size": [
+      4.4444,
+      6.6,
+      9.3333,
+      10.2,
+      13.3333,
+      15.0,
+      16.6666,
+      17.0
+    ],
+    "large_playbook_loc": [
+      12.0,
+      28.0,
+      60.0,
+      71.0,
+      110.0,
+      115.0,
+      132.0,
+      167.0
+    ],
+    "large_playbook_play_count": [
+      0.0,
+      1.0,
+      4.0
+    ],
+    "large_playbook_task_count": [
+      1.0,
+      3.0,
+      7.0,
+      9.0,
+      14.0,
+      15.0,
+      16.0,
+      20.0
+    ],
+    "large_task_loc": [
+      4.0,
+      6.0,
+      10.0,
+      11.0,
+      15.0,
+      19.0,
+      21.0
+    ],
+    "long_statement_chars": [
+      17.0,
+      28.0,
+      46.0,
+      51.0,
+      69.0,
+      87.0,
+      89.5,
+      160.0
+    ],
+    "long_task_name_chars": [
+      21.0,
+      31.0,
+      44.0,
+      48.0,
+      59.0,
+      72.0,
+      75.0,
+      78.5
+    ],
+    "missing_abstraction_leaf_tasks": [
+      1.0,
+      3.0,
+      7.0,
+      8.0,
+      10.0,
+      13.0,
+      16.0,
+      19.0
+    ],
+    "play_name_special_chars": [
+      0.0,
+      3.0
+    ],
+    "task_name_special_chars": [
+      0.0,
+      3.0
+    ],
+    "undocumented_complex_boolean_ops": [
+      0.0,
+      1.0,
+      4.0
+    ],
+    "undocumented_complex_jinja_filters": [
+      0.0,
+      1.0,
+      4.0
+    ],
+    "undocumented_complex_nesting_depth": [
+      0.0,
+      1.0,
+      5.0
+    ]
+  },
+  "large_task_review_sample_count": 944,
+  "observation_count": 2986459,
+  "repositories_manifest": "study/runs/v007-207/input/repositories.csv",
+  "repository_count": 207,
+  "scan_failure_count": 0,
+  "schema_version": 1,
+  "seed": "v007-threshold-benchmark-20260917"
+}

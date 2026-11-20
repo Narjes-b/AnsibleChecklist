@@ -1,0 +1,26 @@
+{
+  "case_id": "comprehension-unguarded-variable-1",
+  "family": "unguarded-variable",
+  "occurrence": {
+    "file": "tasks.yml",
+    "line": 3,
+    "rule_id": "unguarded-variable",
+    "semantic_subject": "variable:ServicePort",
+    "message": "Variable 'ServicePort' has no visible definition or runtime input contract."
+  },
+  "intent": null,
+  "snippets": [
+    {
+      "file": "tasks.yml",
+      "text": "    1 | - name: Show comprehension_1\n    2 |   ansible.builtin.debug:\n    3 |     msg: '{{ ServicePort }}'\n    4 |   vars:\n    5 |     ServicePort: 8080"
+    },
+    {
+      "file": "tasks.yml",
+      "text": "    5 |     ServicePort: 8080"
+    }
+  ],
+  "missing": [],
+  "files": {
+    "tasks.yml": "- name: Show comprehension_1\n  ansible.builtin.debug:\n    msg: '{{ ServicePort }}'\n  vars:\n    ServicePort: 8080\n"
+  }
+}

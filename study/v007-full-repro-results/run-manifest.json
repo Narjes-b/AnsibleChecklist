@@ -1,0 +1,25 @@
+{
+  "ansible_lint_scope": "v005-selected",
+  "configuration_sha256": "b48002266019e1fb90899b87f90e16e626299171d5d69fdd329dc34845e66297",
+  "created_at_utc": "2026-10-03T14:43:27.378712+00:00",
+  "file_manifests_dir": "/home/daehkcarc/ansibleguard-v007-repro/study/manifests/file-classification-v007-207",
+  "kind": "ansibleguard-study-run",
+  "profile": "technical-full",
+  "repository_count": 207,
+  "resolved_manifest": "/home/daehkcarc/ansibleguard-v007-repro/study/runs/v007-full-repro-2026/input/repositories.csv",
+  "resolved_manifest_sha256": "3b8d7ec8a3e744c05d8e0daf48efa6998d3497ee46f6c09c812d9088c34f18a8",
+  "run_id": "v007-full-repro-2026",
+  "scanned_at_utc": "2026-10-06T12:55:14.337445+00:00",
+  "schema_version": 1,
+  "source_manifest": "/home/daehkcarc/ansibleguard-v007-repro/study/manifests/github-v2-final-eligible.csv",
+  "source_manifest_sha256": "0a80696e8fbe91f3302702120061ea1d5f6d8ec625d4ac347d7484b49a3f7405",
+  "state": "scanned",
+  "tool": {
+    "commit_sha": "21ada9649ef2360891b21c58872b8938f502a6eb",
+    "git_ref": "HEAD",
+    "mode": "current-worktree",
+    "python": "/home/daehkcarc/ansibleguard-v007-repro/.venv/bin/python",
+    "version": "0.0.7",
+    "working_tree_dirty": false
+  }
+}

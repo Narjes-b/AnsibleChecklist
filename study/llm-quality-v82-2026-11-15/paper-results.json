@@ -1,0 +1,21 @@
+{
+  "window": 41,
+  "scoped": 45,
+  "window_available": 48,
+  "scoped_available": 48,
+  "window_decision": 41,
+  "scoped_decision": 45,
+  "controlled_window": 24,
+  "controlled_scoped": 24,
+  "real_window": 17,
+  "real_scoped": 21,
+  "simulated_A_adequate": 86,
+  "simulated_B_adequate": 86,
+  "simulated_consistency_percent": 100,
+  "tests": 1696,
+  "skips": 2,
+  "historical_requested": 8,
+  "historical_behavior": 8,
+  "historical_blocked": 4,
+  "historical_spontaneous": 0
+}

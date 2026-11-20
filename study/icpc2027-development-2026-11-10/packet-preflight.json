@@ -1,0 +1,197 @@
+{
+  "purpose": "static packet preflight; no inference or human labels",
+  "rows": [
+    {
+      "case_id": "development-missing-validate-certs-0",
+      "ceiling_with_output": 7051,
+      "predicate": "literal-tls-setting",
+      "missing": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-1",
+      "ceiling_with_output": 7018,
+      "predicate": "literal-tls-setting",
+      "missing": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-2",
+      "ceiling_with_output": 6984,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-missing-validate-certs-3",
+      "ceiling_with_output": 7650,
+      "predicate": "literal-tls-setting",
+      "missing": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-4",
+      "ceiling_with_output": 7018,
+      "predicate": "literal-tls-setting",
+      "missing": false
+    },
+    {
+      "case_id": "development-missing-validate-certs-5",
+      "ceiling_with_output": 6984,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-insecure-permissions-0",
+      "ceiling_with_output": 7651,
+      "predicate": "static-permission-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-insecure-permissions-1",
+      "ceiling_with_output": 7620,
+      "predicate": "static-permission-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-insecure-permissions-2",
+      "ceiling_with_output": 7573,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-insecure-permissions-3",
+      "ceiling_with_output": 7659,
+      "predicate": "static-permission-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-insecure-permissions-4",
+      "ceiling_with_output": 7628,
+      "predicate": "static-permission-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-insecure-permissions-5",
+      "ceiling_with_output": 7581,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-credential-log-exposure-0",
+      "ceiling_with_output": 7235,
+      "predicate": "static-direct-display-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-1",
+      "ceiling_with_output": 7201,
+      "predicate": "static-direct-display-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-2",
+      "ceiling_with_output": 7137,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-credential-log-exposure-3",
+      "ceiling_with_output": 7346,
+      "predicate": "static-direct-display-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-4",
+      "ceiling_with_output": 7312,
+      "predicate": "static-direct-display-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-credential-log-exposure-5",
+      "ceiling_with_output": 7248,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-unguarded-variable-0",
+      "ceiling_with_output": 6949,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-unguarded-variable-1",
+      "ceiling_with_output": 7320,
+      "predicate": "visible-source-definition",
+      "missing": false
+    },
+    {
+      "case_id": "development-unguarded-variable-2",
+      "ceiling_with_output": 6949,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-unguarded-variable-3",
+      "ceiling_with_output": 6949,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-unguarded-variable-4",
+      "ceiling_with_output": 7320,
+      "predicate": "visible-source-definition",
+      "missing": false
+    },
+    {
+      "case_id": "development-unguarded-variable-5",
+      "ceiling_with_output": 6949,
+      "predicate": null,
+      "missing": true
+    },
+    {
+      "case_id": "development-challenge-tls-play-false",
+      "ceiling_with_output": 6985,
+      "predicate": "literal-tls-setting",
+      "missing": false
+    },
+    {
+      "case_id": "development-challenge-tls-action-true",
+      "ceiling_with_output": 6963,
+      "predicate": "literal-tls-setting",
+      "missing": false
+    },
+    {
+      "case_id": "development-challenge-permissions-other-write",
+      "ceiling_with_output": 7648,
+      "predicate": "static-permission-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-challenge-permissions-shared-setgid",
+      "ceiling_with_output": 7625,
+      "predicate": "static-permission-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-challenge-logging-task-unprotected",
+      "ceiling_with_output": 7248,
+      "predicate": "static-direct-display-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-challenge-logging-task-protected",
+      "ceiling_with_output": 7214,
+      "predicate": "static-direct-display-policy",
+      "missing": false
+    },
+    {
+      "case_id": "development-challenge-variable-local-role",
+      "ceiling_with_output": 7342,
+      "predicate": "visible-source-definition",
+      "missing": false
+    },
+    {
+      "case_id": "development-challenge-variable-unrelated-role",
+      "ceiling_with_output": 6977,
+      "predicate": null,
+      "missing": true
+    }
+  ]
+}

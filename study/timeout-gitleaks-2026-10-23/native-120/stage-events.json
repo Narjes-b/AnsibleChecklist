@@ -1,0 +1,26 @@
+[
+  {
+    "stage": "adapter",
+    "state": "start",
+    "elapsed_seconds": 0.00028353500238154083
+  },
+  {
+    "stage": "native-provider",
+    "state": "start",
+    "elapsed_seconds": 0.0022296289971563965
+  },
+  {
+    "stage": "native-provider",
+    "state": "end",
+    "elapsed_seconds": 34.589855658006854,
+    "duration_seconds": 34.58709114699741,
+    "returncode": 1
+  },
+  {
+    "stage": "noise-postprocessing",
+    "state": "start",
+    "elapsed_seconds": 43.895911080006044,
+    "findings": 81598,
+    "distinct_files": 35
+  }
+]

@@ -1,0 +1,12 @@
+category,findings,share_percent,eligible_repositories,missing_repositories,repositories_affected,repository_prevalence_percent,median_per_repository,q1_per_repository,q3_per_repository,findings_per_1000_selected_loc
+style,41382,56.38,127,0,120,94.49,199,77,462,
+correctness,11743,16.0,127,0,110,86.61,24,5,94,
+maintainability,8048,10.96,127,0,114,89.76,27,9,65,
+compatibility,3800,5.18,127,0,82,64.57,3,0,15,
+security,3641,4.96,127,0,111,87.4,10,3,23,
+lint,2242,3.05,127,0,28,22.05,0,0,0,
+documentation,1189,1.62,127,0,127,100.0,3,2,14,
+reliability,585,0.8,127,0,71,55.91,1,0,4,
+structure,419,0.57,127,0,86,67.72,2,0,4,
+testing,307,0.42,127,0,80,62.99,2,0,2,
+dependencies,45,0.06,127,0,16,12.6,0,0,0,

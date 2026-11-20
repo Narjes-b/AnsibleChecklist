@@ -1,0 +1,63 @@
+[
+  {
+    "stage": "imports",
+    "state": "start",
+    "elapsed_seconds": 3.751600161194801e-05
+  },
+  {
+    "stage": "imports",
+    "state": "end",
+    "elapsed_seconds": 0.025963357998989522
+  },
+  {
+    "stage": "classification",
+    "state": "start",
+    "elapsed_seconds": 0.0264607159915613
+  },
+  {
+    "stage": "classification",
+    "state": "end",
+    "elapsed_seconds": 0.9779687849950278,
+    "duration_seconds": 0.9509255919983843,
+    "yaml_files": 148,
+    "included": 145
+  },
+  {
+    "stage": "selection",
+    "state": "start",
+    "elapsed_seconds": 0.9820817680010805
+  },
+  {
+    "stage": "selection",
+    "state": "end",
+    "elapsed_seconds": 1.0291983849892858,
+    "duration_seconds": 0.04674327600514516,
+    "selected_files": 145
+  },
+  {
+    "stage": "repository-context",
+    "state": "start",
+    "elapsed_seconds": 1.0311001999943983
+  },
+  {
+    "stage": "repository-context",
+    "state": "end",
+    "elapsed_seconds": 5.517453063002904,
+    "duration_seconds": 4.485840198001824,
+    "parsed_documents": 145,
+    "tasks": 394
+  },
+  {
+    "stage": "symbol-index",
+    "state": "start",
+    "elapsed_seconds": 5.519874477002304
+  },
+  {
+    "stage": "symbol-index",
+    "state": "end",
+    "elapsed_seconds": 6.278126145989518,
+    "duration_seconds": 0.7579315659968415,
+    "definitions": 1357,
+    "edges": 114
+  }
+]

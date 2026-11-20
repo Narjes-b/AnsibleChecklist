@@ -1,0 +1,50 @@
+{
+  "issue_id": "V007PILOT-MAINTAINABILITY_COMPLEXITY-012",
+  "source_location": {
+    "repository": "roots/trellis",
+    "path": "xdebug-tunnel.yml",
+    "line_start": "16",
+    "line_end": "16",
+    "rule_id": "ansibleguard/unused-handler",
+    "review_family": "Maintainability/complexity"
+  },
+  "context_supplied_to_model": {
+    "source_context": "",
+    "detector_message": "Does the frozen source unit genuinely exhibit the described maintainability/complexity condition independently of the detector cutoff?"
+  },
+  "original_detector_annotation": {
+    "my_label_semantic": "uncertain",
+    "my_label_actionability": "uncertain",
+    "my_explanation": "Handler is only reachable via notify from the sshd/xdebug/xdebug-tunnel roles' task files, none of which are in the frozen bundle; cannot confirm the absence of a notify reference.",
+    "teammate_label_semantic": "uncertain",
+    "teammate_explanation": "The play defines a reload php-fpm handler, but the supplied playbook excerpt contains no notify references. The three referenced roles' task trees may notify it, so this partial role graph cannot establish that the handler is unused.",
+    "note": "preserved exactly as found in the input file; never overwritten by this script"
+  },
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "inference_options": {
+      "temperature": 0.1
+    }
+  },
+  "prompt_version": "ansible-explain-v1",
+  "execution": {
+    "status": "ok",
+    "error": null,
+    "warnings": [],
+    "duration_seconds": 8.436,
+    "generated_at_utc": "2026-10-17T23:49:52.410031+00:00"
+  },
+  "raw_response": "{\n  \"what_is_wrong\": \"The handler 'reload php-fpm' is defined but never used.\",\n  \"why_it_is_wrong\": \"Unused handlers can lead to unnecessary complexity and potential performance overhead as Ansible needs to check for their existence during playbook execution.\",\n  \"why_in_this_context\": \"There are no tasks that reference or trigger the 'reload php-fpm' handler. If this handler is not needed, it should be removed to simplify the playbook.\",\n  \"potential_consequences\": \"The presence of unused handlers can make the playbook harder to understand and maintain. It may also lead to unnecessary service reloads if the handler is accidentally triggered by another part of the playbook that was not intended to do so.\",\n  \"recommended_fix\": \"Remove the 'reload php-fpm' handler as it is not used in this playbook.\",\n  \"fixed_code_snippet\": null,\n  \"why_fix_works\": \"Removing unused handlers simplifies the playbook, making it easier to understand and maintain. It also avoids potential performance overhead associated with unnecessary service reloads.\",\n  \"trade_offs_and_assumptions\": \"This fix assumes that the 'reload php-fpm' handler is not needed anywhere in the playbook. If it is used elsewhere, this fix will need to be adjusted accordingly.\",\n  \"confidence\": \"high\",\n  \"limitations\": null\n}",
+  "explanation": {
+    "what_is_wrong": "The handler 'reload php-fpm' is defined but never used.",
+    "why_it_is_wrong": "Unused handlers can lead to unnecessary complexity and potential performance overhead as Ansible needs to check for their existence during playbook execution.",
+    "why_in_this_context": "There are no tasks that reference or trigger the 'reload php-fpm' handler. If this handler is not needed, it should be removed to simplify the playbook.",
+    "potential_consequences": "The presence of unused handlers can make the playbook harder to understand and maintain. It may also lead to unnecessary service reloads if the handler is accidentally triggered by another part of the playbook that was not intended to do so.",
+    "recommended_fix": "Remove the 'reload php-fpm' handler as it is not used in this playbook.",
+    "fixed_code_snippet": null,
+    "why_fix_works": "Removing unused handlers simplifies the playbook, making it easier to understand and maintain. It also avoids potential performance overhead associated with unnecessary service reloads.",
+    "trade_offs_and_assumptions": "This fix assumes that the 'reload php-fpm' handler is not needed anywhere in the playbook. If it is used elsewhere, this fix will need to be adjusted accordingly.",
+    "confidence": "high",
+    "limitations": null
+  }
+}
