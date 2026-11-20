@@ -88,7 +88,7 @@ Record the producer, labeling method, independence, source evidence, codebook ve
 
 **Repair:** write one claim/estimand registry. For each claim record population, rule set, unit, sampling design, weights, missingness, label policy, estimator, interval, exclusion criteria and analysis version. Use design-aware estimates and repository-level resampling; validate interval behavior in the existing simulation framework. Preserve exploratory results with explicit scope. Source-first recall needs independent audits of both flagged and unflagged source, plus adjudicated matches; seeded recall and external-tool agreement are separate instruments.
 
-Evidence: [validation plan](v007-validation-plan-v2.md), [variable calibration report](../../study/validation-v007-variable-resolution/VALIDATION_REPORT.md), [performance narrative](tool-performance-report.md).
+Evidence: [validation plan](v007-validation-plan-v2.md), [variable calibration report](../../study/validation-v007-variable-resolution/VALIDATION_REPORT.md).
 
 ## 3. LLM recovery: a local evidence pipeline
 

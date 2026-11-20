@@ -77,4 +77,4 @@ From the project root, using new output directories:
   --report-root /tmp/ansibleguard-constructs-REPLAY
 ```
 
-See the [sampling methodology](../../docs/study/sampling-methodology-2026-10-23.md), [metric definition](../../docs/study/structural-metrics-repair-2026-10-23.md), [LLM failures](../../docs/study/local-llm-repair-2026-10-23.md), and [running log](../../docs/study/recovery-progress.md).
+See the [sampling methodology](../../docs/study/sampling-methodology-2026-10-23.md), [metric definition](../../docs/study/structural-metrics-repair-2026-10-23.md), and [running log](../../docs/study/recovery-progress.md).

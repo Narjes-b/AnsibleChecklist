@@ -21,7 +21,7 @@ A claim without an instrument is dropped from the paper, not estimated loosely.
 ## 2. Order of work (each step is a gate for the next)
 
 1. **Codebook v2** ([decisions](../../study/validation-v007-human/codebooks-v2-draft/POLICY_DECISIONS.md)): define every term the pilot showed to be undefined. Owner decisions required.
-2. **Tool v0.0.7.1**: fix false positives found on calibration data (list in [cleanup](v007-cleanup-for-next-runs.md)); heldout stays unopened so the estimate stays clean. Freeze and re-run; run checksum.
+2. **Tool v0.0.7.1**: Fix false positives found on calibration data. Keep heldout data unopened, then freeze, rerun, and verify checksums.
 3. **Bundle generator v2**: full tree listing, non-YAML diffs, imported handler files, name the asserted variable/attribute, stronger redaction plus an independent secret/email/key-body scan. No bundle leaves the machine before this.
 4. **Pilot 2 on new items** (not the 350: memory effects). Gate, per family, decided before labelling:
    - κ on decided items ≥ 0.70 between two humans (target; ≥ 0.60 minimum);

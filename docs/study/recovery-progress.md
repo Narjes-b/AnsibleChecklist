@@ -4,7 +4,7 @@ Branch: `fix/recovery-2026-10-23`
 
 This is the running implementation log for the [recovery plan](recovery-plan-2026-10-23.md). Each completed repair records its cause, changes, validation and remaining limits. All model work must run locally.
 
-Current review: selection/source/canonical metadata are linked for all four calibration draws; structural task metrics are versioned; LLM transport, response validation and head/staged context are repaired. The [current LLM contract and retained failures](local-llm-repair-2026-10-23.md) remain **development work, not validated accuracy**. Human labels/final-population eligibility have not been generated or promoted. Later sections record automatic continuation and remaining gates.
+Current review: selection/source/canonical metadata are linked for all four calibration draws; structural task metrics are versioned; LLM transport, response validation and head/staged context are repaired. The [current explanation contract](verified-claims-v82.md) has no independent accuracy estimate. Human labels/final-population eligibility have not been generated or promoted. Later sections record automatic continuation and remaining gates.
 
 ## 2026-10-23 — Step 1: correct provider-overlap accounting
 
@@ -146,7 +146,7 @@ Status: provenance joined for every selected ID; semantic grounding remains pend
 
 Status: safeguards implemented; semantic answer quality remains unevaluated.
 
-- [Detailed changes, limits and continuation](local-llm-repair-2026-10-23.md). Local inference is enforced with loopback-only endpoints, no environment proxies and no redirects. CLI help reflects the restriction.
+- Local inference is enforced with loopback-only endpoints, no environment proxies and no redirects. CLI help reflects the restriction.
 - Exact source anchors replace line clamping. Invalid/missing/unreadable/outside-root/binary/oversized source produces `insufficient-context` without a model call.
 - Runtime validation now enforces the response schema's types, enum, required/unknown fields and limits, rejects duplicate/non-finite JSON, and requires limitations below high confidence. Invalid/incomplete/oversized transport envelopes cannot become successful explanations.
 - Added generation and prompt/response size limits. Whole-run deadlines, neutral assessment/abstention schema and source-complete semantic evidence remain pending.
@@ -161,7 +161,7 @@ Status: head/staged source lifetime and graph cache isolation repaired.
 - Saved result folders no longer cause explanations to read an unrelated current checkout. Their source context is explicitly unavailable; per-item explanation status and the Markdown summary state insufficiency. Occurrence comparison still runs.
 - Replaced process-global root-only graph caching with reuse limited to one enrichment operation; direct calls rebuild, and exceptions discard the operation cache.
 - Added integration fixtures with different committed/staged/unstaged markers, sequential and parallel head analysis, dirty worktree/index preservation and cleanup on success/failure. Models are stubbed.
-- Source/explanation/diff/output/SARIF/annotation checks: **185 passed**. No model accuracy claim. Ordinary working-tree concurrency, verified saved-source reattachment and graph reachability evidence remain pending in the [LLM record](local-llm-repair-2026-10-23.md).
+- Source/explanation/diff/output/SARIF/annotation checks: **185 passed**. No model accuracy claim. Ordinary working-tree concurrency, verified saved-source reattachment and graph reachability evidence remain open.
 
 ## 2026-10-23 — Step 8a: share and version structural task traversal
 
@@ -181,7 +181,6 @@ Status: versioned answer contract and report propagation implemented; live seman
 - Validate citation file, line and exact quote against only context lines supplied for that call, including retrieved candidate definitions. Real but omitted source and fabricated/moved quotations are rejected. Quote matching is not semantic validation.
 - Preserve assessment, evidence, missing dependencies and versions through all output formats. Unsupported/insufficient results are visible without a fix, remain unverified opinions, and do not override detector policy/counts. Failed re-enrichment discards old LLM fixes and fields.
 - **253 tests passed** across LLM, reporting, snapshot/diff and finding suites; a final focused check additionally rejects silent legacy-answer promotion. No inference is included in those test results. A read-only local probe confirms the already-installed Qwen model is available; proceeding to a separate synthetic live acceptance diagnostic.
-- [Contract behavior and limits](local-llm-repair-2026-10-23.md). No historical responses, human labels or final evaluation eligibility were changed.
 
 ## 2026-10-23 — Step 5d: locate frozen constructs and audit lexical subjects
 
@@ -286,16 +285,6 @@ Status: source-only path completes; full-profile/environment/semantic gates rema
 - 1,128 raw internal findings / 1,127 canonical occurrences are unvalidated outputs. Preserve 49 static-missing and six dynamic include outcomes; operational completion is not dependency completeness or semantic correctness.
 - All 417 source hashes / 470,774,640 bytes reverified after execution; generated output/log hashes recorded. An initial wrong CLI subcommand was rejected before analysis and retained as a launcher error, followed by the corrected direct-target command in a new directory.
 - Diagnostic/documentation-only follow-up to the **1,520 passed / 2 skipped** production-fix suite. Next isolate module docs/lint and the combined provider/reporting path; historical timeout and study denominators remain unchanged.
-
-## 2026-10-31 — ICPC readiness and local-only LLM planning review
-
-Status: planning review documented; no new inference, semantic labels, experiment or submission.
-
-- [Detailed readiness and delivery plan](icpc-readiness-and-local-llm-plan-2026-10-31.md) connects verified LLM/code/evidence limitations to paper claims, scope-aware packets, model/evidence ablations, independent human evaluation, source-first recall and optional comprehension-study design.
-- Official ICPC 2027 guidance checked: research abstract October 29 / paper November 5; Tool Demonstration November 19; ERA optional abstract November 19 / paper November 26. Research abstract deadline has passed; registration/exception feasibility is not assumed. Recommend a focused ERA or Tool Demonstration story according to the actual contribution/evidence.
-- Read-only local inventory: RTX 3050 **6 GiB**, Ollama **0.31.1**, both `qwen2.5-coder:7b` and `qwen3:8b` installed, exact digests recorded. No download/inference/default-model change or superiority claim. Compare on identical packets and measured local budgets after evidence repair.
-- Marked the old RQ1/RQ2 draft as historical at its entry point, preserving old text/labels. Completing pilot adjudication does not override scoring exclusion; provenance remains dataset-scoped. Novelty/comprehension benefit and current semantic model accuracy are unestablished.
-- Documentation-only changes; links and whitespace checked. Existing untracked single-repository demonstration files were inspected read-only and left untouched. The prior 1,520-pass suite is a recorded engineering result, not a newly run test or accuracy score.
 
 ## Next steps
 

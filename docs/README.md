@@ -33,7 +33,6 @@ edited to match later code.
 | [study/icpc2027-tool-readiness-2026-11-10.md](study/icpc2027-tool-readiness-2026-11-10.md) | Current Tool Track engineering changes, bounded evaluation instrument, demo reproduction, and outstanding gates |
 | [Development model results](../study/icpc2027-development-2026-11-10/README.md) | Retained model attempts, backend constraints, prose failures, and release validation |
 | [study/recovery-progress.md](study/recovery-progress.md) | **Current repair log:** completed fixes, validation evidence and next steps |
-| [study/icpc-readiness-and-local-llm-plan-2026-10-31.md](study/icpc-readiness-and-local-llm-plan-2026-10-31.md) | ICPC 2027 timing/track assessment, local LLM evidence improvements, paper gaps, proposed comparisons and human validation gates |
 | [study/recovery-plan-2026-10-23.md](study/recovery-plan-2026-10-23.md) | Diagnosis of the current results, LLM workflow and evaluation integrity; staged repair plan |
 | [study/sampling-methodology-2026-10-23.md](study/sampling-methodology-2026-10-23.md) | Proposed sampling by repository partitions, rule decisions and evidence requirements; probability weights and retrieval protocol |
 | [../study/sampling-design-2026-10-23/README.md](../study/sampling-design-2026-10-23/README.md) | Refreshed population inventory: 121 decision cells, repository exposure and rule feasibility |
@@ -48,7 +47,6 @@ edited to match later code.
 | [../study/evidence-retrieval-2026-10-23/local-cache-recovery/README.md](../study/evidence-retrieval-2026-10-23/local-cache-recovery/README.md) | Exact-SHA source retrieval, local cache recovery, source/packet hashes, redaction and remaining evidence limits |
 | [../study/evidence-metadata-2026-10-23/README.md](../study/evidence-metadata-2026-10-23/README.md) | Checksum-verified canonical metadata join, semantic subject inventory and construct/rule evidence requirements |
 | [../study/evidence-constructs-2026-10-23/README.md](../study/evidence-constructs-2026-10-23/README.md) | Frozen candidate units, lexical subject audit, alias/duplicate/placeholder gaps and outcome cells by rule/decision/size partitions |
-| [study/local-llm-repair-2026-10-23.md](study/local-llm-repair-2026-10-23.md) | Local-only LLM safeguards, strict source/answer checks, measured limits and remaining repairs |
 | [study/structural-metrics-repair-2026-10-23.md](study/structural-metrics-repair-2026-10-23.md) | Shared declared-task traversal, metric versioning, source-unit semantics and threshold validation limits |
 | [study/v007-audit-2026-10-15.md](study/v007-audit-2026-10-15.md) | Historical audit of the v0.0.7 run and validation state, the reproduction, and the fixes |
 | [../study/pr-replay-v007-2026-10-15/README.md](../study/pr-replay-v007-2026-10-15/README.md) | Replay of 21 real merged pull requests through PR mode (CSV results) |
@@ -56,30 +54,22 @@ edited to match later code.
 | [study/v007-results-analysis.md](study/v007-results-analysis.md) | **Results of the full run by category**, verified figures, charts verdict, what the results cannot say |
 | [study/v007-validation-protocol.md](study/v007-validation-protocol.md) | **Validation, sampling and human-labelling protocol** (verification modes, designs, pilot gate, estimation, effort) |
 | [../study/analysis-v007-2026-10-16/](../study/analysis-v007-2026-10-16/) | CSV tables behind the analysis and the 17 corrected charts |
-| [study/v007-validation-research-prompt.md](study/v007-validation-research-prompt.md) | The deep research brief for the validation and its status |
 | [study/v007-validation-plan-v2.md](study/v007-validation-plan-v2.md) | **Validation plan v2**: claims, gates, labelling protocol, decision rules, importance-weighted allocation |
-| [study/v007-pilot2-and-v0071-runbook.md](study/v007-pilot2-and-v0071-runbook.md) | Runbook: what is ready, the disk blocker, order of steps to v0.0.7.1 and pilot 2 |
-| [study/v007-cleanup-for-next-runs.md](study/v007-cleanup-for-next-runs.md) | What to clean before the next runs |
 | [study/v007-reproduce-full-run.md](study/v007-reproduce-full-run.md) | Reproduce the frozen 207-repository run, and its architecture |
 | [study/v007-full-run-investigation.md](study/v007-full-run-investigation.md) | Investigation report for the v0.0.7 full run |
 | [../study/validation-v007-human/README.md](../study/validation-v007-human/README.md) | Human-validation split, pilot, codebooks, and protocols |
 | [study/selection-protocol-v2.md](study/selection-protocol-v2.md) | Repository selection protocol behind the frozen manifest |
-| [study/what-is-a-snapshot-study.md](study/what-is-a-snapshot-study.md) | Boundary between frozen source state and review/history evidence |
 | [study/pipeline-design.md](study/pipeline-design.md) | Generic N-repository study pipeline design |
 | [study/runbook.md](study/runbook.md) | Operational commands for running and resuming studies |
 | [study/scripts-reference.md](study/scripts-reference.md) | Behaviour, schemas, and limits of the study scripts |
 | [study/threshold-calibration-plan.md](study/threshold-calibration-plan.md) | Numeric threshold calibration and agreement plan |
-| [study/v007-pre-benchmark-readiness.md](study/v007-pre-benchmark-readiness.md) | Readiness report before the v0.0.7 threshold benchmark |
 | [study/v007-variable-certainty-implementation.md](study/v007-variable-certainty-implementation.md) | Variable-certainty implementation report |
 | [study/v007-variable-resolution-results.md](study/v007-variable-resolution-results.md) | Variable-resolution corpus results |
-| [study/v0071-run-summary.md](study/v0071-run-summary.md) | v0.0.7.1 full run summary and per-rule delta against v0.0.7 |
 | [study/v0071-rerun-2026-10-22-full-report.md](study/v0071-rerun-2026-10-22-full-report.md) | **Full results report of the 2026-10-22 rerun**: every category, family and rule, distributions, repositories, all 17 charts, comparison |
 | [study/v0071-rerun-2026-10-22-summary.md](study/v0071-rerun-2026-10-22-summary.md) | Full rerun on the consolidated branch: health, deviations, comparison (identical AnsibleGuard results) |
 | [../study/analysis-v0071-rerun-2026-10-22/](../study/analysis-v0071-rerun-2026-10-22/) | Tables and 17 charts of the 2026-10-22 rerun |
 | [../study/rq1-agreement-pilot/RQ1_RESULTS.md](../study/rq1-agreement-pilot/RQ1_RESULTS.md) | **RQ1**: Reviewer A/B agreement, adjudication sheet and guide, precision with intervals (provisional until adjudicated) |
 | [../study/rq2-v0071-rerun-2026-10-22/RQ2_RESULTS.md](../study/rq2-v0071-rerun-2026-10-22/RQ2_RESULTS.md) | **RQ2**: rule co-occurrence at file and repository level, size-adjusted, on the 2026-10-22 rerun |
-| [study/RQ1-RQ2-draft.md](study/RQ1-RQ2-draft.md) | Paper draft: RQ1 precision, RQ2 rule co-occurrence |
-| [study/tool-performance-report.md](study/tool-performance-report.md) | Tool performance report (precision, recall) |
 
 ## Research and paper
 
@@ -128,10 +118,8 @@ moved copies are listed below.
 | `STUDY_RUNBOOK.md` | `docs/study/runbook.md` |
 | `STUDY_SCRIPTS_REFERENCE.md` | `docs/study/scripts-reference.md` |
 | `SELECTION_PROTOCOL_V2.md` | `docs/study/selection-protocol-v2.md` |
-| `WHAT_IS_A_SNAPSHOT_STUDY.md` | `docs/study/what-is-a-snapshot-study.md` |
 | `REPRODUCE_V007_FULL_RUN.md` + `V007_FULL_RUN_ARCHITECTURE.md` | `docs/study/v007-reproduce-full-run.md` |
 | `ANSIBLEGUARD_V007_FULL_RUN_INVESTIGATION_REPORT.md` | `docs/study/v007-full-run-investigation.md` |
-| `V007_207_PRE_BENCHMARK_READINESS_REPORT.md` | `docs/study/v007-pre-benchmark-readiness.md` |
 | `V007_VARIABLE_CERTAINTY_IMPLEMENTATION_REPORT.md` | `docs/study/v007-variable-certainty-implementation.md` |
 | `V007_VARIABLE_RESOLUTION_CORPUS_RESULTS.md` | `docs/study/v007-variable-resolution-results.md` |
 | `NUMERIC_THRESHOLD_CALIBRATION_AND_AGREEMENT_PLAN.md` | `docs/study/threshold-calibration-plan.md` |
